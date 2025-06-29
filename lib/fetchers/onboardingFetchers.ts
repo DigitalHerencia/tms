@@ -12,7 +12,7 @@ export async function getOnboardingStatus(
   try {
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId },
-      include: { organization: true },
+      include: { organization: true, preferences: true },
     });
 
     if (!dbUser) return null;
@@ -42,6 +42,8 @@ export async function getOnboardingStatus(
         firstName: dbUser.firstName,
         lastName: dbUser.lastName,
         role: dbUser.role as SystemRole,
+        preferences: (dbUser.preferences?.preferences as any) || {},
+        inviteCode: dbUser.preferences?.inviteCode || null,
       },
       organization: {
         id: dbUser.organization.id,
@@ -63,6 +65,7 @@ export async function getUserOnboardingProgress(clerkId: string) {
         onboardingSteps: true,
         firstName: true,
         lastName: true,
+        preferences: { select: { preferences: true, inviteCode: true } },
         organization: {
           select: {
             name: true,

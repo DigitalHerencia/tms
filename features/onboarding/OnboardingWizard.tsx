@@ -18,7 +18,11 @@ import {
   submitOnboardingStepAction,
   completeOnboardingAction,
 } from '@/lib/actions/onboardingActions';
-import type { OnboardingStatus, OnboardingStepData } from '@/types/onboarding';
+import type {
+  OnboardingStatus,
+  OnboardingStepData,
+  PreferencesData,
+} from '@/types/onboarding';
 import { ProfileSetupForm } from '@/components/onboarding/ProfileSetupForm';
 import { CompanySetupForm } from '@/components/onboarding/CompanySetupForm';
 import { PreferencesForm } from '@/components/onboarding/PreferencesForm';
@@ -212,6 +216,7 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
                 setStatus({ ...status, currentStep: 'company' })
               }
               isLoading={isLoading}
+              initialData={status.user.preferences as PreferencesData | undefined}
             />
           )}
         </CardContent>

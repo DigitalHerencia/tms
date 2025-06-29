@@ -21,6 +21,7 @@ export interface UserPreferences {
   theme: 'light' | 'dark';
   language: string;
   dashboardLayout?: string;
+  inviteCode?: string;
 }
 
 export interface NotificationSettings {
