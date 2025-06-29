@@ -138,7 +138,9 @@ export function OnboardingStepper() {
             toast({
                 title: "Oops! Something went wrong",
                 description:
-                    "Please try again or contact support if the problem persists.",
+                    error instanceof Error
+                        ? error.message
+                        : "Please try again or contact support if the problem persists.",
                 variant: "destructive",
             })
         } finally {
