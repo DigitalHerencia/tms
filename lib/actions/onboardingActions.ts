@@ -209,21 +209,48 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
     try {
         const user = await currentUser()
         if (!user) {
+            console.error("[Onboarding] User not authenticated")
             throw new Error("User not authenticated")
         }
-
         const parsed = CompleteOnboardingSchema.parse(data)
-
         const isAdmin = parsed.role === SystemRoles.ADMIN
         let organizationId: string
         let organizationSlug: string
+        let organizationClerkId: string | null = null
 
+        // Validate required fields
+        if (!parsed.email || !parsed.firstName || !parsed.lastName || !parsed.role) {
+            throw new Error("All required fields must be provided by onboarding form.")
+        }
+        if (!isAdmin && (!parsed.organizationId || parsed.organizationId.trim() === "")) {
+            throw new Error("Organization ID is required for non-admin onboarding.")
+        }
+        const email = parsed.email
+        const firstName = parsed.firstName
+        const lastName = parsed.lastName
+        const role = parsed.role
+
+        // Map SystemRoles to Prisma UserRole enum values
+        const prismaRoleMap: Record<string, string> = {
+            admin: 'admin',
+            dispatcher: 'dispatcher',
+            driver: 'driver',
+            compliance: 'compliance',
+            member: 'user', // Map 'member' to 'user' for Prisma
+            accountant: 'accountant',
+            viewer: 'viewer',
+            manager: 'manager',
+        }
+        const safeRole = prismaRoleMap[role] ?? 'viewer'
+
+        // --- Organization creation or lookup ---
+        let organization
         if (isAdmin) {
-            // Admin path: Create new organization
-            const slug = generateSlug(parsed.companyName) // Create organization in database
-            const organization = await db.organization.create({
+            // Admin: create new organization
+            const slug = generateSlug(parsed.companyName)
+            organization = await db.organization.create({
                 data: {
-                    clerkId: null, // No Clerk organization for now
+                    clerkId: null,
                     name: parsed.companyName,
                     slug: slug,
                     dotNumber: parsed.dotNumber || null,
@@ -235,31 +262,16 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                     phone: parsed.phone || null,
                 },
             })
-
             organizationId = organization.id
             organizationSlug = organization.slug
-
-            // Create user in database
-            await db.user.upsert({
-                where: { clerkId: user.id },
-                update: {
-                    organizationId: organization.id,
-                    firstName: parsed.firstName,
-                    lastName: parsed.lastName,
-                    onboardingComplete: true,
-                },
-                create: {
-                    clerkId: user.id,
-                    organizationId: organization.id,
-                    email: parsed.email,
-                    firstName: parsed.firstName,
-                    lastName: parsed.lastName,
-                    onboardingComplete: true,
-                },
+            // Update org with Clerk org ID if available, else fallback to user Clerk ID
+            await db.organization.update({
+                where: { id: organizationId },
+                data: { clerkId: organizationClerkId || user.id },
             })
         } else {
-            // Employee path: Join existing organization
-            const organization = await db.organization.findFirst({
+            // Employee: join existing organization
+            organization = await db.organization.findFirst({
                 where: {
                     OR: [
                         { slug: parsed.organizationId },
@@ -267,57 +279,75 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                     ],
                 },
             })
-
             if (!organization) {
+                console.error("[Onboarding] Organization not found for join", parsed.organizationId)
                 throw new Error("Organization not found")
             }
-
             organizationId = organization.id
             organizationSlug = organization.slug
+        }
 
-            // Create/update user in database
-            await db.user.upsert({
-                where: { clerkId: user.id },
-                update: {
-                    organizationId: organization.id,
-                    firstName: parsed.firstName,
-                    lastName: parsed.lastName,
-                    onboardingComplete: true,
-                },
-                create: {
-                    clerkId: user.id,
-                    organizationId: organization.id,
-                    email: parsed.email,
-                    firstName: parsed.firstName,
-                    lastName: parsed.lastName,
-                    onboardingComplete: true,
-                },
-            })
-        } // Update Clerk user metadata with role and permissions
-        const clerkClientInstance = await clerkClient()
-        const userPermissions = getPermissionsForRole(parsed.role as SystemRole)
-
-        await clerkClientInstance.users.updateUserMetadata(user.id, {
-            privateMetadata: {
-                organizationId: organizationSlug, // Use slug for URL routing
-                role: parsed.role as UserRole,
-                permissions: userPermissions, // Add permissions array
+        // --- Upsert user with org and role ---
+        const dbUser = await db.user.upsert({
+            where: { clerkId: user.id },
+            update: {
+                organizationId: organizationId,
+                firstName,
+                lastName,
+                email,
+                role: safeRole as any,
                 onboardingComplete: true,
             },
-            publicMetadata: {
+            create: {
+                clerkId: user.id,
+                organizationId: organizationId,
+                email,
+                firstName,
+                lastName,
+                role: safeRole as any,
                 onboardingComplete: true,
-                firstName: parsed.firstName,
-                lastName: parsed.lastName,
             },
         })
 
-        return {
-            success: true,
-            organizationId: organizationSlug, // Return slug for routing
-            userId: user.id,
+        // --- Upsert organization membership (always) ---
+        const existingMembership = await db.organizationMembership.findFirst({
+            where: { userId: dbUser.id, organizationId: organizationId },
+        })
+        if (!existingMembership) {
+            await db.organizationMembership.create({
+                data: {
+                    userId: dbUser.id,
+                    organizationId: organizationId,
+                    role: isAdmin ? 'admin' : parsed.role,
+                },
+            })
+        } else if (existingMembership.role !== (isAdmin ? 'admin' : parsed.role)) {
+            // Update role if changed
+            await db.organizationMembership.update({
+                where: { id: existingMembership.id },
+                data: { role: isAdmin ? 'admin' : parsed.role },
+            })
         }
+
+        // --- Double-check user is linked to org ---
+        const refreshedUser = await db.user.findUnique({ where: { clerkId: user.id } })
+        if (!refreshedUser || !refreshedUser.organizationId) {
+            console.error("[Onboarding] User not linked to organization after onboarding", { userId: user.id })
+            throw new Error("User not linked to organization after onboarding")
+        }
+
+        // --- Update Clerk user metadata ---
+        await setClerkUserMetadata(user.id, organizationSlug, parsed.role as SystemRole)
+
+        // --- Mark onboarding complete in DB (redundant but safe) ---
+        await db.user.update({
+            where: { id: dbUser.id },
+            data: { onboardingComplete: true },
+        })
+
+        return { success: true, organizationId, organizationSlug, userId: dbUser.id }
     } catch (error) {
-        console.error("Complete onboarding error:", error)
+        console.error("[Onboarding] Complete onboarding error:", error)
         throw new Error(
             error instanceof Error
                 ? error.message

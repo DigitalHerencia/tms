@@ -27,13 +27,6 @@ function getBooleanField(obj: any, key: string): boolean {
     return false
 }
 
-function safeJson(obj: any): any {
-    try {
-        return JSON.parse(JSON.stringify(obj))
-    } catch {
-        return null
-    }
-}
 
 async function handleClerkEvent(eventType: string, data: any) {
     switch (eventType) {

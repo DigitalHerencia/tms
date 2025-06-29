@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -20,11 +18,6 @@ import {
   submitOnboardingStepAction,
   completeOnboardingAction,
 } from '@/lib/actions/onboardingActions';
-import {
-  ProfileSetupSchema,
-  CompanySetupSchema,
-  PreferencesSchema,
-} from '@/schemas/onboarding';
 import type { OnboardingStatus, OnboardingStepData } from '@/types/onboarding';
 import { ProfileSetupForm } from '@/components/onboarding/ProfileSetupForm';
 import { CompanySetupForm } from '@/components/onboarding/CompanySetupForm';

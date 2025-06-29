@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast"
 import { useUser } from "@clerk/nextjs"
 import { Building, CheckCircle, Circle, MapPinned, ShieldUser, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Step Components
 import { CompanySetupStep } from "./steps/CompanySetupStep"
@@ -74,6 +74,18 @@ export function OnboardingStepper() {
         inviteCode: "",
         preferences: {},
     })
+
+    // Ensure formData is synced with user context when loaded
+    useEffect(() => {
+        if (isLoaded && user) {
+            setFormData(prev => ({
+                ...prev,
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                email: user.emailAddresses?.[0]?.emailAddress || "",
+            }))
+        }
+    }, [isLoaded, user])
 
     const updateFormData = (updates: Partial<OnboardingFormData>) => {
         setFormData(prev => ({ ...prev, ...updates }))
