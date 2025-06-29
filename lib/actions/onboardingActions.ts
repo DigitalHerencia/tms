@@ -8,6 +8,7 @@ import { redirect } from "next/navigation"
 
 import db from "@/lib/database/db"
 import { handleError } from "@/lib/errors/handleError"
+import { generateSlug } from "@/lib/utils/slug"
 import {
     CompleteOnboardingSchema,
     type CompleteOnboardingData,
@@ -354,12 +355,4 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                 : "Failed to complete onboarding"
         )
     }
-}
-
-function generateSlug(companyName: string): string {
-    return companyName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
-        .slice(0, 50)
 }

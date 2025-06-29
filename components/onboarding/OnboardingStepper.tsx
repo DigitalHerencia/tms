@@ -17,6 +17,7 @@ import { ReviewSubmitStep } from "./steps/ReviewSubmitStep"
 import { RoleSelectionStep } from "./steps/RoleSelectionStep"
 
 import { completeOnboarding } from "@/lib/actions/onboardingActions"
+import { generateSlug } from "@/lib/utils/slug"
 import type { CompleteOnboardingData } from "@/schemas/onboarding"
 import type { SystemRole } from "@/types/abac"
 
@@ -146,13 +147,6 @@ export function OnboardingStepper() {
         }
     }
 
-    const generateSlug = (companyName: string): string => {
-        return companyName
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "")
-            .slice(0, 50)
-    }
 
     const isAdmin = formData.role === "admin"
     const progress = ((currentStep + 1) / steps.length) * 100
