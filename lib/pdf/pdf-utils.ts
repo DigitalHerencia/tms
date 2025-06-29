@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 import type { DigitalSignature } from "@/types/ifta"
 import { PDFDocument, PDFFont, PDFPage, rgb } from "pdf-lib"

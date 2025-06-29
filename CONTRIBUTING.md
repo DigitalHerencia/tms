@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Contributing Guidelines
 
 Welcome to FleetFusion! We're excited that you want to contribute to this multi-tenant SaaS platform

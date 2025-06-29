@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** @format */
+/**  */
 /**
  * Test Environment Validation Script
  * This script validates the complete testing setup and runs all test suites

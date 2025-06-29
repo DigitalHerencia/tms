@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 import { BarChart3, CalendarIcon, FileText, MapPin } from "lucide-react"
 import type React from "react"

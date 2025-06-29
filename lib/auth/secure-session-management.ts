@@ -2,7 +2,7 @@
  * Session Management Security Enhancements
  * Addresses critical session cache vulnerabilities identified in security audit
  *
- * @format
+ * 
  */
 
 import type { UserContext } from "@/types/auth"

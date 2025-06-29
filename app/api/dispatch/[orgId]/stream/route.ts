@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 import db from "@/lib/database/db"
 import { auth } from "@clerk/nextjs/server"

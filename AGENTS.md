@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # FleetFusion ▸ AI-Assisted DevOps Automation Standards
 
 ## 1️⃣ Environment & Tooling
@@ -165,7 +163,7 @@ graph TD
 
 **Strictly follow these standards for all automation, PRs, issues, and releases. Deviations break project automation and release integrity.**
 
-<!-- @format -->
+<!--  -->
 
 # FleetFusion ▸ AI-Assisted DevOps Automation Standards
 

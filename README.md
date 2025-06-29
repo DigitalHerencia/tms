@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <!-- FleetFusion SaaS Platform -->
 
 <p align="center">

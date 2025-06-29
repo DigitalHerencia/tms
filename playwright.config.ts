@@ -1,5 +1,3 @@
-/** @format */
-
 import { devices, type PlaywrightTestConfig } from "@playwright/test"
 
 const config = {

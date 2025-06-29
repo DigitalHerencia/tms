@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 // In-memory store for dispatches
 const dispatches: any[] = []

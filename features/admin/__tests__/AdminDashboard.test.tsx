@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 // @vitest-environment jsdom
 import React from "react"

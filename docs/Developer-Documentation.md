@@ -1,4 +1,4 @@
-<!-- @format -->
+<!--  -->
 
 -   **Developer Docs**: Split into `TECHNICAL_SPEC.md`, `CLERK_MIDDLEWARE_CONFIG.md`, and
     `APPENDIX.md`—with structured sections, tables, and architecture notes.

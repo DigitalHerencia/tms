@@ -1,4 +1,4 @@
-/** @format */
+/**  */
 
 import { HosEntry, HosLog, HosViolation } from "@/types/compliance"
 

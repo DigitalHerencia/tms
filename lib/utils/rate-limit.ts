@@ -4,7 +4,7 @@
  * Provides in-memory rate limiting functionality using a sliding window approach.
  * Also supports distributed rate limiting with Upstash Redis.
  *
- * @format
+ * 
  */
 
 import { redis } from "@/lib/cache/redis"

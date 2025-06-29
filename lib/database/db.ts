@@ -6,7 +6,7 @@
  * - Handles error logging and type-safe queries
  * - Implements secure connection management with retry logic
  *
- * @format
+ * 
  */
 
 import { PrismaNeon } from "@prisma/adapter-neon"
