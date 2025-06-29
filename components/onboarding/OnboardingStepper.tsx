@@ -116,7 +116,9 @@ export function OnboardingStepper() {
 
         setIsLoading(true)
         try {
-            await completeOnboarding(formData as CompleteOnboardingData)
+            const result = await completeOnboarding(
+                formData as CompleteOnboardingData
+            )
 
             toast({
                 title: "Welcome aboard! 🎉",
@@ -125,10 +127,7 @@ export function OnboardingStepper() {
             })
 
             // Redirect based on role
-            const orgSlug =
-                formData.role === "admin"
-                    ? generateSlug(formData.companyName)
-                    : formData.organizationId
+            const orgSlug = result.organizationSlug
 
             setTimeout(() => {
                 router.push(`/${orgSlug}/dashboard/${user.id}`)
@@ -148,13 +147,6 @@ export function OnboardingStepper() {
         }
     }
 
-    const generateSlug = (companyName: string): string => {
-        return companyName
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "")
-            .slice(0, 50)
-    }
 
     const isAdmin = formData.role === "admin"
     const progress = ((currentStep + 1) / steps.length) * 100
