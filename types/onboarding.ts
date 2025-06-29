@@ -15,6 +15,8 @@ export interface OnboardingStatus {
     firstName: string | null;
     lastName: string | null;
     role: UserRole;
+    preferences?: Record<string, unknown>;
+    inviteCode?: string | null;
   };
   organization: {
     id: string;

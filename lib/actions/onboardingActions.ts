@@ -229,6 +229,8 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
         const firstName = parsed.firstName
         const lastName = parsed.lastName
         const role = parsed.role
+        const inviteCode = parsed.inviteCode || null
+        const userPrefs = parsed.preferences || {}
 
         // Map SystemRoles to Prisma UserRole enum values
         const prismaRoleMap: Record<string, string> = {
@@ -328,6 +330,13 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                 data: { role: isAdmin ? 'admin' : parsed.role },
             })
         }
+
+        // --- Store onboarding preferences and invite code ---
+        await db.userPreferences.upsert({
+            where: { userId: dbUser.id },
+            update: { preferences: userPrefs, inviteCode },
+            create: { userId: dbUser.id, preferences: userPrefs, inviteCode },
+        })
 
         // --- Double-check user is linked to org ---
         const refreshedUser = await db.user.findUnique({ where: { clerkId: user.id } })
