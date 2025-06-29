@@ -17,6 +17,7 @@ import { ReviewSubmitStep } from "./steps/ReviewSubmitStep"
 import { RoleSelectionStep } from "./steps/RoleSelectionStep"
 
 import { completeOnboarding } from "@/lib/actions/onboardingActions"
+import { generateSlug } from "@/lib/utils/slug"
 import type { CompleteOnboardingData } from "@/schemas/onboarding"
 import type { SystemRole } from "@/types/abac"
 
