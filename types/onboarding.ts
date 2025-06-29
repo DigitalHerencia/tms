@@ -63,3 +63,8 @@ export interface OnboardingStepProps {
   initialData?: Partial<OnboardingStepData>;
   isLoading?: boolean;
 }
+
+export interface JoinOrganizationResult {
+  success: boolean;
+  error?: string;
+}

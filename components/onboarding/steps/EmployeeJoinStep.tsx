@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useActionState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Users, 
-  Building, 
+import {
+  Users,
   Key,
   ArrowRight,
   ArrowLeft,
   AlertCircle,
-  CheckCircle,
   Phone
 } from 'lucide-react';
 import type { OnboardingFormData } from '../OnboardingStepper';
+import { validateJoinOrganizationAction } from '@/lib/actions/onboardingActions';
+import type { JoinOrganizationResult } from '@/types/onboarding';
 
 interface EmployeeJoinStepProps {
   formData: OnboardingFormData;
@@ -25,31 +25,21 @@ interface EmployeeJoinStepProps {
 }
 
 export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: EmployeeJoinStepProps) {
-  const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState('');
-  
+  const [state, formAction, isPending] = useActionState<JoinOrganizationResult | null, FormData>(
+    validateJoinOrganizationAction,
+    null
+  );
+
   const isValid = formData.organizationId.trim();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isValid) return;
-
-    setIsValidating(true);
-    setValidationError('');
-
-    try {
-      // TODO: Validate organization ID exists
-      // For now, we'll just proceed
-      setTimeout(() => {
-        setIsValidating(false);
-        onNext();
-      }, 1000);
-      
-    } catch (error) {
-      setValidationError('Organization not found. Please check the ID and try again.');
-      setIsValidating(false);
+  useEffect(() => {
+    if (state?.success) {
+      onNext();
+    } else if (state?.error) {
+      setValidationError(state.error);
     }
-  };
+  }, [state, onNext]);
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -64,12 +54,13 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
+      <form action={formAction} className="space-y-6 max-w-md mx-auto">
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="organizationId" className="text-sm font-medium text-gray-200">Organization ID *</Label>
             <Input
               id="organizationId"
+              name="organizationId"
               type="text"
               placeholder="acme-trucking-llc"
               value={formData.organizationId}
@@ -86,6 +77,7 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
             <Label htmlFor="inviteCode" className="text-sm font-medium text-gray-200">Invite Code (Optional)</Label>
             <Input
               id="inviteCode"
+              name="inviteCode"
               type="text"
               placeholder="ABC123"
               value={formData.inviteCode}
@@ -142,7 +134,7 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
             variant="outline" 
             onClick={onPrev}
             className="w-full border-neutral-700 bg-neutral-800 text-gray-200 hover:bg-neutral-700 hover:text-white"
-            disabled={isValidating}
+            disabled={isPending}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -150,9 +142,9 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
           <Button 
             type="submit" 
             className="w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            disabled={!isValid || isValidating}
+            disabled={!isValid || isPending}
           >
-            {isValidating ? (
+            {isPending ? (
               <>
                 <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
                 Validating...

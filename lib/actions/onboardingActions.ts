@@ -19,6 +19,7 @@ import type {
     CompanySetupData,
     OnboardingStepData,
     ProfileSetupData,
+    JoinOrganizationResult,
 } from "@/types/onboarding"
 
 // Infer the resolved client type
@@ -143,6 +144,54 @@ export async function completeOnboardingAction() {
         redirect(`/app/${dbUser.organizationId}/dashboard`)
     } catch (error) {
         return handleError(error, "Complete Onboarding")
+    }
+}
+
+export async function validateJoinOrganizationAction(
+    _prev: JoinOrganizationResult | null,
+    formData: FormData
+): Promise<JoinOrganizationResult> {
+    try {
+        const orgInput = (formData.get("organizationId") as string | null) || ""
+        const invite = (formData.get("inviteCode") as string | null) || ""
+
+        if (!orgInput) {
+            return { success: false, error: "Organization ID is required" }
+        }
+
+        const organization = await db.organization.findFirst({
+            where: {
+                OR: [{ slug: orgInput }, { id: orgInput }],
+            },
+        })
+
+        if (!organization) {
+            return { success: false, error: "Organization not found" }
+        }
+
+        if (invite) {
+            const found = await (db as any).invitation.findFirst({
+                where: {
+                    code: invite,
+                    organizationId: organization.id,
+                    expiresAt: { gt: new Date() },
+                    acceptedAt: null,
+                },
+            })
+            if (!found) {
+                return { success: false, error: "Invalid or expired invite code" }
+            }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return {
+            success: false,
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to validate organization",
+        }
     }
 }
 
@@ -285,6 +334,20 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
             }
             organizationId = organization.id
             organizationSlug = organization.slug
+
+            if (parsed.inviteCode) {
+                const invite = await (db as any).invitation.findFirst({
+                    where: {
+                        code: parsed.inviteCode,
+                        organizationId: organizationId,
+                        expiresAt: { gt: new Date() },
+                        acceptedAt: null,
+                    },
+                })
+                if (!invite) {
+                    throw new Error("Invalid or expired invite code")
+                }
+            }
         }
 
         // --- Upsert user with org and role ---
