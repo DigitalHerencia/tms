@@ -5,36 +5,23 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import {
   submitOnboardingStepAction,
   completeOnboardingAction,
 } from '@/lib/actions/onboardingActions';
-import type {
-  OnboardingStatus,
-  OnboardingStepData,
-  PreferencesData,
-} from '@/types/onboarding';
+import type { OnboardingStatus, OnboardingStepData } from '@/types/onboarding';
 import { ProfileSetupForm } from '@/components/onboarding/ProfileSetupForm';
 import { CompanySetupForm } from '@/components/onboarding/CompanySetupForm';
-import { PreferencesForm } from '@/components/onboarding/PreferencesForm';
 
 interface OnboardingWizardProps {
   initialStatus?: OnboardingStatus | null;
 }
 
 export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
-  const [status, setStatus] = useState<OnboardingStatus | null>(
-    initialStatus || null
-  );
+  const [status, setStatus] = useState<OnboardingStatus | null>(initialStatus || null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -48,14 +35,15 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
 
       if (result.success) {
         // Refresh status via router to avoid full page reload
-        router.refresh();        toast({
+        router.refresh();
+        toast({
           title: 'Progress saved',
           description: 'Your onboarding step has been completed.',
         });
       } else {
         toast({
           title: 'Error',
-          description: ('error' in result ? result.error : 'Failed to save progress'),
+          description: 'error' in result ? result.error : 'Failed to save progress',
           variant: 'destructive',
         });
       }
@@ -106,17 +94,10 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
       title: 'Company Details',
       completed: status.steps.company,
     },
-    {
-      id: 'preferences',
-      title: 'Preferences',
-      completed: status.steps.preferences,
-    },
   ];
 
-  const currentStepIndex = steps.findIndex(
-    step => step.id === status.currentStep
-  );
-  const progress = (steps.filter(s => s.completed).length / steps.length) * 100;
+  const currentStepIndex = steps.findIndex((step) => step.id === status.currentStep);
+  const progress = (steps.filter((s) => s.completed).length / steps.length) * 100;
 
   if (status.isComplete) {
     return (
@@ -125,16 +106,10 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
           <CardHeader className="text-center">
             <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
             <CardTitle>Welcome to FleetFusion!</CardTitle>
-            <CardDescription>
-              Your account is set up and ready to go.
-            </CardDescription>
+            <CardDescription>Your account is set up and ready to go.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button
-              onClick={handleComplete}
-              disabled={isLoading}
-              className="w-full"
-            >
+            <Button onClick={handleComplete} disabled={isLoading} className="w-full">
               {isLoading ? 'Redirecting...' : 'Go to Dashboard'}
             </Button>
           </CardContent>
@@ -146,9 +121,7 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="mb-4 text-center text-3xl font-bold">
-          Welcome to FleetFusion
-        </h1>
+        <h1 className="mb-4 text-center text-3xl font-bold">Welcome to FleetFusion</h1>
         <p className="text-muted-foreground mb-6 text-center">
           Let's set up your account to get you started
         </p>
@@ -189,7 +162,7 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
           {' '}
           {status.currentStep === 'profile' && (
             <ProfileSetupForm
-              onSubmit={data => handleStepSubmit('profile', data)}
+              onSubmit={(data) => handleStepSubmit('profile', data)}
               isLoading={isLoading}
               initialData={{
                 firstName: status.user.firstName || '',
@@ -199,7 +172,7 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
           )}
           {status.currentStep === 'company' && (
             <CompanySetupForm
-              onSubmit={data => handleStepSubmit('company', data)}
+              onSubmit={(data) => handleStepSubmit('company', data)}
               onPrevious={() =>
                 handleStepSubmit('profile', {
                   firstName: status.user.firstName || '',
@@ -207,16 +180,6 @@ export function OnboardingWizard({ initialStatus }: OnboardingWizardProps) {
                 })
               }
               isLoading={isLoading}
-            />
-          )}
-          {status.currentStep === 'preferences' && (
-            <PreferencesForm
-              onSubmit={data => handleStepSubmit('preferences', data)}
-              onPrevious={() =>
-                setStatus({ ...status, currentStep: 'company' })
-              }
-              isLoading={isLoading}
-              initialData={status.user.preferences as PreferencesData | undefined}
             />
           )}
         </CardContent>

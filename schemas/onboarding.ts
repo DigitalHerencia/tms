@@ -1,14 +1,8 @@
 import { z } from 'zod';
 
 export const ProfileSetupSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, 'First name is required')
-    .max(50, 'First name too long'),
-  lastName: z
-    .string()
-    .min(1, 'Last name is required')
-    .max(50, 'Last name too long'),
+  firstName: z.string().min(1, 'First name is required').max(50, 'First name too long'),
+  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
   phone: z.string().optional(),
 });
 
@@ -26,23 +20,13 @@ export const CompanySetupSchema = z.object({
   fuelUnit: z.enum(['gallons', 'liters']).default('gallons'),
 });
 
-export const PreferencesSchema = z.object({
-  notifications: z.object({
-    email: z.boolean().default(true),
-    push: z.boolean().default(true),
-  }),
-  language: z.string().default('en'),
-  theme: z.enum(['light', 'dark', 'system']).default('system'),
-});
-
 export const OnboardingStepSchema = z.object({
-  step: z.enum(['profile', 'company', 'preferences']),
-  data: z.union([ProfileSetupSchema, CompanySetupSchema, PreferencesSchema]),
+  step: z.enum(['profile', 'company']),
+  data: z.union([ProfileSetupSchema, CompanySetupSchema]),
 });
 
 export type ProfileSetupFormData = z.infer<typeof ProfileSetupSchema>;
 export type CompanySetupFormData = z.infer<typeof CompanySetupSchema>;
-export type PreferencesFormData = z.infer<typeof PreferencesSchema>;
 
 export const CompleteOnboardingSchema = z.object({
   firstName: z.string().min(1),
@@ -59,7 +43,6 @@ export const CompleteOnboardingSchema = z.object({
   phone: z.string().optional(),
   organizationId: z.string().optional(),
   inviteCode: z.string().optional(),
-  preferences: PreferencesSchema.optional(),
 });
 
 export type CompleteOnboardingData = z.infer<typeof CompleteOnboardingSchema>;

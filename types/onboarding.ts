@@ -2,11 +2,10 @@ import type { UserRole } from './auth';
 
 export interface OnboardingStatus {
   isComplete: boolean;
-  currentStep: 'profile' | 'company' | 'preferences' | 'complete';
+  currentStep: 'profile' | 'company' | 'complete';
   steps: {
     profile: boolean;
     company: boolean;
-    preferences: boolean;
   };
   user: {
     id: string;
@@ -15,7 +14,6 @@ export interface OnboardingStatus {
     firstName: string | null;
     lastName: string | null;
     role: UserRole;
-    preferences?: Record<string, unknown>;
     inviteCode?: string | null;
   };
   organization: {
@@ -45,19 +43,7 @@ export interface CompanySetupData {
   fuelUnit?: 'gallons' | 'liters';
 }
 
-export interface PreferencesData {
-  notifications: {
-    email: boolean;
-    push: boolean;
-  };
-  language: string;
-  theme: 'light' | 'dark' | 'system';
-}
-
-export type OnboardingStepData =
-  | ProfileSetupData
-  | CompanySetupData
-  | PreferencesData;
+export type OnboardingStepData = ProfileSetupData | CompanySetupData;
 
 export interface OnboardingStepProps {
   onNext: (data: OnboardingStepData) => void;

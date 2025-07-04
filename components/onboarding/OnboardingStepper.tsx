@@ -39,9 +39,6 @@ export interface OnboardingFormData {
   // Employee Join (for non-admin)
   organizationId: string;
   inviteCode: string;
-
-  // Common
-  preferences: Record<string, any>;
 }
 
 const steps = [
@@ -71,7 +68,6 @@ export function OnboardingStepper() {
     phone: '',
     organizationId: '',
     inviteCode: '',
-    preferences: {},
   });
 
   // Ensure formData is synced with user context when loaded
