@@ -1,28 +1,28 @@
-const { FlatCompat } = require('@eslint/eslintrc');
+import { FlatCompat } from '@eslint/eslintrc';
 
-const compat = new FlatCompat({ baseDirectory: __dirname });
+const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
-module.exports = [
+const config = [
   ...compat.config({
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaVersion: 'latest',
-      sourceType: 'module'
+      sourceType: 'module',
     },
     plugins: ['@typescript-eslint', 'react'],
     extends: [
       'next/core-web-vitals',
       'plugin:react/recommended',
       'plugin:@typescript-eslint/recommended',
-      'prettier'
+      'prettier',
     ],
     settings: {
-      react: { version: 'detect' }
+      react: { version: 'detect' },
     },
     env: {
       browser: true,
       node: true,
-      es2020: true
+      es2020: true,
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
@@ -33,7 +33,10 @@ module.exports = [
       '@typescript-eslint/no-require-imports': 'off',
       '@next/next/no-html-link-for-pages': 'off',
       'react/prop-types': 'off',
-      'react/no-unknown-property': 'off'
-    }
-  })
+      'react/no-unknown-property': 'off',
+      'import/no-anonymous-default-export': 'warn',
+    },
+  }),
 ];
+
+export default config;

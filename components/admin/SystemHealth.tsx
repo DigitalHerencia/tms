@@ -1,7 +1,17 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
-import { Activity, Database, Server, Cpu, MemoryStick, RefreshCw, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import {
+  Activity,
+  Database,
+  Server,
+  Cpu,
+  MemoryStick,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -47,13 +57,13 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
     if (!healthData) {
       refreshHealthData();
     }
-  }, []);
+  }, [healthData]);
 
   const formatUptime = (seconds: number) => {
     const days = Math.floor(seconds / (24 * 60 * 60));
     const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((seconds % (60 * 60)) / 60);
-    
+
     if (days > 0) {
       return `${days}d ${hours}h ${minutes}m`;
     } else if (hours > 0) {
@@ -68,14 +78,34 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
       case 'healthy':
       case 'ok':
       case 'active':
-        return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Healthy</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Healthy
+          </Badge>
+        );
       case 'warning':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><AlertTriangle className="w-3 h-3 mr-1" />Warning</Badge>;
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Warning
+          </Badge>
+        );
       case 'error':
       case 'down':
-        return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />Error</Badge>;
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Error
+          </Badge>
+        );
       default:
-        return <Badge variant="outline"><Clock className="w-3 h-3 mr-1" />Unknown</Badge>;
+        return (
+          <Badge variant="outline">
+            <Clock className="w-3 h-3 mr-1" />
+            Unknown
+          </Badge>
+        );
     }
   };
 
@@ -119,12 +149,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
             Last updated: {lastUpdate.toLocaleTimeString()}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={refreshHealthData}
-          disabled={isLoading}
-        >
+        <Button variant="outline" size="sm" onClick={refreshHealthData} disabled={isLoading}>
           <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
@@ -144,9 +169,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
               <div className="text-2xl font-bold text-green-600">
                 {formatUptime(healthData.uptime)}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Running smoothly
-              </p>
+              <p className="text-xs text-muted-foreground">Running smoothly</p>
             </div>
           </CardContent>
         </Card>
@@ -161,9 +184,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           <CardContent>
             <div className="space-y-2">
               {getStatusBadge(healthData.databaseStatus)}
-              <p className="text-xs text-muted-foreground">
-                Connection active
-              </p>
+              <p className="text-xs text-muted-foreground">Connection active</p>
             </div>
           </CardContent>
         </Card>
@@ -178,9 +199,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           <CardContent>
             <div className="space-y-2">
               {getStatusBadge(healthData.queueStatus)}
-              <p className="text-xs text-muted-foreground">
-                Processing jobs
-              </p>
+              <p className="text-xs text-muted-foreground">Processing jobs</p>
             </div>
           </CardContent>
         </Card>
@@ -198,9 +217,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Operational
               </Badge>
-              <p className="text-xs text-muted-foreground">
-                All systems go
-              </p>
+              <p className="text-xs text-muted-foreground">All systems go</p>
             </div>
           </CardContent>
         </Card>
@@ -219,13 +236,14 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
             <div className="flex justify-between items-center">
               <span className="text-2xl font-bold">{healthData.memoryUsage}%</span>
               <span className={`text-sm font-medium ${getUsageColor(healthData.memoryUsage)}`}>
-                {healthData.memoryUsage < 75 ? 'Normal' : healthData.memoryUsage < 90 ? 'High' : 'Critical'}
+                {healthData.memoryUsage < 75
+                  ? 'Normal'
+                  : healthData.memoryUsage < 90
+                    ? 'High'
+                    : 'Critical'}
               </span>
             </div>
-            <Progress 
-              value={healthData.memoryUsage} 
-              className="h-2"
-            />
+            <Progress value={healthData.memoryUsage} className="h-2" />
             <div className="text-xs text-muted-foreground">
               Memory consumption by the application
             </div>
@@ -254,13 +272,8 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 {healthData.cpuUsage < 50 ? 'Low' : healthData.cpuUsage < 80 ? 'Normal' : 'High'}
               </span>
             </div>
-            <Progress 
-              value={healthData.cpuUsage} 
-              className="h-2"
-            />
-            <div className="text-xs text-muted-foreground">
-              Current CPU utilization
-            </div>
+            <Progress value={healthData.cpuUsage} className="h-2" />
+            <div className="text-xs text-muted-foreground">Current CPU utilization</div>
             {healthData.cpuUsage > 80 && (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
@@ -287,7 +300,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <p className="text-xs text-muted-foreground">All endpoints responding</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 border rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <div>
@@ -295,7 +308,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <p className="text-xs text-muted-foreground">Queue processing normally</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 border rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <div>
@@ -303,7 +316,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <p className="text-xs text-muted-foreground">Storage accessible</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 border rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <div>
@@ -311,7 +324,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <p className="text-xs text-muted-foreground">Sending notifications</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 border rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <div>
@@ -319,7 +332,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
                 <p className="text-xs text-muted-foreground">Cache hits optimal</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 border rounded-lg">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <div>

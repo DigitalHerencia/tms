@@ -2,19 +2,19 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { 
-  Plus, 
-  UserPlus, 
-  AlertCircle, 
-  Truck, 
-  BarChart3, 
-  MapPin, 
-  FileText, 
-  Settings, 
+import { cn } from '@/lib/utils/utils';
+import {
+  Plus,
+  UserPlus,
+  AlertCircle,
+  Truck,
+  BarChart3,
+  MapPin,
+  FileText,
+  Settings,
   DollarSign,
   Clock,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 import type { QuickAction } from '@/types/dashboard';
 
@@ -38,21 +38,19 @@ const iconComponents = {
 
 export function QuickActionCard({ action }: QuickActionCardProps) {
   const IconComponent = iconComponents[action.icon as keyof typeof iconComponents];
-  
+
   return (
     <Card className="transition-all hover:shadow-md hover:scale-105 group cursor-pointer">
       <CardContent className="p-4">
         <Link href={action.href} className="block">
           <div className="flex items-center space-x-3">
-            <div className={cn(
-              'p-3 rounded-lg text-white transition-all group-hover:scale-110',
-              action.color || 'bg-blue-500'
-            )}>
-              {IconComponent ? (
-                <IconComponent className="h-5 w-5" />
-              ) : (
-                <Plus className="h-5 w-5" />
+            <div
+              className={cn(
+                'p-3 rounded-lg text-white transition-all group-hover:scale-110',
+                action.color || 'bg-blue-500',
               )}
+            >
+              {IconComponent ? <IconComponent className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -94,9 +92,7 @@ export function QuickActions({ actions, onActionClick }: QuickActionsProps) {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            No actions available for your role.
-          </p>
+          <p className="text-sm text-muted-foreground">No actions available for your role.</p>
         </CardContent>
       </Card>
     );
@@ -109,8 +105,8 @@ export function QuickActions({ actions, onActionClick }: QuickActionsProps) {
   };
 
   // Group actions by priority
-  const priorityActions = actions.filter(action => action.priority === 'high');
-  const regularActions = actions.filter(action => action.priority !== 'high');
+  const priorityActions = actions.filter((action) => action.priority === 'high');
+  const regularActions = actions.filter((action) => action.priority !== 'high');
 
   return (
     <Card>
@@ -136,7 +132,7 @@ export function QuickActions({ actions, onActionClick }: QuickActionsProps) {
             ))}
           </div>
         )}
-        
+
         {/* Regular Actions */}
         {regularActions.length > 0 && (
           <div className="space-y-2">

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model Organization {
@@ -38,7 +38,7 @@ model Organization {
   iftaReports         IftaReport[]
   IftaTrip            IftaTrip[]
   loads               Load[]
-  // memberships         OrganizationMembership[]
+  memberships         OrganizationMembership[]
   users               User[]
   vehicles            Vehicle[]
 
@@ -67,7 +67,7 @@ model User {
   ComplianceDocument ComplianceDocument[]     @relation("VerifiedByUser")
   driver             Driver?
   IftaReport         IftaReport[]             @relation("SubmittedByUser")
-  // memberships        OrganizationMembership[]
+  memberships        OrganizationMembership[]
   organization       Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   // Relations for IFTA features
@@ -95,6 +95,23 @@ model UserPreferences {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
+}
+
+model OrganizationMembership {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  userId         String       @map("user_id")
+  role           String
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("organization_memberships")
 }
 
 model Vehicle {

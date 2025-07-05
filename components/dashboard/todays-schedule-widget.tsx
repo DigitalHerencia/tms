@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Sun, Sunset, Moon, Clock, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { getTodaysScheduleAction } from '@/lib/actions/dashboardActions';
 
 interface ScheduleItem {
@@ -39,9 +39,7 @@ const timePeriodConfig = {
   },
 } as const;
 
-export default async function TodaysScheduleWidget({
-  orgId,
-}: TodaysScheduleWidgetProps) {
+export default async function TodaysScheduleWidget({ orgId }: TodaysScheduleWidgetProps) {
   if (!orgId) {
     return (
       <Card className="border-red-200 bg-red-50">
@@ -82,51 +80,41 @@ export default async function TodaysScheduleWidget({
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
             <p className="text-sm text-muted-foreground">No items scheduled</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Enjoy your free day!
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Enjoy your free day!</p>
           </div>
         ) : (
           <div className="space-y-3">
             {scheduleItems.map((item) => {
-              const config = timePeriodConfig[item.timePeriod as keyof typeof timePeriodConfig] || timePeriodConfig.All;
+              const config =
+                timePeriodConfig[item.timePeriod as keyof typeof timePeriodConfig] ||
+                timePeriodConfig.All;
               const PeriodIcon = config.icon;
-              
+
               return (
                 <div
                   key={item.id}
                   className={cn(
                     'rounded-lg border p-3 transition-all hover:shadow-sm',
-                    config.color
+                    config.color,
                   )}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1">
                       <PeriodIcon className="h-4 w-4 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {item.description}
-                        </p>
+                        <p className="text-sm font-medium">{item.description}</p>
                         {item.type && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {item.type}
-                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">{item.type}</p>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       {item.count > 1 && (
-                        <Badge
-                          variant="secondary"
-                          className="text-xs"
-                        >
+                        <Badge variant="secondary" className="text-xs">
                           {item.count}
                         </Badge>
                       )}
-                      <Badge
-                        variant="secondary"
-                        className={cn('text-xs capitalize', config.badge)}
-                      >
+                      <Badge variant="secondary" className={cn('text-xs capitalize', config.badge)}>
                         {item.timePeriod.toLowerCase()}
                       </Badge>
                     </div>

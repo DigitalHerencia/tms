@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Clock, AlertCircle, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { getDashboardAlertsAction } from '@/lib/actions/dashboardActions';
 import type { DashboardAlert } from '@/lib/actions/dashboardActions';
 
@@ -33,9 +33,7 @@ const severityConfig = {
   },
 } as const;
 
-export default async function RecentAlertsWidget({
-  orgId,
-}: RecentAlertsWidgetProps) {
+export default async function RecentAlertsWidget({ orgId }: RecentAlertsWidgetProps) {
   if (!orgId) {
     return (
       <Card className="border-red-200 bg-red-50">
@@ -74,22 +72,20 @@ export default async function RecentAlertsWidget({
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <AlertTriangle className="h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">No recent alerts</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Your fleet is running smoothly
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Your fleet is running smoothly</p>
           </div>
         ) : (
           <div className="space-y-3">
             {alerts.map((alert) => {
               const config = severityConfig[alert.severity];
               const SeverityIcon = config.icon;
-              
+
               return (
                 <div
                   key={alert.id}
                   className={cn(
                     'rounded-lg border p-3 transition-all hover:shadow-sm',
-                    config.color
+                    config.color,
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -114,9 +110,7 @@ export default async function RecentAlertsWidget({
                           </span>
                         </div>
                       </div>
-                      <p className="text-sm leading-relaxed">
-                        {alert.message}
-                      </p>
+                      <p className="text-sm leading-relaxed">{alert.message}</p>
                     </div>
                   </div>
                 </div>

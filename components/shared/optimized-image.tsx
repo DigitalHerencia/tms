@@ -2,7 +2,7 @@
 
 // Next.js 15 Optimized Image Component
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { useState } from 'react';
 
 interface OptimizedImageProps {
@@ -71,14 +71,14 @@ export function OptimizedImage({
 }
 
 // Example usage components for common patterns
-export function HeroImage({ 
-  src, 
-  alt, 
+export function HeroImage({
+  src,
+  alt,
   className,
-  fallbackSrc = '/mountain_bg.png' 
-}: { 
-  src: string; 
-  alt: string; 
+  fallbackSrc = '/mountain_bg.png',
+}: {
+  src: string;
+  alt: string;
   className?: string;
   fallbackSrc?: string;
 }) {
@@ -99,15 +99,15 @@ export function HeroImage({
   );
 }
 
-export function ProfileImage({ 
-  src, 
-  alt, 
+export function ProfileImage({
+  src,
+  alt,
   size = 40,
   className,
-  fallbackSrc = '/white_logo.png'
-}: { 
-  src: string; 
-  alt: string; 
+  fallbackSrc = '/white_logo.png',
+}: {
+  src: string;
+  alt: string;
   size?: number;
   className?: string;
   fallbackSrc?: string;
@@ -125,14 +125,14 @@ export function ProfileImage({
   );
 }
 
-export function VehicleImage({ 
-  src, 
-  alt, 
+export function VehicleImage({
+  src,
+  alt,
   className,
-  fallbackSrc = '/trucksz_splash.png'
-}: { 
-  src: string; 
-  alt: string; 
+  fallbackSrc = '/trucksz_splash.png',
+}: {
+  src: string;
+  alt: string;
   className?: string;
   fallbackSrc?: string;
 }) {

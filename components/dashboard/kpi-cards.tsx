@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import type { DashboardKPI } from '@/types/dashboard';
 
 interface KPICardProps {
@@ -38,22 +38,17 @@ export function KPICard({ kpi }: KPICardProps) {
   return (
     <Card className={cn('transition-all hover:shadow-md', colorClass)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {kpi.title}
-        </CardTitle>
-        <div className="text-lg">
-          {iconMap[kpi.icon as keyof typeof iconMap] || '📊'}
-        </div>
+        <CardTitle className="text-sm font-medium text-muted-foreground">{kpi.title}</CardTitle>
+        <div className="text-lg">{iconMap[kpi.icon as keyof typeof iconMap] || '📊'}</div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-foreground">
-          {kpi.value}
-        </div>
+        <div className="text-2xl font-bold text-foreground">{kpi.value}</div>
         {kpi.change !== undefined && TrendIcon && (
           <div className="flex items-center space-x-1 text-xs text-muted-foreground mt-1">
             <TrendIcon className="h-3 w-3" />
             <span>
-              {kpi.change > 0 ? '+' : ''}{kpi.change}% from last period
+              {kpi.change > 0 ? '+' : ''}
+              {kpi.change}% from last period
             </span>
           </div>
         )}
