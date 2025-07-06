@@ -1,14 +1,14 @@
-'use server';
+"use server";
 
-import { auth } from '@clerk/nextjs/server';
+import { auth } from "@clerk/nextjs/server";
 
-import prisma from '@/lib/database/db';
+import prisma from "@/lib/database/db";
 import type {
   Driver,
   DriverListResponse,
   DriverStatsResponse,
   DriverFilters,
-} from '@/types/drivers';
+} from "@/types/drivers";
 
 // ================== Utility Functions ==================
 
@@ -59,29 +59,26 @@ type DriverWithAssignment = Driver & {
 };
 
 // Update DriverListResponse for this fetcher
-type DriverListWithAssignmentResponse = Omit<DriverListResponse, 'drivers'> & {
+type DriverListWithAssignmentResponse = Omit<DriverListResponse, "drivers"> & {
   drivers: DriverWithAssignment[];
 };
 
 /**
  * Get driver by ID with permission check
  */
-export const getDriverById = async (
-  driverId: string,
-  orgId: string
-): Promise<Driver | null> => {
+export const getDriverById = async (driverId: string, orgId: string): Promise<Driver | null> => {
   try {
     const { userId, orgId: sessionOrgId } = await auth();
     if (!userId) return null;
     if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
+      throw new Error("Invalid organization");
     }
 
     const driver = await prisma.driver.findFirst({
       where: {
         id: driverId,
         organizationId: orgId,
-        status: 'active',
+        status: "active",
       },
       include: {
         organization: true,
@@ -90,14 +87,7 @@ export const getDriverById = async (
         loads: {
           where: {
             status: {
-              in: [
-                'assigned',
-                'dispatched',
-                'in_transit',
-                'at_pickup',
-                'picked_up',
-                'en_route',
-              ],
+              in: ["assigned", "dispatched", "in_transit", "at_pickup", "picked_up", "en_route"],
             },
           },
           select: {
@@ -115,7 +105,7 @@ export const getDriverById = async (
             },
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         },
       },
@@ -125,7 +115,7 @@ export const getDriverById = async (
 
     return parseDriverData(driver);
   } catch (error) {
-    console.error('Error fetching driver:', error);
+    console.error("Error fetching driver:", error);
     return null;
   }
 };
@@ -135,7 +125,7 @@ export const getDriverById = async (
  */
 export const listDriversByOrg = async (
   orgId: string,
-  filters: DriverFilters = {}
+  filters: DriverFilters = {},
 ): Promise<DriverListWithAssignmentResponse> => {
   try {
     const { userId, orgId: sessionOrgId } = await auth();
@@ -143,23 +133,23 @@ export const listDriversByOrg = async (
       return { drivers: [], total: 0, page: 1, limit: 20, totalPages: 0 };
     }
     if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
+      throw new Error("Invalid organization");
     }
 
     // Build Prisma where filter
     const where: any = {
       organizationId: orgId,
       // Only show active drivers by default
-      status: { not: 'terminated' },
+      status: { not: "terminated" },
     };
 
     if (filters.search) {
       where.OR = [
-        { firstName: { contains: filters.search, mode: 'insensitive' } },
-        { lastName: { contains: filters.search, mode: 'insensitive' } },
-        { email: { contains: filters.search, mode: 'insensitive' } },
-        { licenseNumber: { contains: filters.search, mode: 'insensitive' } },
-        { phone: { contains: filters.search, mode: 'insensitive' } },
+        { firstName: { contains: filters.search, mode: "insensitive" } },
+        { lastName: { contains: filters.search, mode: "insensitive" } },
+        { email: { contains: filters.search, mode: "insensitive" } },
+        { licenseNumber: { contains: filters.search, mode: "insensitive" } },
+        { phone: { contains: filters.search, mode: "insensitive" } },
       ];
     }
 
@@ -182,17 +172,13 @@ export const listDriversByOrg = async (
     // Expiration filters
     if (filters.cdlExpiringInDays !== undefined) {
       const expirationDate = new Date();
-      expirationDate.setDate(
-        expirationDate.getDate() + filters.cdlExpiringInDays
-      );
+      expirationDate.setDate(expirationDate.getDate() + filters.cdlExpiringInDays);
       where.licenseExpiration = { lte: expirationDate };
     }
 
     if (filters.medicalExpiringInDays !== undefined) {
       const expirationDate = new Date();
-      expirationDate.setDate(
-        expirationDate.getDate() + filters.medicalExpiringInDays
-      );
+      expirationDate.setDate(expirationDate.getDate() + filters.medicalExpiringInDays);
       where.medicalCardExpiration = { lte: expirationDate };
     }
 
@@ -225,30 +211,30 @@ export const listDriversByOrg = async (
     const skip = (page - 1) * limit;
 
     // Sorting
-    const sortBy = filters.sortBy || 'firstName';
-    const sortOrder = filters.sortOrder || 'asc';
+    const sortBy = filters.sortBy || "firstName";
+    const sortOrder = filters.sortOrder || "asc";
     const orderBy: any = {};
     switch (sortBy) {
-      case 'firstName':
+      case "firstName":
         orderBy.firstName = sortOrder;
         break;
-      case 'lastName':
+      case "lastName":
         orderBy.lastName = sortOrder;
         break;
-      case 'status':
+      case "status":
         orderBy.status = sortOrder;
         break;
-      case 'hireDate':
+      case "hireDate":
         orderBy.hireDate = sortOrder;
         break;
-      case 'cdlExpiration':
+      case "cdlExpiration":
         orderBy.licenseExpiration = sortOrder;
         break;
-      case 'safetyScore':
+      case "safetyScore":
         orderBy.safetyScore = sortOrder;
         break;
       default:
-        orderBy.firstName = 'asc';
+        orderBy.firstName = "asc";
     }
 
     // Get total count
@@ -259,14 +245,7 @@ export const listDriversByOrg = async (
         loads: {
           where: {
             status: {
-              in: [
-                'assigned',
-                'dispatched',
-                'in_transit',
-                'at_pickup',
-                'picked_up',
-                'en_route',
-              ],
+              in: ["assigned", "dispatched", "in_transit", "at_pickup", "picked_up", "en_route"],
             },
           },
           select: {
@@ -285,7 +264,7 @@ export const listDriversByOrg = async (
           },
           take: 1, // Only get the most recent active assignment
           orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
           },
         },
       },
@@ -294,7 +273,7 @@ export const listDriversByOrg = async (
       take: limit,
     });
 
-    const parsedDriversData = driverResults.map(driver => {
+    const parsedDriversData = driverResults.map((driver: { loads: null[] }) => {
       const baseDriver = parseDriverData(driver) as DriverWithAssignment;
       // Add current assignment information
       const currentAssignment = driver.loads?.[0] || null;
@@ -323,7 +302,7 @@ export const listDriversByOrg = async (
       totalPages: Math.ceil(total / limit),
     };
   } catch (error) {
-    console.error('Error listing drivers:', error);
+    console.error("Error listing drivers:", error);
     return { drivers: [], total: 0, page: 1, limit: 20, totalPages: 0 };
   }
 };
@@ -335,21 +314,19 @@ export const listDriversByOrg = async (
 /**
  * Get driver statistics for dashboard
  */
-export const getDriverStats = async (
-  orgId: string
-): Promise<DriverStatsResponse> => {
+export const getDriverStats = async (orgId: string): Promise<DriverStatsResponse> => {
   try {
     const { userId, orgId: sessionOrgId } = await auth();
-    if (!userId) throw new Error('Authentication required');
+    if (!userId) throw new Error("Authentication required");
     if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
+      throw new Error("Invalid organization");
     }
     // Example stats: total, active, inactive, expiring licenses, etc.
     const total = await prisma.driver.count({
       where: { organizationId: orgId },
     });
     const active = await prisma.driver.count({
-      where: { organizationId: orgId, status: 'active' },
+      where: { organizationId: orgId, status: "active" },
     });
 
     const expiringLicenses = await prisma.driver.count({
@@ -384,7 +361,7 @@ export const getDriverStats = async (
       // ...default or calculated values for other stats...
     };
   } catch (error) {
-    console.error('Error fetching driver stats:', error);
+    console.error("Error fetching driver stats:", error);
     return {
       totalDrivers: 0,
       activeDrivers: 0,
@@ -405,8 +382,8 @@ export const getDriverStats = async (
 // ================== Performance Fetchers ==================
 
 export async function getVehiclesByOrg(orgId: string): Promise<any[]> {
-  if (!orgId) throw new Error('orgId is required');
+  if (!orgId) throw new Error("orgId is required");
   const { userId } = await auth();
-  if (!userId) throw new Error('Authentication required');
+  if (!userId) throw new Error("Authentication required");
   return prisma.vehicle.findMany({ where: { organizationId: orgId } });
 }

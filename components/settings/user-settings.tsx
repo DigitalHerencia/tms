@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import { useUser } from '@clerk/nextjs';
-import { Loader2, Mail, MoreHorizontal, Search, UserCheck, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useUser } from "@clerk/nextjs";
+import { Loader2, Mail, MoreHorizontal, Search, UserCheck, Users } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -15,22 +14,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -38,45 +37,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from '@/hooks/use-toast';
-import {
-  createOrganizationInvitation,
-  getOrganizationInvitations,
-  type InvitationData,
-} from '@/lib/actions/invitationActions';
-import { SystemRoles, type SystemRole } from '@/types/abac';
-
-interface OrganizationInvitation {
-  id: string;
-  emailAddress: string;
-  role: string;
-  status: string;
-  createdAt: string;
-  publicMetadata?: any;
-}
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
+import { createInvitation } from "@/lib/actions/invitationActions";
+import { SystemRoles, type SystemRole } from "@/types/abac";
+import { type InvitationDisplay, type CreateInvitationData } from "@/types/invitations";
 
 export function UserSettings() {
   const { user } = useUser();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isInviteUserOpen, setIsInviteUserOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [invitations, setInvitations] = useState<OrganizationInvitation[]>([]);
+  const [invitations, setInvitations] = useState<InvitationDisplay[]>([]);
   const [loadingInvitations, setLoadingInvitations] = useState(true);
   const [newInvitation, setNewInvitation] = useState({
-    email: '',
-    role: '' as SystemRole | '',
+    email: "",
+    role: "" as SystemRole | "",
     bypassOnboarding: true,
   });
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending':
+      case "pending":
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
-      case 'accepted':
+      case "accepted":
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Accepted</Badge>;
-      case 'revoked':
+      case "revoked":
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Revoked</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
@@ -85,16 +72,16 @@ export function UserSettings() {
 
   const getRoleBadge = (role: string) => {
     const roleColors = {
-      [SystemRoles.ADMIN]: 'bg-red-100 text-red-800',
-      [SystemRoles.DISPATCHER]: 'bg-blue-100 text-blue-800',
-      [SystemRoles.DRIVER]: 'bg-green-100 text-green-800',
-      [SystemRoles.COMPLIANCE]: 'bg-purple-100 text-purple-800',
-      [SystemRoles.MEMBER]: 'bg-gray-100 text-gray-800',
+      [SystemRoles.ADMIN]: "bg-red-100 text-red-800",
+      [SystemRoles.DISPATCHER]: "bg-blue-100 text-blue-800",
+      [SystemRoles.DRIVER]: "bg-green-100 text-green-800",
+      [SystemRoles.COMPLIANCE]: "bg-purple-100 text-purple-800",
+      [SystemRoles.MEMBER]: "bg-gray-100 text-gray-800",
     };
 
     return (
-      <Badge className={roleColors[role as SystemRole] || 'bg-gray-100 text-gray-800'}>
-        {role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+      <Badge className={roleColors[role as SystemRole] || "bg-gray-100 text-gray-800"}>
+        {role.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
       </Badge>
     );
   };
@@ -104,12 +91,11 @@ export function UserSettings() {
 
     setLoadingInvitations(true);
     try {
+      const { getOrganizationInvitations } = await import("@/lib/fetchers/invitationFetchers");
       const result = await getOrganizationInvitations(user.publicMetadata.organizationId as string);
-      // Note: Since Clerk doesn't provide direct invitation listing, we'll show a placeholder
-      // In a real implementation, you'd track invitations in your own database
-      setInvitations([]);
+      setInvitations(result.invitations);
     } catch (error) {
-      console.error('Error loading invitations:', error);
+      console.error("Error loading invitations:", error);
       setInvitations([]);
     } finally {
       setLoadingInvitations(false);
@@ -125,30 +111,28 @@ export function UserSettings() {
 
   const handleRevokeInvitation = async (invitationId: string) => {
     try {
-      // TODO: Implement actual revoke logic here, e.g. call an API or action
-      // Example:
-      // const result = await revokeOrganizationInvitation(invitationId)
-      const result = { success: false, error: 'Revoke not implemented' }; // Placeholder
+      const { revokeInvitation } = await import("@/lib/actions/invitationActions");
+      const result = await revokeInvitation(invitationId);
 
       if (result.success) {
         toast({
-          title: 'Invitation Revoked',
-          description: 'The invitation has been successfully revoked.',
+          title: "Invitation Revoked",
+          description: "The invitation has been successfully revoked.",
         });
         await loadInvitations(); // Refresh the list
       } else {
         toast({
-          title: 'Failed to Revoke Invitation',
-          description: result.error || 'An error occurred while revoking the invitation.',
-          variant: 'destructive',
+          title: "Failed to Revoke Invitation",
+          description: result.error || "An error occurred while revoking the invitation.",
+          variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Error revoking invitation:', error);
+      console.error("Error revoking invitation:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to revoke invitation. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to revoke invitation. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -156,18 +140,18 @@ export function UserSettings() {
   const handleSendInvitation = async () => {
     if (!newInvitation.email || !newInvitation.role) {
       toast({
-        title: 'Missing Information',
-        description: 'Please provide both email and role for the invitation.',
-        variant: 'destructive',
+        title: "Missing Information",
+        description: "Please provide both email and role for the invitation.",
+        variant: "destructive",
       });
       return;
     }
 
     if (!user?.publicMetadata?.organizationId) {
       toast({
-        title: 'Error',
-        description: 'Organization context not found. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Organization context not found. Please try again.",
+        variant: "destructive",
       });
       return;
     }
@@ -175,24 +159,28 @@ export function UserSettings() {
     setIsLoading(true);
 
     try {
-      const invitationData: InvitationData = {
-        emailAddress: newInvitation.email,
+      const invitationData: CreateInvitationData = {
+        email: newInvitation.email,
         role: newInvitation.role as SystemRole,
         redirectUrl: `${window.location.origin}/accept-invitation`,
+        bypassOnboarding: newInvitation.bypassOnboarding,
       };
 
-      const result = await createOrganizationInvitation(invitationData);
+      const result = await createInvitation(
+        user.publicMetadata.organizationId as string,
+        invitationData,
+      );
 
       if (success(result)) {
         toast({
-          title: 'Invitation Sent',
+          title: "Invitation Sent",
           description: `Invitation has been sent to ${newInvitation.email}`,
         });
 
         // Reset form
         setNewInvitation({
-          email: '',
-          role: '' as SystemRole | '',
+          email: "",
+          role: "" as SystemRole | "",
           bypassOnboarding: true,
         });
         setIsInviteUserOpen(false);
@@ -201,17 +189,17 @@ export function UserSettings() {
         await loadInvitations();
       } else {
         toast({
-          title: 'Failed to Send Invitation',
-          description: 'An error occurred while sending the invitation.',
-          variant: 'destructive',
+          title: "Failed to Send Invitation",
+          description: "An error occurred while sending the invitation.",
+          variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Error sending invitation:', error);
+      console.error("Error sending invitation:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to send invitation. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to send invitation. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -221,7 +209,7 @@ export function UserSettings() {
   // Filter invitations based on search term
   const filteredInvitations = invitations.filter(
     (invitation) =>
-      invitation.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      invitation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invitation.role.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -278,7 +266,7 @@ export function UserSettings() {
                       placeholder="user@example.com"
                       className="col-span-3"
                       value={newInvitation.email}
-                      onChange={(e) => handleInvitationChange('email', e.target.value)}
+                      onChange={(e) => handleInvitationChange("email", e.target.value)}
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -287,7 +275,7 @@ export function UserSettings() {
                     </Label>
                     <Select
                       value={newInvitation.role}
-                      onValueChange={(value) => handleInvitationChange('role', value)}
+                      onValueChange={(value) => handleInvitationChange("role", value)}
                     >
                       <SelectTrigger id="role" className="col-span-3">
                         <SelectValue placeholder="Select role" />
@@ -311,7 +299,7 @@ export function UserSettings() {
                         id="bypass"
                         checked={newInvitation.bypassOnboarding}
                         onCheckedChange={(checked) =>
-                          handleInvitationChange('bypassOnboarding', checked as boolean)
+                          handleInvitationChange("bypassOnboarding", checked as boolean)
                         }
                       />
                       <Label htmlFor="bypass" className="text-sm">
@@ -336,7 +324,7 @@ export function UserSettings() {
                         Sending...
                       </>
                     ) : (
-                      'Send Invitation'
+                      "Send Invitation"
                     )}
                   </Button>
                 </DialogFooter>
@@ -370,8 +358,8 @@ export function UserSettings() {
                       <Mail className="text-muted-foreground mx-auto mb-2 h-8 w-8" />
                       <p className="text-muted-foreground mb-2 text-sm">
                         {searchTerm
-                          ? 'No invitations match your search.'
-                          : 'Invitation tracking not yet implemented.'}
+                          ? "No invitations match your search."
+                          : "Invitation tracking not yet implemented."}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Invitations are sent successfully, but tracking pending invitations requires
@@ -382,12 +370,12 @@ export function UserSettings() {
                 ) : (
                   filteredInvitations.map((invitation) => (
                     <TableRow key={invitation.id}>
-                      <TableCell className="font-medium">{invitation.emailAddress}</TableCell>
+                      <TableCell className="font-medium">{invitation.email}</TableCell>
                       <TableCell>{getRoleBadge(invitation.role)}</TableCell>
                       <TableCell>{getStatusBadge(invitation.status)}</TableCell>
                       <TableCell>{new Date(invitation.createdAt).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        {invitation.publicMetadata?.bypassOnboarding ? (
+                        {invitation.metadata?.bypassOnboarding ? (
                           <Badge variant="outline" className="text-xs">
                             <UserCheck className="mr-1 h-3 w-3" />
                             Skip Onboarding
@@ -405,7 +393,7 @@ export function UserSettings() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {invitation.status.toLowerCase() === 'pending' && (
+                            {invitation.status.toLowerCase() === "pending" && (
                               <DropdownMenuItem
                                 onClick={() => handleRevokeInvitation(invitation.id)}
                                 className="text-red-600"

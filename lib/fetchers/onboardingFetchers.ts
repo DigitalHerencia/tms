@@ -1,10 +1,12 @@
-'use server';
+"use server";
 
-import db, { handleDatabaseError } from '@/lib/database/db';
-import type { OnboardingStatus } from '@/types/onboarding';
+import db, { handleDatabaseError } from "@/lib/database/db";
+import type { OnboardingStatus } from "@/types/onboarding";
+import type { SystemRole } from "@/types/abac";
 
-import { SystemRole } from './../../types/abac';
-
+/**
+ * Get onboarding status for a user
+ */
 export async function getOnboardingStatus(
   userId: string,
   orgId?: string,
@@ -17,58 +19,60 @@ export async function getOnboardingStatus(
 
     if (!dbUser) return null;
 
-    if (!dbUser.organization) return null; // Ensure organization is not null
+    // Determine current step based on completion status
+    let currentStep: OnboardingStatus["currentStep"] = "personal";
 
-    const steps = (dbUser.onboardingSteps as Record<string, boolean>) || {};
+    if (dbUser.onboardingComplete) {
+      currentStep = "complete";
+    } else if (dbUser.firstName && dbUser.lastName && dbUser.email) {
+      if (dbUser.role && dbUser.role !== "viewer") {
+        if (dbUser.organizationId) {
+          currentStep = "review";
+        } else {
+          currentStep = "setup";
+        }
+      } else {
+        currentStep = "role";
+      }
+    }
 
     return {
       isComplete: dbUser.onboardingComplete,
-      steps: {
-        profile: steps.profile || false,
-        company: steps.company || false,
-      },
-      currentStep: !steps.profile ? 'profile' : !steps.company ? 'company' : 'complete',
+      currentStep,
       user: {
         id: dbUser.id,
         clerkId: dbUser.clerkId,
-        email: dbUser.email ? dbUser.email : '',
+        email: dbUser.email || "",
         firstName: dbUser.firstName,
         lastName: dbUser.lastName,
         role: dbUser.role as SystemRole,
       },
-      organization: {
-        id: dbUser.organization.id,
-        name: dbUser.organization.name,
-        slug: dbUser.organization.slug,
-      },
+      organization: dbUser.organization
+        ? {
+            id: dbUser.organization.id,
+            name: dbUser.organization.name,
+            slug: dbUser.organization.slug,
+          }
+        : undefined,
     };
   } catch (error) {
     handleDatabaseError(error);
   }
 }
 
-export async function getUserOnboardingProgress(clerkId: string) {
+/**
+ * Check if user has completed onboarding
+ */
+export async function isOnboardingComplete(clerkId: string): Promise<boolean> {
   try {
     const user = await db.user.findUnique({
       where: { clerkId },
-      select: {
-        onboardingComplete: true,
-        onboardingSteps: true,
-        firstName: true,
-        lastName: true,
-        organization: {
-          select: {
-            name: true,
-            dotNumber: true,
-            mcNumber: true,
-            settings: true,
-          },
-        },
-      },
+      select: { onboardingComplete: true },
     });
 
-    return user;
+    return user?.onboardingComplete ?? false;
   } catch (error) {
     handleDatabaseError(error);
+    return false;
   }
 }

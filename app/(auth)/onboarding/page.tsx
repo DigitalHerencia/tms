@@ -4,9 +4,9 @@
  * Multi-step onboarding with role-based flow
  */
 
-import React from 'react';
-import { OnboardingStepper } from '@/components/onboarding/OnboardingStepper';
+import React from "react";
+import { OnboardingFlow } from "@/features/onboarding/OnboardingFlow";
 
 export default function OnboardingPage() {
-  return <OnboardingStepper />;
+  return <OnboardingFlow />;
 }

@@ -1,30 +1,51 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import db from '@/lib/database/db';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import db from "@/lib/database/db";
+
+interface LoadStatusEvent {
+  id: string;
+  loadId: string;
+  status: string;
+  timestamp: Date;
+  // ...other fields if present...
+}
+
+interface StatusChangeUpdate {
+  type: "status_change";
+  data: {
+    loadId: string;
+    newStatus: string;
+    timestamp: Date;
+  };
+}
+
+interface UpdatesResponse {
+  updates: StatusChangeUpdate[];
+}
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { orgId: string } }
-) {
+  { params }: { params: { orgId: string } },
+): Promise<NextResponse<UpdatesResponse | { error: string }>> {
   const { userId } = await auth();
   const { orgId } = params;
   if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const since = request.nextUrl.searchParams.get('since');
+  const since = request.nextUrl.searchParams.get("since");
   try {
-    const events = await db.loadStatusEvent.findMany({
+    const events: LoadStatusEvent[] = await db.loadStatusEvent.findMany({
       where: {
         load: { organizationId: orgId },
         ...(since ? { timestamp: { gt: new Date(since) } } : {}),
       },
-      orderBy: { timestamp: 'asc' },
+      orderBy: { timestamp: "asc" },
       take: 20,
     });
 
-    const updates = events.map(e => ({
-      type: 'status_change',
+    const updates: StatusChangeUpdate[] = events.map((e) => ({
+      type: "status_change",
       data: {
         loadId: e.loadId,
         newStatus: e.status,
@@ -34,6 +55,6 @@ export async function GET(
 
     return NextResponse.json({ updates });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch updates' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch updates" }, { status: 500 });
   }
 }

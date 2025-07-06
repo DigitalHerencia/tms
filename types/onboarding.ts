@@ -1,58 +1,72 @@
-import type { UserRole } from './auth';
+import type { SystemRole } from "./abac";
 
+/**
+ * Onboarding Types - Clean, comprehensive types for the onboarding process
+ */
+
+// Onboarding status and progress
 export interface OnboardingStatus {
   isComplete: boolean;
-  currentStep: 'profile' | 'company' | 'complete';
-  steps: {
-    profile: boolean;
-    company: boolean;
-  };
+  currentStep: "personal" | "role" | "setup" | "review" | "complete";
   user: {
     id: string;
     clerkId: string;
     email: string;
     firstName: string | null;
     lastName: string | null;
-    role: UserRole;
-    inviteCode?: string | null;
+    role: SystemRole;
   };
-  organization: {
+  organization?: {
     id: string;
     name: string;
     slug: string;
   };
 }
 
-export interface ProfileSetupData {
+// Form data interface for the onboarding stepper
+export interface OnboardingFormData {
+  // Personal Info
   firstName: string;
   lastName: string;
-  phone?: string;
+  email: string;
+
+  // Role Selection
+  role: SystemRole | "";
+
+  // Company Setup (for admin)
+  companyName: string;
+  dotNumber: string;
+  mcNumber: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
+
+  // Employee Join (for non-admin)
+  organizationId: string;
+  inviteCode: string;
 }
 
-export interface CompanySetupData {
-  dotNumber?: string;
-  mcNumber?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  phone?: string;
-  timezone?: string;
-  dateFormat?: string;
-  distanceUnit?: 'miles' | 'kilometers';
-  fuelUnit?: 'gallons' | 'liters';
-}
-
-export type OnboardingStepData = ProfileSetupData | CompanySetupData;
-
+// Step component props
 export interface OnboardingStepProps {
-  onNext: (data: OnboardingStepData) => void;
-  onPrevious?: () => void;
-  initialData?: Partial<OnboardingStepData>;
+  formData: OnboardingFormData;
+  updateFormData: (updates: Partial<OnboardingFormData>) => void;
+  onNext: () => void;
+  onPrev?: () => void;
   isLoading?: boolean;
 }
 
+// Join organization validation result
 export interface JoinOrganizationResult {
   success: boolean;
   error?: string;
+}
+
+// Complete onboarding result
+export interface CompleteOnboardingResult {
+  success: boolean;
+  organizationId: string;
+  organizationSlug: string;
+  userId: string;
 }

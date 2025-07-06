@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { auth } from '@clerk/nextjs/server';
-import db from '@/lib/database/db';
+import { auth } from "@clerk/nextjs/server";
+import db from "@/lib/database/db";
 import type {
   OrganizationSettings,
   UserPreferences,
@@ -11,20 +11,20 @@ import type {
   SettingsAuditLog,
   SystemSettings,
   CompanyProfile,
-} from '@/types/settings';
+} from "@/types/settings";
 
 export async function getCompanyProfile(orgId: string): Promise<CompanyProfile> {
   const org = await db.organization.findUnique({ where: { id: orgId } });
   if (!org) {
-    throw new Error('Organization not found');
+    throw new Error("Organization not found");
   }
   return {
     id: org.id,
     name: org.name,
-    logoUrl: org.logoUrl || '',
-    primaryColor: '',
-    address: org.address || '',
-    contactEmail: org.email || '',
+    logoUrl: org.logoUrl || "",
+    primaryColor: "",
+    address: org.address || "",
+    contactEmail: org.email || "",
   };
 }
 
@@ -37,7 +37,7 @@ export async function getOrganizationSettings(orgId: string): Promise<Organizati
   return {
     id: org.id,
     name: org.name,
-    timezone: settings.timezone || 'UTC',
+    timezone: settings.timezone || "UTC",
     businessRules: settings.businessRules,
     logoUrl: org.logoUrl || undefined,
     address: org.address || undefined,
@@ -52,13 +52,15 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
   const prefs = {} as any;
   return {
     userId: user.id,
-    theme: prefs.theme || 'light',
-    language: prefs.language || 'en',
+    theme: prefs.theme || "light",
+    language: prefs.language || "en",
     dashboardLayout: prefs.dashboardLayout,
   };
 }
 
-export async function getNotificationSettings(userId: string): Promise<NotificationSettings | null> {
+export async function getNotificationSettings(
+  userId: string,
+): Promise<NotificationSettings | null> {
   const { userId: sessionUser } = await auth();
   if (!sessionUser || sessionUser !== userId) return null;
   const user = await db.user.findUnique({ where: { id: userId } });
@@ -93,9 +95,9 @@ export async function getBillingSettings(orgId: string): Promise<BillingSettings
   const settings = (org.settings as any) || {};
   return {
     orgId: org.id,
-    paymentMethod: settings.paymentMethod || '',
+    paymentMethod: settings.paymentMethod || "",
     subscriptionPlan: org.subscriptionTier,
-    billingEmail: org.billingEmail || '',
+    billingEmail: org.billingEmail || "",
   };
 }
 
@@ -103,17 +105,26 @@ export async function getSettingsAuditLog(orgId: string): Promise<SettingsAuditL
   const { userId, orgId: sessionOrg } = await auth();
   if (!userId || sessionOrg !== orgId) return [];
   const logs = await db.auditLog.findMany({
-    where: { organizationId: orgId, entityType: 'settings' },
-    orderBy: { timestamp: 'desc' },
+    where: { organizationId: orgId, entityType: "settings" },
+    orderBy: { timestamp: "desc" },
   });
-  return logs.map(l => ({
-    id: l.id,
-    orgId: l.organizationId,
-    userId: l.userId || '',
-    action: l.action,
-    timestamp: l.timestamp,
-    details: JSON.stringify(l.changes),
-  }));
+  return logs.map(
+    (l: {
+      id: any;
+      organizationId: any;
+      userId: any;
+      action: any;
+      timestamp: any;
+      changes: any;
+    }) => ({
+      id: l.id,
+      orgId: l.organizationId,
+      userId: l.userId || "",
+      action: l.action,
+      timestamp: l.timestamp,
+      details: JSON.stringify(l.changes),
+    }),
+  );
 }
 
 const DEFAULTS: SystemSettings = {

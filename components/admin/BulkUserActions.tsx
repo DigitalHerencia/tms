@@ -1,19 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { UserPlus, UserCheck, UserX, Users, Mail, Shield, Download } from 'lucide-react';
+import { useState, useTransition } from "react";
+import { UserPlus, UserCheck, UserX, Users, Mail, Shield, Download } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { inviteUsersAction, activateUsersAction, deactivateUsersAction, exportOrganizationDataAction } from '@/lib/actions/adminActions';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import {
+  activateUsersAction,
+  deactivateUsersAction,
+  exportOrganizationDataAction,
+} from "@/lib/actions/adminActions";
 
-export function BulkUserActions({ orgId }: { orgId: string }) {
+export function BulkUserActions( p0: { userIds: string[]; action: "activate" | "deactivate" | "delete"; }, { orgId }: { orgId: string; }) {
   const [isPending, startTransition] = useTransition();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [activateOpen, setActivateOpen] = useState(false);
@@ -23,17 +40,48 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
 
   const handleInviteUsers = async (formData: FormData) => {
     startTransition(async () => {
-      const result = await inviteUsersAction(orgId, formData);
-      if (result.success) {
+      // Import the dedicated invitation action
+      const { createBulkInvitations } = await import("@/lib/actions/invitationActions");
+
+      const emailsString = formData.get("emails") as string;
+      const role = formData.get("role") as string;
+
+      if (!emailsString || !role) {
         toast({
-          title: "Success",
-          description: "User invitations sent successfully.",
+          title: "Error",
+          description: "Please provide both emails and role.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const emails = emailsString
+        .split(/[,\n\r\t]+/)
+        .map((email) => email.trim())
+        .filter((email) => email);
+
+      const result = await createBulkInvitations(orgId, {
+        emails,
+        role: role as any,
+        redirectUrl: `${window.location.origin}/accept-invitation`,
+      });
+
+      if (result.success) {
+        const message =
+          result.failed > 0
+            ? `${result.successful} invitations sent, ${result.failed} failed`
+            : `${result.successful} invitations sent successfully`;
+
+        toast({
+          title: "Invitations Processed",
+          description: message,
+          variant: result.failed > 0 ? "destructive" : "default",
         });
         setInviteOpen(false);
       } else {
         toast({
           title: "Error",
-          description: result.error || "Failed to send invitations.",
+          description: "Failed to send invitations.",
           variant: "destructive",
         });
       }
@@ -83,7 +131,7 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
       const result = await exportOrganizationDataAction(orgId, formData);
       if (result.success && result.data) {
         // Trigger download
-        window.open(result.data.downloadUrl, '_blank');
+        window.open(result.data.downloadUrl, "_blank");
         toast({
           title: "Success",
           description: "Data export initiated. Download will start shortly.",
@@ -249,7 +297,8 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                 </div>
                 <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
                   <p className="text-sm text-amber-800">
-                    <strong>Warning:</strong> Deactivated users will lose access to the system immediately.
+                    <strong>Warning:</strong> Deactivated users will lose access to the system
+                    immediately.
                   </p>
                 </div>
                 <div className="flex justify-end gap-2">

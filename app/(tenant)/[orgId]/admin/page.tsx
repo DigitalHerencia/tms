@@ -1,31 +1,33 @@
 /**
  * Admin Dashboard Page
- * 
+ *
  * Comprehensive admin interface for system administration, user management,
  * billing oversight, and audit monitoring.
  */
 
-import { Suspense } from 'react';
-import { Shield, Users, CreditCard, FileText, Settings, Activity } from 'lucide-react';
+import { AdminOverview } from "@/components/admin/AdminOverview";
+import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
+import { BillingManagement } from "@/components/admin/BillingManagement";
+import { SystemHealth } from "@/components/admin/SystemHealth";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { AdminFeatures } from "@/features/admin/AdminFeatures";
+import UserManagementDashboard from "@/features/admin/users/UserManagementDashboard";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
+import { Activity, Badge, Shield, Users, CreditCard, FileText, Settings } from "lucide-react";
+import { Suspense } from "react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AdminOverview } from '@/components/admin/AdminOverview';
-import { BillingManagement } from '@/components/admin/BillingManagement';
-import UserManagementDashboard from '@/features/admin/users/UserManagementDashboard';
-import { AuditLogViewer } from '@/components/admin/AuditLogViewer';
-import { SystemHealth } from '@/components/admin/SystemHealth';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { PageHeader } from '@/components/shared/PageHeader';
+// Cache control for auth-required dynamic pages
+export const dynamic = "force-dynamic";
 
-export default async function AdminPage({
-  params,
-}: {
+interface PageProps {
   params: Promise<{ orgId: string; userId?: string }>;
-}) {
-  const { orgId, userId } = await params;
-  
+}
+
+export default async function AdminPage({ params }: PageProps) {
+  const { orgId } = await params;
+
   return (
     <div className="min-h-screen space-y-6 bg-neutral-900 p-6 pt-8">
       {/* Header Section */}
@@ -34,9 +36,7 @@ export default async function AdminPage({
           <div className="flex items-center gap-2">
             <Shield className="h-8 w-8 text-blue-500" />
             <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-            <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">
-              Administrator
-            </Badge>
+            <Badge className="border-blue-200 bg-blue-50 text-blue-700">Administrator</Badge>
           </div>
           <p className="text-gray-400">
             System administration, user management, and organization oversight
@@ -94,23 +94,38 @@ export default async function AdminPage({
       {/* Main Admin Interface */}
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:w-auto md:grid-cols-5 bg-black border border-gray-200">
-          <TabsTrigger value="overview" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+          <TabsTrigger
+            value="overview"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600"
+          >
             <Shield className="h-4 w-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+          <TabsTrigger
+            value="users"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600"
+          >
             <Users className="h-4 w-4" />
             Users
           </TabsTrigger>
-          <TabsTrigger value="billing" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+          <TabsTrigger
+            value="billing"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600"
+          >
             <CreditCard className="h-4 w-4" />
             Billing
           </TabsTrigger>
-          <TabsTrigger value="audit" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+          <TabsTrigger
+            value="audit"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600"
+          >
             <FileText className="h-4 w-4" />
             Audit
           </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+          <TabsTrigger
+            value="system"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600"
+          >
             <Settings className="h-4 w-4" />
             System
           </TabsTrigger>

@@ -1,14 +1,14 @@
-import { Suspense } from 'react';
-import { Activity, Users, Truck, AlertTriangle, TrendingUp, Calendar } from 'lucide-react';
+import { Suspense } from "react";
+import { Activity, Users, Truck, AlertTriangle, TrendingUp, Calendar } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { OrganizationStats } from './OrganizationStats';
-import { SystemHealth } from './SystemHealth';
-import { AuditLogViewer } from './AuditLogViewer';
-import { BulkUserActions } from './BulkUserActions';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { OrganizationStats } from "./OrganizationStats";
+import { SystemHealth } from "./SystemHealth";
+import { AuditLogViewer } from "./AuditLogViewer";
+import { BulkUserActions } from "./BulkUserActions";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 export function AdminOverview({ orgId }: { orgId: string }) {
   return (
@@ -53,7 +53,7 @@ export function AdminOverview({ orgId }: { orgId: string }) {
             <div className="text-2xl font-bold text-white">85%</div>
             <p className="text-xs text-yellow-500">Fleet utilization</p>
             <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
-              <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+              <div className="bg-yellow-500 h-2 rounded-full" style={{ width: "85%" }}></div>
             </div>
           </CardContent>
         </Card>
@@ -114,9 +114,6 @@ export function AdminOverview({ orgId }: { orgId: string }) {
       <Suspense fallback={<LoadingSpinner />}>
         <SystemHealth />
       </Suspense>
-
-      {/* Bulk User Actions */}
-      <BulkUserActions orgId={orgId} />
 
       {/* Recent Audit Activity */}
       <Suspense fallback={<LoadingSpinner />}>
