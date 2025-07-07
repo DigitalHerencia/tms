@@ -10,7 +10,6 @@ datasource db {
 
 model Organization {
   id                  String                   @id @default(uuid())
-  clerkId             String?                  @unique @map("clerk_id")
   name                String
   slug                String                   @unique
   mcNumber            String?                  @map("mc_number")
@@ -33,6 +32,8 @@ model Organization {
   auditLogs           AuditLog[]
   complianceAlerts    ComplianceAlert[]
   complianceDocuments ComplianceDocument[]
+  // id REMOVED: organizations are not tied to a specific user
+  // All user-organization relationships are managed via OrganizationMembership
   drivers             Driver[]
   IftaFuelPurchase    IftaFuelPurchase[]
   iftaReports         IftaReport[]
@@ -43,13 +44,12 @@ model Organization {
   vehicles            Vehicle[]
 
   @@index([slug])
-  @@index([clerkId])
   @@map("organizations")
 }
 
 model User {
   id                 String                   @id @default(uuid())
-  clerkId            String                   @unique @map("clerk_id")
+  // id removed: use id as Clerk userId
   organizationId     String?                  @map("organization_id")
   email              String?
   firstName          String?                  @map("first_name")
@@ -63,6 +63,7 @@ model User {
   updatedAt          DateTime                 @updatedAt @map("updated_at")
   onboardingSteps    Json?                    @default("{}") @map("onboarding_steps")
   onboardingComplete Boolean                  @default(false) @map("onboarding_complete")
+  preferences        Json?                    @default("{}") @map("preferences")
   auditLogs          AuditLog[]
   ComplianceDocument ComplianceDocument[]     @relation("VerifiedByUser")
   driver             Driver?
@@ -71,12 +72,11 @@ model User {
   organization       Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   // Relations for IFTA features
-  iftaPDFGenerationLogs IftaPDFGenerationLog[] @relation("UserIftaPDFGenerationLogs")
-  generatedIftaReportPDFs IftaReportPDF[] @relation("UserGeneratedIftaReportPDFs")
-  calculatedIftaTaxCalculations IftaTaxCalculation[] @relation("CalculatedByUser")
-  validatedIftaTaxCalculations IftaTaxCalculation[] @relation("ValidatedByUser")
+  iftaPDFGenerationLogs         IftaPDFGenerationLog[] @relation("UserIftaPDFGenerationLogs")
+  generatedIftaReportPDFs       IftaReportPDF[]        @relation("UserGeneratedIftaReportPDFs")
+  calculatedIftaTaxCalculations IftaTaxCalculation[]   @relation("CalculatedByUser")
+  validatedIftaTaxCalculations  IftaTaxCalculation[]   @relation("ValidatedByUser")
 
-  @@index([clerkId])
   @@index([organizationId])
   @@index([email])
   @@index([role])
@@ -284,28 +284,28 @@ model ComplianceDocument {
 }
 
 model IftaReport {
-  id              String       @id @default(uuid())
-  organizationId  String       @map("organization_id")
+  id              String               @id @default(uuid())
+  organizationId  String               @map("organization_id")
   quarter         Int
   year            Int
-  status          String       @default("draft")
-  totalMiles      Int?         @map("total_miles")
-  totalGallons    Decimal?     @map("total_gallons") @db.Decimal(10, 3)
-  totalTaxOwed    Decimal?     @map("total_tax_owed") @db.Decimal(10, 2)
-  totalTaxPaid    Decimal?     @map("total_tax_paid") @db.Decimal(10, 2)
-  submittedAt     DateTime?    @map("submitted_at")
-  submittedBy     String?      @map("submitted_by")
-  dueDate         DateTime?    @map("due_date") @db.Date
-  filedDate       DateTime?    @map("filed_date") @db.Date
-  reportFileUrl   String?      @map("report_file_url")
+  status          String               @default("draft")
+  totalMiles      Int?                 @map("total_miles")
+  totalGallons    Decimal?             @map("total_gallons") @db.Decimal(10, 3)
+  totalTaxOwed    Decimal?             @map("total_tax_owed") @db.Decimal(10, 2)
+  totalTaxPaid    Decimal?             @map("total_tax_paid") @db.Decimal(10, 2)
+  submittedAt     DateTime?            @map("submitted_at")
+  submittedBy     String?              @map("submitted_by")
+  dueDate         DateTime?            @map("due_date") @db.Date
+  filedDate       DateTime?            @map("filed_date") @db.Date
+  reportFileUrl   String?              @map("report_file_url")
   notes           String?
-  calculationData Json?        @default("{}") @map("calculation_data")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
-  supportingDocs  String?      @map("supporting_docs")
-  taxCalculations  IftaTaxCalculation[]
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  submittedByUser User?        @relation("SubmittedByUser", fields: [submittedBy], references: [id])
+  calculationData Json?                @default("{}") @map("calculation_data")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+  supportingDocs  String?              @map("supporting_docs")
+  taxCalculations IftaTaxCalculation[]
+  organization    Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  submittedByUser User?                @relation("SubmittedByUser", fields: [submittedBy], references: [id])
 
   @@index([organizationId])
   @@index([submittedBy])
@@ -476,71 +476,71 @@ model RegulatoryAudit {
 }
 
 model IftaPDFGenerationLog {
-  id             String   @id @default(uuid())
-  organizationId String   @map("organization_id")
-  userId         String   @map("user_id")
-  reportType     String   @map("report_type")
-  parameters     Json     @default("{}")
-  status         String   @map("status")
-  filePath       String?  @map("file_path")
-  fileName       String?  @map("file_name")
-  fileSize       Int?     @map("file_size")
-  errorMessage   String?  @map("error_message")
-  startedAt      DateTime @default(now()) @map("started_at")
+  id             String    @id @default(uuid())
+  organizationId String    @map("organization_id")
+  userId         String    @map("user_id")
+  reportType     String    @map("report_type")
+  parameters     Json      @default("{}")
+  status         String    @map("status")
+  filePath       String?   @map("file_path")
+  fileName       String?   @map("file_name")
+  fileSize       Int?      @map("file_size")
+  errorMessage   String?   @map("error_message")
+  startedAt      DateTime  @default(now()) @map("started_at")
   completedAt    DateTime? @map("completed_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  user           User?    @relation("UserIftaPDFGenerationLogs", fields: [userId], references: [id])
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  user           User?     @relation("UserIftaPDFGenerationLogs", fields: [userId], references: [id])
 }
 
 model IftaReportPDF {
-  id             String   @id @default(uuid())
-  organizationId String   @map("organization_id")
-  reportId       String   @map("report_id")
-  reportType     String   @map("report_type")
-  quarter        String?  @map("quarter")
-  year           Int?     @map("year")
-  fileName       String   @map("file_name")
-  filePath       String   @map("file_path")
-  fileSize       Int      @map("file_size")
-  mimeType       String   @map("mime_type")
-  generatedAt    DateTime @default(now()) @map("generated_at")
-  generatedBy    String   @map("generated_by")
-  isOfficial     Boolean  @default(false) @map("is_official")
-  watermark      String?  @map("watermark")
-  downloadCount  Int      @default(0) @map("download_count")
-  lastDownload   DateTime? @map("last_download")
-  metadata       Json?    @map("metadata")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  generatedByUser User?   @relation("UserGeneratedIftaReportPDFs", fields: [generatedBy], references: [id])
+  id              String    @id @default(uuid())
+  organizationId  String    @map("organization_id")
+  reportId        String    @map("report_id")
+  reportType      String    @map("report_type")
+  quarter         String?   @map("quarter")
+  year            Int?      @map("year")
+  fileName        String    @map("file_name")
+  filePath        String    @map("file_path")
+  fileSize        Int       @map("file_size")
+  mimeType        String    @map("mime_type")
+  generatedAt     DateTime  @default(now()) @map("generated_at")
+  generatedBy     String    @map("generated_by")
+  isOfficial      Boolean   @default(false) @map("is_official")
+  watermark       String?   @map("watermark")
+  downloadCount   Int       @default(0) @map("download_count")
+  lastDownload    DateTime? @map("last_download")
+  metadata        Json?     @map("metadata")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  generatedByUser User?     @relation("UserGeneratedIftaReportPDFs", fields: [generatedBy], references: [id])
 }
 
 model IftaTaxCalculation {
-  id             String   @id @default(uuid())
-  organizationId String   @map("organization_id")
-  reportId       String   @map("report_id")
-  jurisdiction   String   @map("jurisdiction")
-  totalMiles     Int      @map("total_miles")
-  taxableMiles   Int      @map("taxable_miles")
-  fuelPurchased  Decimal  @map("fuel_purchased") @db.Decimal(10, 3)
-  fuelConsumed   Decimal  @map("fuel_consumed") @db.Decimal(10, 3)
-  taxRate        Decimal  @map("tax_rate") @db.Decimal(10, 4)
-  taxDue         Decimal  @map("tax_due") @db.Decimal(10, 2)
-  taxPaid        Decimal  @map("tax_paid") @db.Decimal(10, 2)
-  taxCredits     Decimal  @map("tax_credits") @db.Decimal(10, 2)
-  adjustments    Decimal  @default(0) @map("adjustments") @db.Decimal(10, 2)
-  netTaxDue      Decimal  @map("net_tax_due") @db.Decimal(10, 2)
-  calculatedAt   DateTime @default(now()) @map("calculated_at")
-  calculatedBy   String   @map("calculated_by")
-  isValidated    Boolean  @default(false) @map("is_validated")
-  validatedAt    DateTime? @map("validated_at")
-  validatedBy    String?  @map("validated_by")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  report         IftaReport @relation(fields: [reportId], references: [id])
-  calculatedByUser User?   @relation("CalculatedByUser", fields: [calculatedBy], references: [id])
-  validatedByUser  User?   @relation("ValidatedByUser", fields: [validatedBy], references: [id])
+  id               String     @id @default(uuid())
+  organizationId   String     @map("organization_id")
+  reportId         String     @map("report_id")
+  jurisdiction     String     @map("jurisdiction")
+  totalMiles       Int        @map("total_miles")
+  taxableMiles     Int        @map("taxable_miles")
+  fuelPurchased    Decimal    @map("fuel_purchased") @db.Decimal(10, 3)
+  fuelConsumed     Decimal    @map("fuel_consumed") @db.Decimal(10, 3)
+  taxRate          Decimal    @map("tax_rate") @db.Decimal(10, 4)
+  taxDue           Decimal    @map("tax_due") @db.Decimal(10, 2)
+  taxPaid          Decimal    @map("tax_paid") @db.Decimal(10, 2)
+  taxCredits       Decimal    @map("tax_credits") @db.Decimal(10, 2)
+  adjustments      Decimal    @default(0) @map("adjustments") @db.Decimal(10, 2)
+  netTaxDue        Decimal    @map("net_tax_due") @db.Decimal(10, 2)
+  calculatedAt     DateTime   @default(now()) @map("calculated_at")
+  calculatedBy     String     @map("calculated_by")
+  isValidated      Boolean    @default(false) @map("is_validated")
+  validatedAt      DateTime?  @map("validated_at")
+  validatedBy      String?    @map("validated_by")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+  report           IftaReport @relation(fields: [reportId], references: [id])
+  calculatedByUser User?      @relation("CalculatedByUser", fields: [calculatedBy], references: [id])
+  validatedByUser  User?      @relation("ValidatedByUser", fields: [validatedBy], references: [id])
 }
 
 enum UserRole {

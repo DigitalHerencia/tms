@@ -71,13 +71,13 @@ class AuthCache {
   /**
    * Get user from cache
    */
-  getUser(clerkId: string): UserContext | null {
-    const item = this.userHotCache.get(clerkId);
+  getUser(id: string): UserContext | null {
+    const item = this.userHotCache.get(id);
     if (item && this.isValid(item)) {
       return item.data;
     }
     if (item) {
-      this.userHotCache.delete(clerkId);
+      this.userHotCache.delete(id);
     }
     return null;
   }
@@ -85,8 +85,8 @@ class AuthCache {
   /**
    * Set user in cache
    */
-  setUser(clerkId: string, user: UserContext): void {
-    this.userHotCache.set(clerkId, {
+  setUser(id: string, user: UserContext): void {
+    this.userHotCache.set(id, {
       data: user,
       timestamp: Date.now(),
       ttl: this.USER_CACHE_TTL,
@@ -98,21 +98,21 @@ class AuthCache {
   /**
    * Get organization from cache
    */
-  getOrganization(clerkId: string): ClerkOrganizationMetadata | null {
-    const item = this.orgCache.get(clerkId);
+  getOrganization(id: string): ClerkOrganizationMetadata | null {
+    const item = this.orgCache.get(id);
     if (item && this.isValid(item)) {
       return item.data;
     }
     if (item) {
-      this.orgCache.delete(clerkId);
+      this.orgCache.delete(id);
     }
     return null;
   }
   /**
    * Set organization in cache
    */
-  setOrganization(clerkId: string, org: ClerkOrganizationMetadata): void {
-    this.orgCache.set(clerkId, {
+  setOrganization(id: string, org: ClerkOrganizationMetadata): void {
+    this.orgCache.set(id, {
       data: org,
       timestamp: Date.now(),
       ttl: this.ORG_CACHE_TTL,
@@ -151,19 +151,19 @@ class AuthCache {
   /**
    * Invalidate user cache
    */
-  invalidateUser(clerkId: string): void {
-    this.userHotCache.delete(clerkId);
-    this.permissionHotCache.delete(clerkId);
+  invalidateUser(id: string): void {
+    this.userHotCache.delete(id);
+    this.permissionHotCache.delete(id);
   }
 
   /**
    * Invalidate organization cache
    */
-  invalidateOrganization(clerkId: string): void {
-    this.orgCache.delete(clerkId);
+  invalidateOrganization(id: string): void {
+    this.orgCache.delete(id);
     // Invalidate all users of this organization
     for (const [userId, item] of this.userHotCache.entries()) {
-      if (item.data.organizationId === clerkId) {
+      if (item.data.organizationId === id) {
         this.userHotCache.delete(userId);
         this.permissionHotCache.delete(userId);
       }

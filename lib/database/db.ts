@@ -217,8 +217,8 @@ export class DatabaseQueries {
         createdAt,
         updatedAt,
     }: {
-        organizationId: string
-        userClerkId: string
+        organizationId: string // This is the org UUID, not a Clerk orgId
+        userClerkId: string // This is the Clerk userId
         role: string
         createdAt?: Date
         updatedAt?: Date
@@ -226,17 +226,17 @@ export class DatabaseQueries {
         try {
             // Look up internal IDs
             const organization = await db.organization.findUnique({
-                where: { clerkId: organizationId },
+                where: { id: organizationId },
             })
             if (!organization)
                 throw new Error(
-                    `Organization not found for clerkId: ${organizationId}`
+                    `Organization not found for orgId: ${organizationId}`
                 )
-            const user = await db.user.findUnique({
-                where: { clerkId: userClerkId },
+            const user = await db.user.findFirst({
+                where: { id: userClerkId },
             })
             if (!user)
-                throw new Error(`User not found for clerkId: ${userClerkId}`)
+                throw new Error(`User not found for userId: ${userClerkId}`)
             // Upsert membership (unique on orgId+userId)
             const membership = await db.organizationMembership.upsert({
                 where: {
@@ -271,16 +271,16 @@ export class DatabaseQueries {
         organizationId,
         userClerkId,
     }: {
-        organizationId: string
-        userClerkId: string
+        organizationId: string // This is the org UUID, not a Clerk orgId
+        userClerkId: string // This is the Clerk userId
     }) {
         try {
             const organization = await db.organization.findUnique({
-                where: { clerkId: organizationId },
+                where: { id: organizationId },
             })
             if (!organization) {
                 console.warn(
-                    `[DB] Organization not found for clerkId: ${organizationId}, skipping membership delete.`
+                    `[DB] Organization not found for orgId: ${organizationId}, skipping membership delete.`
                 )
                 return {
                     success: true,
@@ -288,12 +288,12 @@ export class DatabaseQueries {
                         "Organization not found, skipping membership delete.",
                 }
             }
-            const user = await db.user.findUnique({
-                where: { clerkId: userClerkId },
+            const user = await db.user.findFirst({
+                where: { id: userClerkId },
             })
             if (!user) {
                 console.warn(
-                    `[DB] User not found for clerkId: ${userClerkId}, skipping membership delete.`
+                    `[DB] User not found for userId: ${userClerkId}, skipping membership delete.`
                 )
                 return {
                     success: true,
@@ -322,39 +322,25 @@ export class DatabaseQueries {
         }
     }
 
-    /**
-     * Get organization by Clerk ID
-     */ static async getOrganizationByClerkId({
-        clerkId,
-    }: {
-        clerkId: string
-    }) {
+    static async getUserById(userId: string) {
         try {
-            const organization = await db.organization.findFirst({
-                where: { clerkId },
-            })
-            if (!organization) {
-                console.warn(`[DB] Organization not found for id: ${clerkId}`)
-            }
-            return organization || null
-        } catch (error) {
-            handleDatabaseError(error)
-        }
-    }
-
-    /**
-     * Get user by Clerk ID
-     */
-    static async getUserByClerkId(clerkId: string) {
-        try {
-            if (!clerkId) {
+            if (!userId) {
                 console.warn(
-                    "getUserByClerkId called with undefined/empty clerkId"
+                    "getUserById called with undefined/empty userId"
                 )
                 return null
             }
-            const user = await db.user.findUnique({
-                where: { clerkId },
+            // Include memberships (organizationId, role) for ABAC context
+            const user = await db.user.findFirst({
+                where: { id: userId },
+                include: {
+                    memberships: {
+                        select: {
+                            organizationId: true,
+                            role: true,
+                        },
+                    },
+                },
             })
             return user || null
         } catch (error) {
@@ -366,7 +352,7 @@ export class DatabaseQueries {
      * Create or update organization from Clerk webhook
      */
     static async upsertOrganization(data: {
-        clerkId: string
+        id: string
         name: string
         slug: string
         dotNumber?: string | null
@@ -383,15 +369,15 @@ export class DatabaseQueries {
         isActive?: boolean
     }) {
         try {
-            if (!data.clerkId)
-                throw new Error("clerkId is required for organization upsert")
+            if (!data.id)
+                throw new Error("id is required for organization upsert")
             if (!data.name)
                 throw new Error("name is required for organization upsert")
             if (!data.slug)
                 throw new Error("slug is required for organization upsert")
-            const { clerkId } = data
+            const { id } = data
             const existingOrg = await db.organization.findFirst({
-                where: { clerkId },
+                where: { id },
             })
             if (existingOrg) {
                 const updateData = {
@@ -411,7 +397,7 @@ export class DatabaseQueries {
                         data.isActive === undefined ? true : data.isActive,
                 }
                 const organization = await db.organization.update({
-                    where: { clerkId },
+                    where: { id: existingOrg.id },
                     data: updateData,
                 })
                 return organization
@@ -423,7 +409,7 @@ export class DatabaseQueries {
                 while (attempt < maxAttempts) {
                     try {
                         const orgDataForCreate = {
-                            clerkId,
+                            id,
                             name: data.name,
                             slug: uniqueSlug,
                             dotNumber: data.dotNumber,
@@ -467,13 +453,13 @@ export class DatabaseQueries {
                                 continue
                             } else if (
                                 (typeof target === "string" &&
-                                    target === "clerkId") ||
+                                    target === "id") ||
                                 (Array.isArray(target) &&
-                                    target.includes("clerkId"))
+                                    target.includes("id"))
                             ) {
                                 const existingOrg =
                                     await db.organization.findFirst({
-                                        where: { clerkId },
+                                        where: { id },
                                     })
                                 if (existingOrg) {
                                     return existingOrg
@@ -492,7 +478,7 @@ export class DatabaseQueries {
             }
         } catch (error) {
             console.error(
-                `Error in upsertOrganization for id: ${data.clerkId}`,
+                `Error in upsertOrganization for id: ${data.id}`,
                 error
             )
             handleDatabaseError(error)
@@ -503,7 +489,7 @@ export class DatabaseQueries {
      * Create or update user from Clerk webhook (no organization connection)
      */
     static async upsertUser(data: {
-        clerkId: string
+        userId: string // This is the Clerk userId, stored as id
         email: string
         firstName?: string | null
         lastName?: string | null
@@ -514,8 +500,8 @@ export class DatabaseQueries {
         organizationId?: string | null // Optional, can be null
     }) {
         try {
-            const { clerkId, ...updateData } = data
-            if (!clerkId) throw new Error("clerkId is required for user upsert")
+            const { userId, ...updateData } = data
+            if (!userId) throw new Error("userId is required for user upsert")
             if (!data.email)
                 throw new Error("email is required for user upsert")
 
@@ -537,7 +523,7 @@ export class DatabaseQueries {
                 organizationId: validOrganizationId,
             }
             const userDataForCreate = {
-                clerkId,
+                id: userId, // Use userId as the primary key (Clerk userId)
                 email: data.email,
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -552,14 +538,14 @@ export class DatabaseQueries {
             }
 
             const user = await db.user.upsert({
-                where: { clerkId },
+                where: { id: userId },
                 update: userDataForUpdate,
                 create: userDataForCreate,
             })
             return user
         } catch (error) {
             console.error(
-                `Error in upsertUser for clerkId: ${data.clerkId}`,
+                `Error in upsertUser for userId: ${data.userId}`,
                 error
             )
             handleDatabaseError(error)
@@ -569,15 +555,15 @@ export class DatabaseQueries {
     /**
      * Delete organization
      */
-    static async deleteOrganization(clerkId: string) {
+    static async deleteOrganization(id: string) {
         try {
-            console.log("[DB] deleteOrganization called with id:", clerkId)
+            console.log("[DB] deleteOrganization called with id:", id)
             const organization = await db.organization.findFirst({
-                where: { clerkId },
+                where: { id },
             })
             if (!organization) {
                 console.warn(
-                    `[DB] Organization with id ${clerkId} does not exist, skipping delete.`
+                    `[DB] Organization with id ${id} does not exist, skipping delete.`
                 )
                 return {
                     success: true,
@@ -585,9 +571,9 @@ export class DatabaseQueries {
                 }
             }
             await db.organization.delete({
-                where: { clerkId },
+                where: { id: organization.id },
             })
-            console.log(`[DB] Organization deleted successfully: ${clerkId}`)
+            console.log(`[DB] Organization deleted successfully: ${id}`)
             return {
                 success: true,
                 message: "Organization deleted successfully",
@@ -602,7 +588,7 @@ export class DatabaseQueries {
                     message: "Organization already deleted or does not exist",
                 }
             }
-            console.error(`[DB] Error deleting organization ${clerkId}:`, error)
+            console.error(`[DB] Error deleting organization ${id}:`, error)
             return {
                 success: false,
                 message: `Failed to delete organization: ${
@@ -615,25 +601,25 @@ export class DatabaseQueries {
     /**
      * Delete user
      */
-    static async deleteUser(clerkId: string) {
+    static async deleteUser(id: string) {
         try {
-            console.log("[DB] deleteUser called with clerkId:", clerkId)
-            const user = await db.user.findUnique({
-                where: { clerkId },
+            console.log("[DB] deleteUser called with id:", id)
+            const user = await db.user.findFirst({
+                where: { id },
             })
             if (!user) {
                 console.warn(
-                    `[DB] User with clerkId ${clerkId} does not exist, skipping delete.`
+                    `[DB] User with id ${id} does not exist, skipping delete.`
                 )
                 return {
                     success: true,
                     message: "User already deleted or does not exist",
                 }
             }
-            await db.user.delete({
-                where: { clerkId },
+            await db.user.deleteMany({
+                where: { id },
             })
-            console.log(`[DB] User deleted successfully: ${clerkId}`)
+            console.log(`[DB] User deleted successfully: ${id}`)
             return { success: true, message: "User deleted successfully" }
         } catch (error) {
             if (
@@ -645,7 +631,7 @@ export class DatabaseQueries {
                     message: "User already deleted or does not exist",
                 }
             }
-            console.error(`[DB] Error deleting user ${clerkId}:`, error)
+            console.error(`[DB] Error deleting user ${id}:`, error)
             return {
                 success: false,
                 message: `Failed to delete user: ${

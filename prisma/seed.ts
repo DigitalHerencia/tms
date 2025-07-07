@@ -25,13 +25,13 @@ async function main() {
     );
   }
 
-  // 1. Find existing test org by clerkId
+  // 1. Find existing test org by orgId (UUID)
   const org = await prisma.organization.findUnique({
-    where: { clerkId: 'org_2xvBliaRVTLXpaA6Uc5n66Jsw0u' },
+    where: { id: 'org_2xvBliaRVTLXpaA6Uc5n66Jsw0u' },
   });
   if (!org) {
     throw new Error(
-      'Test org with clerkId org_2xvBliaRVTLXpaA6Uc5n66Jsw0u not found. Please create it first.'
+      'Test org with orgId org_2xvBliaRVTLXpaA6Uc5n66Jsw0u not found. Please create it first.'
     );
   }
 

@@ -2,7 +2,7 @@
 
 // Next.js 15 Optimized Image Component
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { useState } from 'react';
 
 interface OptimizedImageProps {

@@ -377,7 +377,7 @@ Fixes #567, Closes #568
     ```prisma
     model Organization {
       id        String   @id @default(cuid())
-      clerkId   String   @unique @map("clerk_id")
+      id   String   @unique @map("clerk_id")
       name      String
       createdAt DateTime @default(now()) @map("created_at")
       updatedAt DateTime @updatedAt @map("updated_at")

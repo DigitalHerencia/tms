@@ -10,7 +10,6 @@ export interface OnboardingStatus {
   };
   user: {
     id: string;
-    clerkId: string;
     email: string;
     firstName: string | null;
     lastName: string | null;

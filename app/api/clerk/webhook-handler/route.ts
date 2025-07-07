@@ -39,7 +39,7 @@ async function handleClerkEvent(eventType: string, data: any) {
         case "user.updated": {
             const user = data as UserJSON
             await DatabaseQueries.upsertUser({
-                clerkId: user.id,
+                userId: user.id,
                 email:
                     Array.isArray(user.email_addresses) &&
                     user.email_addresses.length > 0

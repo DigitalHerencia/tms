@@ -7,7 +7,7 @@ import { toast } from "@/hooks/use-toast"
 import { useUser } from "@clerk/nextjs"
 import { Building, CheckCircle, Circle, MapPinned, ShieldUser, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 // Step Components
 import { CompanySetupStep } from "@/components/onboarding/CompanySetupStep"
@@ -78,6 +78,18 @@ export function OnboardingStepper() {
     const updateFormData = (updates: Partial<OnboardingFormData>) => {
         setFormData(prev => ({ ...prev, ...updates }))
     }
+
+    // Update form data when user is loaded
+    useEffect(() => {
+        if (isLoaded && user) {
+            setFormData(prev => ({
+                ...prev,
+                firstName: user.firstName || prev.firstName,
+                lastName: user.lastName || prev.lastName,
+                email: user.emailAddresses?.[0]?.emailAddress || prev.email,
+            }))
+        }
+    }, [isLoaded, user])
 
     const nextStep = () => {
         if (currentStep < steps.length - 1) {

@@ -36,7 +36,7 @@ async function setupTestDatabase() {
         await prisma.user.deleteMany()
         await prisma.organization.deleteMany()
 
-        // Create test organization
+        // Create test organization (orgId only)
         const organization = await prisma.organization.create({
             data: {
                 id: "org-1",
@@ -51,25 +51,22 @@ async function setupTestDatabase() {
                     distanceUnit: "miles",
                     fuelUnit: "gallons",
                 },
-                clerkId: "clerk-1", // FIXED: use camelCase for Prisma
                 slug: "test-org", // required
             },
         })
 
-        // Create test users with different roles
+        // Create test users with different roles (use id as Clerk userId)
         const users = [
             {
                 id: "user_admin123",
-                clerkId: "user_admin123", // FIXED: use camelCase for Prisma
                 email: "admin@test.com",
-                firstName: "Admin", // FIXED: use camelCase for Prisma
-                lastName: "User", // FIXED: use camelCase for Prisma
-                role: UserRole.admin, // Use enum value
-                organizationId: organization.id, // FIXED: use camelCase for Prisma
+                firstName: "Admin",
+                lastName: "User",
+                role: UserRole.admin,
+                organizationId: organization.id,
             },
             {
                 id: "user_driver123",
-                clerkId: "user_driver123",
                 email: "driver@test.com",
                 firstName: "Test",
                 lastName: "Driver",
@@ -78,7 +75,6 @@ async function setupTestDatabase() {
             },
             {
                 id: "user_dispatcher123",
-                clerkId: "user_dispatcher123",
                 email: "dispatcher@test.com",
                 firstName: "Test",
                 lastName: "Dispatcher",
@@ -165,4 +161,4 @@ setup.afterAll(async () => {
     console.log("✅ Test cleanup completed")
 })
 
-// No changes needed here. Fix the Prisma schema and run a migration to add `clerkId` to the organization table.
+//

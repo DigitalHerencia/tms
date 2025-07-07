@@ -21,7 +21,7 @@ async function checkUserAccess(organizationId: string) {
   }
 
   const user = await db.user.findUnique({
-    where: { clerkId: userId },
+    where: { id: userId },
     select: { organizationId: true, role: true },
   });
 

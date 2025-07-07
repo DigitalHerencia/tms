@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import type { DashboardKPI } from '@/types/dashboard';
 
 interface KPICardProps {

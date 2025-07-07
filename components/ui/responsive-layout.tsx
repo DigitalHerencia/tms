@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResponsiveLayoutProps {

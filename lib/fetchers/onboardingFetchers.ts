@@ -11,7 +11,7 @@ export async function getOnboardingStatus(
 ): Promise<OnboardingStatus | null> {
   try {
     const dbUser = await db.user.findUnique({
-      where: { clerkId: userId },
+      where: { id: userId },
       include: { organization: true },
     });
 
@@ -37,7 +37,6 @@ export async function getOnboardingStatus(
             : 'complete',
       user: {
         id: dbUser.id,
-        clerkId: dbUser.clerkId,
         email: dbUser.email ? dbUser.email : '',
         firstName: dbUser.firstName,
         lastName: dbUser.lastName,
@@ -54,10 +53,10 @@ export async function getOnboardingStatus(
   }
 }
 
-export async function getUserOnboardingProgress(clerkId: string) {
+export async function getUserOnboardingProgress(id: string) {
   try {
     const user = await db.user.findUnique({
-      where: { clerkId },
+      where: { id },
       select: {
         onboardingComplete: true,
         onboardingSteps: true,

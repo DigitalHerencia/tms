@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Sun, Sunset, Moon, Clock, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { getTodaysScheduleAction } from '@/lib/actions/dashboardActions';
 
 interface ScheduleItem {

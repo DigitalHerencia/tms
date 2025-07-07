@@ -16,7 +16,7 @@ import { unstable_cache } from "next/cache"
 export const getDashboardMetrics = unstable_cache(
     async (orgId: string, userId: string): Promise<DashboardMetrics> => {
         const user = await db.user.findFirst({
-            where: { clerkId: userId, organizationId: orgId },
+            where: { id: userId, organizationId: orgId },
         })
         if (!user) throw new Error("User not found or unauthorized")
 
@@ -99,7 +99,7 @@ export const getDashboardKPIs = async (
     metrics: DashboardMetrics
 ): Promise<DashboardKPI[]> => {
     const user = await db.user.findFirst({
-        where: { clerkId: userId, organizationId: orgId },
+        where: { id: userId, organizationId: orgId },
         select: { role: true },
     })
     if (!user) throw new Error("Unauthorized")
@@ -153,7 +153,7 @@ export const getQuickActions = async (
     userId: string
 ): Promise<QuickAction[]> => {
     const user = await db.user.findFirst({
-        where: { clerkId: userId, organizationId: orgId },
+        where: { id: userId, organizationId: orgId },
         select: { role: true },
     })
     if (!user) throw new Error("Unauthorized")
@@ -219,7 +219,7 @@ export const getQuickActions = async (
 export const getRecentActivity = unstable_cache(
     async (orgId: string, userId: string): Promise<ActivityItem[]> => {
         const user = await db.user.findFirst({
-            where: { clerkId: userId, organizationId: orgId },
+            where: { id: userId, organizationId: orgId },
         })
         if (!user) throw new Error("Unauthorized")
 

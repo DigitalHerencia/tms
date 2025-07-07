@@ -18,7 +18,7 @@ export async function fetchNotifications(
     const user = await db.user.findUnique({
       where: {
         organizationId: orgId,
-        clerkId: userId,
+        id: userId,
       },
     });
     if (!user) {
@@ -43,7 +43,7 @@ export async function readNotification(
     // Check if user belongs to the organization and has required permissions
     const user = await db.user.findUnique({
       where: {
-        clerkId: userId,
+        id: userId,
         organizationId: orgId,
       },
     });

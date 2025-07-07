@@ -17,7 +17,7 @@ import { revalidatePath } from "next/cache"
 
 async function verifyAdminAccess(userId: string, orgId: string) {
     const user = await prisma.user.findUnique({
-        where: { clerkId: userId },
+        where: { id: userId },
         select: { organizationId: true, role: true },
     })
     return user?.organizationId === orgId && user.role === SystemRoles.ADMIN
@@ -28,7 +28,6 @@ async function verifyAdminAccess(userId: string, orgId: string) {
  */
 type OrgUser = {
     id: string
-    clerkId: string
     email: string | null
     firstName: string | null
     lastName: string | null
@@ -56,7 +55,6 @@ export async function getOrganizationUsersAction(
             where: { organizationId: orgId },
             select: {
                 id: true,
-                clerkId: true,
                 email: true,
                 firstName: true,
                 lastName: true,

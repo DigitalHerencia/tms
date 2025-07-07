@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Clock, AlertCircle, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { getDashboardAlertsAction } from '@/lib/actions/dashboardActions';
 import type { DashboardAlert } from '@/lib/actions/dashboardActions';
 

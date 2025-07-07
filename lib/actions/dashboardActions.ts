@@ -31,7 +31,7 @@ export async function getDashboardOverviewAction(): Promise<
         }
 
         const user = await db.user.findUnique({
-            where: { clerkId: userId },
+            where: { id: userId },
             select: { organizationId: true, role: true },
         })
 
@@ -544,7 +544,7 @@ export async function markAlertAsRead(orgId: string, alertId: string) {
     if (!userId) throw new Error("Unauthorized")
 
     const user = await db.user.findFirst({
-        where: { clerkId: userId, organizationId: orgId },
+        where: { id: userId, organizationId: orgId },
     })
     if (!user) throw new Error("User not found or unauthorized")
 
