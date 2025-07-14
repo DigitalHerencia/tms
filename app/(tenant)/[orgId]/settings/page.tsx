@@ -34,9 +34,8 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
     redirect('/sign-in');
   }
 
-  // Verify user has permission to access settings
-  const canViewSettings = hasPermission(currentUser, 'settings.read' as Permission);
-  if (!canViewSettings) {
+  // Verify user has admin role to access settings
+  if (currentUser.role !== 'admin') {
     redirect(`/${orgId}/dashboard`);
   }
 

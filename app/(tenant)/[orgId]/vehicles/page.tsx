@@ -15,12 +15,14 @@ interface CompleteVehicle extends BaseVehicle {
   unitNumber: string;
 }
 
+interface VehiclesPageProps {
+  params: Promise<{ orgId: string }>;
+}
+
 export default async function VehiclesPage({
   params,
-}: {
-  params: Promise<{ orgId: string; userId?: string }>;
-}) {
-  const { orgId, userId } = await params;
+}: VehiclesPageProps) {
+  const { orgId } = await params;
   const vehicles = await listVehiclesByOrg(orgId);
 
   // Filter and type assert the vehicles to ensure they have all required fields

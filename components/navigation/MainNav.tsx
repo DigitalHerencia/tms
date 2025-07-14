@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import React from 'react';
 import {
   Home,
   Truck,
@@ -119,13 +120,6 @@ export function MainNav({
       label: 'Analytics',
       icon: <BarChart2 className="h-5 w-5" />,
       roles: [SystemRoles.ADMIN, SystemRoles.MEMBER],
-    },
-    {
-      key: 'admin',
-      href: `/${orgId}/admin`,
-      label: 'Admin',
-      icon: <Settings className="h-5 w-5" />,
-      roles: [SystemRoles.ADMIN],
     },
     {
       key: 'settings',

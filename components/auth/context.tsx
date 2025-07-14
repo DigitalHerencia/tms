@@ -173,6 +173,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const orgMetadata =
         organization?.publicMetadata as unknown as ClerkOrganizationMetadata;
 
+      // Debug logging for user metadata
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthContext Debug:', {
+          clerkUserId: clerkUser.id,
+          userMetadata,
+          extractedRole: userMetadata?.role,
+          orgMetadata,
+          organizationId: organization?.id
+        });
+      }
+
       // Build the user context with memoized function
       const userContext = buildUserContext(
         clerkUser,

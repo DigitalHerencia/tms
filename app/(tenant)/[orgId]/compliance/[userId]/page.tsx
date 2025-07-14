@@ -30,11 +30,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
+interface ComplianceDashboardPageProps {
+  params: Promise<{ orgId: string; userId: string }>;
+}
+
 export default async function ComplianceDashboardPage({
   params,
-}: {
-  params: Promise<{ orgId: string; userId?: string }>;
-}) {
+}: ComplianceDashboardPageProps) {
   const { orgId, userId } = await params;
   return (
     <>

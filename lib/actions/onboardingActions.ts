@@ -193,14 +193,30 @@ export async function setClerkUserMetadata(
         await actualClient.users.updateUserMetadata(userId, {
             privateMetadata: {
                 organizationId,
-                role,
-                permissions: userPermissions,
                 onboardingComplete: true,
             },
             publicMetadata: {
+                organizationId,
+                role,
+                permissions: userPermissions,
+                isActive: true,
                 onboardingComplete: true,
             },
         });
+
+        // Verify the metadata was set correctly
+        const updatedUser = await actualClient.users.getUser(userId)
+        const metadata = updatedUser.publicMetadata as any
+        
+        if (metadata.role !== role || metadata.organizationId !== organizationId) {
+            console.error("❌ Clerk metadata verification failed:", {
+                expected: { role, organizationId },
+                actual: { role: metadata.role, organizationId: metadata.organizationId }
+            })
+            return { success: false, error: "Metadata verification failed" }
+        }
+
+        console.log("✅ Clerk metadata successfully set and verified:", { userId, role, organizationId })
         return { success: true };
     } catch (error: any) {
         console.error("Error setting Clerk metadata:", error)

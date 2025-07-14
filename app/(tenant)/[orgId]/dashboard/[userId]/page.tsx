@@ -5,6 +5,8 @@
  */
 
 import { Suspense } from 'react'
+import Link from 'next/link'
+import { Shield } from 'lucide-react'
 import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
 import { KPIGrid } from '@/components/dashboard/kpi-cards';
 import QuickActionsWidget from '@/features/dashboard/quick-actions-widget';
@@ -12,16 +14,20 @@ import RecentAlertsWidget from '@/features/dashboard/recent-alerts-widget';
 import TodaysScheduleWidget from '@/features/dashboard/todays-schedule-widget';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
 import { getDashboardData } from '@/lib/fetchers/dashboardFetchers';
-import { auth } from '@clerk/nextjs/server';
+import { getCurrentUser } from '@/lib/auth/auth';
+import { Button } from '@/components/ui/button';
+import { SystemRoles } from '@/types/abac';
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: Promise<{ orgId: string }>;
-}) {
-  const { orgId } = await params;
-  const { userId } = await auth();
-  if (!userId) {
+interface DashboardPageProps {
+  params: Promise<{ orgId: string; userId: string }>;
+}
+
+export default async function DashboardPage({ params }: DashboardPageProps) {
+  const { orgId, userId } = await params;
+  
+  // Get current user to check role
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
     return { error: 'Unauthorized' };
   }
 
@@ -30,6 +36,22 @@ export default async function DashboardPage({
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+      {/* Page Header with Admin Button */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-gray-400">Overview of your fleet operations</p>
+        </div>
+        {currentUser.role === SystemRoles.ADMIN && (
+          <Button asChild variant="outline" className="bg-blue-600 border-blue-500 text-white hover:bg-blue-700">
+            <Link href={`/${orgId}/dashboard/${userId}/admin`} className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Admin Dashboard
+            </Link>
+          </Button>
+        )}
+      </div>
+
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
         <FleetOverviewHeader orgId={orgId} />

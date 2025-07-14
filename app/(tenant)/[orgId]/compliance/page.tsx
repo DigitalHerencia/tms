@@ -27,8 +27,12 @@ import { DOTInspectionManagement } from '@/components/compliance/dot-inspection-
 import { ComplianceAlerts } from '@/components/compliance/compliance-alerts';
 import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
 
-export default async function CompliancePage({ params }: { params: Promise<{ orgId: string; userId?: string }> }) {
-  const { orgId, userId } = await params;
+interface CompliancePageProps {
+  params: Promise<{ orgId: string }>
+}
+
+export default async function CompliancePage({ params }: CompliancePageProps) {
+  const { orgId } = await params;
     // Fetch dashboard data with error handling
   let dashboardData: any = {};
   try {

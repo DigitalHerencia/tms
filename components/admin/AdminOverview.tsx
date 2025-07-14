@@ -4,10 +4,10 @@ import { Activity, Users, Truck, AlertTriangle, TrendingUp, Calendar } from 'luc
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { OrganizationStats } from './OrganizationStats';
-import { SystemHealth } from './SystemHealth';
-import { AuditLogViewer } from './AuditLogViewer';
-import { BulkUserActions } from './BulkUserActions';
+import { OrganizationStats } from '@/components/admin/OrganizationStats';
+import { SystemHealth } from '@/features/admin/SystemHealth';
+import { AuditLogViewer } from '@/features/admin/AuditLogViewer';
+import { BulkUserActions } from '@/features/admin/users/BulkUserActions';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 export function AdminOverview({ orgId }: { orgId: string }) {

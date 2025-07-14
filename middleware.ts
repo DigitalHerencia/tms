@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import { SystemRoles } from "@/types/abac"
 
 // Public routes (no auth/RBAC required)
 const isPublicRoute = createRouteMatcher([
@@ -18,8 +19,11 @@ const isPublicRoute = createRouteMatcher([
   "/refund",
 ])
 
-// Admin RBAC route matcher
-const isAdminRoute = createRouteMatcher(["/admin(.*)"])
+/**
+ * Middleware to protect routes and enforce authentication
+ * - Public routes are accessible without auth
+ * - All other routes require authentication
+ */
 
 export default clerkMiddleware(
   async (auth, req) => {
@@ -27,10 +31,12 @@ export default clerkMiddleware(
     if (!isPublicRoute(req)) {
       await auth.protect()
     }
-    // RBAC: Only allow users with 'admin' role to access /admin routes
-    if (isAdminRoute(req) && (await auth()).sessionClaims?.metadata?.role !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url))
-    }
+    
+    const authData = await auth()
+    const userRole = authData.sessionClaims?.publicMetadata?.role
+    
+    
+    
   }
   // Remove CSP configuration to allow Clerk to work properly
   // We'll implement security headers in next.config.ts if needed

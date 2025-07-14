@@ -12,10 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AdminOverview } from '@/components/admin/AdminOverview';
-import { BillingManagement } from '@/components/admin/BillingManagement';
+import { BillingManagement } from '@/features/admin/BillingManagement';
 import UserManagementDashboard from '@/features/admin/users/UserManagementDashboard';
-import { AuditLogViewer } from '@/components/admin/AuditLogViewer';
-import { SystemHealth } from '@/components/admin/SystemHealth';
+import { AuditLogViewer } from '@/features/admin/AuditLogViewer';
+import { SystemHealth } from '@/features/admin/SystemHealth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 export default async function AdminPage({

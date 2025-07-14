@@ -43,14 +43,16 @@ interface PerformanceDataPoint {
 // Import types
 import { ProfitabilityMetrics, TimeSeriesData } from "@/types/analytics"
 
+interface AnalyticsPageProps {
+    params: Promise<{ orgId: string }>
+    searchParams?: Promise<{ start?: string; end?: string; driver?: string }>
+}
+
 export default async function AnalyticsPage({
     params,
     searchParams,
-}: {
-    params: Promise<{ orgId: string; userId?: string }>
-    searchParams?: Promise<{ start?: string; end?: string; driver?: string }>
-}) {
-    const { orgId, userId } = await params
+}: AnalyticsPageProps) {
+    const { orgId } = await params
     const sp = searchParams ? await searchParams : undefined
 
     const start = sp?.start
