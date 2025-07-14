@@ -34,11 +34,9 @@ const adapter = new PrismaNeon({
     connectionString,
     max: maxConnections,
     connectionTimeoutMillis: connectionTimeout,
-    // Neon handles pooling at infrastructure level
 })
 
 declare global {
-    // eslint-disable-next-line no-var
     var prisma: PrismaClient | undefined
 }
 
@@ -65,60 +63,7 @@ if (process.env.NODE_ENV === "production") {
     prisma = globalThis.prisma
 }
 
-// Database monitoring and performance tracking
-const setupDatabaseMonitoring = () => {
-    if (process.env.DATABASE_LOGGING === "true") {
-        prisma.$use(async (params, next) => {
-            const start = Date.now()
-            const result = await next(params)
-            const duration = Date.now() - start
 
-            // Log slow queries for performance monitoring
-            const slowQueryThreshold = parseInt(
-                process.env.SLOW_QUERY_THRESHOLD || "1000"
-            )
-            if (duration > slowQueryThreshold && params.model !== "AuditLog") {
-                console.warn(
-                    `Slow query detected: ${params.model}.${params.action} took ${duration}ms`
-                )
-
-                // In production, log to audit system for performance tracking
-                if (process.env.NODE_ENV === "production") {
-                    try {
-                        await prisma.auditLog.create({
-                            data: {
-                                organizationId: "system",
-                                entityId: "system", // Add required entityId field
-                                entityType: "database",
-                                action: "slow_query",
-                                changes: {
-                                    model: params.model,
-                                    action: params.action,
-                                    duration,
-                                    args: params.args,
-                                },
-                                metadata: {
-                                    query_type: "slow",
-                                    threshold_ms: slowQueryThreshold,
-                                },
-                            },
-                        })
-                    } catch (auditError) {
-                        console.error(
-                            "Failed to log slow query to audit system:",
-                            auditError
-                        )
-                    }
-                }
-            }
-
-            return result
-        })
-    }
-}
-
-// Initialize monitoring
-setupDatabaseMonitoring()
 
 // Health check function for database connectivity
 export const checkDatabaseHealth = async (): Promise<{

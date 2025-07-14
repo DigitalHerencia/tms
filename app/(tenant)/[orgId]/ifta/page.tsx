@@ -9,7 +9,6 @@ import {
     IftaReportTableClient,
     IftaTripTableClient,
 } from "@/components/ifta/ifta-tables"
-import { PageHeader } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -133,7 +132,6 @@ export default async function Page({
                     </Button>
                 </div>
             </div>
-            <PageHeader />
             {error ? (
                 <div className='text-sm font-medium text-red-500'>{error}</div>
             ) : (

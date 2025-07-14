@@ -86,7 +86,8 @@ export async function createDriverAction(
       };
     }
 
-    // Create driver record with proper Prisma schema mapping
+    // Convert date string fields to Date objects if present
+    const toDate = (val: any) => val ? new Date(val) : null;
     const newDriver = await db.driver.create({
       data: {
         organizationId: tenantId,
@@ -95,12 +96,12 @@ export async function createDriverAction(
         email: validatedData.email,
         phone: validatedData.phone,
         employeeId: validatedData.employeeId || null,
-        hireDate: validatedData.hireDate,
+        hireDate: toDate(validatedData.hireDate),
         licenseNumber: validatedData.cdlNumber,
         licenseState: validatedData.cdlState,
         licenseClass: validatedData.cdlClass,
-        licenseExpiration: validatedData.cdlExpiration,
-        medicalCardExpiration: validatedData.medicalCardExpiration,
+        licenseExpiration: toDate(validatedData.cdlExpiration),
+        medicalCardExpiration: toDate(validatedData.medicalCardExpiration),
         status: 'active',
         emergencyContact1: validatedData.emergencyContact?.name || null,
         emergencyContact2: validatedData.emergencyContact?.phone || null,

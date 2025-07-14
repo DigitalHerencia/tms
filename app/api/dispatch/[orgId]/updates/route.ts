@@ -1,23 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import db from '@/lib/database/db';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { orgId: string } }
-) {
+{
+    params,
+}: {
+    params: Promise<{ orgId: string }>
+}) {
+    const { orgId } = await params
   const { userId } = await auth();
-  const { orgId } = params;
   if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return { error: 'Unauthorized' };
   }
 
-  const since = request.nextUrl.searchParams.get('since');
   try {
     const events = await db.loadStatusEvent.findMany({
       where: {
         load: { organizationId: orgId },
-        ...(since ? { timestamp: { gt: new Date(since) } } : {}),
       },
       orderBy: { timestamp: 'asc' },
       take: 20,
@@ -32,8 +31,8 @@ export async function GET(
       },
     }));
 
-    return NextResponse.json({ updates });
+    return { updates };
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch updates' }, { status: 500 });
+    return { error: 'Failed to fetch updates' };
   }
 }

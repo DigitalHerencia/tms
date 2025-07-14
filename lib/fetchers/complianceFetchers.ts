@@ -297,7 +297,7 @@ export async function getDriverComplianceStatuses(
                     : medExp < soon
                     ? "Expiring Soon"
                     : "Valid"
-                const hos = (await getDriverHOSStatus(d.id).catch(
+                const hos = (await getDriverHOSStatus(d.id, organizationId).catch(
                     () => null
                 )) as any
                 const violationStatus = hos?.data?.complianceStatus ?? "unknown"
@@ -784,14 +784,20 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
 /**
  * Get HOS status for a specific driver
  */
-export async function getDriverHOSStatus(driverId: string) {
+export async function getDriverHOSStatus(driverId: string, organizationId?: string) {
     try {
-        const { userId, orgId } = await auth()
-        if (!userId || !orgId) {
+        const { userId } = await auth()
+        if (!userId) {
             throw new Error("Unauthorized")
         }
 
-        const cacheKey = `hos:status:${orgId}:${driverId}`
+        // If organizationId is not provided, we need to get it from the context
+        // This should be passed by the calling component
+        if (!organizationId) {
+            throw new Error("Organization ID is required")
+        }
+
+        const cacheKey = `hos:status:${organizationId}:${driverId}`
         const cached = getCachedData(cacheKey)
         if (cached) {
             return cached
@@ -803,7 +809,7 @@ export async function getDriverHOSStatus(driverId: string) {
         // Get recent HOS logs for the driver
         const recentLogs = await prisma.complianceDocument.findMany({
             where: {
-                organizationId: orgId,
+                organizationId: organizationId,
                 driverId,
                 type: "hos_log",
                 createdAt: {
@@ -828,7 +834,7 @@ export async function getDriverHOSStatus(driverId: string) {
             return {
                 ...(meta as any),
                 id: doc.id,
-                tenantId: orgId,
+                tenantId: organizationId,
                 driverId,
                 date: doc.createdAt,
                 status: doc.status as any,

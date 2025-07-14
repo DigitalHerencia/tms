@@ -7,6 +7,7 @@
 
 export interface Driver {
   id: string;
+  userId?: string; // Reference to the user_id in the database
   tenantId: string;
   externalId?: string; // Reference to Clerk user if applicable
 
@@ -20,8 +21,8 @@ export interface Driver {
 
   // Employment Information
   employeeId?: string;
-  hireDate: string;
-  terminationDate?: string;
+  hireDate: Date;
+  terminationDate?: Date;
   payRate?: number;
   payType?: 'hourly' | 'mileage' | 'salary' | 'percentage';
   homeTerminal: string;
@@ -30,14 +31,16 @@ export interface Driver {
   cdlNumber: string;
   cdlState: string;
   cdlClass: 'A' | 'B' | 'C';
-  cdlExpiration: string;
+  cdlExpiration: Date;
   endorsements?: string[];
   restrictions?: string[];
+  licenseState?: string; 
+  licenseExpiration?: Date;
 
   // Medical & Compliance
   medicalCardNumber?: string;
-  medicalCardExpiration: string;
-  drugTestDate?: string;
+  medicalCardExpiration: Date;
+  drugTestDate?: Date;
   drugTestStatus?: 'passed' | 'failed' | 'pending';
 
   // Operational Status
@@ -48,6 +51,10 @@ export interface Driver {
 
   // Emergency Contact
   emergencyContact?: DriverEmergencyContact;
+
+  // Additional UI Properties
+  profileImage?: string; // URL to profile image
+  companyName?: string; // Organization/Company name
 
   // Performance & Safety
   safetyScore?: number;
@@ -61,8 +68,8 @@ export interface Driver {
   tags?: string[];
   createdBy: string;
   updatedBy?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type DriverStatus =
@@ -284,7 +291,7 @@ export interface DriverFormData {
   address?: Partial<DriverAddress>;
 
   employeeId?: string;
-  hireDate: string;
+  hireDate: Date;
   payRate?: number;
   payType?: 'hourly' | 'mileage' | 'salary' | 'percentage';
   homeTerminal: string;
@@ -297,7 +304,7 @@ export interface DriverFormData {
   restrictions?: string[];
 
   medicalCardNumber?: string;
-  medicalCardExpiration: string;
+  medicalCardExpiration: Date;
 
   emergencyContact?: DriverEmergencyContact;
   notes?: string;
@@ -314,7 +321,7 @@ export interface DriverUpdateData {
   cdlExpiration?: string;
   endorsements?: string[];
   restrictions?: string[];
-  medicalCardExpiration?: string;
+  medicalCardExpiration?: Date;
 
   status?: DriverStatus;
   availabilityStatus?: DriverAvailabilityStatus;

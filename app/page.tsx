@@ -50,7 +50,7 @@ export default function Home() {
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button
                     asChild
-                    className="w-full rounded-lg bg-blue-500 py-2 font-bold text-white transition-colors hover:bg-blue-800"
+                    className="w-full rounded-md bg-blue-500 py-2 font-bold text-white transition-colors hover:bg-blue-800"
                   >
                     <Link href="/sign-up">
                       Start Free 30-Day Trial{' '}

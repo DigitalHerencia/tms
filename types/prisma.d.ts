@@ -202,7 +202,7 @@ export type InvitationWithOrganization = Prisma.InvitationGetPayload<{
 
 // Custom aggregate types for analytics
 export type DriverPerformanceMetrics = {
-  driverId: string;
+  userId: string;
   totalMiles: number;
   totalLoads: number;
   onTimeDeliveries: number;
@@ -332,7 +332,7 @@ export type LoadFilters = {
   };
   origin?: string;
   destination?: string;
-  driverId?: string;
+  userId?: string;
   vehicleId?: string;
 };
 

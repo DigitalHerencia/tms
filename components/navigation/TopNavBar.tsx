@@ -2,8 +2,6 @@
 
 import { MapPinned, Menu, User } from 'lucide-react';
 import Link from 'next/link';
-
-import { GlobalSearchBar } from '@/components/shared/GlobalSearchBar';
 import { NotificationCenter } from '@/components/shared/NotificationCenter';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -40,7 +38,7 @@ export function TopNavBar({ user, organization }: TopNavBarProps) {
   return (
     <div className="fixed top-0 right-0 left-0 z-[100] h-16 border-b border-gray-200 bg-black shadow-lg">
       <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Logo Placeholder */}
+        {/* Logo */}
         <div className="flex items-center">
           <div>
             <div className="flex flex-1 items-center">
@@ -61,8 +59,7 @@ export function TopNavBar({ user, organization }: TopNavBarProps) {
           <span className="hidden text-xl font-medium text-zinc-200 sm:block">
             {organization.name || ' '}
           </span>
-          <GlobalSearchBar />
-          {/* Notifications */}
+        {/* Notifications */}
           <NotificationCenter />
           {/* User Profile */}
           <DropdownMenu>

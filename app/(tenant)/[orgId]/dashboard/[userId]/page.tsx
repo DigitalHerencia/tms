@@ -7,24 +7,29 @@
 import { Suspense } from 'react'
 import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
 import { KPIGrid } from '@/components/dashboard/kpi-cards';
-import QuickActionsWidget from '@/components/dashboard/quick-actions-widget';
-import RecentAlertsWidget from '@/components/dashboard/recent-alerts-widget';
-import TodaysScheduleWidget from '@/components/dashboard/todays-schedule-widget';
+import QuickActionsWidget from '@/features/dashboard/quick-actions-widget';
+import RecentAlertsWidget from '@/features/dashboard/recent-alerts-widget';
+import TodaysScheduleWidget from '@/features/dashboard/todays-schedule-widget';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
 import { getDashboardData } from '@/lib/fetchers/dashboardFetchers';
+import { auth } from '@clerk/nextjs/server';
 
 export default async function DashboardPage({
   params,
 }: {
-  params: Promise<{ orgId: string; userId?: string }>;
+  params: Promise<{ orgId: string }>;
 }) {
-  const { orgId, userId } = await params;
+  const { orgId } = await params;
+  const { userId } = await auth();
+  if (!userId) {
+    return { error: 'Unauthorized' };
+  }
 
   // Fetch dashboard data for KPIs
   const dashboardData = await getDashboardData(orgId);
 
   return (
-    <div className="min-h-screen space-y-6 p-6 pt-8">
+    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
         <FleetOverviewHeader orgId={orgId} />
@@ -46,7 +51,7 @@ export default async function DashboardPage({
       {/* KPI Grid */}
       <div>
         <Suspense fallback={<DashboardSkeleton />}>
-          <KPIGrid kpis={dashboardData.kpis} />
+          <KPIGrid kpis={dashboardData.kpis} orgId={orgId} />
         </Suspense>
       </div>
     </div>

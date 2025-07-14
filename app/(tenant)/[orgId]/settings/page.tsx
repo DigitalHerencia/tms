@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { SettingsDashboard } from '@/components/settings/settings-dashboard';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { 
   getOrganizationSettings, 
   getUserPreferences, 
@@ -75,7 +74,6 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
             Manage your organization and personal settings
           </p>
         </div>
-        <PageHeader />
       </div>
 
       <Suspense fallback={<LoadingSpinner />}>

@@ -2,14 +2,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 /**
- * DashboardSkeleton
+ * DriversSkeleton
  *
- * Closely matches the actual dashboard page layout:
+ * Closely matches the actual drivers page layout:
  * - FleetOverviewHeader (top)
  * - KPI Grid (4 cards)
  * - Bottom widgets grid (3 tall cards)
  */
-export function DashboardSkeleton() {
+export function DriversSkeleton() {
   return (
     <div className="flex flex-col gap-6 p-6 bg-black text-white min-h-screen">
       {/* Header */}

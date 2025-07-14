@@ -112,9 +112,9 @@ export function DriverAssignmentDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent>
+      <DialogContent className="bg-black border-neutral-700 text-white">
         <DialogHeader>
-          <DialogTitle>Assign Driver</DialogTitle>
+          <DialogTitle className="text-white">Assign Driver</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Input
@@ -122,12 +122,14 @@ export function DriverAssignmentDialog({
             value={form.loadId}
             onChange={e => setForm(f => ({ ...f, loadId: e.target.value }))}
             disabled={form.submitting}
+            className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Vehicle ID (optional)"
             value={form.vehicleId}
             onChange={e => setForm(f => ({ ...f, vehicleId: e.target.value }))}
             disabled={form.submitting}
+            className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Assignment Type (e.g. load, maintenance)"
@@ -139,6 +141,7 @@ export function DriverAssignmentDialog({
               }))
             }
             disabled={form.submitting}
+            className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Scheduled Start (YYYY-MM-DDTHH:mm)"
@@ -148,6 +151,7 @@ export function DriverAssignmentDialog({
             }
             disabled={form.submitting}
             type="datetime-local"
+            className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Scheduled End (optional)"
@@ -157,9 +161,10 @@ export function DriverAssignmentDialog({
             }
             disabled={form.submitting}
             type="datetime-local"
+            className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           {form.error && (
-            <div className="text-sm text-red-500">{form.error}</div>
+            <div className="text-sm text-red-400">{form.error}</div>
           )}
         </div>
         <DialogFooter className="flex gap-2">
@@ -167,6 +172,7 @@ export function DriverAssignmentDialog({
             onClick={handleAssign}
             disabled={form.submitting}
             type="button"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
           >
             Assign
           </Button>
@@ -175,10 +181,16 @@ export function DriverAssignmentDialog({
             disabled={form.submitting}
             type="button"
             variant="outline"
+            className="border-neutral-600 text-white hover:bg-neutral-700"
           >
             Unassign
           </Button>
-          <Button onClick={onClose} type="button" variant="ghost">
+          <Button 
+            onClick={onClose} 
+            type="button" 
+            variant="ghost"
+            className="text-neutral-400 hover:text-white hover:bg-neutral-700"
+          >
             Cancel
           </Button>
         </DialogFooter>

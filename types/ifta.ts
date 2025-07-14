@@ -6,7 +6,7 @@ export interface FuelPurchase {
   id: string;
   tenantId: string;
   vehicleId: string;
-  driverId: string;
+  userId: string;
   date: Date;
   location: {
     name: string;
@@ -24,6 +24,7 @@ export interface FuelPurchase {
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 export interface MileageByJurisdiction {
   id: string;
@@ -75,11 +76,12 @@ export interface IftaJurisdictionSummary {
   fuelGallons?: number;
 }
 
+
 export interface TripReport {
   id: string;
   tenantId: string;
   vehicleId: string;
-  driverId: string;
+  userId: string;
   loadId?: string;
   startDate: Date;
   endDate: Date;
@@ -95,7 +97,6 @@ export interface TripReport {
   createdAt: Date;
   updatedAt: Date;
 }
-
 export interface IftaPeriodSummary {
   totalMiles: number;
   totalGallons: number;

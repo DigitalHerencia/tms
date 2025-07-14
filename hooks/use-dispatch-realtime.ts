@@ -11,14 +11,16 @@ interface UseDispatchRealtimeOptions {
 }
 
 interface DispatchUpdate {
-  type: 'load_update' | 'status_change' | 'assignment_change' | 'new_load' | 'load_deleted';
-  data: {
+  type: 'load_update' | 'status_change' | 'assignment_change' | 'new_load' | 'load_deleted' | 'connected' | 'error';
+  data?: {
     loadId: string;
     load?: Partial<Load>;
     oldStatus?: string;
     newStatus?: string;
     timestamp: string;
   };
+  timestamp?: string;
+  message?: string;
 }
 
 interface UseDispatchRealtimeReturn {
@@ -47,6 +49,11 @@ export function useDispatchRealtime({
 
   // Handle dispatch updates
   const handleDispatchUpdate = useCallback((update: DispatchUpdate) => {
+    // Skip non-actionable updates
+    if (update.type === 'connected' || update.type === 'error') {
+      return;
+    }
+    
     setLastUpdate(new Date());
     setUpdateCount(prev => prev + 1);
     
@@ -92,8 +99,27 @@ export function useDispatchRealtime({
       eventSource.onmessage = (event) => {
         try {
           const update: DispatchUpdate = JSON.parse(event.data);
-          lastSeenLoadTimestamp.current = update.data.timestamp;
-          handleDispatchUpdate(update);
+          
+          // Handle different message types
+          if (update.type === 'connected') {
+            console.log('Connected to dispatch stream');
+            return;
+          }
+          
+          if (update.type === 'error') {
+            console.error('Dispatch stream error:', update.message);
+            return;
+          }
+          
+          // For actual dispatch updates, extract timestamp and handle update
+          if (update.data?.timestamp) {
+            lastSeenLoadTimestamp.current = update.data.timestamp;
+            handleDispatchUpdate(update);
+          } else if (update.timestamp) {
+            // Fallback for messages with timestamp at root level
+            lastSeenLoadTimestamp.current = update.timestamp;
+            handleDispatchUpdate(update);
+          }
         } catch (error) {
           console.error('Error parsing SSE message:', error);
         }
@@ -137,8 +163,12 @@ export function useDispatchRealtime({
           const data = await response.json();
           if (data.updates && data.updates.length > 0) {
             data.updates.forEach((update: DispatchUpdate) => {
-              lastSeenLoadTimestamp.current = update.data.timestamp;
-              handleDispatchUpdate(update);
+              // Safely extract timestamp
+              const timestamp = update.data?.timestamp || update.timestamp;
+              if (timestamp) {
+                lastSeenLoadTimestamp.current = timestamp;
+                handleDispatchUpdate(update);
+              }
             });
           }
           setIsConnected(true);

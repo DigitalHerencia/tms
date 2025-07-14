@@ -119,7 +119,7 @@ export default async function DispatchPage({
   const vehicleList = vehicles?.data || [];
 
   return (
-    <div className="min-h-screen bg-black p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-neutral-900 p-4 md:p-6 lg:p-8">
       <div className="mb-8 flex flex-col items-start justify-between sm:flex-row sm:items-center">
         <div>
           <h1 className="mb-1 text-3xl font-bold text-white">Dispatch Board</h1>

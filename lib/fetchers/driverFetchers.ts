@@ -15,39 +15,87 @@ import type {
 // Utility to map raw Prisma driver result to Driver type
 function parseDriverData(raw: any): Driver {
   // Map all required fields from raw to Driver type
-  return {
+  const driver = {
     id: raw.id,
-    tenantId: raw.tenantId,
-    homeTerminal: raw.homeTerminal,
-    cdlNumber: raw.cdlNumber,
-    cdlState: raw.cdlState,
-    cdlClass: raw.cdlClass,
-    cdlExpiration: raw.licenseExpiration,
-    medicalCardExpiration: raw.medicalCardExpiration,
-    firstName: raw.firstName,
-    lastName: raw.lastName,
-    email: raw.email,
-    phone: raw.phone,
+    userId: raw.userId || raw.user_id, // Support both camelCase and snake_case
+    tenantId: raw.organizationId, // Map organizationId to tenantId
+    homeTerminal: raw.homeTerminal || '', // Provide default if missing
+    cdlNumber: raw.licenseNumber || '', // Map licenseNumber to cdlNumber
+    cdlState: raw.licenseState || '', // Map licenseState to cdlState
+    cdlClass: raw.licenseClass || 'A', // Map licenseClass to cdlClass with default
+    cdlExpiration: raw.licenseExpiration || new Date(),
+    medicalCardExpiration: raw.medicalCardExpiration || new Date(),
+    firstName: raw.firstName || '',
+    lastName: raw.lastName || '',
+    email: raw.email || '',
+    phone: raw.phone || '',
     status: raw.status,
-    availabilityStatus: raw.availabilityStatus,
-    hireDate: raw.hireDate,
-    safetyScore: raw.safetyScore,
-    violationCount: raw.violationCount,
-    accidentCount: raw.accidentCount,
-    isActive: raw.isActive,
-    createdBy: raw.createdBy,
+    availabilityStatus: 'available' as const, // Default since this field doesn't exist in DB
+    hireDate: raw.hireDate || new Date(),
+    safetyScore: raw.safetyScore || 0,
+    violationCount: raw.violationCount || 0,
+    accidentCount: raw.accidentCount || 0,
+    isActive: raw.status === 'active', // Derive isActive from status
+    createdBy: raw.createdBy || '',
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
-    // ...add any other required fields from Driver type...
+    // Optional fields
+    employeeId: raw.employeeId,
+    terminationDate: raw.terminationDate,
+    drugTestDate: raw.drugTestDate,
+    notes: raw.notes,
+    // Add address if available
+    address: raw.address ? {
+      street: raw.address,
+      city: raw.city || '',
+      state: raw.state || '',
+      zipCode: raw.zip || '',
+      country: 'USA' // Default country
+    } : undefined,
+    // Parse emergency contacts if available
+    emergencyContact: raw.emergencyContact1 ? {
+      name: raw.emergencyContact1,
+      phone: raw.emergencyContact2 || '',
+      relationship: '',
+      email: '',
+      address: raw.emergencyContact3 || ''
+    } : undefined,
+    // Parse current assignment from loads (just the load ID)
+    currentAssignment: raw.loads?.[0]?.id || undefined,
   };
+
+    // Add assignment details for components that need the full object
+  if (raw.loads?.[0]) {
+    (driver as any).currentAssignmentDetails = {
+      id: raw.loads[0].id,
+      loadNumber: raw.loads[0].loadNumber,
+      status: raw.loads[0].status,
+      customerName: raw.loads[0].customerName,
+      scheduledPickupDate: raw.loads[0].scheduledPickupDate,
+      scheduledDeliveryDate: raw.loads[0].scheduledDeliveryDate,
+      vehicleId: raw.loads[0].vehicleId,
+      vehicleUnit: raw.loads[0].vehicle?.unitNumber,
+    };
+  }
+
+  // Add organization name and profile image
+  if (raw.organization) {
+    (driver as any).companyName = raw.organization.name;
+  }
+  
+  if (raw.user) {
+    (driver as any).profileImage = raw.user.profileImageUrl;
+  }
+
+  return driver;
 }
 
 // ================== Core Fetchers ==================
 
 // Add this type for driver with assignment info
 type DriverWithAssignment = Driver & {
-  currentAssignment?: {
-    loadId: string;
+  currentAssignmentDetails?: {
+    id: string;
     loadNumber: string;
     status: string;
     customerName: string | null;
@@ -58,30 +106,37 @@ type DriverWithAssignment = Driver & {
   } | null;
 };
 
-// Update DriverListResponse for this fetcher
-type DriverListWithAssignmentResponse = Omit<DriverListResponse, 'drivers'> & {
-  drivers: DriverWithAssignment[];
-};
-
 /**
- * Get driver by ID with permission check
+ * Get driver by user ID or driver ID with permission check
+ * Handles both cases where the parameter might be a user ID or driver ID
  */
 export const getDriverById = async (
-  driverId: string,
+  userIdOrDriverId: string,
   orgId: string
 ): Promise<Driver | null> => {
   try {
-    const { userId, orgId: sessionOrgId } = await auth();
-    if (!userId) return null;
-    if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
+    const { userId: sessionUserId } = await auth();
+    if (!sessionUserId) {
+      console.log('No session user ID found');
+      return null;
+    }
+    
+    // Check if user is a member of the organization (emulating dashboard pattern)
+    const user = await prisma.user.findFirst({
+      where: { id: sessionUserId, organizationId: orgId },
+    });
+    if (!user) {
+      console.log('Session user not found in organization:', { sessionUserId, orgId });
+      throw new Error('User not found or unauthorized');
     }
 
-    const driver = await prisma.driver.findFirst({
+    // First try to find by userId (existing behavior)
+    let driver = await prisma.driver.findFirst({
       where: {
-        id: driverId,
+        userId: userIdOrDriverId,
         organizationId: orgId,
-        status: 'active',
+        // Allow all statuses except terminated for driver dashboard
+        status: { not: 'terminated' },
       },
       include: {
         organization: true,
@@ -121,8 +176,61 @@ export const getDriverById = async (
       },
     });
 
-    if (!driver) return null;
+    // If not found by userId, try to find by driver ID
+    if (!driver) {
+      console.log('Driver not found by userId, trying by driver ID:', userIdOrDriverId);
+      driver = await prisma.driver.findFirst({
+        where: {
+          id: userIdOrDriverId,
+          organizationId: orgId,
+          // Allow all statuses except terminated for driver dashboard
+          status: { not: 'terminated' },
+        },
+        include: {
+          organization: true,
+          user: true,
+          complianceDocuments: true,
+          loads: {
+            where: {
+              status: {
+                in: [
+                  'assigned',
+                  'dispatched',
+                  'in_transit',
+                  'at_pickup',
+                  'picked_up',
+                  'en_route',
+                ],
+              },
+            },
+            select: {
+              id: true,
+              loadNumber: true,
+              status: true,
+              customerName: true,
+              scheduledPickupDate: true,
+              scheduledDeliveryDate: true,
+              vehicleId: true,
+              vehicle: {
+                select: {
+                  unitNumber: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+          },
+        },
+      });
+    }
 
+    if (!driver) {
+      console.log('Driver not found by either userId or driverId:', { userIdOrDriverId, orgId });
+      return null;
+    }
+
+    console.log('Driver found:', { driverId: driver.id, userId: driver.userId, orgId: driver.organizationId });
     return parseDriverData(driver);
   } catch (error) {
     console.error('Error fetching driver:', error);
@@ -136,15 +244,18 @@ export const getDriverById = async (
 export const listDriversByOrg = async (
   orgId: string,
   filters: DriverFilters = {}
-): Promise<DriverListWithAssignmentResponse> => {
+): Promise<DriverListResponse> => {
   try {
-    const { userId, orgId: sessionOrgId } = await auth();
+    const { userId } = await auth();
     if (!userId) {
       return { drivers: [], total: 0, page: 1, limit: 20, totalPages: 0 };
     }
-    if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
-    }
+    
+    // Check if user is a member of the organization (emulating dashboard pattern)
+    const user = await prisma.user.findFirst({
+      where: { id: userId, organizationId: orgId },
+    });
+    if (!user) throw new Error('User not found or unauthorized');
 
     // Build Prisma where filter
     const where: any = {
@@ -295,24 +406,7 @@ export const listDriversByOrg = async (
     });
 
     const parsedDriversData = driverResults.map(driver => {
-      const baseDriver = parseDriverData(driver) as DriverWithAssignment;
-      // Add current assignment information
-      const currentAssignment = driver.loads?.[0] || null;
-      return {
-        ...baseDriver,
-        currentAssignment: currentAssignment
-          ? {
-              loadId: currentAssignment.id,
-              loadNumber: currentAssignment.loadNumber,
-              status: currentAssignment.status,
-              customerName: currentAssignment.customerName,
-              scheduledPickupDate: currentAssignment.scheduledPickupDate,
-              scheduledDeliveryDate: currentAssignment.scheduledDeliveryDate,
-              vehicleId: currentAssignment.vehicleId,
-              vehicleUnit: currentAssignment.vehicle?.unitNumber,
-            }
-          : null,
-      } as DriverWithAssignment;
+      return parseDriverData(driver);
     });
 
     return {
@@ -339,11 +433,14 @@ export const getDriverStats = async (
   orgId: string
 ): Promise<DriverStatsResponse> => {
   try {
-    const { userId, orgId: sessionOrgId } = await auth();
+    const { userId } = await auth();
     if (!userId) throw new Error('Authentication required');
-    if (!sessionOrgId || sessionOrgId !== orgId) {
-      throw new Error('Invalid organization');
-    }
+    
+    // Check if user is a member of the organization (emulating dashboard pattern)
+    const user = await prisma.user.findFirst({
+      where: { id: userId, organizationId: orgId },
+    });
+    if (!user) throw new Error('User not found or unauthorized');
     // Example stats: total, active, inactive, expiring licenses, etc.
     const total = await prisma.driver.count({
       where: { organizationId: orgId },
@@ -399,14 +496,3 @@ export const getDriverStats = async (
     };
   }
 };
-
-// ================== HOS Fetchers ==================
-
-// ================== Performance Fetchers ==================
-
-export async function getVehiclesByOrg(orgId: string): Promise<any[]> {
-  if (!orgId) throw new Error('orgId is required');
-  const { userId } = await auth();
-  if (!userId) throw new Error('Authentication required');
-  return prisma.vehicle.findMany({ where: { organizationId: orgId } });
-}

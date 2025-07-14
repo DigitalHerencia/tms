@@ -14,7 +14,19 @@ describe('createDriverAction', () => {
   beforeEach(() => vi.clearAllMocks())
   it('revalidates driver list after create', async () => {
     const { revalidatePath } = await import('next/cache')
-    const result = await createDriverAction('org1', { firstName: 'A', lastName: 'B', email: 'a@b.com', phone: '1234567890', hireDate: '2024-01-01', homeTerminal: 'HQ', cdlNumber: '1', cdlState: 'TX', cdlClass: 'A', cdlExpiration: '2025-01-01', medicalCardExpiration: '2025-01-01' })
+    const result = await createDriverAction('org1', { 
+      firstName: 'A', 
+      lastName: 'B', 
+      email: 'a@b.com', 
+      phone: '1234567890', 
+      hireDate: new Date('2024-01-01'), 
+      homeTerminal: 'HQ', 
+      cdlNumber: '1', 
+      cdlState: 'TX', 
+      cdlClass: 'A', 
+      cdlExpiration: '2025-01-01', 
+      medicalCardExpiration: new Date('2025-01-01') 
+    })
     expect(result.success).toBe(true)
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/org1/drivers')
   })

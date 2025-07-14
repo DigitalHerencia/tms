@@ -37,7 +37,7 @@ export interface Vehicle {
   insuranceExpiry?: Date;
 
   // Current Assignment
-  currentDriverId?: string;
+  currentUserId?: string;
   currentLoadId?: string;
 
   // Location & Mileage
@@ -95,7 +95,7 @@ export interface VehicleFilters {
   make?: string;
   model?: string;
   year?: number;
-  assignedDriverId?: string;
+  assignedUserId?: string;
   maintenanceDue?: boolean;
   page?: number;
   limit?: number;

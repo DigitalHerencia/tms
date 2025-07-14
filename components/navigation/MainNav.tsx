@@ -59,11 +59,17 @@ export function MainNav({
       href: `/${orgId}/dispatch/${userId}`,
       label: 'Dispatch',
       icon: <ClipboardList className="h-5 w-5" />,
-      roles: [SystemRoles.ADMIN, SystemRoles.DISPATCHER],
+      roles: [
+        SystemRoles.ADMIN,
+        SystemRoles.DISPATCHER,
+        SystemRoles.DRIVER,
+        SystemRoles.COMPLIANCE,
+        SystemRoles.MEMBER,
+      ],
     },
     {
       key: 'drivers',
-      href: `/${orgId}/drivers/${userId}`,
+      href: `/${orgId}/drivers`,
       label: 'Drivers',
       icon: <Users className="h-5 w-5" />,
       roles: [
@@ -92,7 +98,13 @@ export function MainNav({
       href: `/${orgId}/compliance/${userId}`,
       label: 'Compliance',
       icon: <FileText className="h-5 w-5" />,
-      roles: [SystemRoles.ADMIN, SystemRoles.COMPLIANCE],
+      roles: [
+        SystemRoles.ADMIN,
+        SystemRoles.DISPATCHER,
+        SystemRoles.DRIVER,
+        SystemRoles.COMPLIANCE,
+        SystemRoles.MEMBER,
+      ],
     },
     {
       key: 'ifta',
@@ -113,6 +125,7 @@ export function MainNav({
       href: `/${orgId}/admin`,
       label: 'Admin',
       icon: <Settings className="h-5 w-5" />,
+      roles: [SystemRoles.ADMIN],
     },
     {
       key: 'settings',

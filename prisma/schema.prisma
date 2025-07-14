@@ -124,7 +124,7 @@ model Vehicle {
 model Driver {
   id                    String               @id @default(uuid())
   organizationId        String               @map("organization_id")
-  userId                String?              @unique @map("user_id")
+  userId                String               @unique @map("user_id")
   employeeId            String?              @map("employee_id")
   firstName             String               @map("first_name")
   lastName              String               @map("last_name")
@@ -153,7 +153,7 @@ model Driver {
   medicalCardExpiration DateTime?            @map("medical_card_exp") @db.Date
   complianceDocuments   ComplianceDocument[]
   organization          Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user                  User?                @relation(fields: [userId], references: [id])
+  user                  User                 @relation(fields: [userId], references: [id])
   loads                 Load[]
 
   @@unique([organizationId, employeeId], name: "drivers_org_employee_unique")
@@ -167,7 +167,7 @@ model Driver {
 model Load {
   id                    String            @id @default(uuid())
   organizationId        String            @map("organization_id")
-  driverId              String?           @map("driver_id")
+  userId                String?           @map("user_id")
   vehicleId             String?           @map("vehicle_id")
   trailerId             String?           @map("trailer_id")
   loadNumber            String            @map("load_number")
@@ -211,7 +211,7 @@ model Load {
   priority              LoadPriority      @default(medium)
   tags                  String[]          @default([])
   statusEvents          LoadStatusEvent[]
-  driver                Driver?           @relation(fields: [driverId], references: [id])
+  driver                Driver?           @relation(fields: [userId], references: [userId])
   organization          Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   trailer               Vehicle?          @relation("TrailerLoads", fields: [trailerId], references: [id])
   vehicle               Vehicle?          @relation("VehicleLoads", fields: [vehicleId], references: [id])
@@ -219,7 +219,7 @@ model Load {
 
   @@unique([organizationId, loadNumber], name: "loads_org_load_unique")
   @@index([organizationId])
-  @@index([driverId])
+  @@index([userId])
   @@index([vehicleId])
   @@index([trailerId])
   @@index([status])
@@ -247,7 +247,7 @@ model LoadStatusEvent {
 model ComplianceDocument {
   id               String       @id @default(uuid())
   organizationId   String       @map("organization_id")
-  driverId         String?      @map("driver_id")
+  userId           String?      @map("user_id")
   vehicleId        String?      @map("vehicle_id")
   type             String
   title            String
@@ -268,13 +268,13 @@ model ComplianceDocument {
   createdAt        DateTime     @default(now()) @map("created_at")
   updatedAt        DateTime     @updatedAt @map("updated_at")
   metadata         Json?        @default("{}")
-  driver           Driver?      @relation(fields: [driverId], references: [id])
+  driver           Driver?      @relation(fields: [userId], references: [userId])
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   vehicle          Vehicle?     @relation(fields: [vehicleId], references: [id])
   verifiedByUser   User?        @relation("VerifiedByUser", fields: [verifiedBy], references: [id])
 
   @@index([organizationId])
-  @@index([driverId])
+  @@index([userId])
   @@index([vehicleId])
   @@index([verifiedBy])
   @@index([type])
@@ -286,8 +286,6 @@ model ComplianceDocument {
 model IftaReport {
   id              String               @id @default(uuid())
   organizationId  String               @map("organization_id")
-  quarter         Int
-  year            Int
   status          String               @default("draft")
   totalMiles      Int?                 @map("total_miles")
   totalGallons    Decimal?             @map("total_gallons") @db.Decimal(10, 3)
@@ -309,7 +307,6 @@ model IftaReport {
 
   @@index([organizationId])
   @@index([submittedBy])
-  @@index([quarter, year])
   @@index([status])
   @@index([dueDate])
   @@map("ifta_reports")
@@ -404,7 +401,6 @@ model ComplianceAlert {
   id               String       @id @default(uuid())
   organizationId   String       @map("organization_id")
   userId           String?      @map("user_id")
-  driverId         String?      @map("driver_id")
   vehicleId        String?      @map("vehicle_id")
   type             String
   severity         String
@@ -426,9 +422,8 @@ model ComplianceAlert {
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
-  @@index([userId])
   @@index([vehicleId])
-  @@index([driverId])
+  @@index([userId])
   @@map("compliance_alerts")
 }
 

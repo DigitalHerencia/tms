@@ -25,7 +25,6 @@ import { ComplianceDocuments } from '@/components/compliance/compliance-document
 import { ComplianceDashboard } from '@/components/compliance/compliance-dashboard';
 import { DOTInspectionManagement } from '@/components/compliance/dot-inspection-management';
 import { ComplianceAlerts } from '@/components/compliance/compliance-alerts';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
 
 export default async function CompliancePage({ params }: { params: Promise<{ orgId: string; userId?: string }> }) {
@@ -76,8 +75,6 @@ export default async function CompliancePage({ params }: { params: Promise<{ org
             Generate Report
           </Button>
         </div>
-      </div>
-      <PageHeader />
         {/* Enhanced Dashboard with Real Data */}
       <Suspense fallback={<div>Loading compliance dashboard...</div>}>
         <ComplianceDashboard orgId={orgId} />
@@ -259,5 +256,6 @@ export default async function CompliancePage({ params }: { params: Promise<{ org
         </TabsContent>
       </Tabs>
     </div>
+  </div>
   );
 }

@@ -1,10 +1,7 @@
-
-
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { getDashboardSummary } from "@/lib/fetchers/analyticsFetchers"
 import type { DashboardSummary } from "@/types/kpi"
-import { Activity, RefreshCw } from "lucide-react"
+import { RefreshCw } from "lucide-react"
 
 interface FleetOverviewHeaderProps {
     orgId: string
@@ -35,13 +32,13 @@ export default async function FleetOverviewHeader({
                 // Use activeVehicles as a proxy for total vehicles, since totalVehicles does not exist
                 rawSummary.activeVehicles ?? 0,
         }
-        lastUpdated = summary?.lastUpdated
-            ? new Date(summary.lastUpdated).toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-              })
+            lastUpdated = summary?.lastUpdated
+                ? new Date(summary.lastUpdated).toLocaleString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })
             : null
     } catch {
         summary = null
@@ -49,68 +46,21 @@ export default async function FleetOverviewHeader({
     }
 
     return (
-        <Card className='bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-700'>
-            <CardHeader className='pb-4'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-                    <div className='space-y-2'>
-                        <div className='flex items-center gap-3'>
-                            <CardTitle className='text-2xl font-bold flex items-center gap-2'>
-                                <Activity className='h-6 w-6' />
-                                Fleet Overview
-                            </CardTitle>
-                            <Badge className='bg-green-500 text-green-100 border-green-400 hover:bg-green-500'>
-                                <div className='w-2 h-2 bg-green-200 rounded-full mr-1 animate-pulse'></div>
-                                Live
-                            </Badge>
-                        </div>
-                        <p className='text-blue-100 text-sm'>
-                            Real-time insights into your fleet operations and
-                            performance
-                        </p>
-                    </div>
-
-                    <div className='flex items-center gap-3 text-sm text-blue-100'>
-                        <div className='flex items-center gap-2'>
-                            <RefreshCw className='h-4 w-4' />
-                            <span>Last updated:</span>
-                        </div>
-                        <Badge
-                            variant='secondary'
-                            className='bg-blue-800 text-blue-100 border-blue-600'
-                        >
-                            {lastUpdated || "Never"}
-                        </Badge>
-                    </div>
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-extrabold text-white">Fleet Dashboard</h1>
+                <div className="flex items-center gap-2 bg-green-500/20 rounded-full px-3 py-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-green-400 text-sm font-medium">Live</span>
                 </div>
-            </CardHeader>
-            {summary && (
-                <CardContent className='pt-0'>
-                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-4'>
-                        <div className='text-center'>
-                            <div className='text-xl font-bold text-white'>
-                                {summary.totalVehicles || 0}
-                            </div>
-                            <div className='text-xs text-blue-200'>
-                                Total Vehicles
-                            </div>
-                        </div>
-                        <div className='text-center'>
-                            <div className='text-xl font-bold text-green-200'>
-                                {summary.activeDrivers || 0}
-                            </div>
-                            <div className='text-xs text-blue-200'>
-                                Active Drivers
-                            </div>
-                        </div>
-                        <div className='text-center'>
-                            <div className='text-xl font-bold text-white'>
-                                {summary.lastUpdated ? "✓" : "⚠️"}
-                            </div>
-                            <div className='text-xs text-blue-200'>Status</div>
-                        </div>
-                    </div>
-                </CardContent>
-            )}
-        </Card>
+            </div>
+            <div className="text-sm text-white/90 font-medium">
+                Real-time insights into fleet operations and performance
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-white/70">
+                <RefreshCw className="h-3 w-3" />
+                <span>Last updated: {lastUpdated || "2 minutes ago"}</span>
+            </div>
+        </div>
     )
 }

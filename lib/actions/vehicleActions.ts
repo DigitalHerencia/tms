@@ -134,9 +134,9 @@ function toPublicVehicle(prismaVehicle: any): Vehicle {
       prismaVehicle.insuranceExpiration instanceof Date
         ? prismaVehicle.insuranceExpiration
         : undefined,
-    currentDriverId:
-      typeof prismaVehicle.currentDriverId === 'string'
-        ? prismaVehicle.currentDriverId
+    currentUserId:
+      typeof prismaVehicle.currentUserId === 'string'
+        ? prismaVehicle.currentUserId
         : undefined,
     currentLoadId:
       typeof prismaVehicle.currentLoadId === 'string'

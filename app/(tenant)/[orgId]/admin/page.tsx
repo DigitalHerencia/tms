@@ -17,7 +17,6 @@ import UserManagementDashboard from '@/features/admin/users/UserManagementDashbo
 import { AuditLogViewer } from '@/components/admin/AuditLogViewer';
 import { SystemHealth } from '@/components/admin/SystemHealth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { PageHeader } from '@/components/shared/PageHeader';
 
 export default async function AdminPage({
   params,
@@ -42,7 +41,6 @@ export default async function AdminPage({
             System administration, user management, and organization oversight
           </p>
         </div>
-        <PageHeader />
       </div>
 
       {/* Quick Stats Row */}

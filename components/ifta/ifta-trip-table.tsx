@@ -93,7 +93,7 @@ export function IftaTripTable({ trips }: IftaTripTableProps) {
           <TableBody>
             {trips.map(trip => (
               <TableRow key={trip.id} className="border-b">
-                <TableCell className="p-2 text-sm">{trip.driverId}</TableCell>
+                <TableCell className="p-2 text-sm">{trip.userId}</TableCell>
                 <TableCell className="p-2 text-sm">{trip.vehicleId}</TableCell>
                 <TableCell className="p-2 text-sm">
                   {trip.jurisdictions.map(j => j.jurisdiction).join(', ')}

@@ -6,7 +6,7 @@ import { CompanyProfile } from '@/types/settings';
 
 interface Props {
   profile: CompanyProfile;
-  onSubmit: (data: CompanyProfile) => void;
+  onSubmit?: (data: CompanyProfile) => void;
 }
 
 export function CompanyProfileForm({ profile, onSubmit }: Props) {

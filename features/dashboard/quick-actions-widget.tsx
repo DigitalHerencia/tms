@@ -1,5 +1,3 @@
-
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -114,15 +112,15 @@ export default function QuickActionsWidget({
     const enabledActions = actions.filter(action => action.enabled)
 
     return (
-        <Card className='h-fit'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-3'>
-                <CardTitle className='text-base font-semibold flex items-center gap-2'>
-                    <Zap className='h-4 w-4 text-yellow-500' />
+        <Card className="border-muted rounded-lg border bg-black p-4 hover:border-blue-500 transition-colors">
+            <CardHeader className="pb-3">
+                <CardTitle className="text-lg font-semibold flex items-center text-white">
+                    <Zap className="h-5 w-5 mr-2 text-blue-500" />
                     Quick Actions
                 </CardTitle>
             </CardHeader>
-            <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                {enabledActions.map(action => {
+            <CardContent >
+                {enabledActions.slice(0, 6).map((action, index) => {
                     const Icon = iconMap[action.icon as keyof typeof iconMap]
                     return (
                         <Link
@@ -131,22 +129,15 @@ export default function QuickActionsWidget({
                             passHref
                         >
                             <Button
-                                className={`w-full flex flex-col items-start p-4 h-auto rounded-lg shadow-md ${
-                                    colorMap[
-                                        action.color as keyof typeof colorMap
-                                    ]
+                                className={`w-full justify-start rounded-md mb-1 ${
+                                    index === 0 
+                                        ? 'bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800'
+                                        : 'border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-semibold bg-transparent'
                                 }`}
-                                variant='ghost'
+                                variant={index === 0 ? "default" : "outline"}
                             >
-                                <div className='flex items-center gap-3'>
-                                    <Icon className='h-6 w-6' />
-                                    <span className='font-semibold'>
-                                        {action.title}
-                                    </span>
-                                </div>
-                                <span className='text-xs text-white/80 mt-1'>
-                                    {action.description}
-                                </span>
+                                <Icon className="h-4 w-4 mr-2" />
+                                {action.title}
                             </Button>
                         </Link>
                     )

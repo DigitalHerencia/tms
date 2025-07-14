@@ -1,26 +1,29 @@
+import { DriversSkeleton } from '@/components/drivers/drivers-skeleton';
 import { Suspense } from 'react';
+import DriversListHeader from '@/components/drivers/drivers-list-header';
+import DriversList from '@/features/drivers/DriversList';
 
-import DriverListPage from '@/features/drivers/DriverListPage';
+// Next.js 15 async params pattern
+interface PageProps {
+  params: Promise<{ orgId: string }>
+  searchParams: { [key: string]: string | string[] | undefined }
+}
 
-// Cache control for auth-required dynamic pages
-export const dynamic = 'force-dynamic';
-
-export default async function DriversPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ orgId: string; userId?: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) {
+export default async function DriverListPage({ params, searchParams }: PageProps) {
   const { orgId } = await params;
-  const sp = searchParams ? await searchParams : undefined;
-
   return (
-    <main className="p-6">
-      <h1 className="mb-6 text-3xl font-bold">Drivers</h1>
-      <Suspense fallback={<div>Loading drivers...</div>}>
-        <DriverListPage orgId={orgId} searchParams={sp} />
+    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+      {/* Drivers List Header */}
+      <Suspense fallback={<DriversSkeleton />}>
+        <DriversListHeader />
       </Suspense>
-    </main>
+
+      {/* Driver Tabs */}
+      <Suspense fallback={<DriversSkeleton />}>
+        <DriversList orgId={orgId} searchParams={searchParams} />
+      </Suspense>
+    </div>
   );
 }
+
+
