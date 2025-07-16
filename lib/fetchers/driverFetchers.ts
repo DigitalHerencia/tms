@@ -141,7 +141,7 @@ export const getDriverById = async (
       include: {
         organization: true,
         user: true,
-        complianceDocuments: true,
+        compliance_documents: true, // <-- FIXED property name
         loads: {
           where: {
             status: {
@@ -189,7 +189,7 @@ export const getDriverById = async (
         include: {
           organization: true,
           user: true,
-          complianceDocuments: true,
+          compliance_documents: true, // <-- FIXED property name
           loads: {
             where: {
               status: {

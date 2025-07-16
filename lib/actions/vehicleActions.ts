@@ -448,7 +448,7 @@ export async function assignVehicleToDriverAction(
     const newLoad = await db.load.create({
       data: {
         organizationId: vehicle.organizationId,
-        userId: driverId,
+        driver_id: driverId,
         vehicleId,
         loadNumber: `ASSIGN-${Date.now()}`,
         status: 'assigned',

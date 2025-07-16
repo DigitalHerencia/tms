@@ -130,33 +130,54 @@ export function AuditLogViewer({ orgId, initialLogs = [] }: AuditLogViewerProps)
   return (
     <div className="space-y-6">
       {/* Filters and Actions */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
+      <Card >
+        <CardHeader className="flex flex-row items-baseline justify-between pb-4">
+          <CardTitle className="text-lg flex items-center gap-2 text-white">
             <Eye className="w-5 h-5" />
             Audit Log Viewer
           </CardTitle>
+          {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                size="sm"
+                onClick={refreshLogs}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                size="sm"
+                onClick={exportLogs}
+                disabled={filteredLogs.length === 0}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+            </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-neutral-800 text-white border-gray-600"
               />
             </div>
 
             {/* Action Filter */}
             <Select value={actionFilter} onValueChange={handleActionFilterChange}>
-              <SelectTrigger className="w-[160px]">
+              <SelectTrigger className="w-[160px] bg-neutral-800 text-white border-gray-600">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Filter by action" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-black text-white border-gray-600">
                 <SelectItem value="all">All Actions</SelectItem>
                 {uniqueActions.map(action => (
                   <SelectItem key={action} value={action}>{action}</SelectItem>
@@ -166,11 +187,11 @@ export function AuditLogViewer({ orgId, initialLogs = [] }: AuditLogViewerProps)
 
             {/* Date Range Filter */}
             <Select value={dateRange} onValueChange={handleDateRangeChange}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[140px] bg-neutral-800 text-white border-gray-600">
                 <Calendar className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-black text-white border-gray-600">
                 <SelectItem value="all">All Time</SelectItem>
                 <SelectItem value="1d">Last Day</SelectItem>
                 <SelectItem value="7d">Last 7 Days</SelectItem>
@@ -178,64 +199,42 @@ export function AuditLogViewer({ orgId, initialLogs = [] }: AuditLogViewerProps)
                 <SelectItem value="90d">Last 90 Days</SelectItem>
               </SelectContent>
             </Select>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refreshLogs}
-                disabled={isLoading}
-              >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={exportLogs}
-                disabled={filteredLogs.length === 0}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
           </div>
 
           {/* Results Summary */}
-          <div className="mt-4 text-sm text-muted-foreground">
+          <div className="mt-4 text-sm text-gray-400">
             Showing {filteredLogs.length} of {logs.length} audit log entries
           </div>
         </CardContent>
       </Card>
 
       {/* Audit Log Table */}
-      <Card>
+      <Card className="border-gray-200 bg-black">
         <CardContent className="p-0">
           {filteredLogs.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-muted-foreground">No audit logs found matching your criteria.</p>
+              <p className="text-gray-400">No audit logs found matching your criteria.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b bg-muted/50">
+                <thead className="border-b border-gray-700 bg-neutral-900">
                   <tr>
-                    <th className="text-left p-4 font-medium">Date & Time</th>
-                    <th className="text-left p-4 font-medium">User</th>
-                    <th className="text-left p-4 font-medium">Action</th>
-                    <th className="text-left p-4 font-medium">Target</th>
-                    <th className="text-left p-4 font-medium w-[100px]">Details</th>
+                    <th className="text-left p-4 font-medium text-white">Date & Time</th>
+                    <th className="text-left p-4 font-medium text-white">User</th>
+                    <th className="text-left p-4 font-medium text-white">Action</th>
+                    <th className="text-left p-4 font-medium text-white">Target</th>
+                    <th className="text-left p-4 font-medium w-[100px] text-white">Details</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredLogs.map((log, index) => (
-                    <tr key={log.id} className={`border-b hover:bg-muted/30 ${index % 2 === 0 ? 'bg-background' : 'bg-muted/20'}`}>
-                      <td className="p-4 font-mono text-sm">
+                    <tr key={log.id} className={`border-b border-gray-700 hover:bg-neutral-800 ${index % 2 === 0 ? 'bg-black' : 'bg-neutral-900'}`}>
+                      <td className="p-4 font-mono text-sm text-gray-300">
                         {new Date(log.createdAt).toLocaleString()}
                       </td>
                       <td className="p-4">
-                        <code className="text-sm bg-muted px-2 py-1 rounded">
+                        <code className="text-sm bg-neutral-800 text-gray-300 px-2 py-1 rounded">
                           {log.userId}
                         </code>
                       </td>
@@ -244,7 +243,7 @@ export function AuditLogViewer({ orgId, initialLogs = [] }: AuditLogViewerProps)
                           {log.action}
                         </Badge>
                       </td>
-                      <td className="p-4 text-sm">
+                      <td className="p-4 text-sm text-gray-300">
                         {log.target}
                       </td>
                       <td className="p-4">

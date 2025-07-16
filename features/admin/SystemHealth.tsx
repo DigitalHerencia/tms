@@ -97,7 +97,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+              <div className="animate-spin rounded-full h-8 w-8 mx-auto mb-2"></div>
               <p className="text-muted-foreground">Loading system health data...</p>
             </div>
           </CardContent>
@@ -111,19 +111,16 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
       {/* Header with Refresh */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium flex items-center gap-2">
-            <Activity className="w-5 h-5" />
-            System Health Monitor
-          </h3>
+          
           <p className="text-sm text-muted-foreground">
             Last updated: {lastUpdate.toLocaleTimeString()}
           </p>
         </div>
         <Button
-          variant="outline"
           size="sm"
           onClick={refreshHealthData}
           disabled={isLoading}
+          className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
@@ -132,7 +129,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
 
       {/* System Overview */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Clock className="w-4 h-4" />
@@ -151,7 +148,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Database className="w-4 h-4" />
@@ -168,7 +165,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Server className="w-4 h-4" />
@@ -185,7 +182,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Activity className="w-4 h-4" />
@@ -208,7 +205,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
 
       {/* Resource Usage */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <MemoryStick className="w-5 h-5" />
@@ -231,8 +228,8 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
             </div>
             {healthData.memoryUsage > 85 && (
               <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
+                <AlertTriangle className="text-red-500 h-4 w-4" />
+                <AlertDescription className="text-red-500">
                   High memory usage detected. Consider reviewing memory-intensive operations.
                 </AlertDescription>
               </Alert>
@@ -240,7 +237,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className='bg-black border border-gray-200'>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Cpu className="w-5 h-5" />
@@ -264,7 +261,7 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
             {healthData.cpuUsage > 80 && (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
+                <AlertDescription className="text-red-500"> 
                   High CPU usage detected. Monitor for performance impacts.
                 </AlertDescription>
               </Alert>
@@ -274,55 +271,58 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
       </div>
 
       {/* Health Checks */}
-      <Card>
+      <Card className='bg-black border border-gray-200'>
         <CardHeader>
-          <CardTitle className="text-lg">System Health Checks</CardTitle>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-white" />
+            <CardTitle className="text-lg">System Health Checks</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent >
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">API Endpoints</p>
                 <p className="text-xs text-muted-foreground">All endpoints responding</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">Background Jobs</p>
                 <p className="text-xs text-muted-foreground">Queue processing normally</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">File Storage</p>
                 <p className="text-xs text-muted-foreground">Storage accessible</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">Email Service</p>
                 <p className="text-xs text-muted-foreground">Sending notifications</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">Cache System</p>
                 <p className="text-xs text-muted-foreground">Cache hits optimal</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-3 p-3 border rounded-lg">
+
+            <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
+              <div className="bg-neutral-900">
                 <p className="font-medium text-sm">Security</p>
                 <p className="text-xs text-muted-foreground">All scans clean</p>
               </div>

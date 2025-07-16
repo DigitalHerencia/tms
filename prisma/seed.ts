@@ -118,7 +118,7 @@ async function main() {
   const load = await prisma.load.create({
     data: {
       organizationId: org.id,
-      userId: driver.userId, // Using userId to link to driver
+      driver_id: driver.id, // Using driver_id to link to driver
       vehicleId: tractor.id,
       trailerId: trailer.id,
       loadNumber: 'LD-1001',
@@ -163,7 +163,7 @@ async function main() {
     data: [
       {
         organizationId: org.id,
-        userId: driver.userId, // Using userId to link to driver
+        driver_id: driver.id, // Using driver_id to link to driver
         vehicleId: null,
         type: 'license',
         title: 'CDL License',
@@ -184,7 +184,7 @@ async function main() {
       },
       {
         organizationId: org.id,
-        userId: null, // No driver for vehicle document
+        driver_id: null, // No driver for vehicle document
         vehicleId: tractor.id,
         type: 'registration',
         title: 'Tractor Registration',
@@ -210,6 +210,8 @@ async function main() {
   await prisma.iftaReport.create({
     data: {
       organizationId: org.id,
+      quarter: 1,
+      year: 2025,
       status: 'filed',
       totalMiles: 5000,
       totalGallons: 800.123,

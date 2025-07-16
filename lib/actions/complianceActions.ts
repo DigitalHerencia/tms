@@ -48,7 +48,7 @@ export async function createComplianceDocument(
                 where: {
                     organizationId: orgId,
                     type: validatedData.type,
-                    userId: driverId,
+                    driver_id: driverId,
                     vehicleId,
                     expirationDate: { gte: new Date() },
                 },
@@ -61,7 +61,7 @@ export async function createComplianceDocument(
         const document = await db.complianceDocument.create({
             data: {
                 organizationId: orgId,
-                userId: driverId,
+                driver_id: driverId,
                 vehicleId,
                 type: validatedData.type,
                 title: validatedData.name,
@@ -85,7 +85,7 @@ export async function createComplianceDocument(
                 updatedAt: new Date(),
             },
             include: {
-                driver: {
+                drivers: {
                     select: { id: true, firstName: true, lastName: true },
                 },
                 vehicle: {
@@ -182,7 +182,7 @@ export async function updateComplianceDocument(
             where: { id },
             data: updateData,
             include: {
-                driver: {
+                drivers: {
                     select: { id: true, firstName: true, lastName: true },
                 },
                 vehicle: {
@@ -215,8 +215,8 @@ export async function updateComplianceDocument(
                 data: {
                     organizationId: orgId,
                     userId,
-                    ...(updatedDocument.userId && {
-                        userId: updatedDocument.userId,
+                    ...(updatedDocument.driver_id && {
+                        userId: updatedDocument.driver_id,
                     }),
                     ...(updatedDocument.vehicleId && {
                         vehicleId: updatedDocument.vehicleId,
@@ -491,7 +491,7 @@ export async function generateExpirationAlertsAction(daysAhead = 30) {
             },
             select: {
                 id: true,
-                userId: true,
+                driver_id: true,
                 vehicleId: true,
                 title: true,
                 expirationDate: true,
@@ -515,7 +515,7 @@ export async function generateExpirationAlertsAction(daysAhead = 30) {
                 await db.complianceAlert.create({
                     data: {
                         organizationId: orgId,
-                        userId: doc.userId || undefined,
+                        userId: doc.driver_id || undefined,
                         vehicleId: doc.vehicleId || undefined,
                         type: "expiring_document",
                         severity: daysLeft <= 7 ? "high" : "medium",

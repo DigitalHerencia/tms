@@ -6,7 +6,7 @@
  */
 
 import { Suspense } from 'react';
-import { Shield, Users, CreditCard, FileText, Settings, Activity } from 'lucide-react';
+import { Shield, Users, CreditCard, FileText, Settings, Activity, BarChart } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ import UserManagementDashboard from '@/features/admin/users/UserManagementDashbo
 import { AuditLogViewer } from '@/features/admin/AuditLogViewer';
 import { SystemHealth } from '@/features/admin/SystemHealth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { BulkUserActions } from '@/features/admin/users/BulkUserActions';
 
 export default async function AdminPage({
   params,
@@ -43,51 +44,7 @@ export default async function AdminPage({
         </div>
       </div>
 
-      {/* Quick Stats Row */}
-      <Suspense fallback={<LoadingSpinner />}>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">System Status</CardTitle>
-              <Activity className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">Online</div>
-              <p className="text-xs text-green-500">All systems operational</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Active Users</CardTitle>
-              <Users className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Loading...</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Subscription</CardTitle>
-              <CreditCard className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Loading...</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Audit Events</CardTitle>
-              <FileText className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Last 24 hours</p>
-            </CardContent>
-          </Card>
-        </div>
-      </Suspense>
+    
 
       {/* Main Admin Interface */}
       <Tabs defaultValue="overview" className="w-full">
@@ -115,20 +72,43 @@ export default async function AdminPage({
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
-          <Suspense fallback={<LoadingSpinner />}>
-            <AdminOverview orgId={orgId} />
-          </Suspense>
+          <Card className="border border-gray-200 bg-black">
+            <CardHeader>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <BarChart className="h-8 w-8" />
+                  Organization Statistics
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Key metrics and performance indicators
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminOverview orgId={orgId} />
+              </Suspense>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="users" className="mt-6 space-y-6">
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
-              <CardTitle className="text-white">User Management</CardTitle>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <Users className="h-8 w-8" />
+                  User Management
+                </h1>
+              </CardTitle>
               <CardDescription className="text-gray-400">
                 Manage user accounts, roles, and permissions for your organization
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className='mb-6'>
+                <BulkUserActions orgId={orgId} />
+              </div>
               <Suspense fallback={<LoadingSpinner />}>
                 <UserManagementDashboard orgId={orgId} />
               </Suspense>
@@ -137,9 +117,14 @@ export default async function AdminPage({
         </TabsContent>
 
         <TabsContent value="billing" className="mt-6 space-y-6">
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
-              <CardTitle className="text-white">Billing & Subscriptions</CardTitle>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <CreditCard className="h-8 w-8" />
+                  Billing & Subscriptions
+                </h1>
+              </CardTitle>
               <CardDescription className="text-gray-400">
                 Monitor subscription status, usage, and manage billing settings
               </CardDescription>
@@ -153,9 +138,14 @@ export default async function AdminPage({
         </TabsContent>
 
         <TabsContent value="audit" className="mt-6 space-y-6">
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
-              <CardTitle className="text-white">Audit Logs</CardTitle>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <FileText className="h-8 w-8" />
+                  Audit Logs
+                </h1>
+              </CardTitle>
               <CardDescription className="text-gray-400">
                 View system activity, user actions, and security events
               </CardDescription>
@@ -169,9 +159,14 @@ export default async function AdminPage({
         </TabsContent>
 
         <TabsContent value="system" className="mt-6 space-y-6">
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
-              <CardTitle className="text-white">System Health</CardTitle>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <Activity className="w-8 h-8" />
+                  System Health Monitor
+                </h1>
+              </CardTitle>
               <CardDescription className="text-gray-400">
                 Monitor system performance, uptime, and infrastructure status
               </CardDescription>
