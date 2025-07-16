@@ -6,11 +6,12 @@ import DriversList from '@/features/drivers/DriversList';
 // Next.js 15 async params pattern
 interface PageProps {
   params: Promise<{ orgId: string }>
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export default async function DriverListPage({ params, searchParams }: PageProps) {
   const { orgId } = await params;
+  const resolvedSearchParams = await searchParams;
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
       {/* Drivers List Header */}
@@ -20,7 +21,7 @@ export default async function DriverListPage({ params, searchParams }: PageProps
 
       {/* Driver Tabs */}
       <Suspense fallback={<DriversSkeleton />}>
-        <DriversList orgId={orgId} searchParams={searchParams} />
+        <DriversList orgId={orgId} searchParams={resolvedSearchParams} />
       </Suspense>
     </div>
   );

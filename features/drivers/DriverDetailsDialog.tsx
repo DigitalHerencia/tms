@@ -170,7 +170,7 @@ export function DriverDetailsDialog({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className="fixed inset-0 z-50 bg-neutral-900 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-black/95 backdrop-blur-xl border border-white/10 mx-auto my-8 shadow-2xl">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-neutral-900 backdrop-blur-xl border border-white/10 mx-auto my-8 shadow-2xl">
         <DialogHeader className="space-y-4 px-6 pt-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">

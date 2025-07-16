@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { VehicleCard } from '@/components/vehicles/vehicle-card';
 import { VehicleDetailsDialog } from '@/components/vehicles/vehicle-details-dialog';
 
-import AddVehicleDialog from './add-vehicle-dialog';
+import AddVehicleDialog from '../../components/vehicles/add-vehicle-dialog';
 
 interface Props {
   orgId: string;
@@ -40,28 +40,24 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
     setDetailsDialogOpen(true);
   };
 
-  const handleVehicleUpdate = (updatedVehicle: Vehicle) => {
-    setVehicles(prev => 
-      prev.map(v => v.id === updatedVehicle.id ? updatedVehicle : v)
-    );
-    setSelectedVehicle(updatedVehicle);
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-            <Input
-              placeholder="Search vehicles..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="pl-8 w-[300px]"
-            />
-          </div>
+      {/* Search and Add Vehicle */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-white/70" />
+          <Input
+            type="search"
+            placeholder="Search vehicles..."
+            className="pl-8 w-full bg-black border-muted text-white placeholder:text-white/50"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
-        <Button onClick={() => setAddDialogOpen(true)}>
+        <Button 
+          onClick={() => setAddDialogOpen(true)}
+          className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Vehicle
         </Button>
@@ -69,18 +65,21 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
 
       {filtered.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-muted-foreground mb-4">
+          <div className="text-white/70 mb-4">
             {search ? 'No vehicles found matching your search.' : 'No vehicles found.'}
           </div>
           {!search && (
-            <Button onClick={() => setAddDialogOpen(true)}>
+            <Button 
+              onClick={() => setAddDialogOpen(true)}
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Your First Vehicle
             </Button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map(vehicle => (
             <VehicleCard 
               key={vehicle.id} 
@@ -103,7 +102,6 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
           vehicle={selectedVehicle}
           open={detailsDialogOpen}
           onOpenChange={setDetailsDialogOpen}
-          onVehicleUpdate={handleVehicleUpdate}
         />
       )}
     </div>

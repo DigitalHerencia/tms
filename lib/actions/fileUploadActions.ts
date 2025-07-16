@@ -33,7 +33,7 @@ export async function saveUploadedDocument(
     await db.complianceDocument.updateMany({
       where: {
         organizationId: orgId,
-        driverId:
+        userId:
           validated.entityType === 'driver' ? validated.entityId : undefined,
         vehicleId:
           validated.entityType === 'vehicle' ? validated.entityId : undefined,
@@ -46,7 +46,7 @@ export async function saveUploadedDocument(
     const doc = await db.complianceDocument.create({
       data: {
         organizationId: orgId,
-        driverId:
+        userId:
           validated.entityType === 'driver' ? validated.entityId : undefined,
         vehicleId:
           validated.entityType === 'vehicle' ? validated.entityId : undefined,

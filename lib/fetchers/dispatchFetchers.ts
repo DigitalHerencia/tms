@@ -744,7 +744,7 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
             where: {
                 organizationId: orgId,
                 status: "pending",
-                driverId: null,
+                userId: null,
                 scheduledPickupDate: {
                     lte: threeDaysFromNow,
                 },

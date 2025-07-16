@@ -36,25 +36,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
-      {/* Page Header with Admin Button */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-400">Overview of your fleet operations</p>
-        </div>
-        {currentUser.role === SystemRoles.ADMIN && (
-          <Button asChild variant="outline" className="bg-blue-600 border-blue-500 text-white hover:bg-blue-700">
-            <Link href={`/${orgId}/dashboard/${userId}/admin`} className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Admin Dashboard
-            </Link>
-          </Button>
-        )}
-      </div>
 
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
-        <FleetOverviewHeader orgId={orgId} />
+        <FleetOverviewHeader orgId={orgId} userId={userId} />
       </Suspense>
 
       {/* Main Widgets Grid */}

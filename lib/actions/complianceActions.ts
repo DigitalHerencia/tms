@@ -48,7 +48,7 @@ export async function createComplianceDocument(
                 where: {
                     organizationId: orgId,
                     type: validatedData.type,
-                    driverId,
+                    userId: driverId,
                     vehicleId,
                     expirationDate: { gte: new Date() },
                 },
@@ -61,7 +61,7 @@ export async function createComplianceDocument(
         const document = await db.complianceDocument.create({
             data: {
                 organizationId: orgId,
-                driverId,
+                userId: driverId,
                 vehicleId,
                 type: validatedData.type,
                 title: validatedData.name,
@@ -215,8 +215,8 @@ export async function updateComplianceDocument(
                 data: {
                     organizationId: orgId,
                     userId,
-                    ...(updatedDocument.driverId && {
-                        driverId: updatedDocument.driverId,
+                    ...(updatedDocument.userId && {
+                        userId: updatedDocument.userId,
                     }),
                     ...(updatedDocument.vehicleId && {
                         vehicleId: updatedDocument.vehicleId,
@@ -491,7 +491,7 @@ export async function generateExpirationAlertsAction(daysAhead = 30) {
             },
             select: {
                 id: true,
-                driverId: true,
+                userId: true,
                 vehicleId: true,
                 title: true,
                 expirationDate: true,
@@ -515,8 +515,7 @@ export async function generateExpirationAlertsAction(daysAhead = 30) {
                 await db.complianceAlert.create({
                     data: {
                         organizationId: orgId,
-                        userId,
-                        driverId: doc.driverId || undefined,
+                        userId: doc.userId || undefined,
                         vehicleId: doc.vehicleId || undefined,
                         type: "expiring_document",
                         severity: daysLeft <= 7 ? "high" : "medium",

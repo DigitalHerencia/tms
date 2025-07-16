@@ -9,45 +9,55 @@ export type VehicleStatus =
   | 'retired';
 
 export interface Vehicle {
+  lastMaintenanceMileage: any;
   id: string;
   organizationId: string;
   type: VehicleType;
   status: VehicleStatus;
 
   // Basic Information
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
+  make?: string;
+  model?: string;
+  year?: number;
+  vin?: string;
   licensePlate?: string;
   licensePlateState?: string;
-  unitNumber?: string;
+  unitNumber: string;
 
   // Specifications
   grossVehicleWeight?: number;
   maxPayload?: number;
   fuelType?: string;
   engineType?: string;
+  fuelCapacity?: number;
 
   // Registration & Insurance
   registrationNumber?: string;
-  registrationExpiry?: Date;
+  registrationExpiration?: Date;
   insuranceProvider?: string;
   insurancePolicyNumber?: string;
-  insuranceExpiry?: Date;
-
-  // Current Assignment
-  currentUserId?: string;
-  currentLoadId?: string;
+  insuranceExpiration?: Date;
 
   // Location & Mileage
   currentLocation?: string;
   totalMileage?: number;
-  lastMaintenanceMileage?: number;
+  currentOdometer?: number;
+  lastOdometerUpdate?: Date;
 
   // Maintenance
   nextMaintenanceDate?: Date;
   nextMaintenanceMileage?: number;
+  lastInspectionDate?: Date;
+  nextInspectionDue?: Date;
+
+  // Financial
+  purchaseDate?: Date;
+  purchasePrice?: number;
+  currentValue?: number;
+
+  // Additional
+  notes?: string;
+  customFields?: Record<string, any>;
 
   // Timestamps
   createdAt: Date;
@@ -66,26 +76,48 @@ export interface Vehicle {
 }
 
 export interface VehicleFormData {
+  // Basic Information
   type: VehicleType;
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
+  unitNumber: string;
+  make?: string;
+  model?: string;
+  year?: number;
+  vin?: string;
   licensePlate?: string;
-  unitNumber?: string;
+  licensePlateState?: string;
+
+  // Specifications
   grossVehicleWeight?: number;
   maxPayload?: number;
   fuelType?: string;
   engineType?: string;
+  fuelCapacity?: number;
+
+  // Registration & Insurance
   registrationNumber?: string;
-  registrationExpiry?: string;
+  registrationExpiration?: string;
   insuranceProvider?: string;
   insurancePolicyNumber?: string;
-  insuranceExpiry?: string;
+  insuranceExpiration?: string;
+
+  // Location & Mileage
   currentLocation?: string;
   totalMileage?: number;
+  currentOdometer?: number;
+
+  // Maintenance
   nextMaintenanceDate?: string;
   nextMaintenanceMileage?: number;
+  lastInspectionDate?: string;
+  nextInspectionDue?: string;
+
+  // Financial
+  purchaseDate?: string;
+  purchasePrice?: number;
+  currentValue?: number;
+
+  // Additional
+  notes?: string;
 }
 
 export interface VehicleFilters {

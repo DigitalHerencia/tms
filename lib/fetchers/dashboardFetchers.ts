@@ -284,8 +284,8 @@ export const getDashboardData = async (
             title: `Alert ${alert.id}`,
             description: alert.message || "Compliance alert",
             severity: "medium" as const,
-            entityId: alert.driverId || alert.vehicleId || "",
-            entityType: alert.driverId
+            entityId: alert.userId || alert.vehicleId || "",
+            entityType: alert.userId
                 ? ("driver" as const)
                 : ("vehicle" as const),
             createdAt: alert.createdAt,

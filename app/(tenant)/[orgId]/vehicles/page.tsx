@@ -1,44 +1,36 @@
 import { Suspense } from 'react';
-
 import { listVehiclesByOrg } from '@/lib/fetchers/vehicleFetchers';
-import VehicleListClient from '@/features/vehicles/vehicle-list-client';
-import type { Vehicle as BaseVehicle } from '@/types/vehicles';
-
-// Cache control for auth-required dynamic pages
-export const dynamic = 'force-dynamic';
-
-// Define the complete vehicle type with required fields
-interface CompleteVehicle extends BaseVehicle {
-  organizationId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  unitNumber: string;
-}
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
+import VehiclesClient from './vehicles-client';
 
 interface VehiclesPageProps {
   params: Promise<{ orgId: string }>;
 }
 
-export default async function VehiclesPage({
-  params,
-}: VehiclesPageProps) {
+export default async function VehiclesPage({ params }: VehiclesPageProps) {
   const { orgId } = await params;
-  const vehicles = await listVehiclesByOrg(orgId);
-
-  // Filter and type assert the vehicles to ensure they have all required fields
-  const validVehicles = vehicles.vehicles.filter((v): v is CompleteVehicle => {
-    return (
-      typeof v.unitNumber === 'string' &&
-      v.unitNumber !== '' &&
-      typeof v.organizationId === 'string' &&
-      v.createdAt instanceof Date &&
-      v.updatedAt instanceof Date
-    );
-  });
+  const { vehicles } = await listVehiclesByOrg(orgId);
 
   return (
-    <Suspense>
-      <VehicleListClient orgId={orgId} initialVehicles={validVehicles} />
-    </Suspense>
+    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Fleet Vehicles</h1>
+          <p className="text-white/70">Manage your fleet vehicles and their information</p>
+        </div>
+        <Link href={`/${orgId}/vehicles/new`}>
+          <button className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800 inline-flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Vehicle
+          </button>
+        </Link>
+      </div>
+      
+      <Suspense fallback={<div className="text-white/70">Loading vehicles...</div>}>
+        <VehiclesClient orgId={orgId} initialVehicles={vehicles} />
+      </Suspense>
+    </div>
   );
 }

@@ -80,7 +80,10 @@ export default async function EditLoadPage({ params, searchParams }: PageProps) 
     rate: Number(load.rate) || 0,
     miles: load.estimatedMiles || 0,
     notes: load.notes || '',
-    driverId: load.driverId || '',
+    driverId:
+      typeof load.driver === 'string'
+        ? load.driver
+        : load.driver?.id || '',
     vehicleId: load.vehicleId || '',
     trailerId: load.trailerId || '',
   };

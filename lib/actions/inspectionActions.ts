@@ -34,7 +34,6 @@ export async function scheduleVehicleInspection(
                 organizationId: user.organizationId,
                 userId: user.userId,
                 vehicleId: validated.vehicleId,
-                driverId: undefined,
                 type: "inspection_due",
                 severity: "low",
                 title: "Vehicle Inspected",

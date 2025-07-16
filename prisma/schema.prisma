@@ -32,8 +32,6 @@ model Organization {
   auditLogs           AuditLog[]
   complianceAlerts    ComplianceAlert[]
   complianceDocuments ComplianceDocument[]
-  // id REMOVED: organizations are not tied to a specific user
-  // All user-organization relationships are managed via OrganizationMembership
   drivers             Driver[]
   IftaFuelPurchase    IftaFuelPurchase[]
   iftaReports         IftaReport[]
@@ -48,34 +46,31 @@ model Organization {
 }
 
 model User {
-  id                 String                   @id @default(uuid())
-  // id removed: use id as Clerk userId
-  organizationId     String?                  @map("organization_id")
-  email              String?
-  firstName          String?                  @map("first_name")
-  lastName           String?                  @map("last_name")
-  profileImage       String?                  @map("profile_image")
-  role               UserRole                 @default(viewer)
-  permissions        Json?                    @default("[]")
-  isActive           Boolean                  @default(true) @map("is_active")
-  lastLogin          DateTime?                @map("last_login")
-  createdAt          DateTime                 @default(now()) @map("created_at")
-  updatedAt          DateTime                 @updatedAt @map("updated_at")
-  onboardingSteps    Json?                    @default("{}") @map("onboarding_steps")
-  onboardingComplete Boolean                  @default(false) @map("onboarding_complete")
-  preferences        Json?                    @default("{}") @map("preferences")
-  auditLogs          AuditLog[]
-  ComplianceDocument ComplianceDocument[]     @relation("VerifiedByUser")
-  driver             Driver?
-  IftaReport         IftaReport[]             @relation("SubmittedByUser")
-  memberships        OrganizationMembership[]
-  organization       Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  // Relations for IFTA features
-  iftaPDFGenerationLogs         IftaPDFGenerationLog[] @relation("UserIftaPDFGenerationLogs")
-  generatedIftaReportPDFs       IftaReportPDF[]        @relation("UserGeneratedIftaReportPDFs")
-  calculatedIftaTaxCalculations IftaTaxCalculation[]   @relation("CalculatedByUser")
-  validatedIftaTaxCalculations  IftaTaxCalculation[]   @relation("ValidatedByUser")
+  id                            String                   @id @default(uuid())
+  organizationId                String?                  @map("organization_id")
+  email                         String?
+  firstName                     String?                  @map("first_name")
+  lastName                      String?                  @map("last_name")
+  profileImage                  String?                  @map("profile_image")
+  role                          UserRole                 @default(viewer)
+  permissions                   Json?                    @default("[]")
+  isActive                      Boolean                  @default(true) @map("is_active")
+  lastLogin                     DateTime?                @map("last_login")
+  createdAt                     DateTime                 @default(now()) @map("created_at")
+  updatedAt                     DateTime                 @updatedAt @map("updated_at")
+  onboardingSteps               Json?                    @default("{}") @map("onboarding_steps")
+  onboardingComplete            Boolean                  @default(false) @map("onboarding_complete")
+  preferences                   Json?                    @default("{}") @map("preferences")
+  iftaPDFGenerationLogs         IftaPDFGenerationLog[]   @relation("UserIftaPDFGenerationLogs")
+  generatedIftaReportPDFs       IftaReportPDF[]          @relation("UserGeneratedIftaReportPDFs")
+  calculatedIftaTaxCalculations IftaTaxCalculation[]     @relation("CalculatedByUser")
+  validatedIftaTaxCalculations  IftaTaxCalculation[]     @relation("ValidatedByUser")
+  auditLogs                     AuditLog[]
+  ComplianceDocument            ComplianceDocument[]     @relation("VerifiedByUser")
+  driver                        Driver?
+  IftaReport                    IftaReport[]             @relation("SubmittedByUser")
+  memberships                   OrganizationMembership[]
+  organization                  Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
   @@index([email])
@@ -124,7 +119,7 @@ model Vehicle {
 model Driver {
   id                    String               @id @default(uuid())
   organizationId        String               @map("organization_id")
-  userId                String               @unique @map("user_id")
+  userId                String?              @unique @map("user_id")
   employeeId            String?              @map("employee_id")
   firstName             String               @map("first_name")
   lastName              String               @map("last_name")
@@ -151,9 +146,9 @@ model Driver {
   emergencyContact2     String?              @map("emergency_contact_2")
   emergencyContact3     String?              @map("emergency_contact_3")
   medicalCardExpiration DateTime?            @map("medical_card_exp") @db.Date
-  complianceDocuments   ComplianceDocument[]
+  compliance_documents  ComplianceDocument[]
   organization          Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user                  User                 @relation(fields: [userId], references: [id])
+  user                  User?                @relation(fields: [userId], references: [id])
   loads                 Load[]
 
   @@unique([organizationId, employeeId], name: "drivers_org_employee_unique")
@@ -167,7 +162,7 @@ model Driver {
 model Load {
   id                    String            @id @default(uuid())
   organizationId        String            @map("organization_id")
-  userId                String?           @map("user_id")
+  driver_id             String?
   vehicleId             String?           @map("vehicle_id")
   trailerId             String?           @map("trailer_id")
   loadNumber            String            @map("load_number")
@@ -210,21 +205,21 @@ model Load {
   lastModifiedBy        String?           @map("last_modified_by")
   priority              LoadPriority      @default(medium)
   tags                  String[]          @default([])
+  loadDocuments         LoadDocument[]
   statusEvents          LoadStatusEvent[]
-  driver                Driver?           @relation(fields: [userId], references: [userId])
+  drivers               Driver?           @relation(fields: [driver_id], references: [id])
   organization          Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   trailer               Vehicle?          @relation("TrailerLoads", fields: [trailerId], references: [id])
   vehicle               Vehicle?          @relation("VehicleLoads", fields: [vehicleId], references: [id])
-  loadDocuments         LoadDocument[]
 
   @@unique([organizationId, loadNumber], name: "loads_org_load_unique")
   @@index([organizationId])
-  @@index([userId])
   @@index([vehicleId])
   @@index([trailerId])
   @@index([status])
   @@index([loadNumber])
   @@index([scheduledPickupDate], map: "loads_scheduled_pickup_idx")
+  @@index([driver_id])
   @@map("loads")
 }
 
@@ -247,7 +242,7 @@ model LoadStatusEvent {
 model ComplianceDocument {
   id               String       @id @default(uuid())
   organizationId   String       @map("organization_id")
-  userId           String?      @map("user_id")
+  driver_id        String?
   vehicleId        String?      @map("vehicle_id")
   type             String
   title            String
@@ -268,24 +263,26 @@ model ComplianceDocument {
   createdAt        DateTime     @default(now()) @map("created_at")
   updatedAt        DateTime     @updatedAt @map("updated_at")
   metadata         Json?        @default("{}")
-  driver           Driver?      @relation(fields: [userId], references: [userId])
+  drivers          Driver?      @relation(fields: [driver_id], references: [id])
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   vehicle          Vehicle?     @relation(fields: [vehicleId], references: [id])
   verifiedByUser   User?        @relation("VerifiedByUser", fields: [verifiedBy], references: [id])
 
   @@index([organizationId])
-  @@index([userId])
   @@index([vehicleId])
   @@index([verifiedBy])
   @@index([type])
   @@index([status])
   @@index([expirationDate], map: "compliance_documents_expiration_idx")
+  @@index([driver_id])
   @@map("compliance_documents")
 }
 
 model IftaReport {
   id              String               @id @default(uuid())
   organizationId  String               @map("organization_id")
+  quarter         Int
+  year            Int
   status          String               @default("draft")
   totalMiles      Int?                 @map("total_miles")
   totalGallons    Decimal?             @map("total_gallons") @db.Decimal(10, 3)
@@ -309,6 +306,7 @@ model IftaReport {
   @@index([submittedBy])
   @@index([status])
   @@index([dueDate])
+  @@index([quarter, year])
   @@map("ifta_reports")
 }
 
@@ -401,6 +399,7 @@ model ComplianceAlert {
   id               String       @id @default(uuid())
   organizationId   String       @map("organization_id")
   userId           String?      @map("user_id")
+  driver_id        String?
   vehicleId        String?      @map("vehicle_id")
   type             String
   severity         String
@@ -424,6 +423,7 @@ model ComplianceAlert {
   @@index([organizationId])
   @@index([vehicleId])
   @@index([userId])
+  @@index([driver_id])
   @@map("compliance_alerts")
 }
 
@@ -485,7 +485,7 @@ model IftaPDFGenerationLog {
   completedAt    DateTime? @map("completed_at")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
-  user           User?     @relation("UserIftaPDFGenerationLogs", fields: [userId], references: [id])
+  user           User      @relation("UserIftaPDFGenerationLogs", fields: [userId], references: [id])
 }
 
 model IftaReportPDF {
@@ -508,7 +508,7 @@ model IftaReportPDF {
   metadata        Json?     @map("metadata")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
-  generatedByUser User?     @relation("UserGeneratedIftaReportPDFs", fields: [generatedBy], references: [id])
+  generatedByUser User      @relation("UserGeneratedIftaReportPDFs", fields: [generatedBy], references: [id])
 }
 
 model IftaTaxCalculation {
@@ -533,8 +533,8 @@ model IftaTaxCalculation {
   validatedBy      String?    @map("validated_by")
   createdAt        DateTime   @default(now()) @map("created_at")
   updatedAt        DateTime   @updatedAt @map("updated_at")
+  calculatedByUser User       @relation("CalculatedByUser", fields: [calculatedBy], references: [id])
   report           IftaReport @relation(fields: [reportId], references: [id])
-  calculatedByUser User?      @relation("CalculatedByUser", fields: [calculatedBy], references: [id])
   validatedByUser  User?      @relation("ValidatedByUser", fields: [validatedBy], references: [id])
 }
 
