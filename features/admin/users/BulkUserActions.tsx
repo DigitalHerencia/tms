@@ -115,12 +115,12 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Invite Users */}
           <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
                 <UserPlus className="h-6 w-6 text-blue-500" />
                 <span>Invite Users</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="bg-black sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Mail className="h-5 w-5" />
@@ -136,6 +136,7 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   <Textarea
                     id="emails"
                     name="emails"
+                    className="bg-neutral-800 text-white mt-2"
                     placeholder="Enter email addresses separated by commas"
                     rows={4}
                     required
@@ -147,10 +148,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                 <div className="space-y-2">
                   <Label htmlFor="role">Default Role</Label>
                   <Select name="role" defaultValue="driver" required>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-neutral-800 text-white">
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-black text-white">
                       <SelectItem value="admin">Administrator</SelectItem>
                       <SelectItem value="dispatcher">Dispatcher</SelectItem>
                       <SelectItem value="driver">Driver</SelectItem>
@@ -161,10 +162,16 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   </Select>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setInviteOpen(false)}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="button"
+                    onClick={() => setInviteOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isPending}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="submit"
+                    disabled={isPending}>
                     {isPending ? "Sending..." : "Send Invitations"}
                   </Button>
                 </div>
@@ -175,12 +182,12 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Activate Users */}
           <Dialog open={activateOpen} onOpenChange={setActivateOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
                 <UserCheck className="h-6 w-6 text-green-500" />
                 <span>Activate Users</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="bg-black sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <UserCheck className="h-5 w-5" />
@@ -196,6 +203,7 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   <Textarea
                     id="userIds"
                     name="userIds"
+                    className="bg-neutral-800 text-white mt-2"
                     placeholder="Enter user IDs separated by commas (leave empty to activate all inactive users)"
                     rows={3}
                   />
@@ -204,10 +212,16 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   </p>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setActivateOpen(false)}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="button"
+                    onClick={() => setActivateOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isPending}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="submit"
+                    disabled={isPending}>
                     {isPending ? "Activating..." : "Activate Users"}
                   </Button>
                 </div>
@@ -218,12 +232,12 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Deactivate Users */}
           <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
                 <UserX className="h-6 w-6 text-red-500" />
                 <span>Deactivate Users</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="bg-black sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <UserX className="h-5 w-5" />
@@ -239,6 +253,7 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   <Textarea
                     id="userIds"
                     name="userIds"
+                    className="bg-neutral-800 text-white mt-2"
                     placeholder="Enter user IDs separated by commas"
                     rows={3}
                     required
@@ -247,16 +262,22 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                     Specify the IDs of users to deactivate
                   </p>
                 </div>
-                <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-                  <p className="text-sm text-amber-800">
+                <div>
+                  <p className="text-sm text-red-600">
                     <strong>Warning:</strong> Deactivated users will lose access to the system immediately.
                   </p>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setDeactivateOpen(false)}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="button"
+                    onClick={() => setDeactivateOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" variant="destructive" disabled={isPending}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="submit"
+                    disabled={isPending}>
                     {isPending ? "Deactivating..." : "Deactivate Users"}
                   </Button>
                 </div>
@@ -267,12 +288,12 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Export Data */}
           <Dialog open={exportOpen} onOpenChange={setExportOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
                 <Download className="h-6 w-6 text-purple-500" />
                 <span>Export Data</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="bg-black sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Download className="h-5 w-5" />
@@ -286,10 +307,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                 <div className="space-y-2">
                   <Label htmlFor="exportType">Export Type</Label>
                   <Select name="exportType" defaultValue="full">
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-neutral-800 text-white">
                       <SelectValue placeholder="Select export type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-black text-white">
                       <SelectItem value="full">Complete Organization Data</SelectItem>
                       <SelectItem value="users">Users Only</SelectItem>
                       <SelectItem value="vehicles">Vehicles Only</SelectItem>
@@ -301,10 +322,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                 <div className="space-y-2">
                   <Label htmlFor="format">Format</Label>
                   <Select name="format" defaultValue="csv">
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-neutral-800 text-white">
                       <SelectValue placeholder="Select format" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-black text-white">
                       <SelectItem value="csv">CSV</SelectItem>
                       <SelectItem value="json">JSON</SelectItem>
                       <SelectItem value="xlsx">Excel</SelectItem>
@@ -312,10 +333,16 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
                   </Select>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setExportOpen(false)}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="button"
+                    onClick={() => setExportOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isPending}>
+                  <Button
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                    type="submit"
+                    disabled={isPending}>
                     {isPending ? "Exporting..." : "Export Data"}
                   </Button>
                 </div>

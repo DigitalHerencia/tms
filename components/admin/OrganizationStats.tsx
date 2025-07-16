@@ -75,22 +75,11 @@ export async function OrganizationStats({ orgId }: { orgId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-white">Organization Statistics</h3>
-          <p className="text-sm text-gray-400">Key metrics and performance indicators</p>
-        </div>
-        <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">
-          <BarChart className="h-3 w-3 mr-1" />
-          Analytics
-        </Badge>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {statsData.map((stat, index) => {
           const IconComponent = stat.icon;
           return (
-            <Card key={index} className="border-gray-200 bg-black hover:bg-neutral-900 transition-colors">
+            <Card key={index} className="border border-gray-200 bg-black hover:bg-neutral-900 transition-colors">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-white">{stat.title}</CardTitle>
                 <IconComponent className={`h-4 w-4 ${stat.color}`} />
@@ -125,7 +114,7 @@ export async function OrganizationStats({ orgId }: { orgId: string }) {
       </div>
 
       {/* Additional Summary Card */}
-      <Card className="border-gray-200 bg-black">
+      <Card className="border border-gray-200 bg-black">
         <CardHeader>
           <CardTitle className="text-white">Organization Health Score</CardTitle>
         </CardHeader>

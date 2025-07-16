@@ -515,7 +515,7 @@ export async function assignDriverAction(
         await tx.load.update({
           where: { id: loadId },
           data: {
-            userId: driverId,
+            driver_id: driverId,
             vehicleId: vehicleId || null,
             trailerId: trailerId || null,
             updatedAt: new Date(),
@@ -621,7 +621,7 @@ export async function unassignDriverAction(
           tx.load.update({
             where: { id: load.id },
             data: {
-              userId: null,
+              driver_id: null,
               status: load.status === 'assigned' ? 'pending' : load.status,
               updatedAt: new Date(),
             },

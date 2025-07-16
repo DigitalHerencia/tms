@@ -81,9 +81,9 @@ export default async function EditLoadPage({ params, searchParams }: PageProps) 
     miles: load.estimatedMiles || 0,
     notes: load.notes || '',
     driverId:
-      typeof load.driver === 'string'
-        ? load.driver
-        : load.driver?.id || '',
+      typeof load.drivers === 'string'
+        ? load.drivers
+        : load.drivers?.id || '',
     vehicleId: load.vehicleId || '',
     trailerId: load.trailerId || '',
   };

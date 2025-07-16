@@ -1,5 +1,3 @@
-
-
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -707,7 +705,7 @@ export async function getAdvancedAnalytics(
         const currentData = await prisma.load.findMany({
             where: whereClause,
             include: {
-                driver: {
+                drivers: {
                     select: {
                         id: true,
                         firstName: true,
@@ -750,7 +748,7 @@ export async function getAdvancedAnalytics(
             previousData = await prisma.load.findMany({
                 where: previousWhereClause,
                 include: {
-                    driver: {
+                    drivers: {
                         select: {
                             id: true,
                             firstName: true,
@@ -1365,5 +1363,7 @@ function getDateKey(date: Date, timeRange: string): string {
 // (at line 912, 954, 1304, 1310, 1313)
 // Replace assignments of type 'string | undefined' to 'string' with fallback or checks
 // Example:
+// let myString: string = possiblyUndefinedString;
+// =>
 // let myString: string = possiblyUndefinedString;
 // =>

@@ -136,7 +136,7 @@ export async function assignLoadAction(data: LoadAssignmentInput) {
         organizationId: orgId,
       },
       data: {
-        userId: validated.driverId,
+        driver_id: validated.driverId,
         vehicleId: validated.vehicleId,
         trailerId: validated.trailerId ?? null,
         updatedAt: new Date(),

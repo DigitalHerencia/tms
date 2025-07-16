@@ -1,5 +1,3 @@
-
-
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -107,7 +105,7 @@ async function _getComplianceDashboard(organizationId: string): Promise<any> {
                     status: "active",
                 },
                 include: {
-                    complianceDocuments: {
+                    compliance_documents: {
                         select: {
                             type: true,
                             status: true,
@@ -154,7 +152,7 @@ async function _getComplianceDashboard(organizationId: string): Promise<any> {
         const driversInCompliance = driverCompliance.filter(driver => {
             const requiredDocs = ["license", "medical_certificate", "drug_test"]
             return requiredDocs.every(docType => {
-                const doc = driver.complianceDocuments.find(
+                const doc = driver.compliance_documents.find(
                     d => d.type === docType
                 )
                 return (
@@ -254,7 +252,7 @@ export async function getDriverComplianceStatuses(
         const drivers = await prisma.driver.findMany({
             where: { organizationId, status: "active" },
             include: {
-                complianceDocuments: true,
+                compliance_documents: true,
                 loads: {
                     where: {
                         status: {
@@ -394,7 +392,7 @@ export async function getComplianceDocuments(
             prisma.complianceDocument.findMany({
                 where,
                 include: {
-                    driver: {
+                    drivers: {
                         select: {
                             id: true,
                             firstName: true,
@@ -473,7 +471,7 @@ export async function getComplianceDocumentById(documentId: string) {
         const document = await prisma.complianceDocument.findUnique({
             where: { id: documentId },
             include: {
-                driver: {
+                drivers: {
                     select: {
                         id: true,
                         firstName: true,
@@ -578,7 +576,7 @@ export async function getPaginatedComplianceDocuments(
             prisma.complianceDocument.findMany({
                 where,
                 include: {
-                    driver: {
+                    drivers: {
                         select: {
                             id: true,
                             firstName: true,
@@ -902,7 +900,7 @@ export async function getHOSViolations(
                     status: "pending", // Pending could indicate violations
                 },
                 include: {
-                    driver: {
+                    drivers: {
                         select: {
                             id: true,
                             firstName: true,
@@ -926,21 +924,25 @@ export async function getHOSViolations(
             }),
         ])
 
-        const transformedViolations = violations.map(doc => ({
-            id: doc.id,
-            type: "other" as const,
-            description: doc.notes || "HOS compliance review required",
-            severity: "minor" as const,
-            timestamp: doc.createdAt,
-            resolved: false,
-            driver: doc.driver
-                ? {
-                      id: doc.driver.id,
-                      name: `${doc.driver.firstName} ${doc.driver.lastName}`,
-                  }
-                : null,
-            status: "open" as const,
-        }))
+        const transformedViolations = violations.map(doc => {
+            let driver = null;
+            if (Array.isArray(doc.drivers) && doc.drivers.length > 0) {
+                driver = {
+                    id: doc.drivers[0].id,
+                    name: `${doc.drivers[0].firstName} ${doc.drivers[0].lastName}`,
+                };
+            }
+            return {
+                id: doc.id,
+                type: "other" as const,
+                description: doc.notes || "HOS compliance review required",
+                severity: "minor" as const,
+                timestamp: doc.createdAt,
+                resolved: false,
+                driver,
+                status: "open" as const,
+            }
+        })
 
         return {
             success: true,
@@ -1043,7 +1045,7 @@ export async function getExpiringDocuments(
                 },
             },
             include: {
-                driver: {
+                drivers: {
                     select: { id: true, firstName: true, lastName: true },
                 },
                 vehicle: { select: { id: true, unitNumber: true } },

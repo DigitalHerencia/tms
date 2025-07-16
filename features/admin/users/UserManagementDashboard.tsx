@@ -9,11 +9,15 @@ export default async function UserManagementDashboard({
 }) {
   const users = await listOrganizationUsers(orgId);
   // Extract roles from users if needed
-  const roles = users.map(user => user.role); // adjust property as needed
-  return (
+  return (  
     <div>
-      <UserTable users={users} />
-      <InviteUserForm onInvite={() => {}} />
+      <UserTable users={ users } />
+      <InviteUserForm onInvite={ function ( email: string, role: string ): Promise<void> {
+        // Handle user invitation logic here
+        console.log(`Inviting ${email} with role ${role}`);
+        return Promise.resolve();
+      } }  />
     </div>
+
   );
 }

@@ -253,7 +253,7 @@ export async function listLoadsByOrg(
             db.load.findMany({
                 where,
                 include: {
-                    driver: {
+                    drivers: {
                         select: {
                             id: true,
                             firstName: true,
@@ -315,7 +315,7 @@ export async function getActiveLoadsForDispatchBoard(orgId: string) {
                 },
             },
             include: {
-                driver: {
+                drivers: {
                     select: {
                         id: true,
                         firstName: true,
@@ -730,7 +730,7 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
                 loadNumber: true,
                 customerName: true,
                 scheduledPickupDate: true,
-                driver: {
+                drivers: {
                     select: {
                         firstName: true,
                         lastName: true,
@@ -744,7 +744,7 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
             where: {
                 organizationId: orgId,
                 status: "pending",
-                userId: null,
+                driver_id: null,
                 scheduledPickupDate: {
                     lte: threeDaysFromNow,
                 },
@@ -772,7 +772,7 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
                 loadNumber: true,
                 customerName: true,
                 scheduledDeliveryDate: true,
-                driver: {
+                drivers: {
                     select: {
                         firstName: true,
                         lastName: true,
@@ -789,8 +789,8 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
                 severity: "high",
                 message: `Load ${load.loadNumber} pickup is overdue`,
                 details: `Customer: ${load.customerName}, Driver: ${
-                    load.driver
-                        ? `${load.driver.firstName} ${load.driver.lastName}`
+                    load.drivers
+                        ? `${load.drivers.firstName} ${load.drivers.lastName}`
                         : "Unassigned"
                 }`,
                 timestamp: new Date(),
@@ -823,8 +823,8 @@ export async function getLoadAlerts(orgId: string, severity?: string[]) {
                 details: `Customer: ${
                     load.customerName
                 }, Due: ${load.scheduledDeliveryDate?.toLocaleDateString()}, Driver: ${
-                    load.driver
-                        ? `${load.driver.firstName} ${load.driver.lastName}`
+                    load.drivers
+                        ? `${load.drivers.firstName} ${load.drivers.lastName}`
                         : "Unassigned"
                 }`,
                 timestamp: new Date(),
@@ -954,7 +954,7 @@ export const getLoadDetails = unstable_cache(
         return db.load.findFirst({
             where: { id: loadId, organizationId: orgId },
             include: {
-                driver: true,
+                drivers: true,
                 vehicle: true,
                 trailer: true,
                 statusEvents: { orderBy: { timestamp: "desc" } },
