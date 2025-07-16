@@ -41,9 +41,7 @@ export interface Load {
   tags?: string[];
   createdAt: Date;
   updatedAt: Date;
-  createdBy?: string;
-  lastModifiedBy?: string;
-  statusEvents?: LoadStatusEvent[];
+  meta?: AssignmentMeta;
 }
 
 export type LoadStatus =
@@ -78,7 +76,7 @@ export interface LoadStatusEvent {
   notes?: string;
   automaticUpdate: boolean;
   source: 'system' | 'driver' | 'dispatcher' | 'customer' | 'eld';
-  createdBy?: string;
+  meta?: AssignmentMeta;
 }
 
 export interface TrackingUpdate {
@@ -107,7 +105,7 @@ export interface LoadAssignedDriver {
   licenseNumber?: string;
   cdlClass?: string;
   assignedAt: Date;
-  assignedBy: string;
+  meta?: AssignmentMeta;
 }
 
 export interface LoadAssignedVehicle {
@@ -119,7 +117,12 @@ export interface LoadAssignedVehicle {
   vin: string;
   licensePlate: string;
   assignedAt: Date;
-  assignedBy: string;
+  meta?: AssignmentMeta;
+}
+
+export interface AssignmentMeta {
+  createdBy?: string;
+  assignedBy?: string;
 }
 
 export interface LoadAssignedTrailer {
@@ -132,7 +135,7 @@ export interface LoadAssignedTrailer {
   vin: string;
   licensePlate: string;
   assignedAt: Date;
-  assignedBy: string;
+  meta?: AssignmentMeta;
 }
 
 export interface EquipmentRequirement {
@@ -187,7 +190,7 @@ export interface BrokerInfo {
   phone?: string;
   email?: string;
   mcNumber?: string;
-  dotNumber?: string;
+  meta?: AssignmentMeta;
   brokerageRate?: number;
   commissionRate?: number;
 }
@@ -199,7 +202,7 @@ export interface FactoringInfo {
   phone?: string;
   email?: string;
   factorRate?: number;
-  advanceRate?: number;
+  meta?: AssignmentMeta;
 }
 
 export interface LoadAlert {
@@ -211,7 +214,7 @@ export interface LoadAlert {
   acknowledged: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: Date;
-  createdAt: Date;
+  meta?: AssignmentMeta;
   autoResolve: boolean;
   resolvedAt?: Date;
 }
@@ -224,7 +227,7 @@ export interface Customer {
   phone?: string;
   address?: string;
   city?: string;
-  state?: string;
+  meta?: AssignmentMeta;
   zipCode?: string;
   mcNumber?: string;
   dotNumber?: string;

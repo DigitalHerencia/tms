@@ -55,6 +55,7 @@ import type {
     LoadDocument,
     Rate,
     TrackingUpdate,
+    AssignmentMeta,
 } from "@/types/dispatch"
 
 interface Driver {
@@ -109,9 +110,7 @@ interface Load {
     tags?: string[]
     createdAt: Date
     updatedAt: Date
-    createdBy?: string
-    lastModifiedBy?: string
-    statusEvents?: LoadStatusEvent[]
+    meta?: AssignmentMeta
 }
 
 interface LoadDetailsDialogProps {

@@ -4,6 +4,7 @@
 
 import { useDispatchRealtime } from "@/hooks/use-dispatch-realtime"
 import type { $Enums, LoadPriority, LoadStatusEvent } from "@prisma/client"
+import type { AssignmentMeta } from '@/types/dispatch';
 import {
     Activity,
     BarChart3,
@@ -111,7 +112,7 @@ interface Load {
     tags?: string[]
     createdAt: Date
     updatedAt: Date
-    createdBy?: string
+    meta?: AssignmentMeta
     lastModifiedBy?: string
     statusEvents?: LoadStatusEvent[]
 }
