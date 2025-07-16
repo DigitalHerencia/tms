@@ -1,5 +1,3 @@
-
-
 import { HosEntry, HosLog, HosViolation } from "@/types/compliance"
 
 export interface DriverHOSStatus {
@@ -143,33 +141,36 @@ export function calculateHosStatus(
         violations.push({
             id: "11",
             type: "11_hour",
-            description: "Exceeded 11-hour driving limit",
-            severity: "major",
-            timestamp: now,
-            resolved: false,
-            status: "open",
+            deviceManufacturer: "",
+            deviceModel: "",
+            firmwareVersion: "",
+            dataTransferMethod: "web",
+            lastSyncAt: now,
+            dataQuality: "poor",
         })
     }
     if (usedOnDuty > ON_DUTY_LIMIT) {
         violations.push({
             id: "14",
             type: "14_hour",
-            description: "Exceeded 14-hour on-duty limit",
-            severity: "major",
-            timestamp: now,
-            resolved: false,
-            status: "open",
+            deviceManufacturer: "",
+            deviceModel: "",
+            firmwareVersion: "",
+            dataTransferMethod: "web",
+            lastSyncAt: now,
+            dataQuality: "poor",
         })
     }
     if (cycleUsed > CYCLE_LIMIT) {
         violations.push({
             id: "70",
             type: "70_hour",
-            description: "Exceeded 70-hour 8-day limit",
-            severity: "major",
-            timestamp: now,
-            resolved: false,
-            status: "open",
+            deviceManufacturer: "",
+            deviceModel: "",
+            firmwareVersion: "",
+            dataTransferMethod: "web",
+            lastSyncAt: now,
+            dataQuality: "poor",
         })
     }
     // Only check for 11-hour violation for today
@@ -177,11 +178,12 @@ export function calculateHosStatus(
         violations.push({
             id: "11",
             type: "11_hour",
-            description: "Exceeded 11 hours driving in a day",
-            severity: "major",
-            timestamp: now,
-            resolved: false,
-            status: "open",
+            deviceManufacturer: "",
+            deviceModel: "",
+            firmwareVersion: "",
+            dataTransferMethod: "web",
+            lastSyncAt: now,
+            dataQuality: "poor",
         })
     }
 
