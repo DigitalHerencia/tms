@@ -644,6 +644,26 @@ Manage company information, system preferences, and user roles in the Settings m
     what their role permits, so assign roles carefully based on job function. (See the Admin Guide for
     more about roles and permissions.)
 
+# Dispatch Domain: Quick Reference
+
+- **Dispatchers:**
+  - Use the Dispatch module to create, assign, and manage loads.
+  - Assign drivers and vehicles from dropdowns; update statuses as loads progress.
+  - Use filters and color-coding to track load status and priorities.
+  - All actions are permission-controlled; only dispatchers/admins can assign or edit loads.
+
+- **Admins:**
+  - Oversee all dispatch operations and user assignments.
+  - Review audit logs for dispatch activity.
+  - Ensure all users have correct roles and permissions.
+
+- **Best Practices:**
+  - Keep driver/vehicle lists up to date for accurate assignments.
+  - Use the dispatch board for real-time status and quick edits.
+  - Refer to the [Dispatch Management Guide](../MODULE_GUIDES/dispatch.md) for advanced features.
+
+See `docs/dispatch-domain-audit-report.md` for a full summary of the audit and improvements.
+
 # Auth Domain Audit & Refactor (2025-07)
 
 ## Feature Changes

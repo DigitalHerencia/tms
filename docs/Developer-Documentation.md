@@ -585,3 +585,15 @@ All tenant-specific pages are now under:
 ## Testing
 - TypeScript, ESLint, and runtime tests pass for all auth domain files.
 - Manual validation recommended for new business logic as it is implemented.
+
+## Dispatch Domain Audit Summary
+
+The dispatch domain was fully audited and refactored for maintainability, type safety, and production readiness. All UI is in `components/dispatch/`, business logic in `features/dispatch/`, server actions in `lib/actions/dispatchActions.ts`, fetchers in `lib/fetchers/dispatchFetchers.ts`, types in `types/dispatch.ts`, and schemas in `schemas/dispatch.ts`.
+
+- **RBAC:** Dispatchers (`org:dispatcher`) can create/manage loads, assign drivers/vehicles, and monitor operations. Permissions are enforced via Clerk and checked in server actions and fetchers.
+- **API:** All data mutations and retrievals use server actions/fetchers, not REST endpoints, for type safety and SSR.
+- **No dead code or legacy files remain.**
+- **No circular dependencies or unused exports.**
+- **Production ready:** All checklist items complete.
+
+See `docs/dispatch-domain-audit-report.md` for full details.

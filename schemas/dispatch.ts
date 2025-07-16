@@ -6,6 +6,7 @@
 import { z } from 'zod';
 
 import { addressSchema, contactSchema } from './shared';
+import { AssignmentMeta } from '@/types/dispatch';
 
 // Location validation schema
 export const locationSchema = z.object({
@@ -152,7 +153,10 @@ export const createLoadSchema = z.object({
   specialInstructions: z.string().optional(),
   brokerInfo: brokerInfoSchema.optional(),
   tags: z.array(z.string()).optional(),
-  createdBy: z.string().optional(),
+  meta: z.object({
+    createdBy: z.string().optional(),
+    assignedBy: z.string().optional(),
+  }).optional(),
   lastModifiedBy: z.string().optional(),
   statusEvents: z
     .array(
@@ -185,7 +189,10 @@ export const createLoadSchema = z.object({
         notes: z.string().optional(),
         automaticUpdate: z.boolean().optional(),
         source: z.string().optional(),
-        createdBy: z.string().optional(),
+        meta: z.object({
+          createdBy: z.string().optional(),
+          assignedBy: z.string().optional(),
+        }).optional(),
       })
     )
     .optional(),
@@ -257,7 +264,10 @@ export const updateLoadSchema = z.object({
   specialInstructions: z.string().optional(),
   brokerInfo: brokerInfoSchema.optional(),
   tags: z.array(z.string()).optional(),
-  createdBy: z.string().optional(),
+  meta: z.object({
+    createdBy: z.string().optional(),
+    assignedBy: z.string().optional(),
+  }).optional(),
   lastModifiedBy: z.string().optional(),
   statusEvents: z
     .array(
@@ -290,7 +300,10 @@ export const updateLoadSchema = z.object({
         notes: z.string().optional(),
         automaticUpdate: z.boolean().optional(),
         source: z.string().optional(),
-        createdBy: z.string().optional(),
+        meta: z.object({
+          createdBy: z.string().optional(),
+          assignedBy: z.string().optional(),
+        }).optional(),
       })
     )
     .optional(),

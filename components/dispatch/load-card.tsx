@@ -2,6 +2,7 @@
 
 import { MapPin, Calendar, User, Truck } from 'lucide-react';
 import type { LoadStatus, LoadPriority, LoadStatusEvent } from '@prisma/client';
+import type { AssignmentMeta } from '@/types/dispatch';
 
 import {
   Card,
@@ -64,7 +65,7 @@ interface Load {
   tags?: string[];
   createdAt: Date;
   updatedAt: Date;
-  createdBy?: string;
+  meta?: AssignmentMeta;
   lastModifiedBy?: string;
   statusEvents?: LoadStatusEvent[];
 }
