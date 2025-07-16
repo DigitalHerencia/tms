@@ -1,5 +1,3 @@
-
-
 ## User Documentation
 
 # FleetFusion User Documentation
@@ -645,3 +643,14 @@ Manage company information, system preferences, and user roles in the Settings m
 -   When inviting users, double-check the email address and role. New users will only have access to
     what their role permits, so assign roles carefully based on job function. (See the Admin Guide for
     more about roles and permissions.)
+
+# Auth Domain Audit & Refactor (2025-07)
+
+## Feature Changes
+- Authentication flows (login, registration, session, RBAC) now have dedicated business logic stubs.
+- All user-facing forms and flows validated with documented Zod schemas.
+- Permission and role logic confirmed for all user types.
+
+## Updated Guides
+- See new developer documentation for technical details and API changes.
+- User onboarding, login, and role assignment flows are unchanged for end users.

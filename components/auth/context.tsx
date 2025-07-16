@@ -1,4 +1,4 @@
-'use client';
+
 
 /**
  * Enhanced Auth Context with ABAC Support and Performance Optimizations
@@ -57,9 +57,9 @@ function cleanupAuthStateCache() {
 }
 
 /**
- * Auth Provider Component
- * Wraps the application and provides auth state with ABAC data
- * Optimized with caching and memoization to prevent unnecessary re-renders
+ * AuthProvider
+ * Wraps the app and provides auth state/context with ABAC data.
+ * Uses Clerk hooks for user/org, memoizes context, and caches state for performance.
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user: clerkUser, isLoaded: userLoaded, isSignedIn } = useUser();
@@ -83,6 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Memoized user context builder
+  /**
+   * Builds a UserContext from Clerk and ABAC metadata
+   */
   const buildUserContext = useCallback(
     (
       clerkUser: any,
@@ -129,12 +132,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   // Memoized cache key generation
+  /**
+   * Generates a cache key for the current user/org
+   */
   const cacheKey = useMemo(() => {
     if (!clerkUser?.id) return null;
     return `${clerkUser.id}-${organization?.id || 'no-org'}-${clerkUser.updatedAt || Date.now()}`;
   }, [clerkUser?.id, organization?.id, clerkUser?.updatedAt]);
 
   useEffect(() => {
+    // Main effect: sync Clerk user/org to auth state
     // Wait for both user and organization data to load
     if (!userLoaded || !orgLoaded) {
       setAuthState(prev => ({ ...prev, isLoaded: false, isLoading: true }));
@@ -175,6 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Debug logging for user metadata
       if (process.env.NODE_ENV === 'development') {
+        // Debug: log Clerk/ABAC metadata for development
         console.log('AuthContext Debug:', {
           clerkUserId: clerkUser.id,
           userMetadata,
@@ -255,6 +263,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ]);
 
   // Memoize the context value to prevent unnecessary re-renders
+  /**
+   * Memoized context value for provider
+   */
   const contextValue = useMemo(() => authState, [authState]);
 
   return (
@@ -263,7 +274,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Hook to access auth state
+ * Hook: useAuth
+ * Returns current auth state from context
  */
 export function useAuth(): AuthState {
   const context = useContext(AuthContext);
@@ -274,7 +286,8 @@ export function useAuth(): AuthState {
 }
 
 /**
- * Hook to access user context
+ * Hook: useUserContext
+ * Returns current user context
  */
 export function useUserContext(): UserContext | null {
   const { user } = useAuth();
@@ -282,7 +295,8 @@ export function useUserContext(): UserContext | null {
 }
 
 /**
- * Hook to check if user is authenticated
+ * Hook: useIsAuthenticated
+ * Returns true if user is signed in and loaded
  */
 export function useIsAuthenticated(): boolean {
   const { isSignedIn, isLoaded } = useAuth();
@@ -290,7 +304,8 @@ export function useIsAuthenticated(): boolean {
 }
 
 /**
- * Hook to check if auth is loaded
+ * Hook: useAuthLoaded
+ * Returns true if auth state is loaded
  */
 export function useAuthLoaded(): boolean {
   const { isLoaded } = useAuth();
@@ -298,7 +313,8 @@ export function useAuthLoaded(): boolean {
 }
 
 /**
- * Hook to get organization context
+ * Hook: useOrganizationContext
+ * Returns current organization context
  */
 export function useOrganizationContext() {
   const { organization } = useAuth();
@@ -306,7 +322,8 @@ export function useOrganizationContext() {
 }
 
 /**
- * Hook to check if user has completed onboarding
+ * Hook: useOnboardingStatus
+ * Returns true if user has completed onboarding
  */
 export function useOnboardingStatus(): boolean {
   const user = useUserContext();
@@ -314,7 +331,8 @@ export function useOnboardingStatus(): boolean {
 }
 
 /**
- * Hook for permission-based conditional rendering
+ * Hook: usePermission
+ * Returns true if user has specified permission
  */
 export function usePermission(permission: Permission): boolean {
   const user = useUserContext();
@@ -322,7 +340,8 @@ export function usePermission(permission: Permission): boolean {
 }
 
 /**
- * Hook for role-based conditional rendering
+ * Hook: useRole
+ * Returns true if user has specified role
  */
 export function useRole(role: UserRole): boolean {
   const user = useUserContext();
@@ -330,7 +349,8 @@ export function useRole(role: UserRole): boolean {
 }
 
 /**
- * Hook to check multiple permissions (any)
+ * Hook: useAnyPermission
+ * Returns true if user has any of the specified permissions
  */
 export function useAnyPermission(permissions: Permission[]): boolean {
   const user = useUserContext();
@@ -339,7 +359,8 @@ export function useAnyPermission(permissions: Permission[]): boolean {
 }
 
 /**
- * Hook to check multiple permissions (all)
+ * Hook: useAllPermissions
+ * Returns true if user has all of the specified permissions
  */
 export function useAllPermissions(permissions: Permission[]): boolean {
   const user = useUserContext();
@@ -348,14 +369,16 @@ export function useAllPermissions(permissions: Permission[]): boolean {
 }
 
 /**
- * Hook to check if user is admin
+ * Hook: useIsAdmin
+ * Returns true if user is admin
  */
 export function useIsAdmin(): boolean {
   return useRole(SystemRoles.ADMIN);
 }
 
 /**
- * Hook to get subscription status
+ * Hook: useSubscriptionStatus
+ * Returns subscription tier/status for current organization
  */
 export function useSubscriptionStatus() {
   const { organization } = useAuth();

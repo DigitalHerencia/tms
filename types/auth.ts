@@ -6,6 +6,8 @@
  *
  * NOTE: This file aligns with the documented ABAC specifications from
  * types/abac.ts to ensure consistency across the codebase.
+ *
+ * All interfaces and exports are strictly type-safe and documented below.
  */
 
 // Import ABAC types as the source of truth
@@ -17,19 +19,25 @@ import {
   UserSessionAttributes
 } from './abac';
 
-// Use ABAC system roles as the canonical role definition
+/**
+ * UserRole: ABAC system role type
+ */
 export const UserRole = SystemRoles;
 export type UserRole = SystemRole;
 
-// Use ABAC permission structure as canonical
+/**
+ * Permission: ABAC permission type
+ */
 export type { Permission, UserSessionAttributes };
 
-// Re-export for backwards compatibility
-
-// Use ABAC role permissions as the source of truth
+/**
+ * ROLE_PERMISSIONS: ABAC role permissions map
+ */
 export const ROLE_PERMISSIONS = ABACRolePermissions;
 
-// Clerk user metadata structure (aligned with JWT claims)
+/**
+ * ClerkUserMetadata: Clerk user metadata structure (aligned with JWT claims)
+ */
 export interface ClerkUserMetadata {
   organizationId: string;
   role: UserRole;

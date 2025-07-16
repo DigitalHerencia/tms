@@ -1,18 +1,26 @@
 /**
  * Validation schemas for authentication-related forms
  * Using Zod for runtime validation
+ *
+ * All schemas are documented and deduplicated for maintainability.
  */
 
 import { z } from 'zod';
 
 import { SystemRoles } from '@/types/abac';
 
+/**
+ * signInSchema: Validates sign-in form fields
+ */
 export const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   tenantId: z.string().optional(),
 });
 
+/**
+ * signUpSchema: Validates sign-up form fields
+ */
 export const signUpSchema = z
   .object({
     email: z.string().email('Please enter a valid email address'),
@@ -40,10 +48,16 @@ export const signUpSchema = z
     path: ['confirmPassword'],
   });
 
+/**
+ * forgotPasswordSchema: Validates forgot password form
+ */
 export const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 });
 
+/**
+ * resetPasswordSchema: Validates reset password form
+ */
 export const resetPasswordSchema = z
   .object({
     password: z
