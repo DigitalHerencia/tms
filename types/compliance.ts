@@ -145,25 +145,7 @@ export interface HosViolation {
     | '11_hour'
     | '14_hour'
     | '70_hour'
-    | '8_hour_break'
-    | '30_minute_break'
-    | '34_hour_restart'
-    | '60_70_hour'
-    | 'other';
-  description: string;
-  severity: 'minor' | 'major' | 'critical';
-  timestamp: Date;
-  resolved: boolean;
-  resolvedBy?: string;
-  resolvedAt?: Date;
-  resolutionNotes?: string;
-  fineAmount?: number;
-  courtDate?: Date;
-  status: 'open' | 'under_review' | 'resolved' | 'disputed';
-}
 
-export interface EldData {
-  deviceId: string;
   deviceManufacturer: string;
   deviceModel: string;
   firmwareVersion: string;
@@ -483,3 +465,16 @@ export const DOCUMENT_STATUS_LABELS = {
   expiring: 'Expiring Soon',
   expired: 'Expired',
 };
+
+// EldData interface for HOS logs (minimal, expand as needed)
+export interface EldData {
+  deviceId: string;
+  manufacturer: string;
+  model: string;
+  firmwareVersion: string;
+  lastSyncAt: Date;
+  dataTransferMethod: 'web' | 'email' | 'usb' | 'bluetooth';
+  rawData?: Metadata;
+  malfunctions?: EldMalfunction[];
+  dataQuality: 'good' | 'fair' | 'poor';
+}
