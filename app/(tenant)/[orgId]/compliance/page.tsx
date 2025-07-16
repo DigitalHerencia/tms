@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+  import { Suspense } from 'react';
 import {
   CalendarIcon,
   ClipboardCheck,
@@ -103,7 +103,8 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <UserIcon className="h-4 w-4 text-[hsl(var(--info))]" />
               </CardHeader>
-              <CardContent>                <div className="card-metric">
+              <CardContent>                
+                <div className="card-metric">
                   {hasData && dashboardData.totalDrivers > 0 ? 
                     `${Math.round((dashboardData.driversInCompliance / dashboardData.totalDrivers) * 100)}%` 
                     : '0%'
@@ -124,7 +125,8 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <TruckIcon className="h-4 w-4 text-[hsl(var(--info))]" />
               </CardHeader>
-              <CardContent>                <div className="card-metric">
+              <CardContent>                
+                <div className="card-metric">
                   {hasData && dashboardData.totalVehicles > 0 ? 
                     `${Math.round((dashboardData.vehiclesInCompliance / dashboardData.totalVehicles) * 100)}%` 
                     : '0%'
@@ -145,7 +147,8 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <AlertTriangle className="h-4 w-4 text-[hsl(var(--warning))]" />
               </CardHeader>
-              <CardContent>                <div className="card-metric">
+              <CardContent>                
+                <div className="card-metric">
                   {hasData ? (dashboardData.activeViolations || 0) : 0}
                 </div>
                 <p className="text-xs text-[hsl(var(--danger))]">Requires attention</p>
@@ -158,7 +161,8 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <FileText className="h-4 w-4 text-[hsl(var(--info))]" />
               </CardHeader>
-              <CardContent>                <div className="card-metric">
+              <CardContent>               
+                <div className="card-metric">
                   {hasData && dashboardData.totalDocuments > 0 ? 
                     `${Math.round(((dashboardData.totalDocuments - dashboardData.expiredDocuments) / dashboardData.totalDocuments) * 100)}%` 
                     : '0%'

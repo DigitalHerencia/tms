@@ -63,10 +63,20 @@ export async function DriverComplianceTable({
               <TableRow key={d.id}>
                 <TableCell className="font-medium">{d.name}</TableCell>
                 <TableCell>
-                  <Badge variant="outline">{d.cdlStatus}</Badge>
+                  <Badge 
+                    variant="outline"
+                    className="border-green-200 bg-green-50 text-green-700"
+                  >
+                    {d.cdlStatus}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline">{d.medicalStatus}</Badge>
+                  <Badge 
+                    variant="outline"
+                    className="border-green-200 bg-green-50 text-green-700"
+                  >
+                    {d.medicalStatus}
+                  </Badge>
                 </TableCell>
                 <TableCell>{d.violationStatus}</TableCell>
                 <TableCell>
@@ -87,7 +97,7 @@ export async function DriverComplianceTable({
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className='bg-neutral-900'>
                       <DropdownMenuItem>View Details</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

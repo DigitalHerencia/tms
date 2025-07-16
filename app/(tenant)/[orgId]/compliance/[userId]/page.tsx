@@ -54,15 +54,13 @@ export default async function ComplianceDashboardPage({
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button
-              variant="default"
-              className="w-full border border-gray-200 bg-black hover:bg-neutral-900"
+              className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
             >
               <FileText className="mr-2 h-4 w-4" />
               Export Report
             </Button>
             <Button
-              variant="default"
-              className="w-full border border-gray-200 bg-black hover:bg-neutral-900"
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
             >
               <Upload className="mr-2 h-4 w-4" />
               Upload Document
@@ -72,7 +70,7 @@ export default async function ComplianceDashboardPage({
 
         {/* Compliance Metrics */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Driver Compliance
@@ -88,7 +86,7 @@ export default async function ComplianceDashboardPage({
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Vehicle Compliance
@@ -104,7 +102,7 @@ export default async function ComplianceDashboardPage({
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 HOS Violations
@@ -118,7 +116,7 @@ export default async function ComplianceDashboardPage({
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Document Status
@@ -136,23 +134,23 @@ export default async function ComplianceDashboardPage({
         </div>
 
         {/* Critical Alerts */}
-        <Card className="border-gray-200 bg-black">
+        <Card className="border border-gray-200 bg-black">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-800">
+            <CardTitle className="flex items-center gap-2 text-red-600">
               <AlertTriangle className="h-5 w-5" />
               Critical Compliance Alerts
             </CardTitle>
-            <CardDescription className="text-red-700">
+            <CardDescription className="text-red-600">
               Items requiring immediate attention
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-md border border-red-200 bg-white p-3">
+              <div className="flex items-center justify-between rounded-md border border-gray-200 bg-neutral-900 p-3">
                 <div className="flex items-center gap-3">
                   <Users className="h-4 w-4 text-red-500" />
                   <div>
-                    <div className="font-medium text-red-800">
+                    <div className="font-medium text-red-600">
                       Driver Medical Certificate Expired
                     </div>
                     <div className="text-sm text-red-600">
@@ -160,24 +158,24 @@ export default async function ComplianceDashboardPage({
                     </div>
                   </div>
                 </div>
-                <Button size="sm" className="bg-red-600 hover:bg-red-700">
+                <Button size="sm" className="bg-red-600">
                   Take Action
                 </Button>
               </div>
 
-              <div className="flex items-center justify-between rounded-md border border-amber-200 bg-white p-3">
+              <div className="flex items-center justify-between rounded-md border border-gray-200 bg-neutral-900 p-3">
                 <div className="flex items-center gap-3">
-                  <Truck className="h-4 w-4 text-amber-500" />
+                  <Truck className="h-4 w-4 text-red-600" />
                   <div>
-                    <div className="font-medium text-amber-800">
+                    <div className="font-medium text-red-600">
                       Vehicle Inspection Due
                     </div>
-                    <div className="text-sm text-amber-600">
+                    <div className="text-sm text-red-600">
                       Vehicle T-103 - Due in 3 days
                     </div>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" className="bg-red-600 hover:bg-red-700">
                   Schedule
                 </Button>
               </div>
@@ -188,7 +186,7 @@ export default async function ComplianceDashboardPage({
         {/* Dashboard Grid */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Upcoming Deadlines */}
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
               <CardTitle>Upcoming Deadlines</CardTitle>
               <CardDescription>
@@ -204,7 +202,7 @@ export default async function ComplianceDashboardPage({
                     </p>
                     <p className="text-muted-foreground text-xs">
                       Expires in 12 days
-                    </p>
+                      </p>
                   </div>
                   <Badge
                     variant="outline"
@@ -267,7 +265,7 @@ export default async function ComplianceDashboardPage({
           </Card>
 
           {/* Compliance Trends */}
-          <Card className="border-gray-200 bg-black">
+          <Card className="border border-gray-200 bg-black">
             <CardHeader>
               <CardTitle>Compliance Trends</CardTitle>
               <CardDescription>
@@ -289,16 +287,16 @@ export default async function ComplianceDashboardPage({
         </div>
 
         {/* Document Management */}
-        <Card className="border-gray-200 bg-black">
+        <Card className="border border-gray-200 bg-black">
           <CardHeader>
             <CardTitle>Document Management</CardTitle>
             <CardDescription>
               Recent uploads and document status tracking
             </CardDescription>
           </CardHeader>
-          <CardContent className="bg-neutral-900">
+          <CardContent className="">
             <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-md border p-3">
+              <div className="flex items-center justify-between bg-neutral-900 rounded-md border p-3">
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-blue-500" />
                   <div>
@@ -317,13 +315,17 @@ export default async function ComplianceDashboardPage({
                   >
                     Pending Review
                   </Badge>
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+
+                  >
                     Review
                   </Button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-md border p-3">
+              <div className="flex items-center justify-between bg-neutral-900 rounded-md border p-3">
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-green-500" />
                   <div>
@@ -343,7 +345,7 @@ export default async function ComplianceDashboardPage({
                 </Badge>
               </div>
 
-              <div className="flex items-center justify-between rounded-md border p-3">
+              <div className="flex items-center justify-between bg-neutral-900 rounded-md border p-3">
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-blue-500" />
                   <div>
@@ -367,7 +369,7 @@ export default async function ComplianceDashboardPage({
         </Card>
 
         {/* Driver Compliance Table */}
-        <Card className="border-gray-200 bg-black">
+        <Card className="border border-gray-200 bg-black">
           <CardHeader>
             <CardTitle>Driver Compliance Status</CardTitle>
             <CardDescription>
@@ -383,7 +385,7 @@ export default async function ComplianceDashboardPage({
         </Card>
 
         {/* Audit Preparation */}
-        <Card className="border-gray-200 bg-black">
+        <Card className="border border-gray-200 bg-black">
           <CardHeader>
             <CardTitle>Audit Preparation</CardTitle>
             <CardDescription>
@@ -391,18 +393,24 @@ export default async function ComplianceDashboardPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 bg-neutral-900 md:grid-cols-3">
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+            <div className="grid gap-4 md:grid-cols-3">
+              <Button 
+                className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2"
+              >
                 <Shield className="h-6 w-6" />
                 <span>Generate Compliance Report</span>
               </Button>
 
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button 
+                className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2"
+              >
                 <FileText className="h-6 w-6" />
                 <span>Export All Documents</span>
               </Button>
 
-              <Button variant="outline" className="flex h-20 flex-col gap-2">
+              <Button 
+                className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2"
+              >
                 <Clock className="h-6 w-6" />
                 <span>HOS Violation Report</span>
               </Button>

@@ -54,8 +54,15 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">Export Report</Button>
-          <Button onClick={handleAudit} disabled={isPending}>
+          <Button 
+            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+          >
+            Export Report
+          </Button>
+          <Button 
+            onClick={handleAudit} disabled={isPending}
+            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+          > 
             {isPending ? 'Running...' : 'Run Compliance Check'}
           </Button>
         </div>
@@ -226,7 +233,11 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
                   <p className="text-center text-sm">
                     Overall compliance score improved by 4% in the last 30 days
                   </p>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="default"
+                    size="sm"
+                    className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                  >
                     View Detailed Report
                   </Button>
                 </div>
