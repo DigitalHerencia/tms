@@ -100,54 +100,54 @@ export function VehicleDetailsDialog({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'assigned':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'in_maintenance':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'out_of_service':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       case 'retired':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   const getMaintenanceStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'scheduled':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   const getInspectionStatusColor = (status: string) => {
     switch (status) {
       case 'passed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   const getLoadStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       case 'assigned':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'in_transit':
-        return 'bg-indigo-100 text-indigo-800';
+        return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30';
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'cancelled':
@@ -209,39 +209,59 @@ export function VehicleDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-screen max-w-4xl overflow-y-auto">
+      <DialogContent className="max-h-screen max-w-4xl overflow-y-auto bg-neutral-900 border-muted text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Truck className="h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2 text-white">
+            <Truck className="h-5 w-5 text-blue-400" />
             Vehicle Details - Unit #{vehicle.unitNumber || 'N/A'}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-            <TabsTrigger value="inspections">Inspections</TabsTrigger>
-            <TabsTrigger value="loads">Recent Loads</TabsTrigger>
+          <TabsList className="bg-black border-muted">
+            <TabsTrigger 
+              value="overview"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="maintenance"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+            >
+              Maintenance
+            </TabsTrigger>
+            <TabsTrigger 
+              value="inspections"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+            >
+              Inspections
+            </TabsTrigger>
+            <TabsTrigger 
+              value="loads"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+            >
+              Recent Loads
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-4 space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Card>
+              <Card className="bg-black border-muted">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Vehicle Information</CardTitle>
+                  <CardTitle className="text-sm text-white">Vehicle Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs">Type</Label>
-                        <div className="font-medium capitalize">
+                        <Label className="text-xs text-white/70">Type</Label>
+                        <div className="font-medium capitalize text-white">
                           {vehicle.type}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs">Status</Label>
+                        <Label className="text-xs text-white/70">Status</Label>
                         <div>
                           <Badge className={getStatusColor(vehicle.status)}>
                             {vehicle.status.replace('_', ' ')}
@@ -250,21 +270,21 @@ export function VehicleDetailsDialog({
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">VIN</Label>
-                      <div className="font-mono font-medium">
+                      <Label className="text-xs text-white/70">VIN</Label>
+                      <div className="font-mono font-medium text-white">
                         {vehicle.vin || 'N/A'}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs">License Plate</Label>
-                        <div className="font-medium">
+                        <Label className="text-xs text-white/70">License Plate</Label>
+                        <div className="font-medium text-white">
                           {vehicle.licensePlate || 'N/A'}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs">State</Label>
-                        <div className="font-medium">
+                        <Label className="text-xs text-white/70">State</Label>
+                        <div className="font-medium text-white">
                           {vehicle.licensePlateState || 'N/A'}
                         </div>
                       </div>
@@ -273,33 +293,33 @@ export function VehicleDetailsDialog({
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-black border-muted">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Usage Information</CardTitle>
+                  <CardTitle className="text-sm text-white">Usage Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <Label className="flex items-center gap-1 text-xs">
-                        <Gauge className="h-3 w-3" /> Total Mileage
+                      <Label className="flex items-center gap-1 text-xs text-white/70">
+                        <Gauge className="h-3 w-3 text-blue-400" /> Total Mileage
                       </Label>
-                      <div className="font-medium">
+                      <div className="font-medium text-white">
                         {vehicle.totalMileage
                           ? `${vehicle.totalMileage.toLocaleString()} miles`
                           : 'N/A'}
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Last Maintenance Mileage</Label>
-                      <div className="font-medium">
+                      <Label className="text-xs text-white/70">Last Maintenance Mileage</Label>
+                      <div className="font-medium text-white">
                         {vehicle.lastMaintenanceMileage
                           ? `${vehicle.lastMaintenanceMileage.toLocaleString()} miles`
                           : 'N/A'}
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs">Fuel Type</Label>
-                      <div className="font-medium capitalize">
+                      <Label className="text-xs text-white/70">Fuel Type</Label>
+                      <div className="font-medium capitalize text-white">
                         {vehicle.fuelType || 'N/A'}
                       </div>
                     </div>
@@ -308,9 +328,9 @@ export function VehicleDetailsDialog({
               </Card>
 
               {upcomingMaintenance.length > 0 && (
-                <Card className="md:col-span-2">
+                <Card className="md:col-span-2 bg-black border-muted">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">
+                    <CardTitle className="text-sm text-white">
                       Upcoming Maintenance
                     </CardTitle>
                   </CardHeader>
@@ -319,14 +339,14 @@ export function VehicleDetailsDialog({
                       {upcomingMaintenance.map((record: MaintenanceRecord) => (
                         <div
                           key={record.id}
-                          className="flex items-start gap-2 rounded-md border p-2"
+                          className="flex items-start gap-2 rounded-md border border-white/10 p-2 bg-black"
                         >
-                          <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-600" />
+                          <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-400" />
                           <div>
-                            <div className="font-medium">
+                            <div className="font-medium text-white">
                               {record.description}
                             </div>
-                            <div className="text-muted-foreground text-sm">
+                            <div className="text-white/70 text-sm">
                               Scheduled:{' '}
                               {record.scheduledDate
                                 ? formatDate(record.scheduledDate)
@@ -346,22 +366,24 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="maintenance" className="mt-4 space-y-4">
-            <Card>
+            <Card className="bg-black border-muted">
               <CardHeader>
-                <CardTitle>Maintenance Records</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-white">Maintenance Records</CardTitle>
+                <CardDescription className="text-white/70">
                   View and manage maintenance for this vehicle
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <h4 className="font-medium">Schedule Maintenance</h4>
-                    <p className="text-muted-foreground text-sm">
+                    <h4 className="font-medium text-white">Schedule Maintenance</h4>
+                    <p className="text-white/70 text-sm">
                       Add a new maintenance record
                     </p>
                   </div>
-                  <Button variant="outline">
+                  <Button 
+                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                  >
                     <Tool className="mr-2 h-4 w-4" />
                     Schedule
                   </Button>
@@ -370,13 +392,13 @@ export function VehicleDetailsDialog({
                 {maintenanceRecords.length > 0 ? (
                   <div className="space-y-4">
                     {maintenanceRecords.map((record: MaintenanceRecord) => (
-                      <div key={record.id} className="rounded-md border p-4">
+                      <div key={record.id} className="rounded-md border border-white/10 p-4 bg-black">
                         <div className="flex items-start justify-between">
                           <div>
-                            <div className="font-medium">
+                            <div className="font-medium text-white">
                               {record.description}
                             </div>
-                            <div className="text-muted-foreground text-sm">
+                            <div className="text-white/70 text-sm">
                               {record.type.charAt(0).toUpperCase() +
                                 record.type.slice(1)}{' '}
                               maintenance
@@ -390,10 +412,10 @@ export function VehicleDetailsDialog({
                         </div>
                         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="text-muted-foreground">
+                            <span className="text-white/70">
                               Date:{' '}
                             </span>
-                            <span>
+                            <span className="text-white">
                               {record.completedDate
                                 ? formatDate(record.completedDate)
                                 : record.scheduledDate
@@ -450,7 +472,7 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="inspections" className="mt-4 space-y-4">
-            <Card>
+            <Card className="bg-black border-muted">
               <CardHeader>
                 <CardTitle>Inspection Records</CardTitle>
                 <CardDescription>
@@ -465,7 +487,9 @@ export function VehicleDetailsDialog({
                       Add a new inspection record
                     </p>
                   </div>
-                  <Button variant="outline">
+                  <Button 
+                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                  >
                     <FileText className="mr-2 h-4 w-4" />
                     Add Inspection
                   </Button>
@@ -543,7 +567,7 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="loads" className="mt-4 space-y-4">
-            <Card>
+            <Card className="bg-black border-muted">
               <CardHeader>
                 <CardTitle>Recent Loads</CardTitle>
                 <CardDescription>
@@ -601,35 +625,41 @@ export function VehicleDetailsDialog({
         </Tabs>
 
         {error && (
-          <div className="mt-4 rounded-md bg-red-100 p-4 text-red-800">
+          <div className="mt-4 rounded-md bg-red-500/20 border border-red-500/30 p-4 text-red-400">
             {error}
           </div>
         )}
 
         <DialogFooter className="flex items-center justify-between">
           <div className="flex gap-2">
-            <Button variant="outline" asChild>
+            <Button 
+              asChild
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+            >
               <Link href={`/vehicles/${vehicle.id}/edit`}>Edit Vehicle</Link>
             </Button>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button 
+              onClick={() => onOpenChange(false)}
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+            >
               Close
             </Button>
           </div>
           <div className="flex gap-2">
             {vehicle.status === 'available' && (
               <Button
-                variant="outline"
                 onClick={() => handleStatusUpdate('maintenance')}
                 disabled={isUpdatingStatus}
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
               >
                 Mark for Maintenance
               </Button>
             )}
             {vehicle.status === 'in_maintenance' && (
               <Button
-                variant="outline"
                 onClick={() => handleStatusUpdate('active')}
                 disabled={isUpdatingStatus}
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
               >
                 Mark as Active
               </Button>

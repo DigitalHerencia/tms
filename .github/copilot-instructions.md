@@ -42,14 +42,14 @@ Execute these steps in order:
    - Map database operations
 
 4. **Generate Survey Report**
-   Create a markdown report with:
+   Create a comment on the issue containing a report with:
    - Complete file inventory
    - Dependency graph
    - Unused/duplicate code locations
    - Auth/DB touchpoints
 
 ### Phase 2: Planning (Strategy)
-Based on survey findings:
+Create a comment on the issue containing a plan based on survey findings:
 
 1. **Organization Plan**
    - Components: Pure UI → `/components/[domain]/`

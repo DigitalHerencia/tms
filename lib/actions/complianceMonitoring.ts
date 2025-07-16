@@ -32,8 +32,7 @@ export async function checkExpiringDocuments(days = 30) {
                 db.complianceAlert.create({
                     data: {
                         organizationId: orgId,
-                        userId,
-                        driverId: doc.driverId || undefined,
+                        userId: doc.userId || undefined,
                         vehicleId: doc.vehicleId || undefined,
                         type: "expiring_document",
                         severity: "medium",

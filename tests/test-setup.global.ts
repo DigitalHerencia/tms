@@ -98,6 +98,7 @@ async function setupTestDatabase() {
             data: {
                 createdAt: new Date(),
                 id: "driver-1",
+                userId: "user_driver123", // Required field linking to User
                 email: "driver@example.com",
                 firstName: "Driver",
                 lastName: "Test",

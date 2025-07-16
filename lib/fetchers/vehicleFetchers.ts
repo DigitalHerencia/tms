@@ -1,5 +1,3 @@
-
-
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -138,13 +136,11 @@ export const listVehiclesByOrg = cache(
                 fuelType: v.fuelType ?? undefined,
                 engineType: undefined,
                 registrationNumber: undefined,
-                registrationExpiry: v.registrationExpiration ?? undefined,
+                registrationExpiration: v.registrationExpiration ?? undefined,
                 insuranceProvider: undefined,
                 insurancePolicyNumber: undefined,
-                insuranceExpiry: v.insuranceExpiration ?? undefined,
+                insuranceExpiration: v.insuranceExpiration ?? undefined,
                 // Remove currentDriverId, currentDriver, nextMaintenanceDate, nextInspectionDue, organization
-                currentDriverId: undefined,
-                currentLoadId: undefined,
                 currentLocation: undefined,
                 totalMileage: v.currentOdometer ?? undefined,
                 lastMaintenanceMileage: undefined,
@@ -169,3 +165,103 @@ export const listVehiclesByOrg = cache(
         }
     }
 )
+
+/**
+ * Get a single vehicle by ID for an organization.
+ * - Validates user authentication and organization access.
+ * - Returns null if vehicle not found or user lacks permission.
+ * - Server-first, feature-driven.
+ */
+export const getVehicleById = cache(
+    async (vehicleId: string, orgId: string): Promise<Vehicle | null> => {
+        try {
+            const { userId } = await auth()
+            if (!userId) {
+                return null
+            }
+
+            const result = await prisma.vehicle.findFirst({
+                where: {
+                    id: vehicleId,
+                    organizationId: orgId,
+                },
+                select: {
+                    id: true,
+                    organizationId: true,
+                    type: true,
+                    status: true,
+                    make: true,
+                    model: true,
+                    year: true,
+                    vin: true,
+                    licensePlate: true,
+                    licensePlateState: true,
+                    unitNumber: true,
+                    fuelType: true,
+                    registrationExpiration: true,
+                    insuranceProvider: true,
+                    insurancePolicyNumber: true,
+                    insuranceExpiration: true,
+                    currentLocation: true,
+                    totalMileage: true,
+                    nextMaintenanceDate: true,
+                    nextMaintenanceMileage: true,
+                    purchaseDate: true,
+                    purchasePrice: true,
+                    currentValue: true,
+                    notes: true,
+                    customFields: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    grossVehicleWeight: true, // <-- Added
+                    maxPayload: true,         // <-- Added
+                },
+            })
+
+            if (!result) {
+                return null
+            }
+
+            // Map Prisma result to public Vehicle type
+            const vehicle: Vehicle = {
+                id: result.id,
+                organizationId: result.organizationId,
+                type: result.type as Vehicle["type"],
+                status: result.status as Vehicle["status"],
+                make: result.make ?? "",
+                model: result.model ?? "",
+                year: result.year ?? 0,
+                vin: result.vin ?? "",
+                licensePlate: result.licensePlate ?? undefined,
+                unitNumber: result.unitNumber ?? undefined,
+                grossVehicleWeight: result.grossVehicleWeight ?? undefined,
+                maxPayload: result.maxPayload ?? undefined,
+                fuelType: result.fuelType ?? undefined,
+                engineType: undefined,
+                registrationNumber: undefined,
+                registrationExpiration: result.registrationExpiration ?? undefined,
+                insuranceProvider: result.insuranceProvider ?? undefined,
+                insurancePolicyNumber: result.insurancePolicyNumber ?? undefined,
+                insuranceExpiration: result.insuranceExpiration ?? undefined,
+                currentLocation: result.currentLocation ?? undefined,
+                totalMileage: result.totalMileage ?? undefined,
+                lastMaintenanceMileage: undefined, // Field doesn't exist in schema
+                nextMaintenanceDate: result.nextMaintenanceDate ?? undefined,
+                nextMaintenanceMileage: result.nextMaintenanceMileage ?? undefined,
+                createdAt: result.createdAt,
+                updatedAt: result.updatedAt,
+                driver: undefined,
+                organization: undefined,
+                notes: result.notes ?? undefined,
+                customFields: result.customFields as Record<string, any> ?? undefined,
+            }
+
+            return vehicle
+
+        } catch (error) {
+            console.error("Error fetching vehicle by ID:", error)
+            return null
+        }
+    }
+)
+

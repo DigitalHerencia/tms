@@ -118,7 +118,7 @@ function toPublicVehicle(prismaVehicle: any): Vehicle {
       typeof prismaVehicle.registrationNumber === 'string'
         ? prismaVehicle.registrationNumber
         : undefined,
-    registrationExpiry:
+    registrationExpiration:
       prismaVehicle.registrationExpiration instanceof Date
         ? prismaVehicle.registrationExpiration
         : undefined,
@@ -130,17 +130,9 @@ function toPublicVehicle(prismaVehicle: any): Vehicle {
       typeof prismaVehicle.insurancePolicyNumber === 'string'
         ? prismaVehicle.insurancePolicyNumber
         : undefined,
-    insuranceExpiry:
+    insuranceExpiration:
       prismaVehicle.insuranceExpiration instanceof Date
         ? prismaVehicle.insuranceExpiration
-        : undefined,
-    currentUserId:
-      typeof prismaVehicle.currentUserId === 'string'
-        ? prismaVehicle.currentUserId
-        : undefined,
-    currentLoadId:
-      typeof prismaVehicle.currentLoadId === 'string'
-        ? prismaVehicle.currentLoadId
         : undefined,
     currentLocation:
       typeof prismaVehicle.currentLocation === 'string'
@@ -224,10 +216,10 @@ export async function createVehicleAction(
       status: toPrismaVehicleStatus('available'),
       type: validatedData.type,
       unitNumber: validatedData.unitNumber ?? '', // ensure string
-      registrationExpiry: validatedData.registrationExpiry
+      registrationExpiration: validatedData.registrationExpiry
         ? new Date(validatedData.registrationExpiry)
         : null,
-      insuranceExpiry: validatedData.insuranceExpiry
+      insuranceExpiration: validatedData.insuranceExpiry
         ? new Date(validatedData.insuranceExpiry)
         : null,
       nextMaintenanceDate: validatedData.nextMaintenanceDate
@@ -313,10 +305,10 @@ export async function updateVehicleAction(
     const updateData = {
       ...validatedData,
       type: validatedData.type,
-      registrationExpiry: validatedData.registrationExpiry
+      registrationExpiration: validatedData.registrationExpiry
         ? new Date(validatedData.registrationExpiry)
         : null,
-      insuranceExpiry: validatedData.insuranceExpiry
+      insuranceExpiration: validatedData.insuranceExpiry
         ? new Date(validatedData.insuranceExpiry)
         : null,
       nextMaintenanceDate: validatedData.nextMaintenanceDate
@@ -456,7 +448,7 @@ export async function assignVehicleToDriverAction(
     const newLoad = await db.load.create({
       data: {
         organizationId: vehicle.organizationId,
-        driverId,
+        userId: driverId,
         vehicleId,
         loadNumber: `ASSIGN-${Date.now()}`,
         status: 'assigned',

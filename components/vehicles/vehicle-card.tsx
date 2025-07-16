@@ -42,18 +42,18 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800 hover:bg-green-200';
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'inactive':
-        return 'bg-red-100 text-red-800 hover:bg-red-200';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
       case 'maintenance':
-        return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       default:
-        return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
   const getTypeIcon = (type: string) => {
-    return <Truck className="text-muted-foreground h-4 w-4" />;
+    return <Truck className="h-4 w-4 text-blue-400" />;
   };
 
   const upcomingMaintenance = vehicle.maintenanceRecords?.find(
@@ -62,14 +62,14 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
 
   return (
     <Card
-      className="cursor-pointer transition-shadow hover:shadow-md"
+      className="border-muted rounded-md border bg-black hover:border-blue-500 transition-colors cursor-pointer"
       onClick={onClick}
     >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             {getTypeIcon(vehicle.type)}
-            <h3 className="font-medium">
+            <h3 className="font-medium text-white">
               {vehicle.unitNumber || 'No Unit Number'}
             </h3>
           </div>
@@ -77,33 +77,33 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             {vehicle.status.replace('_', ' ')}
           </Badge>
         </div>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-white/70 text-sm">
           {vehicle.make} {vehicle.model} {vehicle.year}
         </p>
       </CardHeader>
       <CardContent className="pb-2">
         <div className="space-y-2 text-sm">
           {vehicle.vin && (
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">VIN:</span>
-              <span className="font-mono">{vehicle.vin}</span>
+            <div className="flex items-center gap-2 text-white/90">
+              <span className="text-white/70">VIN:</span>
+              <span className="font-mono text-white">{vehicle.vin}</span>
             </div>
           )}
           {vehicle.licensePlate && (
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">License:</span>
-              <span>
+            <div className="flex items-center gap-2 text-white/90">
+              <span className="text-white/70">License:</span>
+              <span className="text-white">
                 {vehicle.licensePlate} ({vehicle.state})
               </span>
             </div>
           )}
           {vehicle.currentOdometer && (
-            <div className="flex items-center gap-2">
-              <Gauge className="text-muted-foreground h-4 w-4" />
-              <span>
+            <div className="flex items-center gap-2 text-white/90">
+              <Gauge className="h-4 w-4 text-blue-400" />
+              <span className="text-white">
                 {vehicle.currentOdometer.toLocaleString()} miles
                 {vehicle.lastOdometerUpdate && (
-                  <span className="text-muted-foreground ml-1 text-xs">
+                  <span className="text-white/70 ml-1 text-xs">
                     (as of {formatDate(vehicle.lastOdometerUpdate)})
                   </span>
                 )}
@@ -112,17 +112,17 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="border-t pt-3">
+      <CardFooter className="border-t border-white/10 pt-3">
         {upcomingMaintenance ? (
           <div className="flex w-full items-center gap-2 text-xs">
-            <AlertTriangle className="h-3.5 w-3.5 text-yellow-600" />
-            <span className="text-yellow-700">
+            <AlertTriangle className="h-3.5 w-3.5 text-yellow-400" />
+            <span className="text-yellow-400">
               Maintenance scheduled:{' '}
               {formatDate(upcomingMaintenance.scheduledDate!)}
             </span>
           </div>
         ) : (
-          <div className="text-muted-foreground flex w-full items-center gap-2 text-xs">
+          <div className="flex w-full items-center gap-2 text-xs text-white/70">
             <Calendar className="h-3.5 w-3.5" />
             <span>No upcoming maintenance</span>
           </div>

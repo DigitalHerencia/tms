@@ -1,55 +1,48 @@
 'use client';
 
-import { useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState, useEffect } from 'react';
+import { VehicleFormData, Vehicle, VehicleType } from '@/types/vehicles';
+import { updateVehicleAction } from '@/lib/actions/vehicleActions';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { VehicleFormData, Vehicle, VehicleType } from '@/types/vehicles';
-import { createVehicleAction } from '@/lib/actions/vehicleActions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
   orgId: string;
+  vehicle: Vehicle | null;
   onSuccess: (vehicle: Vehicle) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const initialState: Partial<VehicleFormData> = {
-  unitNumber: '',
-  type: 'tractor',
-  make: '',
-  model: '',
-  year: new Date().getFullYear(),
-  vin: '',
-  licensePlate: '',
-  licensePlateState: '',
-};
-
-export default function AddVehicleDialog({
+export default function EditVehicleDialog({
   orgId,
+  vehicle,
   onSuccess,
   open,
   onOpenChange,
 }: Props) {
-  const [form, setForm] = useState<Partial<VehicleFormData>>(initialState);
+  const [form, setForm] = useState<Partial<VehicleFormData>>({});
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (vehicle) {
+      setForm({
+        unitNumber: vehicle.unitNumber || '',
+        type: vehicle.type,
+        make: vehicle.make || '',
+        model: vehicle.model || '',
+        year: vehicle.year || new Date().getFullYear(),
+        vin: vehicle.vin || '',
+        licensePlate: vehicle.licensePlate || '',
+        licensePlateState: vehicle.licensePlateState || '',
+      });
+    }
+  }, [vehicle]);
 
   const handleChange = (field: keyof VehicleFormData, value: any) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -57,6 +50,8 @@ export default function AddVehicleDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!vehicle) return;
+    
     setLoading(true);
     try {
       // Convert form to FormData
@@ -67,25 +62,25 @@ export default function AddVehicleDialog({
         }
       });
       formData.append('orgId', orgId);
+      formData.append('vehicleId', vehicle.id);
 
-      const result = await createVehicleAction(null, formData);
+      const result = await updateVehicleAction(null, formData);
       if (result.success && result.data) {
         onSuccess(result.data as unknown as Vehicle);
         onOpenChange(false);
-        setForm(initialState);
         toast({
           title: 'Success',
-          description: 'Vehicle created successfully',
+          description: 'Vehicle updated successfully',
         });
       } else {
         toast({
           title: 'Error',
-          description: result.error || 'Failed to create vehicle',
+          description: result.error || 'Failed to update vehicle',
           variant: 'destructive',
         });
       }
     } catch (error) {
-      console.error('Error creating vehicle:', error);
+      console.error('Error updating vehicle:', error);
       toast({
         title: 'Error',
         description: 'An unexpected error occurred',
@@ -96,11 +91,13 @@ export default function AddVehicleDialog({
     }
   };
 
+  if (!vehicle) return null;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-muted text-white">
         <DialogHeader>
-          <DialogTitle className="text-white">Add New Vehicle</DialogTitle>
+          <DialogTitle className="text-white">Edit Vehicle</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
@@ -210,6 +207,13 @@ export default function AddVehicleDialog({
                 />
               </div>
             </div>
+
+            {/* Note about advanced fields */}
+            <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-md">
+              <p className="text-sm text-blue-400">
+                💡 For advanced specifications, insurance, and financial details, use the dedicated edit page.
+              </p>
+            </div>
           </div>
           
           <DialogFooter className="flex justify-end space-x-2">
@@ -225,7 +229,7 @@ export default function AddVehicleDialog({
               disabled={loading}
               className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
             >
-              {loading ? 'Creating...' : 'Create Vehicle'}
+              {loading ? 'Updating...' : 'Update Vehicle'}
             </Button>
           </DialogFooter>
         </form>

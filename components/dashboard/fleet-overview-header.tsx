@@ -1,14 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { getDashboardSummary } from "@/lib/fetchers/analyticsFetchers"
 import type { DashboardSummary } from "@/types/kpi"
-import { RefreshCw } from "lucide-react"
+import { RefreshCw, Shield } from "lucide-react"
+import { Button } from "../ui/button"
+import Link from "next/link"
 
 interface FleetOverviewHeaderProps {
     orgId: string
+    userId: string // <-- Add userId to props
 }
 
 export default async function FleetOverviewHeader({
     orgId,
+    userId, // <-- Destructure userId from props
 }: FleetOverviewHeaderProps) {
     if (!orgId) {
         return (
@@ -46,6 +50,7 @@ export default async function FleetOverviewHeader({
     }
 
     return (
+    <div className="flex flex-row items-baseline justify-between mb-6">        
         <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-extrabold text-white">Fleet Dashboard</h1>
@@ -61,6 +66,20 @@ export default async function FleetOverviewHeader({
                 <RefreshCw className="h-3 w-3" />
                 <span>Last updated: {lastUpdated || "2 minutes ago"}</span>
             </div>
+            </div>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <Button
+                        asChild
+                        size="sm"
+                        className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                        >
+                        <Link href={`/${orgId}/dashboard/${userId}/admin`} className="flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          Admin Dashboard
+                        </Link>
+                      </Button>
+                  </div>
         </div>
+
     )
 }

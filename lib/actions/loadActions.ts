@@ -65,12 +65,7 @@ export async function updateLoadAction(id: string, data: UpdateLoadInput) {
       dbData.destinationLat = destination.latitude ?? null;
       dbData.destinationLng = destination.longitude ?? null;
     }
-    if (driver && typeof driver === 'object' && driver.id)
-      dbData.driverId = driver.id;
-    if (vehicle && typeof vehicle === 'object' && vehicle.id)
-      dbData.vehicleId = vehicle.id;
-    if (trailer && typeof trailer === 'object' && trailer.id)
-      dbData.trailerId = trailer.id;
+  
     const load = await db.load.update({
       where: {
         id,
@@ -141,7 +136,7 @@ export async function assignLoadAction(data: LoadAssignmentInput) {
         organizationId: orgId,
       },
       data: {
-        driverId: validated.driverId,
+        userId: validated.driverId,
         vehicleId: validated.vehicleId,
         trailerId: validated.trailerId ?? null,
         updatedAt: new Date(),

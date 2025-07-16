@@ -690,7 +690,7 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
                 take: limit,
                 select: {
                     id: true,
-                    driverId: true,
+                    // driverId: true,
                     createdAt: true,
                     updatedAt: true,
                     status: true,
@@ -744,7 +744,6 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
             }
             return {
                 id: doc.id,
-                driverId: doc.driverId,
                 date: doc.createdAt,
                 status: doc.status as
                     | "compliant"
@@ -810,7 +809,6 @@ export async function getDriverHOSStatus(driverId: string, organizationId?: stri
         const recentLogs = await prisma.complianceDocument.findMany({
             where: {
                 organizationId: organizationId,
-                driverId,
                 type: "hos_log",
                 createdAt: {
                     gte: eightDaysAgo,

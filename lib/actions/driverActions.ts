@@ -91,6 +91,7 @@ export async function createDriverAction(
     const newDriver = await db.driver.create({
       data: {
         organizationId: tenantId,
+        userId: userId, // Add the required userId field
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         email: validatedData.email,
@@ -514,7 +515,7 @@ export async function assignDriverAction(
         await tx.load.update({
           where: { id: loadId },
           data: {
-            driverId,
+            userId: driverId,
             vehicleId: vehicleId || null,
             trailerId: trailerId || null,
             updatedAt: new Date(),
@@ -620,7 +621,7 @@ export async function unassignDriverAction(
           tx.load.update({
             where: { id: load.id },
             data: {
-              driverId: null,
+              userId: null,
               status: load.status === 'assigned' ? 'pending' : load.status,
               updatedAt: new Date(),
             },
