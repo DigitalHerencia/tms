@@ -1,5 +1,3 @@
-
-
 -   **Developer Docs**: Split into `TECHNICAL_SPEC.md`, `CLERK_MIDDLEWARE_CONFIG.md`, and
     `APPENDIX.md`—with structured sections, tables, and architecture notes.
 -   **User Docs**: GitHub-flavored markdown covering QuickStart, FAQ, Troubleshooting, Reference
@@ -566,3 +564,24 @@ All tenant-specific pages are now under:
 <!--
 [userId]: Refers to the dynamic segment in the route, representing the unique identifier of a user (driver).
 -->
+
+# Auth Domain Audit & Refactor (2025-07)
+
+## Architecture Changes
+- Auth context and protected route components now fully documented and type-safe.
+- ABAC logic and Clerk integration confirmed and memoized in context provider.
+- All hooks and context values documented for maintainability.
+- Stubs created for missing domain logic: actions, fetchers, and features.
+
+## API Changes
+- All types in `types/auth.ts` strictly aligned with ABAC specification.
+- Zod schemas in `schemas/auth.ts` deduplicated and documented.
+- New server mutation and fetcher stubs for login, registration, session, and RBAC.
+
+## Migration Notes
+- No breaking changes; all new files are additive and existing logic is documented.
+- Future business logic for auth should be added to new stubs for maintainability.
+
+## Testing
+- TypeScript, ESLint, and runtime tests pass for all auth domain files.
+- Manual validation recommended for new business logic as it is implemented.
