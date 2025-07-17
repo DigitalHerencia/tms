@@ -226,3 +226,57 @@ export const createVehicleAction = async (
         return { success: false, error: "Failed to create vehicle" }
     }
 }
+
+/**
+ * Fetch a single vehicle by organization and vehicle ID.
+ * - Returns mapped Vehicle type or null if not found/unauthorized.
+ * - Server-first, feature-driven.
+ */
+export const getVehicleById = cache(
+    async (orgId: string, vehicleId: string): Promise<Vehicle | null> => {
+        try {
+            const { userId } = await auth()
+            if (!userId) return null
+
+            const v = await prisma.vehicle.findUnique({
+                where: { id: vehicleId },
+            })
+            if (!v || v.organizationId !== orgId) return null
+
+            // Map Prisma result to public Vehicle type
+            return {
+                id: v.id,
+                organizationId: v.organizationId,
+                type: v.type as Vehicle["type"],
+                status: v.status as Vehicle["status"],
+                make: v.make ?? "",
+                model: v.model ?? "",
+                year: v.year ?? 0,
+                vin: v.vin ?? "",
+                licensePlate: v.licensePlate ?? undefined,
+                unitNumber: v.unitNumber ?? undefined,
+                grossVehicleWeight: undefined,
+                maxPayload: undefined,
+                fuelType: v.fuelType ?? undefined,
+                engineType: undefined,
+                registrationNumber: undefined,
+                registrationExpiration: v.registrationExpiration ?? undefined,
+                insuranceProvider: undefined,
+                insurancePolicyNumber: undefined,
+                insuranceExpiration: v.insuranceExpiration ?? undefined,
+                currentLocation: undefined,
+                totalMileage: v.currentOdometer ?? undefined,
+                lastMaintenanceMileage: undefined,
+                nextMaintenanceDate: undefined,
+                nextMaintenanceMileage: undefined,
+                createdAt: v.createdAt,
+                updatedAt: v.updatedAt,
+                driver: undefined,
+                organization: undefined,
+            }
+        } catch (error) {
+            console.error("Error fetching vehicle by ID:", error)
+            return null
+        }
+    }
+)
