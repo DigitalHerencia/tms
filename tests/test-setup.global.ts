@@ -1,5 +1,3 @@
-
-
 import { test as setup } from "@playwright/test"
 import { PrismaClient, UserRole } from "@prisma/client" // fixed import
 
@@ -129,22 +127,22 @@ async function setupTestDatabase() {
                 id: "load-1",
                 organizationId: organization.id,
                 referenceNumber: "REF123",
-                // pickup: new Date(), // Removed: not a valid field
-                // delivery: new Date(), // Removed: not a valid field
-                scheduledPickupDate: new Date(), // Use correct field name
-                scheduledDeliveryDate: new Date(), // Use correct field name
+                scheduledPickupDate: new Date(),
+                scheduledDeliveryDate: new Date(),
                 status: "pending",
                 createdAt: new Date(),
                 loadNumber: "LN-001",
                 originAddress: "123 Main St",
                 originCity: "Origin City",
                 originState: "OS",
-                originZip: "12345", // required
+                originZip: "12345",
                 destinationAddress: "456 Elm St",
                 destinationCity: "Dest City",
                 destinationState: "DS",
-                destinationZip: "67890", // required
+                destinationZip: "67890",
                 weight: 1000,
+                createdBy: "user_admin123", // Added required field
+                lastModifiedBy: "user_admin123", // Added required field
             },
         })
 
@@ -161,5 +159,3 @@ setup.afterAll(async () => {
     await prisma.$disconnect()
     console.log("✅ Test cleanup completed")
 })
-
-//

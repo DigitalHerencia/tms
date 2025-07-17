@@ -460,6 +460,8 @@ export async function assignVehicleToDriverAction(
         destinationCity: '',
         destinationState: '',
         destinationZip: '',
+        createdBy: userId,        // <-- FIX: Add required field
+        lastModifiedBy: userId,   // <-- FIX: Add required field
       },
     });
 
