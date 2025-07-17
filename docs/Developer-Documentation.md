@@ -597,3 +597,20 @@ The dispatch domain was fully audited and refactored for maintainability, type s
 - **Production ready:** All checklist items complete.
 
 See `docs/dispatch-domain-audit-report.md` for full details.
+
+## Dispatch Domain Neon DB Audit & Schema Correction
+
+### Schema Changes (July 2025)
+- Removed legacy/unused 'dispatched' field from `Load` model.
+- Made `createdBy` and `lastModifiedBy` non-nullable in `Load`.
+- Made `createdBy` non-nullable in `LoadStatusEvent`.
+- Prisma migration applied: `dispatch-schema-cleanup`.
+
+### Migration Notes
+- All affected models updated in `prisma/schema.prisma`.
+- Run `npx prisma migrate dev` to apply changes locally.
+- Review downstream code for required updates to new nullability constraints.
+
+### Next Steps
+- Continue with deduplication and normalization in other dispatch-related models if needed.
+- Monitor for runtime errors or data integrity issues post-migration.

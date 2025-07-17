@@ -155,6 +155,8 @@ async function main() {
       notes: 'Handle with care',
       instructions: 'Call on arrival',
       customFields: {},
+      createdBy: adminUser.id,
+      lastModifiedBy: adminUser.id,
     },
   });
 

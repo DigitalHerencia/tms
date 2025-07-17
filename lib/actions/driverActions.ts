@@ -531,6 +531,7 @@ export async function assignDriverAction(
             notes: instructions || 'Driver assigned',
             automaticUpdate: false,
             source: 'dispatcher',
+            createdBy: userId, // <-- FIX: add required field
           },
         });
       }
@@ -638,6 +639,7 @@ export async function unassignDriverAction(
               notes: `Driver unassigned: ${driver.firstName} ${driver.lastName}`,
               automaticUpdate: false,
               source: 'dispatcher',
+              createdBy: userId, // <-- FIX: add required field
             },
           })
         );

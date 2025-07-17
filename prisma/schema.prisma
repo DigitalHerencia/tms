@@ -201,8 +201,8 @@ model Load {
   customFields          Json?             @default("{}") @map("custom_fields")
   createdAt             DateTime          @default(now()) @map("created_at")
   updatedAt             DateTime          @updatedAt @map("updated_at")
-  createdBy             String?           @map("created_by")
-  lastModifiedBy        String?           @map("last_modified_by")
+  createdBy             String            @map("created_by")
+  lastModifiedBy        String            @map("last_modified_by")
   priority              LoadPriority      @default(medium)
   tags                  String[]          @default([])
   loadDocuments         LoadDocument[]
@@ -232,7 +232,7 @@ model LoadStatusEvent {
   notes           String?
   automaticUpdate Boolean    @default(false) @map("automatic_update")
   source          String     @default("dispatcher")
-  createdBy       String?
+  createdBy       String
   load            Load       @relation(fields: [loadId], references: [id], onDelete: Cascade)
 
   @@index([loadId])
