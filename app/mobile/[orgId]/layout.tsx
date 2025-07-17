@@ -11,7 +11,8 @@ interface MobileLayoutProps {
  * Provides mobile-optimized layout for tenant pages
  */
 export default async function MobileLayout({ children, params }: MobileLayoutProps) {
-  const { orgId } = await params;
+  const { orgId } = (await params) ?? {};
+  if (!orgId) throw new Error('Missing orgId param');
 
   return (
     <ProtectedRoute>

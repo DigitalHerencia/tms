@@ -164,7 +164,7 @@ export default function AddVehicleDialog({
                   id="year"
                   type="number"
                   value={form.year || ''}
-                  onChange={(e) => handleChange('year', parseInt(e.target.value) || undefined)}
+                  onChange={(e) => handleChange('year', parseInt(e.target.value) || 0)}
                   className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                   placeholder="2023"
                   min="1950"

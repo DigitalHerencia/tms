@@ -140,7 +140,6 @@ export const listVehiclesByOrg = cache(
                 insuranceProvider: undefined,
                 insurancePolicyNumber: undefined,
                 insuranceExpiration: v.insuranceExpiration ?? undefined,
-                // Remove currentDriverId, currentDriver, nextMaintenanceDate, nextInspectionDue, organization
                 currentLocation: undefined,
                 totalMileage: v.currentOdometer ?? undefined,
                 lastMaintenanceMileage: undefined,
@@ -160,110 +159,70 @@ export const listVehiclesByOrg = cache(
                 totalPages: Math.ceil(total / limit),
             }
         } catch (error) {
-            console.error("Error listing vehicles:", error)
-            return { vehicles: [], total: 0, page: 1, limit: 10, totalPages: 0 }
+            console.error("Error fetching vehicles:", error)
+            // Always return a valid VehicleListResponse on error
+            return {
+                vehicles: [],
+                total: 0,
+                page: 1,
+                limit: 10,
+                totalPages: 0,
+            }
         }
     }
 )
-
-/**
- * Get a single vehicle by ID for an organization.
- * - Validates user authentication and organization access.
- * - Returns null if vehicle not found or user lacks permission.
- * - Server-first, feature-driven.
- */
-export const getVehicleById = cache(
-    async (vehicleId: string, orgId: string): Promise<Vehicle | null> => {
-        try {
-            const { userId } = await auth()
-            if (!userId) {
-                return null
-            }
-
-            const result = await prisma.vehicle.findFirst({
-                where: {
-                    id: vehicleId,
-                    organizationId: orgId,
-                },
-                select: {
-                    id: true,
-                    organizationId: true,
-                    type: true,
-                    status: true,
-                    make: true,
-                    model: true,
-                    year: true,
-                    vin: true,
-                    licensePlate: true,
-                    licensePlateState: true,
-                    unitNumber: true,
-                    currentOdometer: true,
-                    lastOdometerUpdate: true,
-                    fuelType: true,
-                    lastInspectionDate: true,
-                    insuranceExpiration: true,
-                    notes: true,
-                    customFields: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    nextInspectionDue: true,
-                    registrationExpiration: true,
-                },
-            })
-
-            if (!result) {
-                return null
-            }
-
-            // Map Prisma result to public Vehicle type
-            const vehicle: Vehicle = {
-                id: result.id,
-                organizationId: result.organizationId,
-                type: result.type as Vehicle["type"],
-                status: result.status as Vehicle["status"],
-                make: result.make ?? "",
-                model: result.model ?? "",
-                year: result.year ?? 0,
-                vin: result.vin ?? "",
-                licensePlate: result.licensePlate ?? undefined,
-                licensePlateState: result.licensePlateState ?? undefined,
-                unitNumber: result.unitNumber ?? undefined,
-                currentOdometer: result.currentOdometer ?? undefined,
-                lastOdometerUpdate: result.lastOdometerUpdate ?? undefined,
-                fuelType: result.fuelType ?? undefined,
-                lastInspectionDate: result.lastInspectionDate ?? undefined,
-                insuranceExpiration: result.insuranceExpiration ?? undefined,
-                nextInspectionDue: result.nextInspectionDue ?? undefined,
-                registrationExpiration: result.registrationExpiration ?? undefined,
-                createdAt: result.createdAt,
-                updatedAt: result.updatedAt,
-                notes: result.notes ?? undefined,
-                customFields: result.customFields as Record<string, any> ?? undefined,
-                // Remove fields that don't exist in schema
-                grossVehicleWeight: undefined,
-                maxPayload: undefined,
-                engineType: undefined,
-                fuelCapacity: undefined,
-                insuranceProvider: undefined,
-                insurancePolicyNumber: undefined,
-                currentLocation: undefined,
-                totalMileage: undefined,
-                lastMaintenanceMileage: undefined,
-                nextMaintenanceDate: undefined,
-                nextMaintenanceMileage: undefined,
-                purchaseDate: undefined,
-                purchasePrice: undefined,
-                currentValue: undefined,
-                driver: undefined,
-                organization: undefined,
-            }
-
-            return vehicle
-
-        } catch (error) {
-            console.error("Error fetching vehicle by ID:", error)
-            return null
+export const createVehicleAction = async (
+    orgId: string,
+    formData: FormData
+): Promise<{ success: boolean; data?: Vehicle; error?: string }> => {
+    try {
+        const { userId } = await auth()
+        if (!userId) {
+            return { success: false, error: "Unauthorized" }
         }
-    }
-)
 
+        const vehicleData = Object.fromEntries(formData.entries())
+        vehicleData.organizationId = orgId
+
+        const newVehicle = await prisma.vehicle.create({
+            data: vehicleData as any, // Adjust type as needed
+        })
+
+        // Map Prisma result to public Vehicle type, ensuring all required fields are present
+        const mappedVehicle: Vehicle = {
+            id: newVehicle.id,
+            organizationId: newVehicle.organizationId,
+            type: newVehicle.type as Vehicle["type"], // <-- fix: cast to VehicleType
+            status: newVehicle.status as Vehicle["status"], // <-- fix: cast to VehicleStatus
+            make: newVehicle.make ?? "",
+            model: newVehicle.model ?? "",
+            year: newVehicle.year ?? 0,
+            vin: newVehicle.vin ?? "",
+            licensePlate: newVehicle.licensePlate ?? undefined,
+            unitNumber: newVehicle.unitNumber ?? undefined,
+            grossVehicleWeight: undefined, // <-- fix: field not present in Prisma result
+            maxPayload: undefined,         // <-- fix: field not present in Prisma result
+            fuelType: newVehicle.fuelType ?? undefined,
+            engineType: undefined,         // <-- fix: field not present in Prisma result
+            registrationNumber: undefined, // <-- fix: field not present in Prisma result
+            registrationExpiration: newVehicle.registrationExpiration ?? undefined,
+            insuranceProvider: undefined,  // <-- fix: field not present in Prisma result
+            insurancePolicyNumber: undefined, // <-- fix: field not present in Prisma result
+            insuranceExpiration: newVehicle.insuranceExpiration ?? undefined,
+            currentLocation: undefined,    // <-- fix: field not present in Prisma result
+            totalMileage: newVehicle.currentOdometer ?? undefined,
+            lastMaintenanceMileage: undefined, // <-- fix: field not present in Prisma result
+            nextMaintenanceDate: undefined,    // <-- fix: field not present in Prisma result
+            nextMaintenanceMileage: undefined, // <-- fix: field not present in Prisma result
+            createdAt: newVehicle.createdAt,
+            updatedAt: newVehicle.updatedAt,
+            driver: undefined,
+            organization: undefined,
+        }
+
+        return { success: true, data: mappedVehicle }
+    } catch (error) {
+        console.error("Error creating vehicle:", error)
+        return { success: false, error: "Failed to create vehicle" }
+    }
+}

@@ -6,7 +6,8 @@ interface MobileCompliancePageProps {
 }
 
 export default async function MobileCompliancePage({ params }: MobileCompliancePageProps) {
-  const { orgId } = await params;
+  const { orgId } = (await params) ?? {};
+  if (!orgId) throw new Error('Missing orgId param');
   return (
     <div className="p-4 space-y-4">
       <h1 className="text-2xl font-bold">Upload Compliance Document</h1>
