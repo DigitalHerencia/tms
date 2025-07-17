@@ -25,7 +25,6 @@ import type {
   LoadDocument,
   TrackingUpdate,
   BrokerInfo,
-  FactoringInfo,
   LoadAlert,
 } from '@/types/dispatch';
 
@@ -60,7 +59,6 @@ interface Load {
   statusHistory?: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
-  factoring?: FactoringInfo;
   alerts?: LoadAlert[];
   tags?: string[];
   createdAt: Date;

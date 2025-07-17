@@ -150,6 +150,7 @@ export const listVehiclesByOrg = cache(
                 updatedAt: v.updatedAt,
                 driver: undefined,
                 organization: undefined,
+                lastMaintenanceDate: undefined, // <-- Added to fix type error
             }))
 
             return {
@@ -219,8 +220,8 @@ export const getVehicleById = cache(
             const vehicle: Vehicle = {
                 id: result.id,
                 organizationId: result.organizationId,
-                type: result.type as Vehicle["type"],
-                status: result.status as Vehicle["status"],
+                type: result.type as Vehicle[ "type" ],
+                status: result.status as Vehicle[ "status" ],
                 make: result.make ?? "",
                 model: result.model ?? "",
                 year: result.year ?? 0,
@@ -256,6 +257,7 @@ export const getVehicleById = cache(
                 currentValue: undefined,
                 driver: undefined,
                 organization: undefined,
+                lastMaintenanceDate: undefined
             }
 
             return vehicle

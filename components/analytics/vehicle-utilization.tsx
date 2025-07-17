@@ -24,7 +24,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Vehicle } from '@/types/dispatch';
+import { Vehicle } from '@/types/vehicles';
+import { VehicleStatus } from '@prisma/client';
 
 interface VehicleUtilizationProps {
   timeRange: string;
@@ -148,7 +149,6 @@ export function VehicleUtilization({
                     : 'N/A'}
                 </TableCell>
                 <TableCell>
-                  {vehicle.status === 'active' ? (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                       Active
                     </Badge>
@@ -156,7 +156,7 @@ export function VehicleUtilization({
                     <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
                       Maintenance
                     </Badge>
-                  )}
+                  
                 </TableCell>
               </TableRow>
             ))}
