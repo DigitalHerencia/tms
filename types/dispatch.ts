@@ -36,7 +36,7 @@ export interface Load {
   statusHistory?: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
-  factoring?: FactoringInfo;
+  // ...existing code...
   alerts?: LoadAlert[];
   tags?: string[];
   createdAt: Date;
@@ -195,15 +195,7 @@ export interface BrokerInfo {
   commissionRate?: number;
 }
 
-export interface FactoringInfo {
-  company: string;
-  accountNumber?: string;
-  contactName?: string;
-  phone?: string;
-  email?: string;
-  factorRate?: number;
-  meta?: AssignmentMeta;
-}
+// ...existing code...
 
 export interface LoadAlert {
   id: string;
@@ -306,40 +298,8 @@ export interface Rate {
   notes?: string;
 }
 
-export interface Document {
-  id: string;
-  name: string;
-  type: 'bol' | 'pod' | 'invoice' | 'other';
-  url: string;
-  uploadedAt: Date;
-  uploadedBy: string;
-}
+// ...existing code...
 
-export interface Vehicle {
-  id: string;
-  tenantId: string;
-  type: 'truck' | 'van' | 'trailer';
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  licensePlate: string;
-  status: 'active' | 'maintenance' | 'out_of_service';
-  lastMaintenanceDate?: Date;
-  nextMaintenanceDate?: Date;
-  fuelType: 'diesel' | 'gasoline' | 'electric' | 'hybrid';
-  currentOdometer?: number;
-}
+// ...existing code...
 
-export interface Trailer {
-  id: string;
-  tenantId: string;
-  type: 'dry_van' | 'reefer' | 'flatbed' | 'step_deck' | 'other';
-  length: number;
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  licensePlate: string;
-  status: 'active' | 'maintenance' | 'out_of_service';
-}
+// ...existing code...

@@ -17,7 +17,6 @@ import type {
   LoadDocument,
   TrackingUpdate,
   BrokerInfo,
-  FactoringInfo,
   LoadAlert,
 } from '@/types/dispatch';
 
@@ -52,7 +51,6 @@ interface loadList {
   statusHistory?: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
-  factoring?: FactoringInfo;
   alerts?: LoadAlert[];
   tags?: string[];
   createdAt: Date;
@@ -152,3 +150,4 @@ export default async function DispatchPage({
     </div>
   );
 }
+  

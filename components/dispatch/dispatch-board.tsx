@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import { useDispatchRealtime } from "@/hooks/use-dispatch-realtime"
@@ -43,7 +41,6 @@ import type {
     CargoDetails,
     Customer,
     EquipmentRequirement,
-    FactoringInfo,
     LoadAlert,
     LoadAssignedDriver,
     LoadAssignedTrailer,
@@ -107,7 +104,6 @@ interface Load {
     statusHistory?: LoadStatusEvent[]
     trackingUpdates?: TrackingUpdate[]
     brokerInfo?: BrokerInfo
-    factoring?: FactoringInfo
     alerts?: LoadAlert[]
     tags?: string[]
     createdAt: Date

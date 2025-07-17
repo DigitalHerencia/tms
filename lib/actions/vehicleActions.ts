@@ -8,7 +8,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
-import { VehicleStatus as PrismaVehicleStatus } from '@prisma/client';
+import { VehicleStatus as PrismaVehicleStatus, type $Enums } from '@prisma/client';
 
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
@@ -29,6 +29,7 @@ import type {
   VehicleStatus,
   VehicleType,
 } from '@/types/vehicles';
+import type { JsonValue } from '@prisma/client/runtime/library';
 
 // Helper: Map app VehicleStatus to Prisma enum
 function toPrismaVehicleStatus(status: VehicleStatus): PrismaVehicleStatus {
@@ -45,127 +46,6 @@ function toPrismaVehicleStatus(status: VehicleStatus): PrismaVehicleStatus {
     default:
       return PrismaVehicleStatus.active;
   }
-}
-
-// Helper: Map Prisma Vehicle to public Vehicle type
-function toPublicVehicle(prismaVehicle: any): Vehicle {
-  // Map Prisma status to app VehicleStatus
-  let status: VehicleStatus;
-  switch (prismaVehicle.status) {
-    case 'active':
-      status = 'available';
-      break;
-    case 'maintenance':
-      status = 'in_maintenance';
-      break;
-    case 'inactive':
-      status = 'out_of_service';
-      break;
-    case 'decommissioned':
-      status = 'retired';
-      break;
-    case 'assigned':
-      status = 'assigned';
-      break;
-    default:
-      status = 'available';
-  }
-
-  // Map Prisma type to VehicleType (ensure fallback)
-  const type: VehicleType = [
-    'tractor',
-    'trailer',
-    'straight_truck',
-    'other',
-  ].includes(prismaVehicle.type)
-    ? prismaVehicle.type
-    : 'other';
-
-  return {
-    id: prismaVehicle.id,
-    organizationId: prismaVehicle.organizationId,
-    type,
-    status,
-    make: typeof prismaVehicle.make === 'string' ? prismaVehicle.make : '',
-    model: typeof prismaVehicle.model === 'string' ? prismaVehicle.model : '',
-    year: typeof prismaVehicle.year === 'number' ? prismaVehicle.year : 0,
-    vin: typeof prismaVehicle.vin === 'string' ? prismaVehicle.vin : '',
-    licensePlate:
-      typeof prismaVehicle.licensePlate === 'string'
-        ? prismaVehicle.licensePlate
-        : undefined,
-    unitNumber:
-      typeof prismaVehicle.unitNumber === 'string'
-        ? prismaVehicle.unitNumber
-        : undefined,
-    grossVehicleWeight:
-      typeof prismaVehicle.grossVehicleWeight === 'number'
-        ? prismaVehicle.grossVehicleWeight
-        : undefined,
-    maxPayload:
-      typeof prismaVehicle.maxPayload === 'number'
-        ? prismaVehicle.maxPayload
-        : undefined,
-    fuelType:
-      typeof prismaVehicle.fuelType === 'string'
-        ? prismaVehicle.fuelType
-        : undefined,
-    engineType:
-      typeof prismaVehicle.engineType === 'string'
-        ? prismaVehicle.engineType
-        : undefined,
-    registrationNumber:
-      typeof prismaVehicle.registrationNumber === 'string'
-        ? prismaVehicle.registrationNumber
-        : undefined,
-    registrationExpiration:
-      prismaVehicle.registrationExpiration instanceof Date
-        ? prismaVehicle.registrationExpiration
-        : undefined,
-    insuranceProvider:
-      typeof prismaVehicle.insuranceProvider === 'string'
-        ? prismaVehicle.insuranceProvider
-        : undefined,
-    insurancePolicyNumber:
-      typeof prismaVehicle.insurancePolicyNumber === 'string'
-        ? prismaVehicle.insurancePolicyNumber
-        : undefined,
-    insuranceExpiration:
-      prismaVehicle.insuranceExpiration instanceof Date
-        ? prismaVehicle.insuranceExpiration
-        : undefined,
-    currentLocation:
-      typeof prismaVehicle.currentLocation === 'string'
-        ? prismaVehicle.currentLocation
-        : undefined,
-    totalMileage:
-      typeof prismaVehicle.currentOdometer === 'number'
-        ? prismaVehicle.currentOdometer
-        : undefined,
-    lastMaintenanceMileage:
-      typeof prismaVehicle.lastMaintenanceMileage === 'number'
-        ? prismaVehicle.lastMaintenanceMileage
-        : undefined,
-    nextMaintenanceDate:
-      prismaVehicle.nextMaintenanceDate instanceof Date
-        ? prismaVehicle.nextMaintenanceDate
-        : undefined,
-    nextMaintenanceMileage:
-      typeof prismaVehicle.nextMaintenanceMileage === 'number'
-        ? prismaVehicle.nextMaintenanceMileage
-        : undefined,
-    createdAt:
-      prismaVehicle.createdAt instanceof Date
-        ? prismaVehicle.createdAt
-        : new Date(),
-    updatedAt:
-      prismaVehicle.updatedAt instanceof Date
-        ? prismaVehicle.updatedAt
-        : new Date(),
-    // Relations (optional, set to undefined if not present)
-    driver: undefined,
-    organization: undefined,
-  };
 }
 
 export async function createVehicleAction(
@@ -221,7 +101,7 @@ export async function createVehicleAction(
         : null,
       insuranceExpiration: validatedData.insuranceExpiry
         ? new Date(validatedData.insuranceExpiry)
-        : null,
+        : undefined,
       nextMaintenanceDate: validatedData.nextMaintenanceDate
         ? new Date(validatedData.nextMaintenanceDate)
         : null,
@@ -310,7 +190,7 @@ export async function updateVehicleAction(
         : null,
       insuranceExpiration: validatedData.insuranceExpiry
         ? new Date(validatedData.insuranceExpiry)
-        : null,
+        : undefined,
       nextMaintenanceDate: validatedData.nextMaintenanceDate
         ? new Date(validatedData.nextMaintenanceDate)
         : null,
@@ -484,3 +364,81 @@ export async function assignVehicleToDriverAction(
     return { success: result.success, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
   }
 }
+function toPublicVehicle(
+  updatedVehicle: {
+    id: string;
+    organizationId: string;
+    type: string;
+    status: $Enums.VehicleStatus;
+    make: string | null;
+    model: string | null;
+    year: number | null;
+    vin: string | null;
+    licensePlate: string | null;
+    licensePlateState: string | null;
+    unitNumber: string;
+    currentOdometer: number | null;
+    lastOdometerUpdate: Date | null;
+    fuelType: string | null;
+    lastInspectionDate: Date | null;
+    insuranceExpiration: Date | null;
+    notes: string | null;
+    customFields: JsonValue | null;
+    createdAt: Date;
+    updatedAt: Date;
+    nextInspectionDue: Date | null;
+    registrationExpiration: Date | null;
+  }
+): Vehicle | undefined {
+  if (!updatedVehicle) return undefined;
+
+  // Map Prisma status to app VehicleStatus
+  let status: VehicleStatus;
+  switch (updatedVehicle.status) {
+    case 'active':
+      status = 'available';
+      break;
+    case 'maintenance':
+      status = 'in_maintenance';
+      break;
+    case 'inactive':
+      status = 'out_of_service';
+      break;
+    case 'decommissioned':
+      status = 'retired';
+      break;
+    default:
+      status = 'available';
+  }
+
+  return {
+    id: updatedVehicle.id,
+    organizationId: updatedVehicle.organizationId,
+    type: updatedVehicle.type as VehicleType,
+    status,
+    make: updatedVehicle.make ?? '',
+    model: updatedVehicle.model ?? '',
+    year: updatedVehicle.year ?? new Date().getFullYear(),
+    vin: updatedVehicle.vin ?? '',
+    licensePlate: updatedVehicle.licensePlate ?? '',
+    licensePlateState: updatedVehicle.licensePlateState ?? '',
+    unitNumber: updatedVehicle.unitNumber ?? '',
+    currentOdometer: updatedVehicle.currentOdometer ?? 0,
+    lastOdometerUpdate: updatedVehicle.lastOdometerUpdate ?? undefined,
+    fuelType: updatedVehicle.fuelType ?? '',
+    lastInspectionDate: updatedVehicle.lastInspectionDate ?? undefined,
+    insuranceExpiration: updatedVehicle.insuranceExpiration ?? undefined,
+    notes: updatedVehicle.notes ?? '',
+    customFields:
+      typeof updatedVehicle.customFields === 'object' && updatedVehicle.customFields !== null
+        ? updatedVehicle.customFields as Record<string, any>
+        : {},
+    createdAt: updatedVehicle.createdAt,
+    updatedAt: updatedVehicle.updatedAt,
+    nextInspectionDue: updatedVehicle.nextInspectionDue ?? undefined,
+    registrationExpiration: updatedVehicle.registrationExpiration ?? undefined,
+    lastMaintenanceDate: (updatedVehicle as any).lastMaintenanceDate ?? undefined,
+    lastMaintenanceMileage: (updatedVehicle as any).lastMaintenanceMileage ?? undefined,
+  };
+}
+

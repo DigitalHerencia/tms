@@ -149,6 +149,7 @@ export const listVehiclesByOrg = cache(
                 updatedAt: v.updatedAt,
                 driver: undefined,
                 organization: undefined,
+                lastMaintenanceDate: undefined, // <-- Added to fix type error
             }))
 
             return {
@@ -273,6 +274,7 @@ export const getVehicleById = cache(
                 updatedAt: v.updatedAt,
                 driver: undefined,
                 organization: undefined,
+                lastMaintenanceDate: undefined
             }
         } catch (error) {
             console.error("Error fetching vehicle by ID:", error)
