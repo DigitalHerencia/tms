@@ -12,7 +12,7 @@ export default async function DriversList({ orgId, searchParams }: DriversListPr
   const filters = {
     page: searchParams?.page ? Number(searchParams.page) : 1,
     limit: searchParams?.limit ? Number(searchParams.limit) : 20,
-    search: typeof searchParams?.q === 'string' ? searchParams.q : undefined,
+    search: typeof searchParams?.q === 'string' ? searchParams.q : "",
   };
   const { drivers } = await listDriversByOrg(orgId, filters);
   return <DriversListClient drivers={drivers} orgId={orgId} />;
