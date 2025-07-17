@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import type { LoadPriority, LoadStatus, LoadStatusEvent } from "@prisma/client"
@@ -47,7 +45,6 @@ import type {
     CargoDetails,
     Customer,
     EquipmentRequirement,
-    FactoringInfo,
     LoadAlert,
     LoadAssignedDriver,
     LoadAssignedTrailer,
@@ -105,7 +102,6 @@ interface Load {
     statusHistory?: LoadStatusEvent[]
     trackingUpdates?: TrackingUpdate[]
     brokerInfo?: BrokerInfo
-    factoring?: FactoringInfo
     alerts?: LoadAlert[]
     tags?: string[]
     createdAt: Date
@@ -660,3 +656,4 @@ export function LoadDetailsDialog({
         </Dialog>
     )
 }
+    

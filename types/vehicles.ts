@@ -9,6 +9,7 @@ export type VehicleStatus =
   | 'retired';
 
 export interface Vehicle {
+  lastMaintenanceDate: any;
   lastMaintenanceMileage: any;
   id: string;
   organizationId: string;

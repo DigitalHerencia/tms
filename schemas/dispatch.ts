@@ -469,55 +469,13 @@ export const bulkLoadOperationSchema = z.object({
 });
 
 // Document upload validation schema
-export const loadDocumentSchema = z.object({
-  loadId: z.string().min(1, 'Load ID is required'),
-  name: z.string().min(1, 'Document name is required'),
-  type: z.enum([
-    'bol',
-    'pod',
-    'invoice',
-    'receipt',
-    'permit',
-    'contract',
-    'rate_confirmation',
-    'other',
-  ]),
-  category: z.enum([
-    'pickup',
-    'delivery',
-    'administrative',
-    'billing',
-    'compliance',
-  ]),
-  description: z.string().optional(),
-  isRequired: z.boolean().default(false),
-});
+// ...existing code...
 
 // Tracking update validation schema
-export const trackingUpdateSchema = z.object({
-  loadId: z.string().min(1, 'Load ID is required'),
-  location: z.object({
-    latitude: z.number().min(-90).max(90),
-    longitude: z.number().min(-180).max(180),
-    address: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-  }),
-  speed: z.number().min(0).optional(),
-  heading: z.number().min(0).max(360).optional(),
-  source: z.enum(['gps', 'manual', 'eld', 'driver_app']).default('manual'),
-  accuracy: z.number().min(0).optional(),
-});
+// ...existing code...
 
 // Load alert validation schema
-export const loadAlertSchema = z.object({
-  loadId: z.string().min(1, 'Load ID is required'),
-  type: z.enum(['warning', 'error', 'info']),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  title: z.string().min(1, 'Alert title is required'),
-  message: z.string().min(1, 'Alert message is required'),
-  autoResolve: z.boolean().default(false),
-});
+// ...existing code...
 
 // Export types from schemas
 export type CreateLoadInput = z.infer<typeof createLoadSchema>;
@@ -526,6 +484,4 @@ export type LoadAssignmentInput = z.infer<typeof loadAssignmentSchema>;
 export type LoadStatusUpdateInput = z.infer<typeof loadStatusUpdateSchema>;
 export type LoadFilterInput = z.infer<typeof loadFilterSchema>;
 export type BulkLoadOperationInput = z.infer<typeof bulkLoadOperationSchema>;
-export type LoadDocumentInput = z.infer<typeof loadDocumentSchema>;
-export type TrackingUpdateInput = z.infer<typeof trackingUpdateSchema>;
-export type LoadAlertInput = z.infer<typeof loadAlertSchema>;
+// ...existing code...

@@ -3,10 +3,11 @@
  */
 
 import type { PaginatedResponse, ApiResponse } from './index';
-import type { Load, Vehicle } from './dispatch';
+import type { Load } from './dispatch';
 import type { Driver } from './drivers';
 import type { ComplianceDocument, HosLog } from './compliance';
 import type { FuelPurchase, IftaReport } from './ifta';
+import type { Vehicle } from './vehicles';
 
 // Auth API
 export interface SignInRequest {
