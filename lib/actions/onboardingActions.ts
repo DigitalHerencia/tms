@@ -298,6 +298,7 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                     // Create membership for the creator with admin role
                     memberships: {
                         create: {
+                            id: crypto.randomUUID(), // <-- Add this line
                             userId: dbUser.id,
                             role: "admin",
                         }
@@ -345,6 +346,7 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
             // Create membership for user
             await db.organizationMembership.create({
                 data: {
+                    id: crypto.randomUUID(), // <-- Add this line
                     userId: dbUser.id,
                     organizationId: organization.id,
                     role: role as any,

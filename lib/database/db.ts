@@ -12,6 +12,7 @@
 import { PrismaNeon } from "@prisma/adapter-neon"
 import { PrismaClient } from "@prisma/client"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import crypto from "crypto"
 
 // Validate required environment variables
 const requiredEnvVars = ["DATABASE_URL"] as const
@@ -195,6 +196,7 @@ export class DatabaseQueries {
                     updatedAt: updatedAt || new Date(),
                 },
                 create: {
+                    id: crypto.randomUUID(), // <-- Add this line
                     organizationId: organization.id,
                     userId: user.id,
                     role,
