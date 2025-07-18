@@ -10,21 +10,15 @@ import {
   getBillingSettings 
 } from '@/lib/fetchers/settingsFetchers';
 import db from '@/lib/database/db';
-import { hasPermission } from '@/lib/auth/permissions';
-import { Permission } from '@/types/auth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { getCurrentUser } from '@/lib/auth/auth';
 
-interface SettingsPageProps {
-  params: Promise<{ orgId: string }>;
-}
-
-export default async function SettingsPage({ params }: SettingsPageProps) {
+export default async function SettingsPage({ params }: { params: Promise<{ orgId: string }> }) {
   const { orgId } = await params;
-  const { userId, orgId: sessionOrgId } = await auth();
+  const { userId } = await auth();
 
-  // Verify authentication and organization access
-  if (!userId || sessionOrgId !== orgId) {
+  // Verify authentication only
+  if (!userId) {
     redirect('/sign-in');
   }
 
@@ -34,10 +28,7 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
     redirect('/sign-in');
   }
 
-  // Verify user has admin role to access settings
-  if (currentUser.role !== 'admin') {
-    redirect(`/${orgId}/dashboard`);
-  }
+  // All roles can access settings now
 
   // Get user role for tab visibility
   const userMembership = await db.organizationMembership.findUnique({    where: {

@@ -442,21 +442,22 @@ export async function getVehicleAnalytics(
     }
 }
 
+
 /**
  * Get dashboard summary data
+ * Now expects userId to be passed in
  */
 async function _getDashboardSummary(
+    userId: string,
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
 ): Promise<DashboardSummary> {
-    const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
     }
-
+    // ...existing code...
     const { startDate, endDate } = getDateRange(timeRange)
-
     const whereClause: any = {
         organizationId,
         actualDeliveryDate: { gte: startDate, lte: endDate },
@@ -477,7 +478,7 @@ async function _getDashboardSummary(
         }
     }
     if (filters.priority) whereClause.priority = filters.priority
-
+    // ...existing code...
     const [
         loads,
         activeDrivers,
@@ -509,7 +510,7 @@ async function _getDashboardSummary(
             where: { organizationId, status: "maintenance" },
         }),
     ])
-
+    // ...existing code...
     const totalLoads = loads.length
     const completedLoads = loads.filter(l => l.status === "delivered").length
     const activeLoads = loads.filter(
@@ -529,14 +530,12 @@ async function _getDashboardSummary(
     ).length
     const onTimeDeliveryRate =
         completedLoads > 0 ? (onTimeDeliveries / completedLoads) * 100 : 0
-
     const fuelConsumed = Number(fuelStats._sum.gallons || 0)
     const fuelEfficiency = fuelConsumed > 0 ? totalMiles / fuelConsumed : 0
     const driverUtilization =
         activeDrivers > 0 ? (activeLoads / activeDrivers) * 100 : 0
     const maintenanceAlerts = maintenanceVehicles + complianceAlerts
     const safetyScore = Math.max(0, 100 - complianceAlerts * 2)
-
     const summary: DashboardSummary = {
         totalRevenue,
         totalMiles,
@@ -556,15 +555,26 @@ async function _getDashboardSummary(
         maintenanceAlerts,
         safetyScore,
     }
-
     return summary
 }
 
-export const getDashboardSummary = unstable_cache(
-    _getDashboardSummary,
-    ["analytics-dashboard-summary"],
-    { revalidate: 300, tags: ["dashboard", "analytics"] }
-)
+// Refactored: getDashboardSummary now calls auth() outside the cached function
+export async function getDashboardSummary(
+    organizationId: string,
+    timeRange: string = "30d",
+    filters: AnalyticsFilters = {}
+): Promise<DashboardSummary> {
+    const { userId } = await auth()
+    if (!userId) {
+        throw new Error("Unauthorized")
+    }
+    // Pass userId into the cached function
+    return await unstable_cache(
+        _getDashboardSummary,
+        ["analytics-dashboard-summary", userId, organizationId, timeRange, JSON.stringify(filters)],
+        { revalidate: 300, tags: ["dashboard", "analytics"] }
+    )(userId, organizationId, timeRange, filters)
+}
 
 /**
  * Save filter preset for user

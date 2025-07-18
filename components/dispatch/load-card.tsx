@@ -129,7 +129,7 @@ export function LoadCard({
         </div>
         <p className="text-muted-foreground text-sm">
           {/* Display customer name or fallback to "Unknown Customer" */}
-          {load.customer.name ?? 'Unknown Customer'}
+          {load.customer?.name ?? 'Unknown Customer'}
         </p>
       </CardHeader>
       <CardContent className="pb-2">

@@ -126,7 +126,13 @@ export function MainNav({
       href: `/${orgId}/settings`,
       label: 'Settings',
       icon: <Settings className="h-5 w-5" />,
-      roles: [SystemRoles.ADMIN],
+      roles: [
+        SystemRoles.ADMIN,
+        SystemRoles.DISPATCHER,
+        SystemRoles.DRIVER,
+        SystemRoles.COMPLIANCE,
+        SystemRoles.MEMBER,
+      ],
     },
     {
       key: 'signout',
@@ -157,16 +163,26 @@ export function MainNav({
         {/* Navigation Links Section */}
         <nav className="mt-6 flex-1 space-y-4 px-8 py-4">
           {visibleLinks.map(link => (
-            <SidebarLink
-              key={link.key}
-              href={link.href}
-              icon={link.icon}
-              collapsed={collapsed}
-              // Pass onClick if present (for Sign Out)
-              {...(link.onClick ? { onClick: link.onClick } : {})}
-            >
-              {link.label}
-            </SidebarLink>
+            link.key === 'signout' ? (
+              <SidebarLink
+                key={link.key}
+                href={link.href}
+                icon={link.icon}
+                collapsed={collapsed}
+                onClick={link.onClick}
+              >
+                {link.label}
+              </SidebarLink>
+            ) : (
+              <SidebarLink
+                key={link.key}
+                href={link.href}
+                icon={link.icon}
+                collapsed={collapsed}
+              >
+                {link.label}
+              </SidebarLink>
+            )
           ))}
         </nav>
         {/* Collapse Sidebar Button */}
@@ -200,8 +216,8 @@ function SidebarLink({
   collapsed: boolean;
   onClick?: (e: React.MouseEvent) => void;
 }) {
-  // If onClick is provided, render as a button for accessibility (e.g., Sign Out)
-  if (onClick) {
+  // Only render as a button if onClick is provided AND href is '#', to avoid accidental override for navigation links like Settings
+  if (onClick && href === '#') {
     return (
       <button
         onClick={onClick}
@@ -244,5 +260,3 @@ function SidebarLink({
     </Link>
   );
 }
-
-// Add sidebar-link styles via Tailwind in globals.css or as a component if not present:

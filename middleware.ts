@@ -31,12 +31,10 @@ export default clerkMiddleware(
     if (!isPublicRoute(req)) {
       await auth.protect()
     }
-    
-    const authData = await auth()
-    const userRole = authData.sessionClaims?.publicMetadata?.role
-    
-    
-    
+
+    // No role-based restriction for /settings route
+    // All authenticated users can access settings
+    // ...existing code...
   }
   // Remove CSP configuration to allow Clerk to work properly
   // We'll implement security headers in next.config.ts if needed
