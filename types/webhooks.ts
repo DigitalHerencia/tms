@@ -91,8 +91,9 @@ export interface OrganizationWebhookData {
 }
 
 // Organization membership webhook event data structure
+// All organization membership IDs must be in {prefix}_{32char_alphanum} format (see ID Format Spec)
 export interface OrganizationMembershipWebhookData {
-  id: string;
+  id: string; // {prefix}_{32char_alphanum} format, not UUID
   organization: {
     id: string;
     name: string;

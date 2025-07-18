@@ -1,0 +1,86 @@
+name: "Domain Table Audit & Refactor"
+description: "Standardize ID formats, schema, and logic for a database table/domain"
+title: "[Domain] Table Audit & Refactor"
+labels: ["domain-audit", "schema", "rbac", "refactor"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Table/Domain Audit & Refactor
+
+  - type: input
+    id: table_name
+    attributes:
+      label: Table/Domain Name
+      description: e.g. users, organizations, vehicles, etc.
+      placeholder: Table name
+    validations:
+      required: true
+
+  - type: textarea
+    id: table_purpose
+    attributes:
+      label: Purpose
+      description: Short description of the table/domain
+      placeholder: Describe the purpose
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: Current State
+      description: Describe the current state of the table/domain
+      value: |
+        - **ID Format:** 
+        - **Columns:** 
+        - **Indexes:** 
+        - **Dependencies:** 
+        - **Prisma Schema:** 
+        - **Types/Validation:** 
+        - **Fetchers/Actions:** 
+        - **URL Params:** 
+        - **RBAC/Permissions:** 
+        - **Other Considerations:** 
+
+  - type: checkboxes
+    id: required_changes
+    attributes:
+      label: Required Changes
+      options:
+        - label: "Update ID format to `{prefix}_{32char_alphanum}` (see ID Format Spec in README; prefixes must match domain object)"
+        - label: "Align columns/types with domain spec and TypeScript strict mode"
+        - label: "Update indexes for performance/consistency"
+        - label: "Refactor dependencies for new ID format and colocate by domain"
+        - label: "Update Prisma schema and ensure all changes are documented"
+        - label: "Update types/validation and ensure all flows are validated"
+        - label: "Refactor fetchers/actions and colocate by domain"
+        - label: "Update URL params to match new ID and RBAC standards"
+        - label: "Align RBAC/permissions with Clerk metadata/session claims only (see RBAC/Session Claims Spec in README)"
+        - label: "Document all changes (developer and user docs)"
+
+  - type: checkboxes
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      options:
+        - label: "All code/tests updated (unit and integration)"
+        - label: "No breaking changes unless documented"
+        - label: "TypeScript strict mode passes"
+        - label: "RBAC/permissions enforced via Clerk/session only"
+        - label: "Documentation updated (developer and user docs)"
+
+  - type: textarea
+    id: impact_risks
+    attributes:
+      label: Impact/Risks
+      description: List any risks, migration needs, or impacts
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Add links to related docs/specs
+      value: |
+        - See Clerk User Example, Session Claims Spec, ID Format Spec, RBAC/Session Claims Spec, and GitHub Labels in the main README for reference.

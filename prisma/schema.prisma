@@ -45,8 +45,9 @@ model Organization {
   @@map("organizations")
 }
 
+/// User model with string ID in {prefix}_{32char_alphanum} format (generated in app, not by DB)
 model User {
-  id                            String                   @id @default(uuid())
+  id                            String                   @id // {prefix}_{32char_alphanum} format, generated in app
   organizationId                String?                  @map("organization_id")
   email                         String?
   firstName                     String?                  @map("first_name")
@@ -427,8 +428,9 @@ model ComplianceAlert {
   @@map("compliance_alerts")
 }
 
+/// OrganizationMembership model with string ID in {prefix}_{32char_alphanum} format (generated in app, not by DB)
 model OrganizationMembership {
-  id             String       @id @default(uuid())
+  id             String       @id // {prefix}_{32char_alphanum} format, generated in app
   organizationId String       @map("organization_id")
   userId         String       @map("user_id")
   role           String

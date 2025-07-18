@@ -1,66 +1,35 @@
-# Pull Request Template
+---
+name: "Domain Table Refactor PR"
+about: "Implements standardized ID format, schema, and logic for a domain table"
+title: "[Domain] Table Refactor"
+labels: ["domain-audit", "schema", "rbac", "refactor"]
+---
 
-## Domain Audit PR
+## Summary
 
-**Related Issue:** #[issue_number]
-**Domain:** [domain_name]
-**Phase:** [survey/planning/execution/documentation]
+- **Domain/Table:** <!-- e.g. users -->
+- **Key Changes:** <!-- List major changes -->
+- **Related Issues:** <!-- Link to issues addressed -->
 
-### Changes Made
+## Checklist
 
-#### Component Organization
-- [ ] Moved components to proper folders
-- [ ] Separated client/server components
-- [ ] Removed unused components
-- [ ] Deduplicated component logic
+- [ ] ID format updated to `{prefix}_{32char_alphanum}` (see ID Format Spec in README). Prefixes must match domain object (see label table in README).
+- [ ] Schema/types/validation updated and TypeScript strict mode passes (see [table-audit.yml](../.github/ISSUE_TEMPLATE/table-audit.yml))
+- [ ] Fetchers/actions refactored and colocated by domain
+- [ ] RBAC/permissions enforced via Clerk/session only (see RBAC/Session Claims Spec in README)
+- [ ] Tests updated/passing (unit and integration)
+- [ ] Documentation updated (developer and user docs)
 
-#### Feature Organization  
-- [ ] Organized features by domain
-- [ ] Consolidated feature logic
-- [ ] Removed unused features
+## Migration Notes
 
-#### Actions & Fetchers
-- [ ] Optimized server actions
-- [ ] Consolidated fetchers
-- [ ] Removed unused actions/fetchers
-- [ ] Updated error handling
+- <!-- Any migration steps or data updates required -->
 
-#### Types & Schemas
-- [ ] Moved interfaces to types files
-- [ ] Consolidated schemas
-- [ ] Removed duplicate types
-- [ ] Updated import statements
+## Screenshots/Examples
 
-#### Dependencies & Imports
-- [ ] Cleaned up unused imports
-- [ ] Updated dependency paths
-- [ ] Resolved circular dependencies
+- <!-- Optional: before/after, code snippets, etc. -->
 
-#### Auth & Database
-- [ ] Updated Clerk auth configurations
-- [ ] Updated RBAC permissions
-- [ ] Updated Prisma schema (if needed)
-- [ ] Verified database operations
+## Reviewer Notes
 
-#### Documentation
-- [ ] Updated User Documentation
-- [ ] Updated Developer Documentation
-- [ ] Updated inline code comments
+- <!-- Anything reviewers should focus on -->
 
-### Files Changed
-<!-- List key files that were modified, added, or removed -->
-
-### Testing Checklist
-- [ ] TypeScript compilation passes
-- [ ] All imports resolve correctly
-- [ ] Domain functionality works as expected
-- [ ] Authentication/authorization works
-- [ ] Database operations work correctly
-- [ ] No runtime errors
-
-### Breaking Changes
-<!-- List any breaking changes and migration steps -->
-
-### Additional Notes
-<!-- Any additional context or notes -->
-
+---

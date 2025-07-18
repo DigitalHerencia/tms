@@ -1,5 +1,6 @@
 import { test as setup } from "@playwright/test"
 import { PrismaClient, UserRole } from "@prisma/client" // fixed import
+import { generateDomainId } from '../lib/utils/idUtils';
 
 const prisma = new PrismaClient()
 
@@ -56,7 +57,7 @@ async function setupTestDatabase() {
         // Create test users with different roles (use id as Clerk userId)
         const users = [
             {
-                id: "user_admin123",
+                id: generateDomainId('user'),
                 email: "admin@test.com",
                 firstName: "Admin",
                 lastName: "User",
@@ -64,7 +65,7 @@ async function setupTestDatabase() {
                 organizationId: organization.id,
             },
             {
-                id: "user_driver123",
+                id: generateDomainId('user'),
                 email: "driver@test.com",
                 firstName: "Test",
                 lastName: "Driver",
@@ -72,7 +73,7 @@ async function setupTestDatabase() {
                 organizationId: organization.id,
             },
             {
-                id: "user_dispatcher123",
+                id: generateDomainId('user'),
                 email: "dispatcher@test.com",
                 firstName: "Test",
                 lastName: "Dispatcher",

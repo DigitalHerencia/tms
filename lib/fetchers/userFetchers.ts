@@ -1,3 +1,4 @@
+// All user and organization membership IDs must be in {prefix}_{32char_alphanum} format (see ID Format Spec)
 'use server';
 
 import { requireAdminForOrg } from '@/lib/auth/utils';

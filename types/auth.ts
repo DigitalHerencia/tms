@@ -146,8 +146,9 @@ export interface OrganizationWebhookPayload {
 }
 
 // Database sync types
+// All user IDs must be in {prefix}_{32char_alphanum} format (see ID Format Spec)
 export interface DatabaseUser {
-  id: string; // Clerk User ID
+  id: string; // {prefix}_{32char_alphanum} format, not UUID
   email: string;
   firstName: string | null;
   lastName: string | null;

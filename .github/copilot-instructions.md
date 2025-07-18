@@ -137,11 +137,11 @@ Final verification:
 
 ## Quality Gates
 Before proceeding to next phase:
-- [ ] All checklist items complete
-- [ ] No TypeScript errors
+- [ ] All checklist items complete (see PR/commit/issue templates and README)
+- [ ] No TypeScript errors (strict mode passes)
 - [ ] User approval received (for planning phase)
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Tests passing (unit and integration)
+- [ ] Documentation updated (developer and user docs)
 
 ## Domain-Specific Considerations
 
@@ -208,3 +208,7 @@ Always provide:
 - Specific file changes
 - Impact assessment
 - Next steps
+- Reference the label table, ID format, and RBAC/session claims spec in the README as needed
+
+## Label Reference Guidance
+When referencing labels in issues, PRs, or documentation, use the exact label names as listed in the label table in the README.

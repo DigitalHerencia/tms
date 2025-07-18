@@ -1,3 +1,5 @@
+// When creating a new OrganizationMembership, use:
+// const orgMemId = generateDomainId('orgmem');
 
 
 "use server"
@@ -10,6 +12,7 @@
 import prisma from "@/lib/database/db"
 import { handleError } from "@/lib/errors/handleError"
 import { SystemRoles } from "@/types/abac"
+import { generateDomainId } from '@/lib/utils/idUtils';
 import type { AdminActionResult } from "@/types/actions"
 import type { AuditLogEntry, OrganizationStats } from "@/types/admin"
 import { auth, clerkClient } from "@clerk/nextjs/server"
@@ -274,10 +277,16 @@ export async function inviteUsersAction(
             return { success: false, error: "Invalid role" }
         }
 
-        // Implementation would send invitations via Clerk
-        // For now, log count in development only
+        // Generate new user IDs for each invite
+        const userInvites = emails.map(email => ({
+            id: generateDomainId('user'),
+            email,
+            role
+        }));
+
+        // Log generated IDs for traceability (dev only)
         if (process.env.NODE_ENV === "development") {
-            console.log("Inviting users", { count: emails.length, orgId })
+            console.log("Inviting users", { invites: userInvites, orgId })
         }
 
         // Create audit log entry
@@ -288,7 +297,7 @@ export async function inviteUsersAction(
                 action: "BULK_INVITE_USERS",
                 entityType: "USER",
                 entityId: "",
-                metadata: { emails, role, count: emails.length },
+                metadata: { invites: userInvites, count: userInvites.length },
                 timestamp: new Date(),
             },
         })

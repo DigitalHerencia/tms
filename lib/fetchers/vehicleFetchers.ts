@@ -219,6 +219,7 @@ export const createVehicleAction = async (
             updatedAt: newVehicle.updatedAt,
             driver: undefined,
             organization: undefined,
+            lastMaintenanceDate: undefined // <-- Added to fix type error
         }
 
         return { success: true, data: mappedVehicle }

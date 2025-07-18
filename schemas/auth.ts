@@ -120,8 +120,9 @@ export const systemRoleSchema = z.enum([
   SystemRoles.MEMBER,
 ] as const);
 
+// All user and organization membership IDs must be in {prefix}_{32char_alphanum} format (see ID Format Spec)
 export const userRoleAssignmentSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
+  userId: z.string().min(1, 'User ID is required'), // {prefix}_{32char_alphanum}
   role: systemRoleSchema,
   organizationId: z.string().min(1, 'Organization ID is required'),
 });
@@ -273,8 +274,10 @@ export const webhookOrganizationDataSchema = z.object({
   updated_at: z.number(),
 });
 
+// Organization membership webhook event data schema
+// All organization membership IDs must be in {prefix}_{32char_alphanum} format (see ID Format Spec)
 export const webhookOrganizationMembershipDataSchema = z.object({
-  id: z.string(),
+  id: z.string(), // {prefix}_{32char_alphanum}
   organization: z.object({
     id: z.string(),
     name: z.string(),

@@ -26,11 +26,17 @@ interface DashboardPageProps {
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const { orgId, userId } = await params;
-  
+
   // Get current user to check role
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    return { error: 'Unauthorized' };
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-neutral-900">
+        <div className="text-red-500 text-center text-xl font-semibold p-8 rounded-lg bg-neutral-800 shadow-md">
+          Unauthorized: You do not have access to this dashboard.
+        </div>
+      </div>
+    );
   }
 
   // Fetch dashboard data for KPIs
