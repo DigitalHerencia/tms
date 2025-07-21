@@ -53,7 +53,7 @@ export default function SignUpPage() {
   }
 
   return (
-        <div className='flex min-h-screen flex-col items-center justify-center mt-10 mb-10 rounded-lg bg-black px-4 sm:px-6 lg:px-8'>
+        <div className='flex flex-col items-center justify-center mt-5 mb-5 rounded-lg border border-gray-200 bg-black px-10 py-10'>
             <div className='w-full max-w-md space-y-8'>
                 <div className='flex flex-col items-center justify-center text-center'>
                     <div className='flex flex-1 items-center'>
@@ -68,7 +68,7 @@ export default function SignUpPage() {
                         </Link>
                     </div>
           <h1 className="mt-2 text-3xl font-extrabold text-white">
-            CREATE YOUR ACCOUNT
+            CREATE YOUR NEW ACCOUNT
           </h1>
           <p className="mt-2 text-sm text-gray-400">
             Already have an account?{" "}
@@ -82,7 +82,7 @@ export default function SignUpPage() {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="mt-8 bg-neutral-900 p-6 shadow-lg rounded-lg border border-neutral-800 flex flex-col gap-4"
+          className="mt-8 bg-neutral-900 p-6 shadow-lg rounded-lg border border-gray-200 flex flex-col gap-4"
         >
           <label className="text-gray-200 text-sm font-medium" htmlFor="email">
             Email

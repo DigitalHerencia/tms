@@ -9,7 +9,7 @@ const plans = [
   {
 	name: 'Starter',
 	price: '$149/mo',
-	description: 'For small fleets: up to 5 trucks, 2 dispatcher seats, 5 driver apps, core TMS features, 90-day log retention.',
+	description: 'For Small Fleets',
 	features: [
 	  'Up to 5 trucks',
 	  '2 dispatcher seats',
@@ -22,7 +22,7 @@ const plans = [
   {
 	name: 'Growth',
 	price: '$349/mo',
-	description: 'For growing fleets: up to 25 trucks, unlimited dispatcher seats, 25 driver apps, IFTA engine, custom reports.',
+	description: 'For Growing Fleets',
 	features: [
 	  'Up to 25 trucks',
 	  'Unlimited dispatcher seats',
@@ -34,8 +34,8 @@ const plans = [
   },
   {
 	name: 'Enterprise',
-	price: '$15/truck (min $699/mo)',
-	description: 'For large operations: minimum $699/mo, priority SLA, dedicated CSM, SSO & API rate bump, custom integrations.',
+	price: '$15/truck',
+	description: 'For Large Operations (minimum $699/mo)',
 	features: [
 	  'Minimum $699/mo',
 	  'Priority SLA',
@@ -69,10 +69,10 @@ export default function PricingSection({
 			<div className="relative z-10 container w-full px-4 py-12 md:px-8 md:py-24 xl:px-32">
 				{showTitle && (
 					<>
-						<h2 className="mb-4 text-center text-5xl font-black text-white/90">
+						<h2 className="mb-4 text-center text-5xl font-black tracking-tight text-white/90">
 							Simple Transparent Pricing
 						</h2>
-						<p className="text-muted-foreground mb-12 text-center text-lg">
+						<p className="text-muted-foreground mb-12 text-center font-bold text-lg">
 							Affordable for every fleet size. 30-day free trial on all plans.
 						</p>
 					</>

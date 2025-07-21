@@ -27,13 +27,6 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
       color: 'text-blue-500',
     },
     {
-      title: 'Active Users',
-      value: stats.activeUserCount,
-      icon: UserCheck,
-      description: 'Currently active users',
-      color: 'text-green-500',
-    },
-    {
       title: 'Fleet Vehicles',
       value: stats.vehicleCount,
       icon: Truck,
@@ -92,7 +85,7 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
       </Card>
     
       {/* Organization Statistics */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statsData.map((stat, index) => {
           const IconComponent = stat.icon;
           return (

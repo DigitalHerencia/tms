@@ -43,7 +43,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const users = await getOrganizationUsers(orgId);
 
   return (
-    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+    <div className="flex flex-col gap-3 p-6 bg-neutral-900 text-white min-h-screen">
 
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>

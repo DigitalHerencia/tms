@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export default function AboutPage() {
     return (
-        <div className='relative flex min-h-screen flex-col'>
+        <div className='relative bg-black flex min-h-screen flex-col'>
             {/* Background gradient overlay for fade effect */}
             <div
                 className='from-background via-background pointer-events-none absolute inset-0 bg-gradient-to-b to-transparent'
@@ -25,7 +25,7 @@ export default function AboutPage() {
             </div>
 
             <main className='relative z-10 container mx-auto flex-1 px-4 py-12 md:px-8'>
-                <div className='bg-card/90 mx-auto mb-60 w-full max-w-3xl rounded-lg p-6 shadow-md backdrop-blur-sm md:mb-80 md:p-8 lg:mb-96'>
+                <div className='bg-card/90 mx-auto mb-30 w-full max-w-3xl rounded-lg p-6 shadow-md backdrop-blur-sm'>
                     <h1 className='mb-6 text-center text-3xl font-bold md:text-4xl'>
                         🛣️ About Us
                     </h1>
@@ -131,7 +131,7 @@ export default function AboutPage() {
                     </section>
                 </div>
             </main>
-            <footer className='bg-background/80 relative z-10 flex w-full flex-col gap-2 border-t px-4 py-6 backdrop-blur-sm sm:flex-row md:px-6'>
+            <footer className='bg-black/80 relative z-10 flex w-full gap-2 px-6 py-3 backdrop-blur-sm'>
                 <p className='text-muted-foreground text-xs'>
                     © 2025 FleetFusion. All rights reserved.
                 </p>

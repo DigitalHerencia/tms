@@ -132,9 +132,9 @@ export function BillingManagementClient({
               Active Users
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 flex flex-col justify-between space-y-4">
+          <CardContent className="p-6 flex flex-col justify-between items-center mt-4 space-y-4">
             {/* Top: used / limit */}
-            <div>
+            <div className='flex flex-row mt-8 gap-4 items-baseline'>
               <h3 className="text-4xl font-bold text-white">{users}</h3>
               <p className="text-2xl text-gray-400">
                 of {maxUsers} seats

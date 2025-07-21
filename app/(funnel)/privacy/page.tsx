@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function PrivacyPage() {
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative bg-black flex min-h-screen flex-col">
       {/* Background gradient overlay for fade effect */}
       <div
         className="from-background via-background pointer-events-none absolute inset-0 bg-gradient-to-b to-transparent"
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
 
       <main className="relative z-10 flex-1">
         <div className="container mx-auto px-4 py-12 md:px-8">
-          <div className="bg-card/90 mx-auto mb-60 w-full max-w-3xl rounded-lg p-6 shadow-md backdrop-blur-sm md:mb-80 md:p-8 lg:mb-96">
+          <div className="bg-card/90 mx-auto mb-40 w-full max-w-3xl p-6">
             <h1 className="mb-6 text-center text-3xl font-bold md:text-4xl">
               🔒 Privacy Policy
             </h1>
@@ -133,17 +133,17 @@ export default function PrivacyPage() {
                 <br />
                 For any privacy-related inquiries, contact{' '}
                 <a
-                  href="mailto:support@fleetfusion.app"
+                  href="mailto:digitalherencia@outlook.com"
                   className="text-primary underline"
                 >
-                  support@fleetfusion.app
+                  digitalherencia@outlook.com
                 </a>
               </li>
             </ol>
           </div>
         </div>
       </main>
-      <footer className="bg-background/80 relative z-10 flex w-full flex-col gap-2 border-t px-4 py-6 backdrop-blur-sm sm:flex-row md:px-6">
+      <footer className="bg-background/80 relative z-10 flex w-full flex-row gap-2 px-6 py-3 backdrop-blur-sm">
         <p className="text-muted-foreground text-xs">
           © 2025 FleetFusion. All rights reserved.
         </p>

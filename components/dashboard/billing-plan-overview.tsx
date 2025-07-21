@@ -24,13 +24,12 @@ export function BillingPlanOverview({
 }: BillingPlanOverviewProps) {
   return (
     <Card className="rounded-md shadow-md bg-black border border-gray-200">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex items-center justify-between pb-2">
         <CardTitle className="text-white flex items-center gap-2">
           <CreditCard className="h-8 w-8 text-white" />
-          Current Subscription
+          Subscription
         </CardTitle>
       </CardHeader>
-
       <CardContent className="w-full p-2 ml-4 space-y-2">
         {/* Top row: plan name/price + status badge */}
           <div className="flex flex-row justify-evenly items-stretch ">

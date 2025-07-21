@@ -40,11 +40,11 @@ export default function Home() {
             <div className="grid w-full gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
               <div className="flex flex-col justify-center space-y-4 rounded-xl bg-black/70 p-6 pl-6 md:pl-12 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none xl:pl-20">
                 <h1 className="text-3xl font-black tracking-wide text-white md:text-4xl">
-                  Enterprise-Grade Fleet Management
+                  Run Your Fleet Like a Fortune 500 Even if You You Park at Mom & Pop's
                 </h1>
                 <p className="lg:text-muted-foreground font-bold max-w-[600px] text-white/90 md:text-xl">
                   FleetFusion unifies dispatch, compliance, and real-time
-                  analytics so you can get freight out the door - faster, safer,
+                  analytics so you can get freight out the door faster, safer, and
                   smarter.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">

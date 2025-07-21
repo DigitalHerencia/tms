@@ -76,7 +76,7 @@ export default function SignInPage() {
     }
 
     return (
-        <div className='flex min-h-screen flex-col items-center justify-center mt-10 mb-10 rounded-lg bg-black px-4 sm:px-6 lg:px-8'>
+        <div className='flex flex-col items-center justify-center mt-5 mb-5 rounded-lg border border-gray-200 bg-black px-10 py-10'>
             <div className='w-full max-w-md space-y-8'>
                 <div className='flex flex-col items-center justify-center text-center'>
                     <div className='flex flex-1 items-center'>
@@ -105,7 +105,7 @@ export default function SignInPage() {
                 </div>
                 <form
                     onSubmit={handleSubmit}
-                    className='mt-8 flex flex-col gap-4 rounded-lg border border-neutral-800 bg-neutral-900 p-6 shadow-lg'
+                    className='mt-8 flex flex-col gap-4 rounded-lg border border-gray-200 bg-neutral-900 p-6 shadow-lg'
                 >
                     <label
                         className='text-sm font-medium text-gray-200'
@@ -147,10 +147,6 @@ export default function SignInPage() {
                             Forgot password?
                         </Link>
                     </div>
-
-                    {error && (
-                        <p className='mt-2 text-sm text-red-500'>{error}</p>
-                    )}
 
                     <Button
                         type='submit'
