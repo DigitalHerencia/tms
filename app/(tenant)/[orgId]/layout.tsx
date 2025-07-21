@@ -61,8 +61,9 @@ export default function TenantLayout({
             <main 
                 className={`transition-all duration-300 ease-in-out pt-16 ${
                     collapsed ? 'ml-20' : 'ml-64'
-                }`}
+                    }`}
             >
+                
                 {children}
             </main>
             </div>

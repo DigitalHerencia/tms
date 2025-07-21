@@ -5,20 +5,24 @@
  */
 
 import { Suspense } from 'react'
-import Link from 'next/link'
-import { Activity, CreditCard, FileText, Shield, Users } from 'lucide-react'
+import { Activity, BarChart, CreditCard, FileText, Settings, Shield, Users } from 'lucide-react'
 import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
-import { KPIGrid } from '@/components/dashboard/kpi-cards';
-import QuickActionsWidget from '@/features/dashboard/quick-actions-widget';
-import RecentAlertsWidget from '@/features/dashboard/recent-alerts-widget';
-import TodaysScheduleWidget from '@/features/dashboard/todays-schedule-widget';
+import UserManagementDashboard from '@/features/dashboard/UserManagementDashboard';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
-import { getDashboardData } from '@/lib/fetchers/dashboardFetchers';
 import { getCurrentUser } from '@/lib/auth/auth';
-import { Button } from '@/components/ui/button';
-import { SystemRoles } from '@/types/abac';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import  AdminOverview from '@/features/dashboard/AdminOverview';
+import { AuditLogViewer } from '@/features/dashboard/AuditLogViewer';
+import {BillingManagementClient} from '@/features/dashboard/BillingManagement';
+import { getBillingInfo } from '@/lib/fetchers/dashboardFetchers';
+import type { BillingInfo } from '@/types/dashboard';import { SystemHealth } from '@/features/dashboard/SystemHealth';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getOrganizationUsers } from '@/lib/fetchers/dashboardFetchers';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { BillingActions } from '@/components/dashboard/billing-actions';
+
 
 interface DashboardPageProps {
   params: Promise<{ orgId: string; userId: string }>;
@@ -27,14 +31,16 @@ interface DashboardPageProps {
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const { orgId, userId } = await params;
   
+ const billingInfo = await getBillingInfo(orgId) as BillingInfo;
+
   // Get current user to check role
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return { error: 'Unauthorized' };
   }
 
-  // Fetch dashboard data for KPIs
-  const dashboardData = await getDashboardData(orgId);
+  // Fetch users for the organization
+  const users = await getOrganizationUsers(orgId);
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
@@ -44,73 +50,139 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <FleetOverviewHeader orgId={orgId} userId={userId} />
       </Suspense>
 
-  {/* Quick Stats Row */}
-      <Suspense fallback={<LoadingSpinner />}>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">System Status</CardTitle>
-              <Activity className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">Online</div>
-              <p className="text-xs text-green-500">All systems operational</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Active Users</CardTitle>
-              <Users className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Loading...</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Subscription</CardTitle>
-              <CreditCard className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Loading...</p>
-            </CardContent>
-          </Card>
-          <Card className="border-gray-200 bg-black">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white">Audit Events</CardTitle>
-              <FileText className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">-</div>
-              <p className="text-xs text-gray-400">Last 24 hours</p>
-            </CardContent>
-          </Card>
-        </div>
-      </Suspense>
+      {/* Main Admin Interface */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
+          <TabsTrigger value="overview" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+            <Shield className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="users" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+            <Users className="h-4 w-4" />
+            Users
+          </TabsTrigger>
+          <TabsTrigger value="billing" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+            <CreditCard className="h-4 w-4" />
+            Billing
+          </TabsTrigger>
+          <TabsTrigger value="audit" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+            <FileText className="h-4 w-4" />
+            Audit
+          </TabsTrigger>
+          <TabsTrigger value="system" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-600">
+            <Settings className="h-4 w-4" />
+            System
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Main Widgets Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Suspense fallback={<DashboardSkeleton />}>
-          <QuickActionsWidget orgId={orgId} />
-        </Suspense>
-        <Suspense fallback={<DashboardSkeleton />}>
-          <RecentAlertsWidget orgId={orgId} />
-        </Suspense>
-        <Suspense fallback={<DashboardSkeleton />}>
-          <TodaysScheduleWidget orgId={orgId} />
-        </Suspense>
-      </div>
+        <TabsContent value="overview" className="width-auto mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <BarChart className="h-8 w-8" />
+                  Company Statistics
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Key metrics and performance indicators
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+                <AdminOverview orgId={orgId} userId={userId} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* KPI Grid */}
-      <div>
-        <Suspense fallback={<DashboardSkeleton />}>
-          <KPIGrid kpis={dashboardData.kpis} orgId={orgId} />
-        </Suspense>
-      
-      
-      </div>
+        <TabsContent value="users" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <Users className="h-8 w-8" />
+                  User Management
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Manage user accounts, roles, and permissions for your organization
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+                <UserManagementDashboard orgId={orgId} users={Array.isArray(users) ? users : users.users} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="billing" className="mt-6 space-y-6">
+          <Card>
+            <div className='flex flex-row justify-between items-baseline'>
+            <CardHeader >
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <CreditCard className="h-8 w-8" />
+                  Billing & Subscriptions
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Monitor subscription status, usage, and manage billing settings
+              </CardDescription>
+              </CardHeader>
+              <BillingActions />
+            </div>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+            <BillingManagementClient billingInfo={billingInfo} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="audit" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <FileText className="h-8 w-8" />
+                  Audit Logs
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                View system activity, user actions, and security events
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+                <AuditLogViewer orgId={orgId} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="system" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <Activity className="w-8 h-8" />
+                  System Health Monitor
+                </h1>
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Monitor system performance, uptime, and infrastructure status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSpinner />}>
+                <SystemHealth />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

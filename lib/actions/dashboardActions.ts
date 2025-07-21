@@ -1,21 +1,113 @@
-
-
 "use server"
 
-
-
+import { billingInfoSchema } from '@/schemas/dashboard';
+import type { BillingInfo } from '@/types/dashboard';
 import { auth } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
-
 import db from "@/lib/database/db"
 import { handleError } from "@/lib/errors/handleError"
-import { getOrganizationKPIs } from "@/lib/fetchers/kpiFetchers"
-import type { OrganizationKPIs } from "@/types/kpi"
+import { getOrganizationKPIs } from "@/lib/fetchers/dashboardFetchers"
+import type { OrganizationKPIs } from "@/types/dashboard"
+import type { DashboardActionResult, DashboardAlert, DashboardScheduleItem } from "@/types/dashboard"
 
-export interface DashboardActionResult<T = unknown> {
-    success: boolean
-    error?: string
-    data?: T
+/**
+ * Get organization billing info
+ */
+export async function getOrganizationBillingAction(orgId: string): Promise<DashboardActionResult<BillingInfo>> {
+    try {
+        const { userId } = await auth();
+        if (!userId) return { success: false, error: "Unauthorized" };
+
+        // Fetch org from DB
+        const org = await db.organization.findUnique({
+            where: { id: orgId },
+            select: { subscriptionTier: true, subscriptionStatus: true, maxUsers: true }
+        });
+        if (!org) return { success: false, error: "Organization not found" };
+
+        const usersCount = await db.user.count({ where: { organizationId: orgId } });
+        const vehiclesCount = await db.vehicle.count({ where: { organizationId: orgId } });
+        const maxVehicles = 1;
+        const billingData = {
+            plan: org.subscriptionTier || 'free',
+            status: org.subscriptionStatus || 'inactive',
+            currentPeriodEnds: '',
+            usage: {
+                users: usersCount,
+                maxUsers: org.maxUsers ?? 1,
+                vehicles: vehiclesCount,
+                maxVehicles,
+            },
+        };
+        const parsed = billingInfoSchema.safeParse(billingData);
+        if (!parsed.success) {
+            return { success: false, error: "Invalid billing data" };
+        }
+        return { success: true, data: parsed.data };
+    } catch (error) {
+        return handleError(error, "Get Organization Billing Info");
+    }
+}
+
+export async function activateUsersAction(orgId: string, formData: FormData): Promise<DashboardActionResult<{ activated: string[] }>> {
+    try {
+        const { userId } = await auth();
+        if (!userId) return { success: false, error: "Unauthorized" };
+        const userIdsRaw = formData.get("userIds") as string | null;
+        let activated: string[] = [];
+        if (userIdsRaw && userIdsRaw.trim()) {
+            const userIds = userIdsRaw.split(",").map(e => e.trim()).filter(Boolean);
+            for (const id of userIds) {
+                const user = await db.user.update({ where: { id }, data: { isActive: true } });
+                activated.push(user.email || id);
+            }
+        } else {
+            // Activate all inactive users in org
+            const users = await db.user.findMany({ where: { organizationId: orgId, isActive: false } });
+            for (const user of users) {
+                await db.user.update({ where: { id: user.id }, data: { isActive: true } });
+                activated.push(user.email || user.id);
+            }
+        }
+        revalidatePath(`/${orgId}/dashboard`);
+        return { success: true, data: { activated } };
+    } catch (error) {
+        return handleError(error, "Activate Users");
+    }
+}
+
+export async function deactivateUsersAction(orgId: string, formData: FormData): Promise<DashboardActionResult<{ deactivated: string[] }>> {
+    try {
+        const { userId } = await auth();
+        if (!userId) return { success: false, error: "Unauthorized" };
+        const userIdsRaw = formData.get("userIds") as string;
+        if (!userIdsRaw) return { success: false, error: "User IDs are required." };
+        const userIds = userIdsRaw.split(",").map(e => e.trim()).filter(Boolean);
+        const deactivated: string[] = [];
+        for (const id of userIds) {
+            const user = await db.user.update({ where: { id }, data: { isActive: false } });
+            deactivated.push(user.email || id);
+        }
+        revalidatePath(`/${orgId}/dashboard`);
+        return { success: true, data: { deactivated } };
+    } catch (error) {
+        return handleError(error, "Deactivate Users");
+    }
+}
+
+export async function exportOrganizationDataAction(orgId: string, formData: FormData): Promise<DashboardActionResult<{ downloadUrl: string }>> {
+    try {
+        const { userId } = await auth();
+        if (!userId) return { success: false, error: "Unauthorized" };
+        const exportType = formData.get("exportType") as string;
+        const format = formData.get("format") as string;
+        // Simulate export logic: generate a download URL (replace with real export logic)
+        const downloadUrl = `/api/export?orgId=${orgId}&type=${exportType}&format=${format}`;
+        // TODO: Implement actual export logic and file generation
+        return { success: true, data: { downloadUrl } };
+    } catch (error) {
+        return handleError(error, "Export Organization Data");
+    }
 }
 
 /**
@@ -49,17 +141,6 @@ export async function getDashboardOverviewAction(): Promise<
     } catch (error) {
         return handleError(error, "Get Dashboard Overview")
     }
-}
-
-/**
- * Get dashboard alerts and notifications
- */
-export type DashboardAlert = {
-    id: string
-    message: string
-    severity: "high" | "medium" | "low"
-    timestamp: string
-    type: string
 }
 
 export async function getDashboardAlertsAction(
@@ -297,17 +378,6 @@ export async function getDashboardAlertsAction(
     } catch (error) {
         return handleError(error, "Get Dashboard Alerts")
     }
-}
-
-/**
- * Get today's schedule for the dashboard
- */
-export type DashboardScheduleItem = {
-    id: string
-    description: string
-    timePeriod: string
-    count: number
-    type: string
 }
 
 export async function getTodaysScheduleAction(
@@ -578,5 +648,38 @@ export async function refreshDashboardData(
         revalidatePath("/")
     } catch (error) {
         console.error("Error refreshing dashboard:", error)
+    }
+}
+
+/**
+ * Get system health status
+ */
+export async function getSystemHealthAction(): Promise<
+    DashboardActionResult<{
+        database: "healthy" | "unhealthy"
+        uptime: number
+    }>
+> {
+    try {
+        // Check database connectivity
+        let dbStatus: "healthy" | "unhealthy" = "healthy";
+        try {
+            await db.$queryRaw`SELECT 1`;
+        } catch {
+            dbStatus = "unhealthy";
+        }
+
+        // Get process uptime in seconds
+        const uptime = Math.floor(process.uptime());
+
+        return {
+            success: true,
+            data: {
+                database: dbStatus,
+                uptime,
+            },
+        };
+    } catch (error) {
+        return handleError(error, "Get System Health");
     }
 }

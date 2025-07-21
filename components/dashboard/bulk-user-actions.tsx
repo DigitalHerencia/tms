@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { UserPlus, UserCheck, UserX, Users, Mail, Shield, Download } from 'lucide-react';
+import { UserPlus, UserCheck, UserX, UserPen, Mail, Download } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { inviteUsersAction, activateUsersAction, deactivateUsersAction, exportOrganizationDataAction } from '@/lib/actions/adminActions';
+import { activateUsersAction, deactivateUsersAction, exportOrganizationDataAction } from '@/lib/actions/dashboardActions';
+import { inviteUserAction } from '@/lib/actions/userActions';
+import React from 'react';
 
 export function BulkUserActions({ orgId }: { orgId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -20,20 +21,41 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const { toast } = useToast();
-
+  
   const handleInviteUsers = async (formData: FormData) => {
     startTransition(async () => {
-      const result = await inviteUsersAction(orgId, formData);
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "User invitations sent successfully.",
-        });
-        setInviteOpen(false);
-      } else {
+      const emailsRaw = formData.get("emails") as string;
+      const role = formData.get("role") as string;
+      if (!emailsRaw || !role) {
         toast({
           title: "Error",
-          description: result.error || "Failed to send invitations.",
+          description: "Email addresses and role are required.",
+          variant: "destructive",
+        });
+        return;
+      }
+      const emails = emailsRaw.split(",").map(e => e.trim()).filter(Boolean);
+      let successCount = 0;
+      let errorCount = 0;
+      for (const email of emails) {
+        const result = await inviteUserAction(orgId, email, role);
+        if (result.success) {
+          successCount++;
+        } else {
+          errorCount++;
+        }
+      }
+      if (successCount > 0) {
+        toast({
+          title: "Success",
+          description: `${successCount} invitation(s) sent successfully.`,
+        });
+        setInviteOpen(false);
+      }
+      if (errorCount > 0) {
+        toast({
+          title: "Error",
+          description: `${errorCount} invitation(s) failed.`,
           variant: "destructive",
         });
       }
@@ -99,11 +121,13 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
     });
   };
 
+
   return (
-    <Card className="border-gray-200 bg-black">
+    <div className="mt-2">
+    <Card className="border border-gray-200 bg-black">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
-          <Users className="h-5 w-5" />
+          <UserPen className="h-5 w-5" />
           Bulk User Actions
         </CardTitle>
         <CardDescription className="text-gray-400">
@@ -115,8 +139,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Invite Users */}
           <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
             <DialogTrigger asChild>
-              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
-                <UserPlus className="h-6 w-6 text-blue-500" />
+              <Button 
+              className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              >
+              <UserPlus className="h-6 w-6 text-white" />
                 <span>Invite Users</span>
               </Button>
             </DialogTrigger>
@@ -182,8 +208,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Activate Users */}
           <Dialog open={activateOpen} onOpenChange={setActivateOpen}>
             <DialogTrigger asChild>
-              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
-                <UserCheck className="h-6 w-6 text-green-500" />
+              <Button 
+              className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              >
+              <UserCheck className="h-6 w-6 text-white" />
                 <span>Activate Users</span>
               </Button>
             </DialogTrigger>
@@ -232,8 +260,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Deactivate Users */}
           <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
             <DialogTrigger asChild>
-              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
-                <UserX className="h-6 w-6 text-red-500" />
+              <Button 
+              className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              >
+              <UserX className="h-6 w-6 text-white" />
                 <span>Deactivate Users</span>
               </Button>
             </DialogTrigger>
@@ -288,8 +318,10 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
           {/* Export Data */}
           <Dialog open={exportOpen} onOpenChange={setExportOpen}>
             <DialogTrigger asChild>
-              <Button className="flex h-20 flex-col gap-2 bg-neutral-900 border border-gray-200 text-white">
-                <Download className="h-6 w-6 text-purple-500" />
+              <Button 
+              className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              >
+              <Download className="h-6 w-6 text-white" />
                 <span>Export Data</span>
               </Button>
             </DialogTrigger>
@@ -350,7 +382,9 @@ export function BulkUserActions({ orgId }: { orgId: string }) {
             </DialogContent>
           </Dialog>
         </div>
+    
       </CardContent>
     </Card>
+    </div>
   );
 }

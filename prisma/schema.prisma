@@ -20,7 +20,7 @@ model Organization {
   phone               String?
   email               String?
   logoUrl             String?                  @map("logo_url")
-  subscriptionTier    SubscriptionTier         @default(free) @map("subscription_tier")
+  subscriptionTier    SubscriptionTier         @default(starter) @map("subscription_tier")
   subscriptionStatus  SubscriptionStatus       @default(trial) @map("subscription_status")
   maxUsers            Int                      @default(5) @map("max_users")
   billingEmail        String?                  @map("billing_email")
@@ -550,8 +550,8 @@ enum UserRole {
 }
 
 enum SubscriptionTier {
-  free
-  pro
+  starter
+  growth
   enterprise
 }
 

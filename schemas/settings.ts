@@ -48,8 +48,8 @@ export const IntegrationSettingsSchema = z.object({
 
 export const BillingSettingsSchema = z.object({
   orgId: z.string(),
-  paymentMethod: z.string(),
-  subscriptionPlan: z.string(),
+  subscriptionTier: z.enum(['free', 'pro', 'enterprise']),
+  subscriptionStatus: z.enum(['active', 'inactive', 'trial', 'cancelled']),
   billingEmail: z.string().email(),
 });
 

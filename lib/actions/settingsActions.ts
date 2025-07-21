@@ -90,6 +90,14 @@ export async function updateIntegrationSettings(orgId: string, data: unknown) {
 export async function updateBillingSettings(orgId: string, data: unknown) {
   const userId = await verifyOrgAccess(orgId);
   const parsed = BillingSettingsSchema.parse(data);
+  await db.organization.update({
+    where: { id: orgId },
+    data: {
+      subscriptionTier: parsed.subscriptionTier,
+      subscriptionStatus: parsed.subscriptionStatus,
+      billingEmail: parsed.billingEmail,
+    },
+  });
   await logChange(orgId, userId, 'updateBilling', parsed);
   return { success: true };
 }

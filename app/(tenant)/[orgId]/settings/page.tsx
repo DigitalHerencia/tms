@@ -56,16 +56,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
   ]);
 
   return (
-    <div className="container mx-auto max-w-6xl py-8">
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your organization and personal settings
-          </p>
-        </div>
-      </div>
-
+    <div className="container mx-auto">
       <Suspense fallback={<LoadingSpinner />}>
         <SettingsDashboard 
           orgId={orgId}

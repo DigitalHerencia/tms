@@ -32,14 +32,6 @@ export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
             onChange={e => handleChange('billingEmail', e.target.value)}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="paymentMethod">Payment Method</Label>
-          <Input
-            id="paymentMethod"
-            value={formState.paymentMethod}
-            onChange={e => handleChange('paymentMethod', e.target.value)}
-          />
-        </div>
       </div>
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving}>
@@ -49,4 +41,4 @@ export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
     </div>
   );
 }
-
+      

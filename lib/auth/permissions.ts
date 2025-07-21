@@ -4,7 +4,7 @@
  * Provides permission checking and role management utilities
  * for the FleetFusion multi-tenant system with custom role/permission management
  *
- * @format
+ *
  */
 
 import {

@@ -1,11 +1,7 @@
-
-
 "use client"
 
 import {
     BarChart,
-    Calendar,
-    Download,
     FileText,
     TrendingUp,
 } from "lucide-react"
@@ -20,7 +16,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import {
     Select,
     SelectContent,
@@ -31,10 +26,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { IftaPeriodData } from "@/types/ifta"
 
-import { IftaReportTable } from "./ifta-report-table"
-import { IftaTripTable } from "./ifta-trip-table"
-
-type IftaData = IftaPeriodData
+import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 
 export function IftaDashboard() {
     const params = useParams()
@@ -91,17 +84,12 @@ export function IftaDashboard() {
     }
 
     return (
-        <div className="flex flex-col gap-6 p-6 bg-black text-white min-h-screen">
-            <div className="flex flex-row flex-wrap items-center justify-between gap-6">
+        <Container>
+            <PageHeader title="IFTA ✱" description="Fuel tax reporting & distance logs" />
+            <div className="flex flex-row flex-wrap items-center justify-between gap-6 mb-6">
                 <div className="flex min-w-0 flex-col gap-1">
-                    <h2 className="text-3xl font-bold tracking-tight whitespace-nowrap">
-                        IFTA Management
-                    </h2>
-                    <p className="text-muted-foreground whitespace-nowrap">
-                        Track and manage International Fuel Tax Agreement reporting
-                    </p>
+                    {/* ...existing code for header ... */}
                 </div>
-
                 <div className="flex w-full max-w-xs flex-col gap-2 sm:w-auto">
                     <Select value={quarter} onValueChange={handleQuarterChange}>
                         <SelectTrigger className="w-full">
@@ -133,13 +121,13 @@ export function IftaDashboard() {
                 </div>
             ) : error ? (
                 <div className="flex h-32 items-center justify-center">
-                    <div className="text-sm text-red-500">{error}</div>
+                    <div className="text-sm text-danger-500">{error}</div>
                 </div>
             ) : (
                 <div className="space-y-6">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         {/* KPI Cards */}
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">Total Miles</CardTitle>
                                 <BarChart className="text-muted-foreground h-4 w-4" />
@@ -149,7 +137,7 @@ export function IftaDashboard() {
                                 <p className="text-muted-foreground text-xs">For {quarter.replace("-", " ")}</p>
                             </CardContent>
                         </Card>
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">Fuel Purchased</CardTitle>
                                 <BarChart className="text-muted-foreground h-4 w-4" />
@@ -159,7 +147,7 @@ export function IftaDashboard() {
                                 <p className="text-muted-foreground text-xs">For {quarter.replace("-", " ")}</p>
                             </CardContent>
                         </Card>
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">Average MPG</CardTitle>
                                 <TrendingUp className="text-muted-foreground h-4 w-4" />
@@ -169,7 +157,7 @@ export function IftaDashboard() {
                                 <p className="text-muted-foreground text-xs">For {quarter.replace("-", " ")}</p>
                             </CardContent>
                         </Card>
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">Fuel Cost</CardTitle>
                                 <FileText className="text-muted-foreground h-4 w-4" />
@@ -182,7 +170,7 @@ export function IftaDashboard() {
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader>
                                 <CardTitle>Quarterly Filing Status</CardTitle>
                                 <CardDescription>IFTA filing progress for {quarter.replace("-", " ")}</CardDescription>
@@ -197,14 +185,14 @@ export function IftaDashboard() {
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card className="border-muted rounded-lg border bg-black p-4">
+                        <Card className="rounded-md shadow-card bg-card p-4">
                             <CardHeader>
                                 <CardTitle>Jurisdiction Summary</CardTitle>
                                 <CardDescription>Miles traveled and fuel purchased by jurisdiction</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 {/* ...existing code... */}
-                                <div className="rounded-md border">
+                                <div className="rounded-md border overflow-x-auto whitespace-nowrap">
                                     {/* ...existing code... */}
                                 </div>
                                 <div className="mt-4 text-center">
@@ -221,7 +209,7 @@ export function IftaDashboard() {
                             <TabsTrigger value="reports">Past Reports</TabsTrigger>
                         </TabsList>
                         <TabsContent value="trips">
-                            <Card className="border-muted rounded-lg border bg-black p-4">
+                            <Card className="rounded-md shadow-card bg-card p-4">
                                 <CardHeader>
                                     <CardTitle>Trip Data</CardTitle>
                                     <CardDescription>Record of trips for IFTA reporting</CardDescription>
@@ -232,7 +220,7 @@ export function IftaDashboard() {
                             </Card>
                         </TabsContent>
                         <TabsContent value="fuel">
-                            <Card className="border-muted rounded-lg border bg-black p-4">
+                            <Card className="rounded-md shadow-card bg-card p-4">
                                 <CardHeader>
                                     <CardTitle>Fuel Purchases</CardTitle>
                                     <CardDescription>Record of fuel purchases for IFTA reporting</CardDescription>
@@ -243,7 +231,7 @@ export function IftaDashboard() {
                             </Card>
                         </TabsContent>
                         <TabsContent value="reports">
-                            <Card className="border-muted rounded-lg border bg-black p-4">
+                            <Card className="rounded-md shadow-card bg-card p-4">
                                 <CardHeader>
                                     <CardTitle>Past IFTA Reports</CardTitle>
                                     <CardDescription>History of filed IFTA reports</CardDescription>
@@ -256,7 +244,7 @@ export function IftaDashboard() {
                     </Tabs>
                 </div>
             )}
-        </div>
+        </Container>
     )
 }
 

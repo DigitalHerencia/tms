@@ -1,6 +1,6 @@
 "use server"
 
-import type { DeletedObjectJSON, UserJSON } from "@clerk/backend"
+import type { DeletedObjectJSON, UserJSON } from "@clerk/types"
 import { NextRequest, NextResponse } from "next/server"
 import { Webhook } from "svix"
 
@@ -50,14 +50,14 @@ async function handleClerkEvent(eventType: string, data: any) {
                 profileImage: user.image_url ?? null,
                 isActive: true,
                 onboardingComplete: getBooleanField(
-                    user.private_metadata,
+                    user.public_metadata,
                     "onboardingComplete"
                 ),
                 lastLogin: user.last_sign_in_at
                     ? new Date(user.last_sign_in_at)
                     : null,
                 organizationId: getStringField(
-                    user.private_metadata,
+                    user.public_metadata,
                     "organizationId"
                 ),
             })
@@ -68,14 +68,6 @@ async function handleClerkEvent(eventType: string, data: any) {
             if (user.id) await DatabaseQueries.deleteUser(user.id)
             break
         }
-        // NOTE: Organization events removed - using custom organization management
-        // case 'organization.created':
-        // case 'organization.updated':
-        // case 'organization.deleted':
-        // case 'organizationMembership.created':
-        // case 'organizationMembership.updated':
-        // case 'organizationMembership.deleted':
-        // These are now handled through our custom onboarding flow
         default:
             if (process.env.NODE_ENV === 'development') {
                 console.log(`[Clerk Webhook] Unhandled event: ${eventType}`)

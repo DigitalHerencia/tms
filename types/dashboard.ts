@@ -1,4 +1,25 @@
-// Dashboard specific types
+export interface DashboardActionResult<T = unknown> {
+    success: boolean
+    error?: string
+    data?: T
+}
+
+export type DashboardAlert = {
+    id: string
+    message: string
+    severity: "high" | "medium" | "low"
+    timestamp: string
+    type: string
+}
+
+export type DashboardScheduleItem = {
+    id: string
+    description: string
+    timePeriod: string
+    count: number
+    type: string
+}
+// Consolidated dashboard types and interfaces
 export interface DashboardMetrics {
   activeLoads: number;
   totalLoads: number;
@@ -75,4 +96,159 @@ export interface DashboardPreferences {
   showAlerts: boolean;
   theme: 'light' | 'dark' | 'system';
   refreshInterval: number; // in minutes
+}
+
+// Admin types consolidated
+export interface AdminDashboardData {
+  organizationStats: OrganizationStats;
+  userData: UserManagementData;
+  billing: BillingInfo;
+  systemHealth: SystemHealth;
+  recentActivity: AuditLogEntry[];
+}
+
+export interface OrganizationStats {
+  userCount: number;
+  activeUserCount: number;
+  vehicleCount: number;
+  driverCount: number;
+  loadCount: number;
+}
+
+export interface UserManagementData {
+  users: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    isActive: boolean;
+  }[];
+}
+
+export interface AuditLogEntry {
+  id: string;
+  userId: string;
+  action: string;
+  target: string;
+  createdAt: string;
+}
+
+export interface UsageInfo {
+  users: number;
+  maxUsers: number;
+  vehicles: number;
+  maxVehicles: number;
+}
+
+export interface BillingInfo {
+  plan: string;
+  status: string;
+  currentPeriodEnds: string;
+  usage: UsageInfo;
+}
+
+export interface SystemHealth {
+  uptime: number;
+  databaseStatus: string;
+  queueStatus: string;
+}
+
+// Dashboard component types
+export interface UserWithRole {
+  id: string;
+  name: string;
+  role: string;
+}
+
+export interface UserTableProps {
+  users: UserWithRole[];
+  onAssignRole?: (user: UserWithRole) => void;
+}
+
+export interface BillingManagementProps {
+  orgId: string;
+  initialBillingInfo?: BillingInfo;
+}
+
+export interface PlanDetails {
+  name: string;
+  price: string;
+  color: string;
+  features: string[];
+}
+
+export interface SystemHealthData {
+  uptime: number;
+  databaseStatus: string;
+  queueStatus: string;
+  memoryUsage: number;
+  cpuUsage: number;
+}
+
+export interface SystemHealthProps {
+  initialData?: SystemHealthData;
+}
+
+export interface AuditLogViewerProps {
+  orgId: string;
+  initialLogs?: AuditLogEntry[];
+}
+
+export interface AuditLogTableProps {
+  logs: AuditLogEntry[];
+  selectedLog: AuditLogEntry | null;
+  setSelectedLog: (log: AuditLogEntry | null) => void;
+  getActionBadgeVariant: (action: string) => "default" | "secondary" | "destructive" | "outline" | null | undefined;
+}
+
+export interface AuditLogFiltersProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  actionFilter: string;
+  onActionFilterChange: (value: string) => void;
+  dateRange: string;
+  onDateRangeChange: (value: string) => void;
+  uniqueActions: string[];
+  onRefresh: () => void;
+  onExport: () => void;
+  isLoading: boolean;
+  exportDisabled: boolean;
+  logsCount: number;
+  filteredCount: number;
+}
+
+export interface OrganizationKPIs {
+  activeVehicles: number;
+  activeVehiclesChange: string;
+  activeDrivers: number;
+  activeDriversChange: string;
+  activeLoads: number;
+  activeLoadsLive: number;
+  completedLoads: number;
+  inTransitLoads: number;
+  totalRevenue: number;
+  revenueChange: string;
+  revenuePerMile: number;
+  revenueTarget: number;
+  totalMiles: number;
+  milesChange: string;
+  milesPerVehicleAvg: number;
+  milesTarget: number;
+  recentInspections: number;
+  failedInspections: number;
+  inspectionSuccessRate: number;
+  upcomingMaintenance: number;
+  maintenanceOverdue: number;
+  maintenanceThisWeek: number;
+  pendingLoads: number;
+  pendingLoadsUrgent: number;
+  pendingLoadsAwaitingPickup: number;
+  pendingLoadsAwaitingAssignment: number;
+}
+
+export interface DashboardSummary {
+  lastUpdated: string;
+  totalVehicles: number;
+  activeDrivers: number;
+  // additional fields can be added as needed
 }

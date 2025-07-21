@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "@clerk/agent-toolkit": "^0.1.1",
-    "@clerk/nextjs": "^6.22.0",
+    "@clerk/backend": "^2.5.0",
+    "@clerk/nextjs": "^6.25.4",
+    "@clerk/themes": "^2.3.3",
     "@hookform/resolvers": "^5.1.1",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/adapter-neon": "^6.10.1",

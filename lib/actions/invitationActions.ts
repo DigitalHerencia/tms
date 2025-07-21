@@ -1,9 +1,7 @@
-
-
 "use server"
 
 import { handleError } from "@/lib/errors/handleError"
-import { invitationSchema } from "@/schemas/invitations"
+import { invitationSchema } from "@/schemas/dashboard"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 

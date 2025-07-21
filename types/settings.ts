@@ -38,9 +38,10 @@ export interface IntegrationSettings {
 
 export interface BillingSettings {
   orgId: string;
-  paymentMethod: string;
-  subscriptionPlan: string;
+  subscriptionTier: 'free' | 'pro' | 'enterprise';
+  subscriptionStatus: 'active' | 'inactive' | 'trial' | 'cancelled';
   billingEmail: string;
+  paymentMethod: string;
 }
 
 export interface SystemSettings {

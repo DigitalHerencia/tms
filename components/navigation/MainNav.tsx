@@ -1,5 +1,7 @@
+'use client';
+
+import * as React from 'react';
 import Link from 'next/link';
-import React from 'react';
 import {
   Home,
   Truck,
@@ -19,8 +21,13 @@ import { cn } from '@/lib/utils/utils';
 import { useUserContext } from '@/components/auth/context';
 import { SystemRoles, type SystemRole } from '@/types/abac';
 
-// MainNavProps interface: defines props for MainNav component
-interface MainNavProps {
+// ── 1) Context + hook for collapse state ───────────────────────────
+const SidebarCollapsedContext = React.createContext<boolean>(false);
+export const useSidebarCollapsed = () =>
+  React.useContext(SidebarCollapsedContext);
+
+// ── 2) Props interface ──────────────────────────────────────────────
+export interface MainNavProps {
   className?: string;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
@@ -28,7 +35,7 @@ interface MainNavProps {
   userId: string;
 }
 
-// MainNav component: renders the sidebar navigation
+// ── 3) MainNav component ────────────────────────────────────────────
 export function MainNav({
   className,
   collapsed,
@@ -40,7 +47,7 @@ export function MainNav({
   const user = useUserContext();
   const userRole: SystemRole = user?.role || SystemRoles.MEMBER;
 
-  // navLinks: array of navigation link objects for the sidebar
+  // Navigation links
   const navLinks = [
     {
       key: 'dashboard',
@@ -139,7 +146,6 @@ export function MainNav({
       href: '#',
       label: 'Sign Out',
       icon: <LogOut className="h-5 w-5" />,
-      // Sign Out handler
       onClick: async (e: React.MouseEvent) => {
         e.preventDefault();
         await signOut({ redirectUrl: '/' });
@@ -147,62 +153,67 @@ export function MainNav({
     },
   ];
 
-  const visibleLinks = navLinks.filter(link => !link.roles || link.roles.includes(userRole));
+  const visibleLinks = navLinks.filter(
+    (link) => !link.roles || link.roles.includes(userRole)
+  );
 
   return (
-    // Sidebar container
-    <aside
-      className={cn(
-        'fixed top-16 bottom-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-blue-500/60 shadow-xl transition-all duration-300 ease-in-out',
-        collapsed ? 'w-20' : 'w-64',
-        className
-      )}
-      data-collapsed={collapsed}
-    >
-      <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-        {/* Navigation Links Section */}
-        <nav className="mt-6 flex-1 space-y-4 px-8 py-4">
-          {visibleLinks.map(link => (
-            link.key === 'signout' ? (
-              <SidebarLink
-                key={link.key}
-                href={link.href}
-                icon={link.icon}
-                collapsed={collapsed}
-                onClick={link.onClick}
-              >
-                {link.label}
-              </SidebarLink>
+    // ── wrap in our provider so child components can call useSidebarCollapsed()
+    <SidebarCollapsedContext.Provider value={collapsed}>
+      <aside
+        className={cn(
+          'fixed top-16 bottom-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-blue-500/60 shadow-xl transition-all duration-300 ease-in-out',
+          collapsed ? 'w-20' : 'w-64',
+          className
+        )}
+        data-collapsed={collapsed}
+      >
+        <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+          {/* Navigation Links */}
+          <nav className="mt-6 flex-1 space-y-4 px-8 py-4">
+            {visibleLinks.map((link) =>
+              link.key === 'signout' ? (
+                <SidebarLink
+                  key={link.key}
+                  href={link.href}
+                  icon={link.icon}
+                  collapsed={collapsed}
+                  onClick={link.onClick}
+                >
+                  {link.label}
+                </SidebarLink>
+              ) : (
+                <SidebarLink
+                  key={link.key}
+                  href={link.href}
+                  icon={link.icon}
+                  collapsed={collapsed}
+                >
+                  {link.label}
+                </SidebarLink>
+              )
+            )}
+          </nav>
+
+          {/* Collapse/Expand Button */}
+          <button
+            className="absolute top-3 -right-4 flex h-8 w-8 items-center justify-center rounded-full border border-b bg-black shadow-md hover:bg-gray-900"
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4 text-zinc-400" />
             ) : (
-              <SidebarLink
-                key={link.key}
-                href={link.href}
-                icon={link.icon}
-                collapsed={collapsed}
-              >
-                {link.label}
-              </SidebarLink>
-            )
-          ))}
-        </nav>
-        {/* Collapse Sidebar Button */}
-        <button
-          className="absolute top-3 -right-4 flex h-8 w-8 items-center justify-center rounded-full border border-b bg-black shadow-md hover:bg-gray-900"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? (
-            <ChevronRight className="mx-auto my-auto h-4 w-4 text-zinc-400" />
-          ) : (
-            <ChevronLeft className="mx-auto my-auto h-4 w-4 text-zinc-400" />
-          )}
-        </button>
-      </div>
-    </aside>
+              <ChevronLeft className="h-4 w-4 text-zinc-400" />
+            )}
+          </button>
+        </div>
+      </aside>
+    </SidebarCollapsedContext.Provider>
   );
 }
 
-// SidebarLink component: renders a single sidebar navigation link
+// ── 4) SidebarLink sub‑component ────────────────────────────────────
 function SidebarLink({
   href,
   children,
@@ -216,7 +227,7 @@ function SidebarLink({
   collapsed: boolean;
   onClick?: (e: React.MouseEvent) => void;
 }) {
-  // Only render as a button if onClick is provided AND href is '#', to avoid accidental override for navigation links like Settings
+  // render as button if it has an onClick (Sign Out)
   if (onClick && href === '#') {
     return (
       <button
@@ -228,7 +239,7 @@ function SidebarLink({
         )}
         type="button"
       >
-        <span className="group-hover:text-primary h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
+        <span className="h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
           {icon}
         </span>
         {!collapsed && (
@@ -239,7 +250,8 @@ function SidebarLink({
       </button>
     );
   }
-  // Default: render as a Link
+
+  // default: render as a Next.js Link
   return (
     <Link
       href={href}
@@ -249,7 +261,7 @@ function SidebarLink({
         'hover:shadow-md'
       )}
     >
-      <span className="group-hover:text-primary h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
+      <span className="h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
         {icon}
       </span>
       {!collapsed && (

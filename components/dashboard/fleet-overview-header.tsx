@@ -1,9 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { getDashboardSummary } from "@/lib/fetchers/analyticsFetchers"
-import type { DashboardSummary } from "@/types/kpi"
+import type { DashboardSummary } from "@/types/dashboard"
 import { RefreshCw, Shield } from "lucide-react"
-import { Button } from "../ui/button"
-import Link from "next/link"
 
 interface FleetOverviewHeaderProps {
     orgId: string
@@ -12,7 +10,6 @@ interface FleetOverviewHeaderProps {
 
 export default async function FleetOverviewHeader({
     orgId,
-    userId, // <-- Destructure userId from props
 }: FleetOverviewHeaderProps) {
     if (!orgId) {
         return (
@@ -53,7 +50,10 @@ export default async function FleetOverviewHeader({
     <div className="flex flex-row items-baseline justify-between mb-6">        
         <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-extrabold text-white">Fleet Dashboard</h1>
+                <Shield className="h-8 w-8" />
+                <h1 className="text-3xl font-extrabold text-white">
+                    Admin Dashboard
+                </h1>
                 <div className="flex items-center gap-2 bg-green-500/20 rounded-full px-3 py-1">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                     <span className="text-green-400 text-sm font-medium">Live</span>
@@ -67,19 +67,6 @@ export default async function FleetOverviewHeader({
                 <span>Last updated: {lastUpdated || "2 minutes ago"}</span>
             </div>
             </div>
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <Button
-                        asChild
-                        size="sm"
-                        className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
-                        >
-                        <Link href={`/${orgId}/dashboard/${userId}/admin`} className="flex items-center gap-2">
-                          <Shield className="h-4 w-4" />
-                          Admin Dashboard
-                        </Link>
-                      </Button>
-                  </div>
         </div>
-
     )
 }

@@ -3,16 +3,10 @@
 import { z } from 'zod';
 
 import db from '../database/db';
+import { auditLogSchema } from '@/schemas/auditLogSchema';
 
-export const auditLogSchema = z.object({
-  organizationId: z.string(),
-  userId: z.string().optional(),
-  entityType: z.string(),
-  entityId: z.string(),
-  action: z.string(),
-  changes: z.any().optional(),
-  metadata: z.any().optional(),
-});
+// Removed auditLogSchema export and imported from auditLogSchema.ts
+// ...existing code...
 
 export async function createAuditLog(data: z.infer<typeof auditLogSchema>) {
   const validated = auditLogSchema.parse(data);

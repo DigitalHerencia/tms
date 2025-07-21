@@ -6,45 +6,45 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 const plans = [
-	{
-		name: 'Starter',
-		price: '$149/mo',
-		description: 'Perfect for small fleets just getting started.',
-		features: [
-			'Up to 5 trucks',
-			'2 dispatcher seats',
-			'5 driver apps',
-			'Core TMS features',
-			'90-day log retention',
-		],
-		highlight: false,
-	},
-	{
-		name: 'Growth',
-		price: '$349/mo',
-		description: 'For growing fleets that need more power and flexibility.',
-		features: [
-			'Up to 25 trucks',
-			'Unlimited dispatcher seats',
-			'25 driver apps',
-			'IFTA engine',
-			'Custom reports',
-		],
-		highlight: true, // Recommended plan
-	},
-	{
-		name: 'Enterprise',
-		price: '$15/truck',
-		description: 'Advanced features and support for large operations.',
-		features: [
-			'Minimum $699/mo',
-			'Priority SLA',
-			'Dedicated CSM',
-			'SSO & API rate bump',
-			'Custom integrations',
-		],
-		highlight: false,
-	},
+  {
+	name: 'Starter',
+	price: '$149/mo',
+	description: 'For small fleets: up to 5 trucks, 2 dispatcher seats, 5 driver apps, core TMS features, 90-day log retention.',
+	features: [
+	  'Up to 5 trucks',
+	  '2 dispatcher seats',
+	  '5 driver apps',
+	  'Core TMS features',
+	  '90-day log retention',
+	],
+	highlight: false,
+  },
+  {
+	name: 'Growth',
+	price: '$349/mo',
+	description: 'For growing fleets: up to 25 trucks, unlimited dispatcher seats, 25 driver apps, IFTA engine, custom reports.',
+	features: [
+	  'Up to 25 trucks',
+	  'Unlimited dispatcher seats',
+	  '25 driver apps',
+	  'IFTA engine',
+	  'Custom reports',
+	],
+	highlight: true,
+  },
+  {
+	name: 'Enterprise',
+	price: '$15/truck (min $699/mo)',
+	description: 'For large operations: minimum $699/mo, priority SLA, dedicated CSM, SSO & API rate bump, custom integrations.',
+	features: [
+	  'Minimum $699/mo',
+	  'Priority SLA',
+	  'Dedicated CSM',
+	  'SSO & API rate bump',
+	  'Custom integrations',
+	],
+	highlight: false,
+  },
 ];
 
 export default function PricingSection({

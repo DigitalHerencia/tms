@@ -94,7 +94,8 @@ export async function getBillingSettings(orgId: string): Promise<BillingSettings
   return {
     orgId: org.id,
     paymentMethod: settings.paymentMethod || '',
-    subscriptionPlan: org.subscriptionTier,
+    subscriptionTier: org.subscriptionTier,
+    subscriptionStatus: org.subscriptionStatus,
     billingEmail: org.billingEmail || '',
   };
 }
