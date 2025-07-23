@@ -25,7 +25,6 @@ import type {
 } from '@/types/dashboard';
 
 export async function getOrganizationStats(orgId: string): Promise<OrganizationStats> {
-  await requireAdminForOrg(orgId);
 
   const cacheKey = `admin:stats:${orgId}`;
   const cached = getCachedData(cacheKey) as OrganizationStats | null;
@@ -51,7 +50,6 @@ export async function getOrganizationStats(orgId: string): Promise<OrganizationS
 }
 
 export async function getOrganizationUsers(orgId: string): Promise<UserManagementData> {
-  await requireAdminForOrg(orgId);
   const users = await prisma.user.findMany({
     where: { organizationId: orgId },
     select: {

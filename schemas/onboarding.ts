@@ -59,7 +59,6 @@ export const CompleteOnboardingSchema = z.object({
   phone: z.string().optional(),
   organizationId: z.string().optional(),
   inviteCode: z.string().optional(),
-  preferences: z.record(z.any()).optional(),
 });
 
 export type CompleteOnboardingData = z.infer<typeof CompleteOnboardingSchema>;

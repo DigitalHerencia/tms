@@ -622,7 +622,6 @@ export async function unassignDriverAction(
           tx.load.update({
             where: { id: load.id },
             data: {
-              driver_id: null,
               status: load.status === 'assigned' ? 'pending' : load.status,
               updatedAt: new Date(),
             },

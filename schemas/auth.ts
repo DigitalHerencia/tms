@@ -176,7 +176,6 @@ export const createOrganizationSchema = z.object({
   email: z.string().email('Invalid email address').optional(),
 
   // Additional metadata
-  publicMetadata: z.record(z.any()).optional(),
 });
 
 export const updateOrganizationSchema = z.object({
@@ -221,7 +220,6 @@ export const updateOrganizationSchema = z.object({
     .optional(),
   email: z.string().email('Invalid email address').optional(),
 
-  publicMetadata: z.record(z.any()).optional(),
 });
 
 // Webhook payload validation schemas
@@ -241,8 +239,6 @@ export const webhookUserDataSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   profile_image_url: z.string().url().optional(),
-  public_metadata: z.record(z.any()).optional(),
-  private_metadata: z.record(z.any()).optional(),
   organization_memberships: z
     .array(
       z.object({
@@ -251,10 +247,8 @@ export const webhookUserDataSchema = z.object({
           id: z.string(),
           name: z.string(),
           slug: z.string(),
-          public_metadata: z.record(z.any()).optional(),
         }),
         role: z.string(),
-        public_metadata: z.record(z.any()).optional(),
       })
     )
     .optional(),
@@ -266,8 +260,6 @@ export const webhookOrganizationDataSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  public_metadata: z.record(z.any()).optional(),
-  private_metadata: z.record(z.any()).optional(),
   members_count: z.number().optional(),
   created_at: z.number(),
   updated_at: z.number(),
@@ -279,7 +271,6 @@ export const webhookOrganizationMembershipDataSchema = z.object({
     id: z.string(),
     name: z.string(),
     slug: z.string(),
-    public_metadata: z.record(z.any()).optional(),
   }),
   user_id: z.string().optional(),
   public_user_data: z
@@ -291,8 +282,6 @@ export const webhookOrganizationMembershipDataSchema = z.object({
     })
     .optional(),
   role: z.string(),
-  public_metadata: z.record(z.any()).optional(),
-  private_metadata: z.record(z.any()).optional(),
   created_at: z.number(),
   updated_at: z.number(),
 });

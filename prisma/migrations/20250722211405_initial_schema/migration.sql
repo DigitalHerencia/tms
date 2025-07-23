@@ -2,7 +2,7 @@
 CREATE TYPE "UserRole" AS ENUM ('admin', 'manager', 'user', 'dispatcher', 'driver', 'compliance', 'accountant', 'viewer');
 
 -- CreateEnum
-CREATE TYPE "SubscriptionTier" AS ENUM ('free', 'pro', 'enterprise');
+CREATE TYPE "SubscriptionTier" AS ENUM ('starter', 'growth', 'enterprise');
 
 -- CreateEnum
 CREATE TYPE "SubscriptionStatus" AS ENUM ('active', 'inactive', 'trial', 'cancelled');
@@ -32,7 +32,7 @@ CREATE TABLE "organizations" (
     "phone" TEXT,
     "email" TEXT,
     "logo_url" TEXT,
-    "subscription_tier" "SubscriptionTier" NOT NULL DEFAULT 'free',
+    "subscription_tier" "SubscriptionTier" NOT NULL DEFAULT 'starter',
     "subscription_status" "SubscriptionStatus" NOT NULL DEFAULT 'trial',
     "max_users" INTEGER NOT NULL DEFAULT 5,
     "billing_email" TEXT,
@@ -48,7 +48,6 @@ CREATE TABLE "organizations" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
-    "clerk_id" TEXT NOT NULL,
     "organization_id" TEXT,
     "email" TEXT,
     "first_name" TEXT,
@@ -62,6 +61,7 @@ CREATE TABLE "users" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "onboarding_steps" JSONB DEFAULT '{}',
     "onboarding_complete" BOOLEAN NOT NULL DEFAULT false,
+    "preferences" JSONB DEFAULT '{}',
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -92,6 +92,49 @@ CREATE TABLE "vehicles" (
     "registration_expiry" DATE,
 
     CONSTRAINT "vehicles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "trailers" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "unitNumber" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "length" INTEGER,
+    "make" TEXT,
+    "model" TEXT,
+    "year" INTEGER,
+    "vin" TEXT,
+    "licensePlate" TEXT,
+    "status" TEXT NOT NULL,
+
+    CONSTRAINT "trailers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "customers" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "contactName" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "address" TEXT,
+    "city" TEXT,
+    "state" TEXT,
+    "zipCode" TEXT,
+    "mcNumber" TEXT,
+    "dotNumber" TEXT,
+    "creditLimit" DOUBLE PRECISION,
+    "paymentTerms" TEXT,
+    "rating" INTEGER,
+    "notes" TEXT,
+    "tags" TEXT[],
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "customers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -135,7 +178,6 @@ CREATE TABLE "loads" (
     "organization_id" TEXT NOT NULL,
     "driver_id" TEXT,
     "vehicle_id" TEXT,
-    "trailer_id" TEXT,
     "load_number" TEXT NOT NULL,
     "reference_number" TEXT,
     "status" "LoadStatus" NOT NULL DEFAULT 'pending',
@@ -176,6 +218,8 @@ CREATE TABLE "loads" (
     "last_modified_by" TEXT,
     "priority" "LoadPriority" NOT NULL DEFAULT 'medium',
     "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "customer_id" TEXT,
+    "trailer_id" TEXT,
 
     CONSTRAINT "loads_pkey" PRIMARY KEY ("id")
 );
@@ -193,6 +237,19 @@ CREATE TABLE "load_status_events" (
     "createdBy" TEXT,
 
     CONSTRAINT "load_status_events_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "dispatch_activity" (
+    "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+    "entityType" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "entityId" TEXT NOT NULL,
+    "userName" TEXT NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "dispatch_activity_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -466,12 +523,6 @@ CREATE UNIQUE INDEX "organizations_slug_key" ON "organizations"("slug");
 CREATE INDEX "organizations_slug_idx" ON "organizations"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_clerk_id_key" ON "users"("clerk_id");
-
--- CreateIndex
-CREATE INDEX "users_clerk_id_idx" ON "users"("clerk_id");
-
--- CreateIndex
 CREATE INDEX "users_organization_id_idx" ON "users"("organization_id");
 
 -- CreateIndex
@@ -496,6 +547,12 @@ CREATE INDEX "vehicles_type_idx" ON "vehicles"("type");
 CREATE UNIQUE INDEX "vehicles_organization_id_unit_number_key" ON "vehicles"("organization_id", "unit_number");
 
 -- CreateIndex
+CREATE INDEX "trailers_organizationId_idx" ON "trailers"("organizationId");
+
+-- CreateIndex
+CREATE INDEX "customers_organizationId_idx" ON "customers"("organizationId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "drivers_user_id_key" ON "drivers"("user_id");
 
 -- CreateIndex
@@ -517,9 +574,6 @@ CREATE UNIQUE INDEX "drivers_organization_id_employee_id_key" ON "drivers"("orga
 CREATE INDEX "loads_organization_id_idx" ON "loads"("organization_id");
 
 -- CreateIndex
-CREATE INDEX "loads_driver_id_idx" ON "loads"("driver_id");
-
--- CreateIndex
 CREATE INDEX "loads_vehicle_id_idx" ON "loads"("vehicle_id");
 
 -- CreateIndex
@@ -535,16 +589,19 @@ CREATE INDEX "loads_load_number_idx" ON "loads"("load_number");
 CREATE INDEX "loads_scheduled_pickup_idx" ON "loads"("scheduled_pickup_date");
 
 -- CreateIndex
+CREATE INDEX "loads_driver_id_idx" ON "loads"("driver_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "loads_organization_id_load_number_key" ON "loads"("organization_id", "load_number");
 
 -- CreateIndex
 CREATE INDEX "load_status_events_load_id_idx" ON "load_status_events"("load_id");
 
 -- CreateIndex
-CREATE INDEX "compliance_documents_organization_id_idx" ON "compliance_documents"("organization_id");
+CREATE INDEX "dispatch_activity_organizationId_timestamp_idx" ON "dispatch_activity"("organizationId", "timestamp");
 
 -- CreateIndex
-CREATE INDEX "compliance_documents_driver_id_idx" ON "compliance_documents"("driver_id");
+CREATE INDEX "compliance_documents_organization_id_idx" ON "compliance_documents"("organization_id");
 
 -- CreateIndex
 CREATE INDEX "compliance_documents_vehicle_id_idx" ON "compliance_documents"("vehicle_id");
@@ -562,19 +619,22 @@ CREATE INDEX "compliance_documents_status_idx" ON "compliance_documents"("status
 CREATE INDEX "compliance_documents_expiration_idx" ON "compliance_documents"("expiration_date");
 
 -- CreateIndex
+CREATE INDEX "compliance_documents_driver_id_idx" ON "compliance_documents"("driver_id");
+
+-- CreateIndex
 CREATE INDEX "ifta_reports_organization_id_idx" ON "ifta_reports"("organization_id");
 
 -- CreateIndex
 CREATE INDEX "ifta_reports_submitted_by_idx" ON "ifta_reports"("submitted_by");
 
 -- CreateIndex
-CREATE INDEX "ifta_reports_quarter_year_idx" ON "ifta_reports"("quarter", "year");
-
--- CreateIndex
 CREATE INDEX "ifta_reports_status_idx" ON "ifta_reports"("status");
 
 -- CreateIndex
 CREATE INDEX "ifta_reports_due_date_idx" ON "ifta_reports"("due_date");
+
+-- CreateIndex
+CREATE INDEX "ifta_reports_quarter_year_idx" ON "ifta_reports"("quarter", "year");
 
 -- CreateIndex
 CREATE INDEX "audit_logs_organization_id_idx" ON "audit_logs"("organization_id");
@@ -634,10 +694,10 @@ CREATE INDEX "ifta_fuel_purchases_date_idx" ON "ifta_fuel_purchases"("date");
 CREATE INDEX "compliance_alerts_organization_id_idx" ON "compliance_alerts"("organization_id");
 
 -- CreateIndex
-CREATE INDEX "compliance_alerts_user_id_idx" ON "compliance_alerts"("user_id");
+CREATE INDEX "compliance_alerts_vehicle_id_idx" ON "compliance_alerts"("vehicle_id");
 
 -- CreateIndex
-CREATE INDEX "compliance_alerts_vehicle_id_idx" ON "compliance_alerts"("vehicle_id");
+CREATE INDEX "compliance_alerts_user_id_idx" ON "compliance_alerts"("user_id");
 
 -- CreateIndex
 CREATE INDEX "compliance_alerts_driver_id_idx" ON "compliance_alerts"("driver_id");
@@ -658,6 +718,12 @@ ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_fkey" FOREIGN KEY ("or
 ALTER TABLE "vehicles" ADD CONSTRAINT "vehicles_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "trailers" ADD CONSTRAINT "trailers_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "customers" ADD CONSTRAINT "customers_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "drivers" ADD CONSTRAINT "drivers_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -670,13 +736,19 @@ ALTER TABLE "loads" ADD CONSTRAINT "loads_driver_id_fkey" FOREIGN KEY ("driver_i
 ALTER TABLE "loads" ADD CONSTRAINT "loads_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "loads" ADD CONSTRAINT "loads_trailer_id_fkey" FOREIGN KEY ("trailer_id") REFERENCES "vehicles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "loads" ADD CONSTRAINT "loads_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "loads" ADD CONSTRAINT "loads_customer_id_fkey" FOREIGN KEY ("customer_id") REFERENCES "customers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "loads" ADD CONSTRAINT "loads_trailer_id_fkey" FOREIGN KEY ("trailer_id") REFERENCES "trailers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "load_status_events" ADD CONSTRAINT "load_status_events_load_id_fkey" FOREIGN KEY ("load_id") REFERENCES "loads"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dispatch_activity" ADD CONSTRAINT "dispatch_activity_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "organizations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "compliance_documents" ADD CONSTRAINT "compliance_documents_driver_id_fkey" FOREIGN KEY ("driver_id") REFERENCES "drivers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -733,10 +805,10 @@ ALTER TABLE "IftaPDFGenerationLog" ADD CONSTRAINT "IftaPDFGenerationLog_user_id_
 ALTER TABLE "IftaReportPDF" ADD CONSTRAINT "IftaReportPDF_generated_by_fkey" FOREIGN KEY ("generated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "IftaTaxCalculation" ADD CONSTRAINT "IftaTaxCalculation_report_id_fkey" FOREIGN KEY ("report_id") REFERENCES "ifta_reports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "IftaTaxCalculation" ADD CONSTRAINT "IftaTaxCalculation_calculated_by_fkey" FOREIGN KEY ("calculated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "IftaTaxCalculation" ADD CONSTRAINT "IftaTaxCalculation_calculated_by_fkey" FOREIGN KEY ("calculated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "IftaTaxCalculation" ADD CONSTRAINT "IftaTaxCalculation_report_id_fkey" FOREIGN KEY ("report_id") REFERENCES "ifta_reports"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "IftaTaxCalculation" ADD CONSTRAINT "IftaTaxCalculation_validated_by_fkey" FOREIGN KEY ("validated_by") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

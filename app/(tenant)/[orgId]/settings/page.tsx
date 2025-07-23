@@ -7,7 +7,6 @@ import {
   getUserPreferences, 
   getNotificationSettings,
   getIntegrationSettings,
-  getBillingSettings 
 } from '@/lib/fetchers/settingsFetchers';
 import db from '@/lib/database/db';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -46,13 +45,11 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
     userPreferences,
     notificationSettings,
     integrationSettings,
-    billingSettings,
   ] = await Promise.allSettled([
     getOrganizationSettings(orgId),
     getUserPreferences(userId),
     getNotificationSettings(userId),
     getIntegrationSettings(orgId),
-    getBillingSettings(orgId),
   ]);
 
   return (
@@ -67,7 +64,6 @@ export default async function SettingsPage({ params }: { params: Promise<{ orgId
             userPreferences: userPreferences.status === 'fulfilled' ? userPreferences.value : null,
             notifications: notificationSettings.status === 'fulfilled' ? notificationSettings.value : null,
             integrations: integrationSettings.status === 'fulfilled' ? integrationSettings.value : null,
-            billing: billingSettings.status === 'fulfilled' ? billingSettings.value : null,
           }}
         />
       </Suspense>

@@ -1,7 +1,4 @@
-/**
- * Server-only utility for serializing Prisma data
- * This file should only be imported in server-side code
- */
+"use server";
 
 import { Decimal } from '@prisma/client/runtime/library';
 
@@ -9,7 +6,7 @@ import { Decimal } from '@prisma/client/runtime/library';
  * Server-side Prisma data serializer with proper type checking
  * This function can only be used in server components/actions
  */
-export function serializePrismaDataServer<T>(data: T): T {
+export async function serializePrismaDataServer<T>(data: T): Promise<T> {
   if (data === null || data === undefined) {
     return data;
   }
@@ -40,10 +37,10 @@ export function serializePrismaDataServer<T>(data: T): T {
 /**
  * Helper function to serialize specific Decimal fields in an object
  */
-export function serializeDecimalFields<T extends Record<string, any>>(
+export async function serializeDecimalFields<T extends Record<string, any>>(
   obj: T,
   decimalFields: (keyof T)[]
-): T {
+): Promise<T> {
   const result = { ...obj };
   
   for (const field of decimalFields) {

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { updateBillingSettings } from '@/lib/actions/settingsActions';
 import { BillingSettings } from '@/types/settings';
 
 export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
@@ -17,7 +16,6 @@ export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await updateBillingSettings(formState.orgId, formState);
     setSaving(false);
   };
 

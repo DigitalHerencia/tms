@@ -34,7 +34,7 @@ export function PerformanceMetrics({
             config={{
               loads: {
                 label: 'Loads',
-                color: 'hsl(var(--chart-1))',
+                color: '--color-chart-1',
               },
             }}
             className="h-[300px]"
@@ -52,7 +52,7 @@ export function PerformanceMetrics({
                 <Line
                   type="monotone"
                   dataKey="loads"
-                  stroke="hsl(var(--chart-1))"
+                  stroke="--color-chart-1"
                   name="Loads"
                 />
               </LineChart>
@@ -66,7 +66,7 @@ export function PerformanceMetrics({
             config={{
               miles: {
                 label: 'Miles',
-                color: 'hsl(var(--chart-2))',
+                color: '--color-chart-2',
               },
             }}
             className="h-[300px]"
@@ -84,7 +84,7 @@ export function PerformanceMetrics({
                 <Line
                   type="monotone"
                   dataKey="miles"
-                  stroke="hsl(var(--chart-2))"
+                  stroke="--color-chart-2"
                   name="Miles"
                 />
               </LineChart>
@@ -100,7 +100,7 @@ export function PerformanceMetrics({
             config={{
               onTimeDelivery: {
                 label: 'On-Time Delivery',
-                color: 'hsl(var(--chart-3))',
+                color: '--color-chart-3',
               },
             }}
             className="h-[300px]"
@@ -118,7 +118,7 @@ export function PerformanceMetrics({
                 <Line
                   type="monotone"
                   dataKey="onTimeDelivery"
-                  stroke="hsl(var(--chart-3))"
+                  stroke="--color-chart-3"
                   name="On-Time Delivery"
                 />
               </LineChart>
@@ -134,7 +134,7 @@ export function PerformanceMetrics({
             config={{
               utilization: {
                 label: 'Utilization',
-                color: 'hsl(var(--chart-4))',
+                color: '--color-chart-3',
               },
             }}
             className="h-[300px]"
@@ -152,7 +152,7 @@ export function PerformanceMetrics({
                 <Line
                   type="monotone"
                   dataKey="utilization"
-                  stroke="hsl(var(--chart-4))"
+                  stroke="--color-chart-3"
                   name="Utilization"
                 />
               </LineChart>
@@ -180,31 +180,31 @@ export function PerformanceMetrics({
               <td className="p-2 text-sm font-medium">Total Loads</td>
               <td className="p-2 text-right text-sm">209</td>
               <td className="p-2 text-right text-sm">195</td>
-              <td className="p-2 text-right text-sm text-[hsl(var(--success))]">+7.2%</td>
+              <td className="p-2 text-right text-sm text-success">+7.2%</td>
             </tr>
             <tr className="border-b">
               <td className="p-2 text-sm font-medium">Total Miles</td>
               <td className="p-2 text-right text-sm">62,350</td>
               <td className="p-2 text-right text-sm">58,450</td>
-              <td className="p-2 text-right text-sm text-[hsl(var(--success))]">+6.7%</td>
+              <td className="p-2 text-right text-sm text-success">+6.7%</td>
             </tr>
             <tr className="border-b">
               <td className="p-2 text-sm font-medium">Average Load Distance</td>
               <td className="p-2 text-right text-sm">298 mi</td>
               <td className="p-2 text-right text-sm">300 mi</td>
-              <td className="p-2 text-right text-sm text-[hsl(var(--destructive))]">-0.7%</td>
+              <td className="p-2 text-right text-sm text-destructive">-0.7%</td>
             </tr>
             <tr className="border-b">
               <td className="p-2 text-sm font-medium">On-Time Delivery Rate</td>
               <td className="p-2 text-right text-sm">94.2%</td>
               <td className="p-2 text-right text-sm">92.5%</td>
-              <td className="p-2 text-right text-sm text-[hsl(var(--success))]">+1.8%</td>
+              <td className="p-2 text-right text-sm text-success">+1.8%</td>
             </tr>
             <tr>
               <td className="p-2 text-sm font-medium">Fleet Utilization</td>
               <td className="p-2 text-right text-sm">87.8%</td>
               <td className="p-2 text-right text-sm">85.2%</td>
-              <td className="p-2 text-right text-sm text-[hsl(var(--success))]">+3.1%</td>
+              <td className="p-2 text-right text-sm text-success">+3.1%</td>
             </tr>
           </tbody>
         </table>

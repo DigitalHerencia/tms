@@ -6,9 +6,7 @@
 import { z } from 'zod';
 
 export const VehicleFormSchema = z.object({
-  type: z.enum(['tractor', 'trailer', 'straight_truck', 'other'], {
-    required_error: 'Vehicle type is required',
-  }),
+
   make: z.string().min(1, 'Make is required').max(50, 'Make is too long'),
   model: z.string().min(1, 'Model is required').max(50, 'Model is too long'),
   year: z
@@ -73,20 +71,10 @@ export const VehicleFormSchema = z.object({
     .optional(),
 });
 
-export const VehicleUpdateStatusSchema = z.object({
-  status: z.enum(
-    ['available', 'assigned', 'in_maintenance', 'out_of_service', 'retired'],
-    {
-      required_error: 'Status is required',
-    }
-  ),
-  notes: z.string().max(500, 'Notes are too long').optional(),
-});
+
 
 export const VehicleMaintenanceSchema = z.object({
-  type: z.enum(['preventive', 'repair', 'inspection', 'recall'], {
-    required_error: 'Maintenance type is required',
-  }),
+
   description: z
     .string()
     .min(1, 'Description is required')
@@ -140,12 +128,10 @@ export const VehicleFiltersSchema = z.object({
 });
 
 export type VehicleFormData = z.infer<typeof VehicleFormSchema>;
-export type VehicleUpdateStatusData = z.infer<typeof VehicleUpdateStatusSchema>;
 export type VehicleMaintenanceData = z.infer<typeof VehicleMaintenanceSchema>;
 export type VehicleFiltersData = z.infer<typeof VehicleFiltersSchema>;
 
 // Legacy schemas for backward compatibility
 export const createVehicleSchema = VehicleFormSchema;
-export const updateVehicleSchema = VehicleUpdateStatusSchema;
 export const vehicleFilterSchema = VehicleFiltersSchema;
 export const maintenanceRecordSchema = VehicleMaintenanceSchema;

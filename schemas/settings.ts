@@ -13,7 +13,6 @@ export const OrganizationSettingsSchema = z.object({
   id: z.string(),
   name: z.string().min(2),
   timezone: z.string(),
-  businessRules: z.record(z.any()).optional(),
   logoUrl: z.string().url().optional(),
   address: z.string().optional(),
 });
@@ -35,16 +34,6 @@ export const NotificationSettingsSchema = z.object({
     .optional(),
 });
 
-export const IntegrationSettingsSchema = z.object({
-  orgId: z.string(),
-  services: z.record(
-    z.object({
-      enabled: z.boolean(),
-      apiKey: z.string().optional(),
-      webhookUrl: z.string().url().optional(),
-    })
-  ),
-});
 
 export const BillingSettingsSchema = z.object({
   orgId: z.string(),
@@ -53,8 +42,3 @@ export const BillingSettingsSchema = z.object({
   billingEmail: z.string().email(),
 });
 
-export const SystemSettingsSchema = z.object({
-  featureFlags: z.record(z.boolean()),
-  limits: z.record(z.number()),
-  permissions: z.record(z.array(z.string())),
-});

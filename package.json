@@ -10,19 +10,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postinstall": "prisma generate",
-    "test": "vitest",
-    "test:e2e": "playwright test",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
-    "clean:cache": "rimraf .next node_modules/.cache",
-    "clean:all": "rimraf .next node_modules && npm install"
+    "db:generate": "prisma generate"
+
   },
   "dependencies": {
     "@clerk/agent-toolkit": "^0.1.1",

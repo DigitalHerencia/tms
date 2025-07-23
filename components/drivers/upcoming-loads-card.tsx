@@ -2,12 +2,11 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
+import { getLoadsByOrg } from '@/lib/fetchers/dispatchFetchers'
 export async function UpcomingLoadsCard({ driverId, orgId }: { driverId: string; orgId: string }) {
-  const { listLoadsByOrg } = await import('@/lib/fetchers/dispatchFetchers');
   try {
-    const loadResponse = await listLoadsByOrg(orgId);
-    const loads = loadResponse.success ? loadResponse.data.loads : [];
+    const loadResponse = await getLoadsByOrg(orgId);
+    const loads = loadResponse
     const upcomingLoads = loads
       .filter((load: any) =>
         load.assignedDriverId === driverId &&

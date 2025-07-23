@@ -239,12 +239,7 @@ export function InteractiveCharts({
                 return (
                     <BarChart
                         data={combinedData}
-                        onClick={data =>
-                            handleDrillDown(
-                                "bar",
-                                data?.activePayload?.[0]?.payload
-                            )
-                        }
+                    
                     >
                         <CartesianGrid strokeDasharray='3 3' />
                         <XAxis dataKey='date' />
@@ -306,12 +301,7 @@ export function InteractiveCharts({
                 return (
                     <LineChart
                         data={combinedData}
-                        onClick={data =>
-                            handleDrillDown(
-                                "line",
-                                data?.activePayload?.[0]?.payload
-                            )
-                        }
+                        
                     >
                         <CartesianGrid strokeDasharray='3 3' />
                         <XAxis dataKey='date' />

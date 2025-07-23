@@ -47,7 +47,7 @@ export function DriverPerformance({
             config={{
               miles: {
                 label: 'Miles',
-                color: 'hsl(var(--chart-1))',
+                color: '--color-chart-1',
               },
             }}
             className="h-[300px]"
@@ -62,7 +62,7 @@ export function DriverPerformance({
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Bar dataKey="miles" fill="var(--color-miles)" name="Miles" />
+                <Bar dataKey="miles" fill="--color-miles" name="Miles" />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -76,7 +76,7 @@ export function DriverPerformance({
             config={{
               safetyScore: {
                 label: 'Safety Score',
-                color: 'hsl(var(--chart-2))',
+                color: '--color-chart-2',
               },
             }}
             className="h-[300px]"
@@ -93,7 +93,7 @@ export function DriverPerformance({
                 <Legend />
                 <Bar
                   dataKey="safetyScore"
-                  fill="var(--color-safetyScore)"
+                  fill="--color-safetyScore"
                   name="Safety Score"
                 />
               </BarChart>

@@ -15,13 +15,6 @@ import { handleError } from '@/lib/errors/handleError';
 import { hasPermission } from '@/lib/auth/permissions';
 import {
   VehicleFormSchema,
-  VehicleUpdateStatusSchema,
-  VehicleMaintenanceSchema,
-} from '@/schemas/vehicles';
-import type {
-  VehicleFormData,
-  VehicleUpdateStatusData,
-  VehicleMaintenanceData,
 } from '@/schemas/vehicles';
 import type {
   Vehicle,
@@ -94,7 +87,6 @@ export async function createVehicleAction(
       ...validatedData,
       organizationId: currentOrgId, // Use orgId from auth
       status: toPrismaVehicleStatus('available'),
-      type: validatedData.type,
       unitNumber: validatedData.unitNumber ?? '', // ensure string
       registrationExpiration: validatedData.registrationExpiry
         ? new Date(validatedData.registrationExpiry)
@@ -184,7 +176,6 @@ export async function updateVehicleAction(
     // Map type to Prisma
     const updateData = {
       ...validatedData,
-      type: validatedData.type,
       registrationExpiration: validatedData.registrationExpiry
         ? new Date(validatedData.registrationExpiry)
         : null,
@@ -219,8 +210,7 @@ export async function updateVehicleAction(
 }
 
 export async function updateVehicleStatusAction(
-  vehicleId: string,
-  data: VehicleUpdateStatusData
+vehicleId: string, p0: { status: VehicleStatus; },
 ): Promise<VehicleActionResult> {
   try {
     const { userId } = await auth();
@@ -245,15 +235,11 @@ export async function updateVehicleStatusAction(
       return { success: false, error: 'Vehicle not found', data: false };
     }
 
-    // Validate input
-    const validatedData = VehicleUpdateStatusSchema.parse(data);
 
     // Update status and notes
     const updatedVehicle = await db.vehicle.update({
       where: { id: vehicleId },
       data: {
-        status: toPrismaVehicleStatus(validatedData.status),
-        notes: validatedData.notes,
       },
     });
 

@@ -39,7 +39,7 @@ async function setupTestDatabase() {
             data: {
                 id: "org-1",
                 name: "Test Org",
-                subscriptionTier: "pro",
+                subscriptionTier: "starter",
                 subscriptionStatus: "active",
                 maxUsers: 10,
                 createdAt: new Date(),
@@ -121,30 +121,7 @@ async function setupTestDatabase() {
             },
         })
 
-        // Create test loads
-        await prisma.load.create({
-            data: {
-                id: "load-1",
-                organizationId: organization.id,
-                referenceNumber: "REF123",
-                scheduledPickupDate: new Date(),
-                scheduledDeliveryDate: new Date(),
-                status: "pending",
-                createdAt: new Date(),
-                loadNumber: "LN-001",
-                originAddress: "123 Main St",
-                originCity: "Origin City",
-                originState: "OS",
-                originZip: "12345",
-                destinationAddress: "456 Elm St",
-                destinationCity: "Dest City",
-                destinationState: "DS",
-                destinationZip: "67890",
-                weight: 1000,
-                createdBy: "user_admin123", // Added required field
-                lastModifiedBy: "user_admin123", // Added required field
-            },
-        })
+        
 
         console.log("✅ Test database setup completed")
     } catch (error) {

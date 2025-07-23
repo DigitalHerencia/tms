@@ -5,7 +5,6 @@
 
 import { z } from 'zod';
 
-import { addressSchema, contactSchema } from './shared';
 
 // Compliance document validation schemas
 export const createComplianceDocumentSchema = z.object({
@@ -69,7 +68,6 @@ export const createComplianceDocumentSchema = z.object({
   autoRenewal: z.boolean().default(false),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
 });
 
 export const updateComplianceDocumentSchema = z.object({
@@ -90,7 +88,6 @@ export const updateComplianceDocumentSchema = z.object({
   renewalNotes: z.string().optional(),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
 });
 
 export const complianceDocumentFilterSchema = z.object({
@@ -154,7 +151,6 @@ export const createHosLogSchema = z.object({
       deviceModel: z.string(),
       firmwareVersion: z.string(),
       dataTransferMethod: z.enum(['web', 'email', 'usb', 'bluetooth']),
-      rawData: z.record(z.any()).optional(),
     })
     .optional(),
 });
@@ -540,7 +536,6 @@ export const complianceAlertSchema = z.object({
   entityType: z.enum(['driver', 'vehicle', 'trailer', 'company', 'load']),
   entityId: z.string().min(1, 'Entity ID is required'),
   dueDate: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
 });
 
 export const updateComplianceAlertSchema = z.object({
@@ -586,7 +581,6 @@ export const bulkComplianceOperationSchema = z.object({
     'bulk_reminder',
   ]),
   ids: z.array(z.string()).min(1, 'At least one item must be selected'),
-  data: z.record(z.any()).optional(),
 });
 
 // Additional compliance-specific schemas

@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model Organization {
@@ -40,6 +40,9 @@ model Organization {
   memberships         OrganizationMembership[]
   users               User[]
   vehicles            Vehicle[]
+  trailers            Trailer[]
+  customers           Customer[]  
+  dispatchActivities  DispatchActivity[]  
 
   @@index([slug])
   @@map("organizations")
@@ -104,7 +107,6 @@ model Vehicle {
   complianceDocuments    ComplianceDocument[]
   iftaFuelPurchases      IftaFuelPurchase[]   @relation("VehicleIftaFuelPurchases")
   iftaTrips              IftaTrip[]           @relation("VehicleIftaTrips")
-  trailerLoads           Load[]               @relation("TrailerLoads")
   loads                  Load[]               @relation("VehicleLoads")
   organization           Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -114,6 +116,53 @@ model Vehicle {
   @@index([status])
   @@index([type])
   @@map("vehicles")
+}
+
+// Trailer model
+model Trailer {
+  id             String   @id @default(uuid())
+  organizationId String
+  unitNumber     String
+  type           String               // e.g. "dry_van", "reefer"
+  length         Int?
+  make           String?
+  model          String?
+  year           Int?
+  vin            String?
+  licensePlate   String?
+  status         String               // "active", "maintenance", "out_of_service"
+  loads          Load[]   @relation("TrailerLoads")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@map("trailers")
+}
+
+// Customer model
+model Customer {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  contactName    String?
+  email          String?
+  phone          String?
+  address        String?
+  city           String?
+  state          String?
+  zipCode        String?
+  mcNumber       String?
+  dotNumber      String?
+  creditLimit    Float?
+  paymentTerms   String?
+  rating         Int?
+  notes          String?
+  tags           String[]
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  loads          Load[]
+  @@index([organizationId])
+  @@map("customers")
 }
 
 model Driver {
@@ -162,9 +211,8 @@ model Driver {
 model Load {
   id                    String            @id @default(uuid())
   organizationId        String            @map("organization_id")
-  driver_id             String?
+  driver_id             String            @map("driver_id")  
   vehicleId             String?           @map("vehicle_id")
-  trailerId             String?           @map("trailer_id")
   loadNumber            String            @map("load_number")
   referenceNumber       String?           @map("reference_number")
   status                LoadStatus        @default(pending)
@@ -209,8 +257,12 @@ model Load {
   statusEvents          LoadStatusEvent[]
   drivers               Driver?           @relation(fields: [driver_id], references: [id])
   organization          Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  trailer               Vehicle?          @relation("TrailerLoads", fields: [trailerId], references: [id])
   vehicle               Vehicle?          @relation("VehicleLoads", fields: [vehicleId], references: [id])
+  customerId            String?           @map("customer_id")
+  customer              Customer?         @relation(fields: [customerId], references: [id])
+  trailerId             String?           @map("trailer_id")
+  trailer               Trailer?          @relation("TrailerLoads", fields: [trailerId], references: [id])
+
 
   @@unique([organizationId, loadNumber], name: "loads_org_load_unique")
   @@index([organizationId])
@@ -237,6 +289,19 @@ model LoadStatusEvent {
 
   @@index([loadId])
   @@map("load_status_events")
+}
+
+model DispatchActivity {
+  id             String   @id @default(uuid())
+  organizationId String
+  entityType     String
+  action         String
+  entityId       String
+  userName       String
+  timestamp      DateTime @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId, timestamp])
+  @@map("dispatch_activity")
 }
 
 model ComplianceDocument {

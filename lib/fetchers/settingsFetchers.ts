@@ -85,21 +85,6 @@ export async function getIntegrationSettings(orgId: string): Promise<Integration
   };
 }
 
-export async function getBillingSettings(orgId: string): Promise<BillingSettings | null> {
-  const { userId, orgId: sessionOrg } = await auth();
-  if (!userId || sessionOrg !== orgId) return null;
-  const org = await db.organization.findUnique({ where: { id: orgId } });
-  if (!org) return null;
-  const settings = (org.settings as any) || {};
-  return {
-    orgId: org.id,
-    paymentMethod: settings.paymentMethod || '',
-    subscriptionTier: org.subscriptionTier,
-    subscriptionStatus: org.subscriptionStatus,
-    billingEmail: org.billingEmail || '',
-  };
-}
-
 export async function getSettingsAuditLog(orgId: string): Promise<SettingsAuditLog[]> {
   const { userId, orgId: sessionOrg } = await auth();
   if (!userId || sessionOrg !== orgId) return [];

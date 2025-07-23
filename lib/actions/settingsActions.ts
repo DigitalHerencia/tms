@@ -9,8 +9,6 @@ import {
   OrganizationSettingsSchema,
   UserPreferencesSchema,
   NotificationSettingsSchema,
-  IntegrationSettingsSchema,
-  BillingSettingsSchema,
 } from '@/schemas/settings';
 
 async function verifyOrgAccess(orgId: string) {
@@ -21,7 +19,7 @@ async function verifyOrgAccess(orgId: string) {
   return userId;
 }
 
-async function logChange(orgId: string, userId: string, action: string, changes: Prisma.JsonObject) {
+async function logChange(orgId: string, userId: string, action: string) {
   await db.auditLog.create({
     data: {
       organizationId: orgId,
@@ -29,7 +27,6 @@ async function logChange(orgId: string, userId: string, action: string, changes:
       entityType: 'settings',
       entityId: orgId,
       action,
-      changes,
       timestamp: new Date(),
     },
   });
@@ -38,7 +35,7 @@ async function logChange(orgId: string, userId: string, action: string, changes:
 export async function updateCompanyProfileAction(orgId: string, data: unknown) {
   const userId = await verifyOrgAccess(orgId);
   const parsed = CompanyProfileSchema.parse(data);
-  await logChange(orgId, userId, 'updateCompanyProfile', parsed);
+  await logChange(orgId, userId, 'updateCompanyProfile');
   return { success: true };
 }
 
@@ -52,12 +49,11 @@ export async function updateOrganizationSettings(orgId: string, data: unknown) {
       address: parsed.address,
       logoUrl: parsed.logoUrl,
       settings: {
-        ...(parsed.businessRules && { businessRules: parsed.businessRules }),
         timezone: parsed.timezone,
       },
     },
   });
-  await logChange(orgId, userId, 'updateOrganization', parsed);
+  await logChange(orgId, userId, 'updateOrganization');
   revalidatePath(`/[orgId]/settings`);
   return result;
 }
@@ -67,7 +63,7 @@ export async function updateUserPreferences(data: unknown) {
   if (!userId) throw new Error('Unauthorized');
   const parsed = UserPreferencesSchema.parse(data);
   if (parsed.userId !== userId) throw new Error('Invalid user');
-  await logChange(parsed.userId, parsed.userId, 'updateUserPrefs', parsed);
+  await logChange(parsed.userId, parsed.userId, 'updateUserPrefs');
   return { success: true };
 }
 
@@ -76,35 +72,19 @@ export async function updateNotificationSettings(data: unknown) {
   if (!userId) throw new Error('Unauthorized');
   const parsed = NotificationSettingsSchema.parse(data);
   if (parsed.userId !== userId) throw new Error('Invalid user');
-  await logChange(parsed.userId, parsed.userId, 'updateNotifications', parsed);
+  await logChange(parsed.userId, parsed.userId, 'updateNotifications');
   return { success: true };
 }
 
 export async function updateIntegrationSettings(orgId: string, data: unknown) {
   const userId = await verifyOrgAccess(orgId);
-  const parsed = IntegrationSettingsSchema.parse(data);
-  await logChange(orgId, userId, 'updateIntegrations', parsed);
-  return { success: true };
-}
-
-export async function updateBillingSettings(orgId: string, data: unknown) {
-  const userId = await verifyOrgAccess(orgId);
-  const parsed = BillingSettingsSchema.parse(data);
-  await db.organization.update({
-    where: { id: orgId },
-    data: {
-      subscriptionTier: parsed.subscriptionTier,
-      subscriptionStatus: parsed.subscriptionStatus,
-      billingEmail: parsed.billingEmail,
-    },
-  });
-  await logChange(orgId, userId, 'updateBilling', parsed);
+  await logChange(orgId, userId, 'updateIntegrations');
   return { success: true };
 }
 
 export async function resetSettingsToDefault(orgId: string) {
   const userId = await verifyOrgAccess(orgId);
-  await logChange(orgId, userId, 'resetSettings', {});
+  await logChange(orgId, userId, 'resetSettings');
   return { success: true };
 }
 
@@ -117,6 +97,6 @@ export async function exportSettings(orgId: string) {
 export async function importSettings(orgId: string, settings: Prisma.JsonObject) {
   const userId = await verifyOrgAccess(orgId);
   await db.organization.update({ where: { id: orgId }, data: { settings } });
-  await logChange(orgId, userId, 'importSettings', settings);
+  await logChange(orgId, userId, 'importSettings');
   return { success: true };
 }

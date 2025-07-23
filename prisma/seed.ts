@@ -1,287 +1,273 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
-
-const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL!;
-const adapter = new PrismaNeon({ connectionString });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
-  // Find admin user and driver user by email (adjust emails as needed)
-  const adminUser = await prisma.user.findFirst({
-    where: { email: 'admin@fleetfusion.test' },
-  });
-  if (!adminUser) {
-    throw new Error(
-      'Admin user with email admin@fleetfusion.test not found. Please create it first.'
-    );
-  }
-
-  const driverUser = await prisma.user.findFirst({
-    where: { email: 'driver@fleetfusion.test' },
-  });
-  if (!driverUser) {
-    throw new Error(
-      'Driver user with email driver@fleetfusion.test not found. Please create it first.'
-    );
-  }
-
-  // 1. Find existing test org by orgId (UUID)
-  const org = await prisma.organization.findUnique({
-    where: { id: 'org_2xvBliaRVTLXpaA6Uc5n66Jsw0u' },
-  });
-  if (!org) {
-    throw new Error(
-      'Test org with orgId org_2xvBliaRVTLXpaA6Uc5n66Jsw0u not found. Please create it first.'
-    );
-  }
-
-  // 2. Generate lots of realistic data for this org (no test users)
-  // 3. Create Vehicles (tractor, trailer)
-  const tractor = await prisma.vehicle.create({
-    data: {
-      organizationId: org.id,
-      type: 'tractor',
-      status: 'active',
-      make: 'Freightliner',
-      model: 'Cascadia',
-      year: 2022,
-      vin: '1FUJGLDR5CSBM1234',
-      licensePlate: 'ABC123',
-      licensePlateState: 'CO',
-      unitNumber: 'T-001',
-      currentOdometer: 120000,
-      lastOdometerUpdate: new Date(),
-      fuelType: 'diesel',
-      lastInspectionDate: new Date('2024-01-15'),
-      nextInspectionDue: new Date('2025-01-15'),
-      registrationExpiration: new Date('2025-03-01'),
-      insuranceExpiration: new Date('2025-04-01'),
-      notes: 'Main fleet tractor',
-      customFields: {},
-    },
+  // 1. Organization
+  const organization = await prisma.organization.upsert({
+    where: { id: "org_fb3de43942a58cace7958646851f" },
+    update: {},
+    create: {
+      id: "org_fb3de43942a58cace7958646851f",
+      name: "Digital Herencia Logistics",
+      slug: "digital-herencia",
+      mcNumber: "888999",
+      address: "1500 Logistics Ave",
+      city: "El Paso",
+      state: "TX",
+      zip: "79901",
+      phone: "915-555-0100",
+      email: "info@digitalherencia.com",
+      logoUrl: "https://img.clerk.com/logo-dhl.png",
+      subscriptionTier: "enterprise",
+      subscriptionStatus: "active",
+      maxUsers: 20,
+      billingEmail: "billing@digitalherencia.com",
+      settings: {
+        fuelUnit: "gallons",
+        timezone: "America/Denver",
+        dateFormat: "MM/dd/yyyy",
+        distanceUnit: "miles"
+      },
+      isActive: true,
+      dotNumber: "4567890",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
   });
 
-  const trailer = await prisma.vehicle.create({
-    data: {
-      organizationId: org.id,
-      type: 'trailer',
-      status: 'active',
-      make: 'Wabash',
-      model: 'Dry Van',
+  // 2. User (admin)
+  const user = await prisma.user.upsert({
+    where: { id: "user_2zXX3j7yxxDc2loT3oI7PlpjLMM" },
+    update: {},
+    create: {
+      id: "user_2zXX3j7yxxDc2loT3oI7PlpjLMM",
+      organizationId: organization.id,
+      email: "digitalherencia@outlook.com",
+      firstName: "Ivan",
+      lastName: "Roman",
+      profileImage: "https://www.gravatar.com/avatar?d=mp",
+      role: "admin",
+      permissions: [
+        "org:sys_domains:read",
+        "org:sys_domains:manage",
+        "org:sys_profile:manage",
+        "org:sys_profile:delete",
+        "org:sys_memberships:read",
+        "org:sys_memberships:manage",
+        "org:admin:access_all_reports",
+        "org:admin:configure_company_settings",
+        "org:admin:view_audit_logs",
+        "org:admin:manage_users_and_roles",
+        "org:admin:view_edit_all_loads",
+        "org:sys_billing:manage",
+        "org:sys_billing:read"
+      ],
+      isActive: true,
+      lastLogin: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      onboardingSteps: {},
+      onboardingComplete: true,
+      preferences: {},
+    }
+  });
+
+  // 3. OrganizationMembership
+  await prisma.organizationMembership.upsert({
+    where: { id: "mship_ivan" },
+    update: {},
+    create: {
+      id: "mship_ivan",
+      organizationId: organization.id,
+      userId: user.id,
+      role: "admin",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  });
+
+  // 4. Drivers
+  const [driverIvan, driverJane] = await Promise.all([
+    prisma.driver.upsert({
+      where: { id: "drv_ivan" },
+      update: {},
+      create: {
+        id: "drv_ivan",
+        organizationId: organization.id,
+        userId: user.id,
+        employeeId: "E1001",
+        firstName: "Ivan",
+        lastName: "Roman",
+        email: "ivan.roman@digitalherencia.com",
+        phone: "915-555-0101",
+        status: "active",
+        licenseNumber: "TX987654321",
+        licenseState: "TX",
+        licenseClass: "A",
+        hireDate: new Date("2022-01-10"),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    }),
+    prisma.driver.upsert({
+      where: { id: "drv_jane" },
+      update: {},
+      create: {
+        id: "drv_jane",
+        organizationId: organization.id,
+        employeeId: "E1002",
+        firstName: "Jane",
+        lastName: "Doe",
+        email: "jane.doe@digitalherencia.com",
+        phone: "915-555-0102",
+        status: "active",
+        licenseNumber: "TX123456789",
+        licenseState: "TX",
+        licenseClass: "A",
+        hireDate: new Date("2022-03-20"),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    })
+  ]);
+
+  // 5. Vehicle
+  const vehicle = await prisma.vehicle.upsert({
+    where: { id: "veh_freight_1" },
+    update: {},
+    create: {
+      id: "veh_freight_1",
+      organizationId: organization.id,
+      type: "tractor",
+      status: "active",
+      make: "Freightliner",
+      model: "Cascadia",
+      year: 2020,
+      vin: "1FUJGLDR2LLL88888",
+      licensePlate: "TX1234",
+      unitNumber: "TRK-01",
+      currentOdometer: 154000,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  });
+
+  // 6. Trailer
+  const trailer = await prisma.trailer.upsert({
+    where: { id: "trl_reefer_1" },
+    update: {},
+    create: {
+      id: "trl_reefer_1",
+      organizationId: organization.id,
+      unitNumber: "TRL-01",
+      type: "reefer",
+      length: 53,
+      make: "Great Dane",
+      model: "Everest",
       year: 2021,
-      vin: '1JJV532D4KL123456',
-      licensePlate: 'TR1234',
-      licensePlateState: 'CO',
-      unitNumber: 'TR-001',
-      currentOdometer: 50000,
-      lastOdometerUpdate: new Date(),
-      fuelType: null,
-      lastInspectionDate: new Date('2024-02-10'),
-      nextInspectionDue: new Date('2025-02-10'),
-      registrationExpiration: new Date('2025-05-01'),
-      insuranceExpiration: new Date('2025-06-01'),
-      notes: 'Main trailer',
-      customFields: {},
-    },
+      vin: "1GRAA0622BJ888888",
+      licensePlate: "TX-TRL1",
+      status: "active",
+    }
   });
 
-  // 4. Create Driver (linked to driverUser)
-  const driver = await prisma.driver.create({
-    data: {
-      organizationId: org.id,
-      userId: driverUser.id,
-      employeeId: 'EMP001',
-      firstName: 'Charlie',
-      lastName: 'Driver',
-      email: 'driver@fleetfusion.test',
-      phone: '555-555-5678',
-      address: '456 Elm St',
-      city: 'Denver',
-      state: 'CO',
-      zip: '80203',
-      licenseNumber: 'D1234567',
-      licenseState: 'CO',
-      licenseClass: 'A',
-      licenseExpiration: new Date('2026-05-01'),
-      medicalCardExpiration: new Date('2025-12-01'),
-      drugTestDate: new Date('2025-01-10'),
-      backgroundCheckDate: new Date('2024-12-15'),
-      hireDate: new Date('2023-06-01'),
-      status: 'active',
-      emergencyContact1: 'Jane Doe, 555-555-9999',
-      notes: 'No incidents',
-      customFields: {},
-    },
+  // 7. Customer
+  const customer = await prisma.customer.upsert({
+    where: { id: "cust_abc" },
+    update: {},
+    create: {
+      id: "cust_abc",
+      organizationId: organization.id,
+      name: "ABC Supply",
+      contactName: "Alice Buyer",
+      email: "abuyer@abcsupply.com",
+      phone: "915-555-0111",
+      address: "400 Commerce Rd",
+      city: "El Paso",
+      state: "TX",
+      zipCode: "79901",
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
   });
 
-  // 5. Create Load (assigned to driver, tractor, trailer)
-  const load = await prisma.load.create({
-    data: {
-      organizationId: org.id,
-      driver_id: driver.id, // Using driver_id to link to driver
-      vehicleId: tractor.id,
+  // 8. Load (with all relationships)
+  await prisma.load.upsert({
+    where: { id: "load1" },
+    update: {},
+    create: {
+      id: "load1",
+      organizationId: organization.id,
+      driver_id: driverIvan.id,
+      vehicleId: vehicle.id,
       trailerId: trailer.id,
-      loadNumber: 'LD-1001',
-      referenceNumber: 'REF-202405',
-      status: 'in_transit',
-      customerName: 'Acme Corp',
-      customerContact: 'John Smith',
-      customerPhone: '555-555-8888',
-      customerEmail: 'john.smith@acme.com',
-      originAddress: '789 Warehouse Rd',
-      originCity: 'Aurora',
-      originState: 'CO',
-      originZip: '80012',
-      originLat: 39.7294,
-      originLng: -104.8319,
-      destinationAddress: '321 Distribution Ave',
-      destinationCity: 'Boulder',
-      destinationState: 'CO',
-      destinationZip: '80301',
-      destinationLat: 40.015,
-      destinationLng: -105.2705,
-      rate: 2500.0,
-      currency: 'USD',
-      scheduledPickupDate: new Date('2025-05-28T08:00:00Z'),
-      actualPickupDate: new Date('2025-05-28T08:30:00Z'),
-      scheduledDeliveryDate: new Date('2025-05-29T15:00:00Z'),
-      actualDeliveryDate: null,
-      weight: 40000,
+      loadNumber: "L-0001",
+      referenceNumber: "REF-0001",
+      status: "in_transit",
+      customerId: customer.id,
+      customerName: "ABC Supply",
+      customerContact: "Alice Buyer",
+      customerPhone: "915-555-0111",
+      customerEmail: "abuyer@abcsupply.com",
+      originAddress: "400 Commerce Rd",
+      originCity: "El Paso",
+      originState: "TX",
+      originZip: "79901",
+      originLat: 31.7619,
+      originLng: -106.485,
+      destinationAddress: "901 Industrial Park",
+      destinationCity: "Phoenix",
+      destinationState: "AZ",
+      destinationZip: "85001",
+      destinationLat: 33.4484,
+      destinationLng: -112.074,
+      rate: 5400.00,
+      currency: "USD",
+      scheduledPickupDate: new Date("2024-07-23T09:00:00Z"),
+      actualPickupDate: new Date("2024-07-23T09:15:00Z"),
+      scheduledDeliveryDate: new Date("2024-07-25T15:00:00Z"),
+      weight: 12000,
       pieces: 20,
-      commodity: 'Electronics',
+      commodity: "Fresh Produce",
       hazmat: false,
-      estimatedMiles: 50,
-      actualMiles: null,
-      notes: 'Handle with care',
-      instructions: 'Call on arrival',
-      customFields: {},
-      createdBy: adminUser.id,        // <-- Added required field
-      lastModifiedBy: adminUser.id,   // <-- Added required field
-    },
+      estimatedMiles: 430,
+      actualMiles: 431,
+      notes: "Temp control required, do not delay.",
+      instructions: "Dock 3, use side entrance.",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdBy: user.id,
+      lastModifiedBy: user.id,
+      priority: "high",
+      tags: ["perishable", "expedite"]
+    }
   });
 
-  // 6. Compliance Documents (for driver, vehicle)
-  await prisma.complianceDocument.createMany({
-    data: [
-      {
-        organizationId: org.id,
-        driver_id: driver.id, // Using driver_id to link to driver
-        vehicleId: null,
-        type: 'license',
-        title: 'CDL License',
-        documentNumber: 'D1234567',
-        issuingAuthority: 'CO DMV',
-        fileUrl: 'https://placehold.co/200x200',
-        fileName: 'cdl_license.pdf',
-        fileSize: 123456,
-        mimeType: 'application/pdf',
-        issueDate: new Date('2022-05-01'),
-        expirationDate: new Date('2026-05-01'),
-        status: 'active',
-        isVerified: true,
-        verifiedBy: adminUser.id,
-        verifiedAt: new Date(),
-        notes: 'Verified by admin',
-        tags: ['driver', 'license'],
-      },
-      {
-        organizationId: org.id,
-        driver_id: null, // No driver for vehicle document
-        vehicleId: tractor.id,
-        type: 'registration',
-        title: 'Tractor Registration',
-        documentNumber: 'REG-2024-001',
-        issuingAuthority: 'CO DMV',
-        fileUrl: 'https://placehold.co/200x200',
-        fileName: 'tractor_registration.pdf',
-        fileSize: 234567,
-        mimeType: 'application/pdf',
-        issueDate: new Date('2024-03-01'),
-        expirationDate: new Date('2025-03-01'),
-        status: 'active',
-        isVerified: true,
-        verifiedBy: adminUser.id,
-        verifiedAt: new Date(),
-        notes: 'Verified by admin',
-        tags: ['vehicle', 'registration'],
-      },
-    ],
-  });
-
-  // 7. IFTA Report
-  await prisma.iftaReport.create({
+  // 9. (Optional) Add a LoadStatusEvent for this load
+  await prisma.loadStatusEvent.create({
     data: {
-      organizationId: org.id,
-      quarter: 1,
-      year: 2025,
-      status: 'filed',
-      totalMiles: 5000,
-      totalGallons: 800.123,
-      totalTaxOwed: 1200.5,
-      totalTaxPaid: 1200.5,
-      submittedAt: new Date('2025-04-15'),
-      submittedBy: adminUser.id,
-      dueDate: new Date('2025-04-30'),
-      filedDate: new Date('2025-04-16'),
-      reportFileUrl: 'https://placehold.co/200x200',
-      supportingDocs: 'https://placehold.co/200x200',
-      notes: 'Filed on time',
-      calculationData: {},
-    },
+      loadId: "load1",
+      status: "in_transit",
+      timestamp: new Date(),
+      source: "dispatcher",
+      createdBy: user.id
+    }
   });
 
-  // 8. Audit Logs
-  await prisma.auditLog.createMany({
-    data: [
-      {
-        organizationId: org.id,
-        userId: adminUser.id,
-        entityType: 'user',
-        entityId: adminUser.id,
-        action: 'created',
-        changes: { after: { ...adminUser } },
-        metadata: { ip: '127.0.0.1', userAgent: 'seed-script' },
-        timestamp: new Date(),
-      },
-      {
-        organizationId: org.id,
-        userId: adminUser.id,
-        entityType: 'vehicle',
-        entityId: tractor.id,
-        action: 'created',
-        changes: { after: { ...tractor } },
-        metadata: { ip: '127.0.0.1', userAgent: 'seed-script' },
-        timestamp: new Date(),
-      },
-      {
-        organizationId: org.id,
-        userId: adminUser.id,
-        entityType: 'driver',
-        entityId: driver.id,
-        action: 'created',
-        changes: { after: { ...driver } },
-        metadata: { ip: '127.0.0.1', userAgent: 'seed-script' },
-        timestamp: new Date(),
-      },
-    ],
-  });
-
-  // 9. Webhook Event
-  await prisma.webhookEvent.create({
+  // 10. (Optional) Add DispatchActivity log
+  await prisma.dispatchActivity.create({
     data: {
-      eventType: 'user.created',
-      eventId: 'evt_test_001',
-      organizationId: org.id,
-      userId: adminUser.id,
-      payload: { example: 'payload', user: adminUser.email },
-      status: 'processed',
-      processingError: null,
-      processedAt: new Date(),
-      retryCount: 0,
-    },
+      organizationId: organization.id,
+      entityType: "Load",
+      action: "CREATED",
+      entityId: "L-0001",
+      userName: "Ivan Roman",
+      timestamp: new Date()
+    }
   });
 
-  console.log('Seed complete. Admin user: admin@fleetfusion.test');
+  console.log('Seed data created successfully.');
 }
 
 main()
@@ -289,4 +275,6 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

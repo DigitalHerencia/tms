@@ -370,7 +370,6 @@ export async function bulkUpdateComplianceDocuments(
                         organizationId: orgId,
                     },
                     data: {
-                        ...validatedData.data,
                         updatedAt: new Date(),
                     },
                 })
@@ -381,7 +380,6 @@ export async function bulkUpdateComplianceDocuments(
                     entityType: "ComplianceDocument",
                     entityId: documentId,
                     action: "bulk_update",
-                    changes: validatedData.data,
                 })
                 return updated
             })

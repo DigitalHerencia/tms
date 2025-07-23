@@ -40,15 +40,15 @@ export function FinancialMetrics({
           config={{
             revenue: {
               label: 'Revenue',
-              color: 'hsl(var(--chart-1))',
+              color: '--color-chart-1',
             },
             expenses: {
               label: 'Expenses',
-              color: 'hsl(var(--chart-2))',
+              color: '--color-chart-2',
             },
             profit: {
               label: 'Profit',
-              color: 'hsl(var(--chart-3))',
+              color: '--color-chart-3',
             },
           }}
           className="h-[400px]"
@@ -66,19 +66,19 @@ export function FinancialMetrics({
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke="var(--color-revenue)"
+                stroke="--color-revenue"
                 name="Revenue"
               />
               <Line
                 type="monotone"
                 dataKey="expenses"
-                stroke="var(--color-expenses)"
+                stroke="--color-expenses"
                 name="Expenses"
               />
               <Line
                 type="monotone"
                 dataKey="profit"
-                stroke="var(--color-profit)"
+                stroke="--color-profit"
                 name="Profit"
               />
             </LineChart>
@@ -94,7 +94,7 @@ export function FinancialMetrics({
             config={{
               value: {
                 label: 'Amount',
-                color: 'hsl(var(--chart-4))',
+                color: '--color-chart-4',
               },
             }}
             className="h-[300px]"
@@ -109,7 +109,7 @@ export function FinancialMetrics({
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Bar dataKey="value" fill="var(--color-value)" name="Amount" />
+                <Bar dataKey="value" fill="--color-value" name="Amount" />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>

@@ -41,22 +41,8 @@ import {
 } from '@/components/shared/DocumentUpload';
 import { updateDriverStatusAction } from '@/lib/actions/driverActions';
 import { toast } from '@/hooks/use-toast';
+import type { Driver } from '@/types/drivers';
 
-interface Driver {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email?: string;
-  phone?: string;
-  status: string;
-  licenseNumber?: string;
-  licenseState?: string;
-  licenseExpiration?: Date;
-  medicalCardExpiration?: Date;
-  hireDate?: Date;
-  terminationDate?: Date;
-  notes?: string;
-}
 
 interface Load {
   id: string;
@@ -299,11 +285,11 @@ export function DriverDetailsDialog({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {driver.licenseNumber && (
+                    {driver.cdlNumber && (
                       <div className="flex items-center gap-2">
                         <FileText className="text-white/70 h-4 w-4" />
                         <span className="text-white">
-                          License: {driver.licenseNumber} ({driver.licenseState}
+                          License: {driver.cdlNumber} ({driver.licenseState}
                           )
                         </span>
                       </div>
@@ -437,7 +423,7 @@ export function DriverDetailsDialog({
 
         <DialogFooter className="flex items-center justify-between pt-4 border-t border-white/10 px-6 pb-6">
           <div className="flex gap-2">
-            {driver.status === 'active' && (
+            {driver.status === 'available' && (
               <Button
                 variant="destructive"
                 onClick={() => handleStatusUpdate('inactive')}

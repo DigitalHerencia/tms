@@ -1,53 +1,36 @@
-/**
- * Validation schemas for dispatch-related forms
- * Using Zod for runtime validation
- */
+import { z } from "zod";
 
-import { z } from 'zod';
-
-import { addressSchema, contactSchema } from './shared';
-import { AssignmentMeta } from '@/types/dispatch';
-
-// Location validation schema
+// Common schemas for embedded fields
 export const locationSchema = z.object({
-  name: z.string().min(1, 'Location name is required'),
-  ...addressSchema.shape,
+  name: z.string().min(1, "Location name is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  zipCode: z.string().min(1, "ZIP code is required"),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
+  contactName: z.string().optional(),
+  contactPhone: z.string().optional(),
   notes: z.string().optional(),
 });
-
-// Customer validation schema
 export const customerSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, 'Customer name is required'),
+  name: z.string().min(1, "Customer name is required"),
   contactName: z.string().optional(),
-  email: z
-    .string()
-    .email('Please enter a valid email')
-    .optional()
-    .or(z.literal('')),
+  email: z.string().email("Invalid email").optional(),
   phone: z.string().optional(),
-  ...addressSchema.partial().shape,
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
   mcNumber: z.string().optional(),
   dotNumber: z.string().optional(),
   creditLimit: z.number().optional(),
   paymentTerms: z.string().optional(),
   notes: z.string().optional(),
 });
-
-// Equipment requirement validation schema
 export const equipmentRequirementSchema = z.object({
-  type: z.enum([
-    'dry_van',
-    'reefer',
-    'flatbed',
-    'step_deck',
-    'lowboy',
-    'tanker',
-    'container',
-    'other',
-  ]),
+  type: z.enum(["dry_van", "reefer", "flatbed", "step_deck", "lowboy", "tanker", "container", "other"]),
   length: z.number().optional(),
   temperatureMin: z.number().optional(),
   temperatureMax: z.number().optional(),
@@ -57,46 +40,36 @@ export const equipmentRequirementSchema = z.object({
   specialPermits: z.array(z.string()).optional(),
   notes: z.string().optional(),
 });
-
-// Cargo details validation schema
 export const cargoDetailsSchema = z.object({
-  description: z.string().min(1, 'Cargo description is required'),
+  description: z.string().min(1, "Description is required"),
   commodity: z.string().optional(),
-  weight: z.number().min(0, 'Weight must be a positive number'),
+  weight: z.number().min(0, "Weight must be positive"),
   pieces: z.number().int().min(0).optional(),
   pallets: z.number().int().min(0).optional(),
-  dimensions: z
-    .object({
-      length: z.number().optional(),
-      width: z.number().optional(),
-      height: z.number().optional(),
-    })
-    .optional(),
+  dimensions: z.object({
+    length: z.number().optional(),
+    width: z.number().optional(),
+    height: z.number().optional(),
+  }).optional(),
   value: z.number().min(0).optional(),
-  hazmat: z
-    .object({
-      class: z.string(),
-      unNumber: z.string(),
-      properShippingName: z.string(),
-      placard: z.string().optional(),
-    })
-    .optional(),
-  temperature: z
-    .object({
-      min: z.number(),
-      max: z.number(),
-      unit: z.enum(['F', 'C']),
-    })
-    .optional(),
+  hazmat: z.object({
+    class: z.string(),
+    unNumber: z.string(),
+    properShippingName: z.string(),
+    placard: z.string().optional(),
+  }).optional(),
+  temperature: z.object({
+    min: z.number(),
+    max: z.number(),
+    unit: z.enum(["F", "C"]),
+  }).optional(),
   specialHandling: z.array(z.string()).optional(),
 });
-
-// Rate validation schema
 export const rateSchema = z.object({
-  total: z.number().min(0, 'Total rate must be a positive number'),
-  currency: z.string().default('USD'),
-  type: z.enum(['flat', 'per_mile', 'percentage']),
-  lineHaul: z.number().min(0, 'Line haul must be a positive number'),
+  total: z.number().min(0, "Total rate must be non-negative"),
+  currency: z.string().default("USD"),
+  type: z.enum(["flat", "per_mile", "percentage"]).default("flat"),
+  lineHaul: z.number().min(0, "Line haul must be non-negative"),
   fuelSurcharge: z.number().min(0).optional(),
   detention: z.number().min(0).optional(),
   layover: z.number().min(0).optional(),
@@ -112,35 +85,19 @@ export const rateSchema = z.object({
   brokerageRate: z.number().min(0).optional(),
   commissionRate: z.number().min(0).optional(),
   driverPay: z.number().min(0).optional(),
-  driverPayType: z.enum(['percentage', 'flat', 'per_mile']).optional(),
+  driverPayType: z.enum(["percentage", "flat", "per_mile"]).optional(),
   notes: z.string().optional(),
 });
 
-// Broker info validation schema
-export const brokerInfoSchema = z.object({
-  name: z.string().min(1, 'Broker name is required'),
-  contactName: z.string().optional(),
-  phone: z.string().optional(),
-  email: z
-    .string()
-    .email('Please enter a valid email')
-    .optional()
-    .or(z.literal('')),
-  mcNumber: z.string().optional(),
-  dotNumber: z.string().optional(),
-  brokerageRate: z.number().min(0).optional(),
-  commissionRate: z.number().min(0).optional(),
-});
-
-// Create load validation schema
+// Schema for creating a new load
 export const createLoadSchema = z.object({
-  referenceNumber: z.string().min(1, 'Reference number is required'),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+  referenceNumber: z.string().min(1, "Reference number is required"),
+  priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
   customer: customerSchema,
   origin: locationSchema,
   destination: locationSchema,
-  pickupDate: z.string().min(1, 'Pickup date is required'),
-  deliveryDate: z.string().min(1, 'Delivery date is required'),
+  pickupDate: z.string().min(1, "Pickup date is required"),
+  deliveryDate: z.string().min(1, "Delivery date is required"),
   estimatedPickupTime: z.string().optional(),
   estimatedDeliveryTime: z.string().optional(),
   equipment: equipmentRequirementSchema.optional(),
@@ -151,99 +108,23 @@ export const createLoadSchema = z.object({
   notes: z.string().optional(),
   internalNotes: z.string().optional(),
   specialInstructions: z.string().optional(),
-  brokerInfo: brokerInfoSchema.optional(),
+  brokerInfo: z.any().optional(),
   tags: z.array(z.string()).optional(),
-  meta: z.object({
-    createdBy: z.string().optional(),
-    assignedBy: z.string().optional(),
-  }).optional(),
-  lastModifiedBy: z.string().optional(),
-  statusEvents: z
-    .array(
-      z.object({
-        id: z.string(),
-        loadId: z.string(),
-        status: z.enum([
-          'draft',
-          'pending',
-          'posted',
-          'booked',
-          'confirmed',
-          'assigned',
-          'dispatched',
-          'in_transit',
-          'at_pickup',
-          'picked_up',
-          'en_route',
-          'at_delivery',
-          'delivered',
-          'pod_required',
-          'completed',
-          'invoiced',
-          'paid',
-          'cancelled',
-          'problem',
-        ]),
-        timestamp: z.date(),
-        location: z.any().optional(),
-        notes: z.string().optional(),
-        automaticUpdate: z.boolean().optional(),
-        source: z.string().optional(),
-        meta: z.object({
-          createdBy: z.string().optional(),
-          assignedBy: z.string().optional(),
-        }).optional(),
-      })
-    )
-    .optional(),
-  driver: z
-    .object({
-      id: z.string().optional(),
-      name: z.string().optional(),
-    })
-    .optional(),
-  vehicle: z
-    .object({
-      id: z.string().optional(),
-      unit: z.string().optional(),
-    })
-    .optional(),
-  trailer: z
-    .object({
-      id: z.string().optional(),
-      unit: z.string().optional(),
-    })
-    .optional(),
+  driver: z.object({ id: z.string().optional(), name: z.string().optional() }).optional(),
+  vehicle: z.object({ id: z.string().optional() }).optional(),
+  trailer: z.object({ id: z.string().optional() }).optional(),
 });
-
-// Update load validation schema
+// Schema for updating an existing load (partial fields optional)
 export const updateLoadSchema = z.object({
   id: z.string(),
-  referenceNumber: z.string().min(1, 'Reference number is required').optional(),
-  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
-  status: z
-    .enum([
-      'draft',
-      'pending',
-      'posted',
-      'booked',
-      'confirmed',
-      'assigned',
-      'dispatched',
-      'in_transit',
-      'at_pickup',
-      'picked_up',
-      'en_route',
-      'at_delivery',
-      'delivered',
-      'pod_required',
-      'completed',
-      'invoiced',
-      'paid',
-      'cancelled',
-      'problem',
-    ])
-    .optional(),
+  referenceNumber: z.string().min(1).optional(),
+  priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
+  status: z.enum([
+    "draft", "pending", "posted", "booked", "confirmed", "assigned",
+    "dispatched", "in_transit", "at_pickup", "picked_up", "en_route",
+    "at_delivery", "delivered", "pod_required", "completed", "invoiced",
+    "paid", "cancelled", "problem",
+  ]).optional(),
   customer: customerSchema.optional(),
   origin: locationSchema.optional(),
   destination: locationSchema.optional(),
@@ -262,226 +143,27 @@ export const updateLoadSchema = z.object({
   notes: z.string().optional(),
   internalNotes: z.string().optional(),
   specialInstructions: z.string().optional(),
-  brokerInfo: brokerInfoSchema.optional(),
+  brokerInfo: z.any().optional(),
   tags: z.array(z.string()).optional(),
-  meta: z.object({
-    createdBy: z.string().optional(),
-    assignedBy: z.string().optional(),
-  }).optional(),
-  lastModifiedBy: z.string().optional(),
-  statusEvents: z
-    .array(
-      z.object({
-        id: z.string(),
-        loadId: z.string(),
-        status: z.enum([
-          'draft',
-          'pending',
-          'posted',
-          'booked',
-          'confirmed',
-          'assigned',
-          'dispatched',
-          'in_transit',
-          'at_pickup',
-          'picked_up',
-          'en_route',
-          'at_delivery',
-          'delivered',
-          'pod_required',
-          'completed',
-          'invoiced',
-          'paid',
-          'cancelled',
-          'problem',
-        ]),
-        timestamp: z.date(),
-        location: z.any().optional(),
-        notes: z.string().optional(),
-        automaticUpdate: z.boolean().optional(),
-        source: z.string().optional(),
-        meta: z.object({
-          createdBy: z.string().optional(),
-          assignedBy: z.string().optional(),
-        }).optional(),
-      })
-    )
-    .optional(),
-  driver: z
-    .object({
-      id: z.string().optional(),
-      name: z.string().optional(),
-    })
-    .optional(),
-  vehicle: z
-    .object({
-      id: z.string().optional(),
-      unit: z.string().optional(),
-    })
-    .optional(),
-  trailer: z
-    .object({
-      id: z.string().optional(),
-      unit: z.string().optional(),
-    })
-    .optional(),
+  driver: z.object({ id: z.string().optional() }).optional(),
+  vehicle: z.object({ id: z.string().optional() }).optional(),
+  trailer: z.object({ id: z.string().optional() }).optional(),
 });
-
-// Load assignment validation schema
+// Schema for assigning driver/vehicle to a load
 export const loadAssignmentSchema = z.object({
-  loadId: z.string().min(1, 'Load ID is required'),
-  driverId: z.string().min(1, 'Driver ID is required'),
-  vehicleId: z.string().min(1, 'Vehicle ID is required'),
+  loadId: z.string().min(1),
+  driverId: z.string().min(1),
+  vehicleId: z.string().min(1),
   trailerId: z.string().optional(),
-  assignedAt: z.string().optional(),
-  notes: z.string().optional(),
 });
-
-// Load status update validation schema
+// Schema for updating load status (could include location data)
 export const loadStatusUpdateSchema = z.object({
-  loadId: z.string().min(1, 'Load ID is required'),
+  loadId: z.string().min(1),
   status: z.enum([
-    'draft',
-    'pending',
-    'posted',
-    'booked',
-    'confirmed',
-    'assigned',
-    'dispatched',
-    'in_transit',
-    'at_pickup',
-    'picked_up',
-    'en_route',
-    'at_delivery',
-    'delivered',
-    'pod_required',
-    'completed',
-    'invoiced',
-    'paid',
-    'cancelled',
-    'problem',
+    "draft", "pending", "posted", "booked", "confirmed", "assigned",
+    "dispatched", "in_transit", "at_pickup", "picked_up", "en_route",
+    "at_delivery", "delivered", "pod_required", "completed", "invoiced",
+    "paid", "cancelled", "problem",
   ]),
-  location: z
-    .object({
-      latitude: z.number().optional(),
-      longitude: z.number().optional(),
-      address: z.string().optional(),
-      city: z.string().optional(),
-      state: z.string().optional(),
-    })
-    .optional(),
-  notes: z.string().optional(),
-  automaticUpdate: z.boolean().default(false),
-  source: z
-    .enum(['system', 'driver', 'dispatcher', 'customer', 'eld'])
-    .default('dispatcher'),
+  location: z.any().optional(),
 });
-
-// Load filtering validation schema
-export const loadFilterSchema = z.object({
-  status: z
-    .array(
-      z.enum([
-        'all',
-        'draft',
-        'pending',
-        'posted',
-        'booked',
-        'confirmed',
-        'assigned',
-        'dispatched',
-        'in_transit',
-        'at_pickup',
-        'picked_up',
-        'en_route',
-        'at_delivery',
-        'delivered',
-        'pod_required',
-        'completed',
-        'invoiced',
-        'paid',
-        'cancelled',
-        'problem',
-      ])
-    )
-    .optional(),
-  priority: z.array(z.enum(['low', 'medium', 'high', 'urgent'])).optional(),
-  driverId: z.string().optional(),
-  vehicleId: z.string().optional(),
-  customerId: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  pickupDateFrom: z.string().optional(),
-  pickupDateTo: z.string().optional(),
-  deliveryDateFrom: z.string().optional(),
-  deliveryDateTo: z.string().optional(),
-  originState: z.string().optional(),
-  destinationState: z.string().optional(),
-  equipmentType: z
-    .array(
-      z.enum([
-        'dry_van',
-        'reefer',
-        'flatbed',
-        'step_deck',
-        'lowboy',
-        'tanker',
-        'container',
-        'other',
-      ])
-    )
-    .optional(),
-  minRate: z.number().min(0).optional(),
-  maxRate: z.number().min(0).optional(),
-  minMiles: z.number().min(0).optional(),
-  maxMiles: z.number().min(0).optional(),
-  tags: z.array(z.string()).optional(),
-  search: z.string().optional(),
-  sortBy: z
-    .enum([
-      'pickupDate',
-      'deliveryDate',
-      'rate',
-      'miles',
-      'priority',
-      'status',
-      'customer',
-      'createdAt',
-    ])
-    .optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
-  page: z.number().int().min(1).optional(),
-  limit: z.number().int().min(1).max(100).optional(),
-});
-
-// Bulk operations validation schema
-export const bulkLoadOperationSchema = z.object({
-  operation: z.enum([
-    'delete',
-    'update_status',
-    'assign_driver',
-    'assign_vehicle',
-    'add_tags',
-    'remove_tags',
-  ]),
-  loadIds: z.array(z.string()).min(1, 'At least one load must be selected'),
-  data: z.record(z.any()).optional(),
-});
-
-// Document upload validation schema
-// ...existing code...
-
-// Tracking update validation schema
-// ...existing code...
-
-// Load alert validation schema
-// ...existing code...
-
-// Export types from schemas
-export type CreateLoadInput = z.infer<typeof createLoadSchema>;
-export type UpdateLoadInput = z.infer<typeof updateLoadSchema>;
-export type LoadAssignmentInput = z.infer<typeof loadAssignmentSchema>;
-export type LoadStatusUpdateInput = z.infer<typeof loadStatusUpdateSchema>;
-export type LoadFilterInput = z.infer<typeof loadFilterSchema>;
-export type BulkLoadOperationInput = z.infer<typeof bulkLoadOperationSchema>;
-// ...existing code...

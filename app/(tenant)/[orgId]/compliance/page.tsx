@@ -101,7 +101,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 <CardTitle className="text-sm font-medium">
                   Driver Compliance
                 </CardTitle>
-                <UserIcon className="h-4 w-4 text-[hsl(var(--info))]" />
+                <UserIcon className="h-4 w-4 text--info" />
               </CardHeader>
               <CardContent>                
                 <div className="card-metric">
@@ -110,7 +110,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                     : '0%'
                   }
                 </div>
-                <p className="text-xs text-[hsl(var(--success))]">
+                <p className="text-xs text-success">
                   {hasData ? 
                     `${dashboardData.driversInCompliance} of ${dashboardData.totalDrivers} drivers compliant` 
                     : 'No data available'
@@ -123,7 +123,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 <CardTitle className="text-sm font-medium">
                   Vehicle Compliance
                 </CardTitle>
-                <TruckIcon className="h-4 w-4 text-[hsl(var(--info))]" />
+                <TruckIcon className="h-4 w-4 text-info" />
               </CardHeader>
               <CardContent>                
                 <div className="card-metric">
@@ -132,7 +132,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                     : '0%'
                   }
                 </div>
-                <p className="text-xs text-[hsl(var(--success))]">
+                <p className="text-xs text-success">
                   {hasData ? 
                     `${dashboardData.vehiclesInCompliance} of ${dashboardData.totalVehicles} vehicles compliant` 
                     : 'No data available'
@@ -145,13 +145,13 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 <CardTitle className="text-sm font-medium">
                   Active Violations
                 </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-[hsl(var(--warning))]" />
+                <AlertTriangle className="h-4 w-4 text-warning" />
               </CardHeader>
               <CardContent>                
                 <div className="card-metric">
                   {hasData ? (dashboardData.activeViolations || 0) : 0}
                 </div>
-                <p className="text-xs text-[hsl(var(--danger))]">Requires attention</p>
+                <p className="text-xs text-danger">Requires attention</p>
               </CardContent>
             </Card>
             <Card className="card">
@@ -159,7 +159,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 <CardTitle className="text-sm font-medium">
                   Document Status
                 </CardTitle>
-                <FileText className="h-4 w-4 text-[hsl(var(--info))]" />
+                <FileText className="h-4 w-4 text-info" />
               </CardHeader>
               <CardContent>               
                 <div className="card-metric">
@@ -168,7 +168,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                     : '0%'
                   }
                 </div>
-                <p className="text-xs text-[hsl(var(--success))]">
+                <p className="text-xs text-success">
                   {hasData ? 
                     `${dashboardData.totalDocuments - dashboardData.expiredDocuments} of ${dashboardData.totalDocuments} current` 
                     : 'No documents'

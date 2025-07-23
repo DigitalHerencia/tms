@@ -6,6 +6,7 @@
 // ================== Core Driver Types ==================
 
 export interface Driver {
+  name: string;
   id: string;
   userId?: string; // Reference to the user_id in the database
   tenantId: string;

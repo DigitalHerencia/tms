@@ -1,9 +1,13 @@
 /**
- * Type definitions for the dispatch module
+ * Type definitions for dispatch domain
  */
+export type LoadStatus =
+  | "draft" | "pending" | "posted" | "booked" | "confirmed"
+  | "assigned" | "dispatched" | "in_transit" | "at_pickup" | "picked_up"
+  | "en_route" | "at_delivery" | "delivered" | "pod_required"
+  | "completed" | "invoiced" | "paid" | "cancelled" | "problem";
 
-import type { User } from './index';
-import type { Metadata } from './metadata';
+export type LoadPriority = "low" | "medium" | "high" | "urgent";
 
 export interface Load {
   id: string;
@@ -36,36 +40,16 @@ export interface Load {
   statusHistory?: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
-  // ...existing code...
+  factoring?: FactoringInfo;
   alerts?: LoadAlert[];
   tags?: string[];
   createdAt: Date;
   updatedAt: Date;
+  createdBy?: string;
+  lastModifiedBy?: string;
   meta?: AssignmentMeta;
+  statusEvents?: LoadStatusEvent[];
 }
-
-export type LoadStatus =
-  | 'draft'
-  | 'pending'
-  | 'posted'
-  | 'booked'
-  | 'confirmed'
-  | 'assigned'
-  | 'dispatched'
-  | 'in_transit'
-  | 'at_pickup'
-  | 'picked_up'
-  | 'en_route'
-  | 'at_delivery'
-  | 'delivered'
-  | 'pod_required'
-  | 'completed'
-  | 'invoiced'
-  | 'paid'
-  | 'cancelled'
-  | 'problem';
-
-export type LoadPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface LoadStatusEvent {
   id: string;
@@ -74,9 +58,9 @@ export interface LoadStatusEvent {
   timestamp: Date;
   location?: Partial<Location>;
   notes?: string;
-  automaticUpdate: boolean;
-  source: 'system' | 'driver' | 'dispatcher' | 'customer' | 'eld';
-  meta?: AssignmentMeta;
+  automaticUpdate?: boolean;
+  source?: "system" | "driver" | "dispatcher" | "customer" | "eld";
+  createdBy?: string;
 }
 
 export interface TrackingUpdate {
@@ -92,7 +76,7 @@ export interface TrackingUpdate {
   };
   speed?: number;
   heading?: number;
-  source: 'gps' | 'manual' | 'eld' | 'driver_app';
+  source: "gps" | "manual" | "eld" | "driver_app";
   accuracy?: number;
 }
 
@@ -105,7 +89,7 @@ export interface LoadAssignedDriver {
   licenseNumber?: string;
   cdlClass?: string;
   assignedAt: Date;
-  meta?: AssignmentMeta;
+  assignedBy: string;
 }
 
 export interface LoadAssignedVehicle {
@@ -117,12 +101,7 @@ export interface LoadAssignedVehicle {
   vin: string;
   licensePlate: string;
   assignedAt: Date;
-  meta?: AssignmentMeta;
-}
-
-export interface AssignmentMeta {
-  createdBy?: string;
-  assignedBy?: string;
+  assignedBy: string;
 }
 
 export interface LoadAssignedTrailer {
@@ -135,19 +114,11 @@ export interface LoadAssignedTrailer {
   vin: string;
   licensePlate: string;
   assignedAt: Date;
-  meta?: AssignmentMeta;
+  assignedBy: string;
 }
 
 export interface EquipmentRequirement {
-  type:
-    | 'dry_van'
-    | 'reefer'
-    | 'flatbed'
-    | 'step_deck'
-    | 'lowboy'
-    | 'tanker'
-    | 'container'
-    | 'other';
+  type: "dry_van" | "reefer" | "flatbed" | "step_deck" | "lowboy" | "tanker" | "container" | "other";
   length?: number;
   temperatureMin?: number;
   temperatureMax?: number;
@@ -179,7 +150,7 @@ export interface CargoDetails {
   temperature?: {
     min: number;
     max: number;
-    unit: 'F' | 'C';
+    unit: "F" | "C";
   };
   specialHandling?: string[];
 }
@@ -190,23 +161,31 @@ export interface BrokerInfo {
   phone?: string;
   email?: string;
   mcNumber?: string;
-  meta?: AssignmentMeta;
+  dotNumber?: string;
   brokerageRate?: number;
   commissionRate?: number;
 }
 
-// ...existing code...
+export interface FactoringInfo {
+  company: string;
+  accountNumber?: string;
+  contactName?: string;
+  phone?: string;
+  email?: string;
+  factorRate?: number;
+  advanceRate?: number;
+}
 
 export interface LoadAlert {
   id: string;
-  type: 'warning' | 'error' | 'info';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "warning" | "error" | "info";
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   message: string;
   acknowledged: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: Date;
-  meta?: AssignmentMeta;
+  createdAt: Date;
   autoResolve: boolean;
   resolvedAt?: Date;
 }
@@ -219,7 +198,7 @@ export interface Customer {
   phone?: string;
   address?: string;
   city?: string;
-  meta?: AssignmentMeta;
+  state?: string;
   zipCode?: string;
   mcNumber?: string;
   dotNumber?: string;
@@ -237,16 +216,8 @@ export interface LoadDocument {
   id: string;
   loadId: string;
   name: string;
-  type:
-    | 'bol'
-    | 'pod'
-    | 'invoice'
-    | 'receipt'
-    | 'permit'
-    | 'contract'
-    | 'rate_confirmation'
-    | 'other';
-  category: 'pickup' | 'delivery' | 'administrative' | 'billing' | 'compliance';
+  type: "bol" | "pod" | "invoice" | "receipt" | "permit" | "contract" | "rate_confirmation" | "other";
+  category: "pickup" | "delivery" | "administrative" | "billing" | "compliance";
   url: string;
   fileSize: number;
   mimeType: string;
@@ -256,7 +227,7 @@ export interface LoadDocument {
   uploadedAt: Date;
   uploadedBy: string;
   description?: string;
-  metadata?: Metadata;
+  metadata?: any;
 }
 
 export interface Location {
@@ -275,7 +246,7 @@ export interface Location {
 export interface Rate {
   total: number;
   currency: string;
-  type: 'flat' | 'per_mile' | 'percentage';
+  type: "flat" | "per_mile" | "percentage";
   lineHaul: number;
   fuelSurcharge?: number;
   detention?: number;
@@ -292,14 +263,46 @@ export interface Rate {
   brokerageRate?: number;
   commissionRate?: number;
   driverPay?: number;
-  driverPayType?: 'percentage' | 'flat' | 'per_mile';
+  driverPayType?: "percentage" | "flat" | "per_mile";
   profit?: number;
   profitMargin?: number;
   notes?: string;
 }
 
-// ...existing code...
+export interface Vehicle {
+  id: string;
+  tenantId: string;
+  type: "truck" | "van" | "trailer";
+  make: string;
+  model: string;
+  year: number;
+  vin: string;
+  licensePlate: string;
+  status: "active" | "maintenance" | "out_of_service";
+  lastMaintenanceDate?: Date;
+  nextMaintenanceDate?: Date;
+  fuelType: "diesel" | "gasoline" | "electric" | "hybrid";
+  currentOdometer?: number;
+}
 
-// ...existing code...
+export interface Trailer {
+  id: string;
+  tenantId: string;
+  type: "dry_van" | "reefer" | "flatbed" | "step_deck" | "other";
+  length: number;
+  make: string;
+  model: string;
+  year: number;
+  vin: string;
+  licensePlate: string;
+  status: "active" | "maintenance" | "out_of_service";
+}
 
-// ...existing code...
+export interface AssignmentMeta {
+  driverAssignedAt?: Date;
+  driverAssignedBy?: string;
+  vehicleAssignedAt?: Date;
+  vehicleAssignedBy?: string;
+  trailerAssignedAt?: Date;
+  trailerAssignedBy?: string;
+}

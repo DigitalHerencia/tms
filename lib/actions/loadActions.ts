@@ -1,150 +1,202 @@
-'use server';
+"use server";
 
-import { auth } from '@clerk/nextjs/server';
-import { revalidatePath } from 'next/cache';
-import { LoadStatus as PrismaLoadStatus } from '@prisma/client';
-
-import db from '@/lib/database/db';
-import { handleError } from '@/lib/errors/handleError';
-import {
-  updateLoadSchema,
-  loadAssignmentSchema,
-  type UpdateLoadInput,
-  type LoadAssignmentInput,
-} from '@/schemas/dispatch';
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import db from "@/lib/database/db";
+import { handleError } from "@/lib/errors/handleError";
+// import { loadInputSchema } from '@/schemas/dispatch' // (stub for Zod validation)
+import type { DashboardActionResult } from "@/types/dashboard";
 
 /**
- * Update an existing load with the provided fields.
- *
- * @param id - The load identifier to update.
- * @param data - Partial load data from the dispatch form.
- * @returns Result with the updated load or an error message.
+ * Create a load
  */
-export async function updateLoadAction(id: string, data: UpdateLoadInput) {
+export async function createLoadAction(
+  orgId: string,
+  formData: FormData
+): Promise<DashboardActionResult<{ id: string }>> {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    const validated = updateLoadSchema.parse({ ...data, id });
-    const {
-      rate,
-      customer,
-      origin,
-      destination,
-      driver,
-      vehicle,
-      trailer,
-      ...rest
-    } = validated;
-    // Map incoming data to flat DB fields as in dispatchActions.ts
-    const dbData: any = {
-      ...rest,
-      updatedAt: new Date(),
-    };
-    if (typeof rate !== 'undefined') dbData.rate = rate;
-    if (customer && typeof customer === 'object') {
-      dbData.customerName = customer.name ?? null;
-      dbData.customerContact = customer.contactName ?? null;
-      dbData.customerPhone = customer.phone ?? null;
-      dbData.customerEmail = customer.email ?? null;
-    }
-    if (origin && typeof origin === 'object') {
-      dbData.originAddress = origin.address ?? null;
-      dbData.originCity = origin.city ?? null;
-      dbData.originState = origin.state ?? null;
-      dbData.originZip = origin.zip ?? null;
-      dbData.originLat = origin.latitude ?? null;
-      dbData.originLng = origin.longitude ?? null;
-    }
-    if (destination && typeof destination === 'object') {
-      dbData.destinationAddress = destination.address ?? null;
-      dbData.destinationCity = destination.city ?? null;
-      dbData.destinationState = destination.state ?? null;
-      dbData.destinationZip = destination.zip ?? null;
-      dbData.destinationLat = destination.latitude ?? null;
-      dbData.destinationLng = destination.longitude ?? null;
-    }
-  
-    const load = await db.load.update({
-      where: {
-        id,
-        organizationId: orgId,
-      },
-      data: dbData,
-    });
-    revalidatePath('/[orgId]/dispatch', 'page');
-    revalidatePath(`/[orgId]/dispatch/${id}`, 'page');
-    return { success: true, data: load };
-  } catch (error) {
-    return handleError(error, 'Update Load');
-  }
-}
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
 
-export async function updateLoadStatus(id: string, status: string) {
-  try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    const load = await db.load.update({
-      where: {
-        id,
-        organizationId: orgId,
-      },
+    // Required fields
+    const loadNumber        = formData.get("load_number") as string;
+    const originAddress     = formData.get("origin_address") as string;
+    const originCity        = formData.get("origin_city") as string;
+    const originState       = formData.get("origin_state") as string;
+    const originZip         = formData.get("origin_zip") as string;
+    const destinationAddress= formData.get("destination_address") as string;
+    const destinationCity   = formData.get("destination_city") as string;
+    const destinationState  = formData.get("destination_state") as string;
+    const destinationZip    = formData.get("destination_zip") as string;
+
+    // Optional/nullable fields
+    const customerId           = formData.get("customer_id") as string;
+    const driverId             = formData.get("driver_id") as string;
+    const vehicleId            = formData.get("vehicle_id") as string;
+    const trailerId            = formData.get("trailer_id") as string; 
+    const scheduledPickupDate  = formData.get("scheduled_pickup_date") ? new Date(formData.get("scheduled_pickup_date") as string) : null;
+    const scheduledDeliveryDate= formData.get("scheduled_delivery_date") ? new Date(formData.get("scheduled_delivery_date") as string) : null;
+    const notes                = formData.get("notes") as string | null;
+
+    // If you need to default/validate, do it here.
+
+    const load = await db.load.create({
       data: {
-        status: status as PrismaLoadStatus,
-        updatedAt: new Date(),
+        organizationId: orgId,
+        loadNumber,
+        originAddress,
+        originCity,
+        originState,
+        originZip,
+        destinationAddress,
+        destinationCity,
+        destinationState,
+        destinationZip,
+        customerId: customerId,
+        driver_id: driverId,
+        vehicleId: vehicleId,
+        trailerId: trailerId,
+        scheduledPickupDate,
+        scheduledDeliveryDate,
+        notes,
+        status: "pending",
+        createdBy: userId,
       },
     });
-    revalidatePath('/[orgId]/dispatch', 'page');
-    return { success: true, data: load };
+
+    revalidatePath(`/${orgId}/loads`);
+    return { success: true, data: { id: load.id } };
   } catch (error) {
-    return handleError(error, 'Update Load Status');
+    return handleError(error, "Create Load");
   }
 }
 
-export async function deleteLoadAction(id: string) {
+/**
+ * Update a load
+ */
+export async function updateLoadAction(
+  orgId: string,
+  loadId: string,
+  formData: FormData
+): Promise<DashboardActionResult<{ id: string }>> {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return { success: false, error: 'Unauthorized' };
-    }
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
+    const data: Record<string, any> = {};
+    [
+      "customer_id",
+      "driver_id",
+      "vehicle_id",
+      "trailer_id",
+      "origin_address",
+      "destination_address",
+      "scheduled_pickup_date",
+      "scheduled_delivery_date",
+      "notes",
+      "status",
+    ].forEach((key) => {
+      const val = formData.get(key);
+      if (val !== null && val !== undefined) {
+        if (
+          ["scheduled_pickup_date", "scheduled_delivery_date"].includes(key)
+        ) {
+          data[key] = val ? new Date(val as string) : null;
+        } else {
+          data[key] = val;
+        }
+      }
+    });
+
+    data["lastModifiedBy"] = userId;
+    data["updatedAt"] = new Date();
+
+    const load = await db.load.update({
+      where: { id: loadId, organizationId: orgId },
+      data,
+    });
+
+    revalidatePath(`/${orgId}/loads`);
+    return { success: true, data: { id: loadId } };
+  } catch (error) {
+    return handleError(error, "Update Load");
+  }
+}
+
+/**
+ * Delete a load
+ */
+export async function deleteLoadAction(
+  orgId: string,
+  loadId: string
+): Promise<DashboardActionResult<null>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
     await db.load.delete({
-      where: {
-        id,
-        organizationId: orgId,
-      },
+      where: { id: loadId, organizationId: orgId },
     });
-    revalidatePath('/[orgId]/dispatch', 'page');
-    return { success: true };
+
+    revalidatePath(`/${orgId}/loads`);
+    return { success: true, data: null };
   } catch (error) {
-    return handleError(error, 'Delete Load');
+    return handleError(error, "Delete Load");
   }
 }
 
-export async function assignLoadAction(data: LoadAssignmentInput) {
+/**
+ * Assign vehicle to load
+ */
+export async function assignVehicleToLoadAction(
+  orgId: string,
+  loadId: string,
+  vehicleId: string
+): Promise<DashboardActionResult<{ id: string }>> {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    const validated = loadAssignmentSchema.parse(data);
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
     const load = await db.load.update({
-      where: {
-        id: validated.loadId,
-        organizationId: orgId,
-      },
+      where: { id: loadId, organizationId: orgId },
       data: {
-        driver_id: validated.driverId,
-        vehicleId: validated.vehicleId,
-        trailerId: validated.trailerId ?? null,
+        vehicleId,
+        lastModifiedBy: userId,
         updatedAt: new Date(),
       },
     });
-    revalidatePath('/[orgId]/dispatch', 'page');
-    return { success: true, data: load };
+
+    revalidatePath(`/${orgId}/loads`);
+    return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, 'Assign Load');
+    return handleError(error, "Assign Vehicle to Load");
+  }
+}
+
+/**
+ * Assign trailer to load
+ */
+export async function assignTrailerToLoadAction(
+  orgId: string,
+  loadId: string,
+  trailerId: string
+): Promise<DashboardActionResult<{ id: string }>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
+    const load = await db.load.update({
+      where: { id: loadId, organizationId: orgId },
+      data: {
+        trailerId,
+        lastModifiedBy: userId,
+        updatedAt: new Date(),
+      },
+    });
+
+    revalidatePath(`/${orgId}/loads`);
+    return { success: true, data: { id: loadId } };
+  } catch (error) {
+    return handleError(error, "Assign Trailer to Load");
   }
 }

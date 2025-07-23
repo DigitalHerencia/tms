@@ -48,7 +48,6 @@ interface SettingsDashboardProps {
         userPreferences: UserPreferences | null
         notifications: NotificationSettingsType | null
         integrations: IntegrationSettingsType | null
-        billing: BillingSettingsType | null
     }
 }
 
@@ -375,9 +374,6 @@ export function SettingsDashboard({
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <BillingSettingsForm
-                                    initial={initialData.billing ?? {} as BillingSettingsType}
-                                />
                             </CardContent>
                         </Card>
                     </TabsContent>
