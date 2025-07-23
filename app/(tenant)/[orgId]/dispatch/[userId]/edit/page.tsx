@@ -1,31 +1,36 @@
-import { notFound } from "next/navigation";
-import { LoadForm } from "@/components/dispatch/load-form";
-import { getLoadById, getDriversByOrg, getVehiclesByOrg } from "@/lib/fetchers/dispatchFetchers";
+import { getDriversByOrg, getVehiclesByOrg, getLoadById } from "@/lib/fetchers/dispatchFetchers";
+import { EditLoadFeature } from "@/features/dispatch/EditLoadFeature";
+import type { Driver } from "@/types/drivers";
+import type { Vehicle } from "@/types/vehicles";
+import type { Load } from "@/types/dispatch";
 
 interface EditLoadPageProps {
-  params: { orgId: string; userId: string };
-  searchParams: { loadId?: string };
+  params: {
+    orgId: string;
+    loadId: string;
+  };
 }
 
-export default async function EditLoadPage({ params, searchParams }: EditLoadPageProps) {
-  const { orgId } = params;
-  const loadId = searchParams.loadId;
-  if (!loadId) {
-    return notFound();
-  }
-  // Fetch the load to edit, and options for drivers/vehicles
-  const [load, drivers, vehicles] = await Promise.all([
-    getLoadById(orgId, loadId),
-    getDriversByOrg(orgId),
-    getVehiclesByOrg(orgId),
-  ]);
+export default async function EditLoadPage({ params }: EditLoadPageProps) {
+  const { orgId, loadId } = params;
+
+  // These must return Driver[] and Vehicle[] (with full fields!)
+  const drivers: Driver[] = await getDriversByOrg(orgId);
+  const vehicles: Vehicle[] = await getVehiclesByOrg(orgId);
+  const load: Load | null = await getLoadById(orgId, loadId);
+
   if (!load) {
-    return notFound();
+    return <div className="text-red-500 p-6">Load not found.</div>;
   }
 
   return (
-    <div className="p-4">
-      <LoadForm orgId={ orgId } load={ load } vehicles={ vehicles } drivers={ [] } />
+    <div className="container mx-auto py-8">
+      <EditLoadFeature
+        orgId={orgId}
+        load={load}
+        drivers={drivers}
+        vehicles={vehicles}
+      />
     </div>
   );
 }
