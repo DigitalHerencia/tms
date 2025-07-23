@@ -1,46 +1,34 @@
 // components/dispatch/recent-activity-row.tsx
+"use client";
 
 import { Activity, Clock, PlusCircle, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getRecentDispatchActivity } from "@/lib/fetchers/dispatchFetchers";
-import React from "react";
+import Link from "next/link";
 
-// Props: header actions and summary passed as renderable children for flexibility
-interface RecentActivityRowProps {
-  orgId: string;
-  onNewLoadClick: () => void;
-  onFilterClick: () => void;
-  summaryStats: React.ReactNode;
-}
-
-
-export async function RecentActivityRow({ orgId, onNewLoadClick, onFilterClick, summaryStats }: RecentActivityRowProps) {
-  let activityItems: {
-    id: string;
-    organizationId: string;
-    entityType: string;
-    action: string;
-    entityId: string;
+interface RecentActivityProps {
+params: {
+    userId: string;
+  };
+  stats: {
+    totalLoads: number;
+    pendingLoads: number;
+    assignedLoads: number;
+    inTransitLoads: number;
+    completedLoads: number;
+  };
+  RecentActivity: Array<{
+    id: string | number;
     userName: string;
     timestamp: string;
-  }[] = [];
+    action: string;
+    entityType: string;
+    entityId: string;
+  }> ;
+}
 
-  try {
-  const result = await getRecentDispatchActivity(orgId);
-  if (result.success && Array.isArray(result.data)) {
-    activityItems = result.data.map(item => ({
-      ...item,
-      timestamp: typeof item.timestamp === "string" ? item.timestamp : item.timestamp.toISOString(),
-    }));
-
-
-    }
-  } catch {
-    activityItems = [];
-  }
-
-  const formatLabel = (item: typeof activityItems[0]) =>
+export function RecentActivityRow({params, stats, RecentActivity }: RecentActivityProps) {
+  const formatLabel = (item: any) =>
     `${item.userName} ${item.action.toLowerCase()} ${item.entityType.toLowerCase()} ${item.entityId}`;
 
   return (
@@ -49,16 +37,14 @@ export async function RecentActivityRow({ orgId, onNewLoadClick, onFilterClick, 
       <Card>
         <CardContent className="p-4">
           <div className="mb-4 flex items-center gap-2">
-            <div className="rounded bg-purple-500 p-1.5">
-              <Activity className="h-4 w-4 text-white" />
-            </div>
+            <Activity className="h-8 w-8 text-white" />
             <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
           </div>
-          {activityItems.length === 0 ? (
+          {!RecentActivity || RecentActivity.length === 0 ? (
             <p className="text-gray-500">No recent activity.</p>
           ) : (
             <ul className="space-y-3 text-gray-200 text-sm">
-              {activityItems.slice(0, 8).map(item => (
+              {RecentActivity.slice(0, 8).map(item => (
                 <li key={item.id} className="flex items-center justify-between">
                   <span>{formatLabel(item)}</span>
                   <span className="flex items-center gap-1 text-xs text-gray-400">
@@ -74,22 +60,32 @@ export async function RecentActivityRow({ orgId, onNewLoadClick, onFilterClick, 
       {/* Header Actions Card */}
       <Card>
         <CardContent className="flex flex-col items-center justify-center gap-3 py-6">
-          <Button size="sm" className="w-full" onClick={onNewLoadClick}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Load
-          </Button>
-          <Button variant="outline" size="sm" className="w-full" onClick={onFilterClick}>
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
+          <Link href={`/dispatch/${params.userId}/new`} className="w-full">
+            <Button size="sm" className="w-full">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add New Load
+            </Button>
+          </Link>
+          <Link href={`/dispatch/${params.userId}/edit`} className="w-full">
+            <Button variant="outline" size="sm" className="w-full">
+              <Filter className="mr-2 h-4 w-4" />
+              Edit Load
+            </Button>
+          </Link>
         </CardContent>
       </Card>
       {/* Load Summary Card */}
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-6">
-          {summaryStats}
+          {/* Quick summary stats */}
+        <div className="text-sm text-muted-foreground">
+          {stats.totalLoads} loads total • {stats.pendingLoads} pending • {stats.assignedLoads} assigned •{" "}
+          {stats.inTransitLoads} in transit • {stats.completedLoads} completed
+        </div>
         </CardContent>
       </Card>
     </div>
   );
 }
+
+  

@@ -17,6 +17,7 @@ interface EditLoadFeatureProps {
   drivers: Driver[];
   vehicles: Vehicle[];
   load: Load;
+  
 }
 
 export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeatureProps) {

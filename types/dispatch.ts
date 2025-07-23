@@ -1,6 +1,9 @@
 /**
  * Type definitions for dispatch domain
+ * These types are aligned with Prisma schema and Zod validations
  */
+
+// Enums
 export type LoadStatus =
   | "draft" | "pending" | "posted" | "booked" | "confirmed"
   | "assigned" | "dispatched" | "in_transit" | "at_pickup" | "picked_up"
@@ -9,12 +12,20 @@ export type LoadStatus =
 
 export type LoadPriority = "low" | "medium" | "high" | "urgent";
 
+export type EquipmentType = 
+  | "dry_van" | "reefer" | "flatbed" | "step_deck" 
+  | "lowboy" | "tanker" | "container" | "other";
+
+export type TemperatureUnit = "F" | "C";
+
+// Core Interfaces
 export interface Load {
   id: string;
   organizationId: string;
   referenceNumber: string;
   status: LoadStatus;
   priority: LoadPriority;
+  customerId: string;
   customer: Customer;
   origin: Location;
   destination: Location;
@@ -24,10 +35,13 @@ export interface Load {
   estimatedDeliveryTime?: string;
   actualPickupTime?: Date;
   actualDeliveryTime?: Date;
+  driverId?: string;
   driver?: LoadAssignedDriver;
+  vehicleId?: string;
   vehicle?: LoadAssignedVehicle;
+  trailerId?: string;
   trailer?: LoadAssignedTrailer;
-  equipment?: EquipmentRequirement;
+  equipment: EquipmentRequirement;
   cargo: CargoDetails;
   rate: Rate;
   miles?: number;
@@ -37,18 +51,17 @@ export interface Load {
   internalNotes?: string;
   specialInstructions?: string;
   documents?: LoadDocument[];
-  statusHistory?: LoadStatusEvent[];
+  statusEvents: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
   factoring?: FactoringInfo;
   alerts?: LoadAlert[];
-  tags?: string[];
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
-  createdBy?: string;
-  lastModifiedBy?: string;
+  createdById: string;
+  lastModifiedById?: string;
   meta?: AssignmentMeta;
-  statusEvents?: LoadStatusEvent[];
 }
 
 export interface LoadStatusEvent {
@@ -58,9 +71,9 @@ export interface LoadStatusEvent {
   timestamp: Date;
   location?: Partial<Location>;
   notes?: string;
-  automaticUpdate?: boolean;
-  source?: "system" | "driver" | "dispatcher" | "customer" | "eld";
-  createdBy?: string;
+  automaticUpdate: boolean;
+  source: "system" | "driver" | "dispatcher" | "customer" | "eld";
+  createdById: string;
 }
 
 export interface TrackingUpdate {
@@ -73,11 +86,14 @@ export interface TrackingUpdate {
     address?: string;
     city?: string;
     state?: string;
+    zip?: string;
   };
   speed?: number;
   heading?: number;
   source: "gps" | "manual" | "eld" | "driver_app";
   accuracy?: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface LoadAssignedDriver {

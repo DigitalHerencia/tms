@@ -6,6 +6,7 @@
     "target": "ESNext",
     "skipLibCheck": true,
     "strict": true,
+    "noImplicitAny": false,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "esModuleInterop": true,

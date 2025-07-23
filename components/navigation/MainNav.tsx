@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Home,
   Truck,
@@ -16,7 +17,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useClerk } from '@clerk/nextjs';
-
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
 import { useUserContext } from '@/components/auth/context';
 import { SystemRoles, type SystemRole } from '@/types/abac';
@@ -162,7 +163,7 @@ export function MainNav({
     <SidebarCollapsedContext.Provider value={collapsed}>
       <aside
         className={cn(
-          'fixed top-16 bottom-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-blue-500/60 shadow-xl transition-all duration-300 ease-in-out',
+          'fixed top-16 bottom-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-blue-500/60 transition-all duration-300 ease-in-out',
           collapsed ? 'w-20' : 'w-64',
           className
         )}
@@ -196,8 +197,9 @@ export function MainNav({
           </nav>
 
           {/* Collapse/Expand Button */}
-          <button
-            className="absolute top-3 -right-4 flex h-8 w-8 items-center justify-center rounded-full border border-b bg-black shadow-md hover:bg-gray-900"
+          <Button
+            size="icon"
+            className="absolute top-3 -right-4 h-8 w-8 rounded-full border border-gray-200 bg-black hover:bg-gray-900"
             onClick={() => setCollapsed(!collapsed)}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -206,7 +208,7 @@ export function MainNav({
             ) : (
               <ChevronLeft className="h-4 w-4 text-zinc-400" />
             )}
-          </button>
+          </Button>
         </div>
       </aside>
     </SidebarCollapsedContext.Provider>
@@ -227,48 +229,36 @@ function SidebarLink({
   collapsed: boolean;
   onClick?: (e: React.MouseEvent) => void;
 }) {
-  // render as button if it has an onClick (Sign Out)
+  const pathname = usePathname();
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+  const baseClasses = `w-full ${collapsed ? 'justify-center px-2' : 'justify-start'} text-zinc-200 font-medium transition-all duration-300 ease-in-out hover:bg-black p-4`;
+  const activeClasses = isActive ? 'bg-black' : '';
+
   if (onClick && href === '#') {
     return (
-      <button
+      <Button
         onClick={onClick}
-        className={cn(
-          'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left font-medium text-zinc-200 transition-all duration-300 ease-in-out',
-          collapsed ? 'justify-center px-2' : 'justify-start',
-          'hover:shadow-md'
-        )}
-        type="button"
+        className={`${baseClasses} ${activeClasses}`}
       >
-        <span className="h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
-          {icon}
-        </span>
+        <span className="h-5 w-5 flex-shrink-0">{icon}</span>
         {!collapsed && (
-          <span className="truncate text-base transition-all duration-300 ease-in-out">
-            {children}
-          </span>
+          <span className="ml-3 truncate text-base">{children}</span>
         )}
-      </button>
+      </Button>
     );
   }
 
-  // default: render as a Next.js Link
   return (
-    <Link
-      href={href}
-      className={cn(
-        'flex items-center gap-3 rounded-xl px-3 py-2 font-medium text-zinc-200 transition-all duration-300 ease-in-out',
-        collapsed ? 'justify-center px-2' : 'justify-start',
-        'hover:shadow-md'
-      )}
+    <Button
+      asChild
+      className={`${baseClasses} ${activeClasses}`}
     >
-      <span className="h-5 w-5 flex-shrink-0 transition-all duration-300 ease-in-out">
-        {icon}
-      </span>
-      {!collapsed && (
-        <span className="truncate text-base transition-all duration-300 ease-in-out">
-          {children}
-        </span>
-      )}
-    </Link>
+      <Link href={href}>
+        <span className="h-5 w-5 flex-shrink-0">{icon}</span>
+        {!collapsed && (
+          <span className="ml-3 pr-6 truncate text-base">{children}</span>
+        )}
+      </Link>
+    </Button>
   );
 }

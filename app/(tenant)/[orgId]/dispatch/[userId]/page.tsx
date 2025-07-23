@@ -1,33 +1,38 @@
-import { DispatchSkeleton } from "@/components/dispatch/dispatch-skeleton";
-import { RecentActivityRow } from "@/components/dispatch/recent-activity";
+"use server";
+
 import  { DispatchBoardFeature }  from "@/features/dispatch/DispatchBoardFeature";
 import { getCurrentUser } from "@/lib/auth/auth";
-import { getOrganizationUsers } from "@/lib/fetchers/dashboardFetchers";
 import { Suspense } from "react";
 import DispatchHeader from "@/components/dispatch/dispatch-header";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import type { Driver } from "@/types/drivers";
-import type { Vehicle } from "@/types/vehicles";
+import { getLoadsByOrg, getDriversByOrg, getVehiclesByOrg, getRecentDispatchActivity, getLoadSummaryStats } from "@/lib/fetchers/dispatchFetchers";
+import { RecentActivityRow } from "@/components/dispatch/recent-activity";
 
 interface DispatchPageProps {
   params: Promise<{ orgId: string; userId: string }>;
-  loads: any[];
-  drivers: Driver[];
-  vehicles: Vehicle[];
 }
 
-export default async function DispatchPage({ params, loads, drivers, vehicles }: DispatchPageProps) {
+export default async function DispatchPage({ params }: DispatchPageProps) {
   const { orgId, userId } = await params;
+
+  // Fetch all required data
+  const [loads, drivers, vehicles, RecentActivity, summaryStats] = await Promise.all([
+    getLoadsByOrg(orgId),
+    getDriversByOrg(orgId),
+    getVehiclesByOrg(orgId),
+    getRecentDispatchActivity(orgId),
+    getLoadSummaryStats(orgId)
+  ]);
    
   // Get current user to check role
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    return { error: 'Unauthorized' };
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-red-500 text-xl">Unauthorized access</div>
+      </div>
+    );
   }
-
-  // Fetch users for the organization
-  const users = await getOrganizationUsers(orgId);
-
 
   return (
     <div className="flex flex-col gap-3 p-6 bg-neutral-900 text-white min-h-screen">
@@ -36,27 +41,24 @@ export default async function DispatchPage({ params, loads, drivers, vehicles }:
       <Suspense fallback={<LoadingSpinner/>}>
         <DispatchHeader orgId={ orgId } userId={ userId } />
       </Suspense>
+
+      {/* Additional features can be added here */}
+      <RecentActivityRow 
+        stats={ summaryStats }
+        params={{ userId }}
+        RecentActivity={ RecentActivity.data.map(activity => ({
+          ...activity,
+          timestamp: activity.timestamp instanceof Date ? activity.timestamp.toISOString() : activity.timestamp
+        })) }
+      />
       
       {/* Main Dispatch Board */}
-      <DispatchBoardFeature 
-        orgId={orgId} 
-        drivers={drivers} 
-        loads={loads} 
-        vehicles={vehicles} 
-      />
-      {/* Recent activity feed for dispatch operations */}
-
-      
-      {/* Recent activity feed for dispatch operations */}
-      <Suspense fallback={<DispatchSkeleton />}>
-        <RecentActivityRow orgId={ orgId } onNewLoadClick={ function (): void
-        {
-          throw new Error( "Function not implemented." );
-        } } onFilterClick={ function (): void
-        {
-          throw new Error( "Function not implemented." );
-        } } summaryStats={ undefined } />
-      </Suspense>
-    </div>
+        <DispatchBoardFeature 
+          orgId={ orgId }
+          drivers={ drivers }
+          loads={ loads }
+          vehicles={ vehicles } 
+        />      
+  </div>
   );
 }

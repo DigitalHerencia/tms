@@ -19,6 +19,7 @@ function parseDriverData(raw: any): Driver {
     id: raw.id,
     userId: raw.userId || raw.user_id, // Support both camelCase and snake_case
     tenantId: raw.organizationId, // Map organizationId to tenantId
+    name: `${raw.firstName || ''} ${raw.lastName || ''}`.trim(), // Add name property
     homeTerminal: raw.homeTerminal || '', // Provide default if missing
     cdlNumber: raw.licenseNumber || '', // Map licenseNumber to cdlNumber
     cdlState: raw.licenseState || '', // Map licenseState to cdlState

@@ -7,17 +7,17 @@ import type { Load } from "@/types/dispatch";
 interface EditLoadPageProps {
   params: {
     orgId: string;
-    loadId: string;
+    userId: string;
   };
 }
 
 export default async function EditLoadPage({ params }: EditLoadPageProps) {
-  const { orgId, loadId } = params;
+  const { orgId } = params;
 
   // These must return Driver[] and Vehicle[] (with full fields!)
   const drivers: Driver[] = await getDriversByOrg(orgId);
   const vehicles: Vehicle[] = await getVehiclesByOrg(orgId);
-  const load: Load | null = await getLoadById(orgId, loadId);
+  const load: Load | null = await getLoadById(orgId, params.userId);
 
   if (!load) {
     return <div className="text-red-500 p-6">Load not found.</div>;

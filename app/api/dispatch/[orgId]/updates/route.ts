@@ -22,7 +22,22 @@ export async function GET(
       take: 20,
     });
 
-    const updates = events.map(e => ({
+    interface StatusChangeUpdate {
+      type: 'status_change';
+      data: {
+        loadId: string;
+        newStatus: string;
+        timestamp: Date;
+      };
+    }
+
+    interface LoadStatusEvent {
+      loadId: string;
+      status: string;
+      timestamp: Date;
+    }
+
+    const updates: StatusChangeUpdate[] = events.map((e: LoadStatusEvent) => ({
       type: 'status_change',
       data: {
         loadId: e.loadId,

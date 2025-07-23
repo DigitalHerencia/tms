@@ -1,105 +1,141 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import type { Load } from "@/types/dispatch";
 import type { Driver } from "@/types/drivers";
 import type { Vehicle } from "@/types/vehicles";
-import { DispatchBoardUI } from "@/components/dispatch/dispatch-board"; 
+import { DispatchBoardUI } from "@/components/dispatch/dispatch-board";
+import { useRouter } from "next/navigation";
 
 interface DispatchBoardFeatureProps {
-  loads: any[];
+  loads: Load[];
   drivers: Driver[];
   vehicles: Vehicle[];
   orgId: string;
+  searchParams?: { 
+    tab?: string;
+    status?: string;
+    driverId?: string;
+    origin?: string;
+    destination?: string;
+    dateRange?: string;
+    page?: string;
+  };
 }
 
-export function DispatchBoardFeature({ loads, drivers, vehicles, orgId }: DispatchBoardFeatureProps) {
+const ITEMS_PER_PAGE = 50;
+
+export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchParams = {} }: DispatchBoardFeatureProps) {
   const router = useRouter();
-  const [selectedLoad, setSelectedLoad] = useState<any | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [isPending, startTransition] = useTransition();
+  
+  const currentTab = searchParams.tab || "all";
+  const currentPage = parseInt(searchParams.page || "1", 10);
+  
+  const filters = {
+    status: searchParams.status || "",
+    driverId: searchParams.driverId || "",
+    origin: searchParams.origin || "",
+    destination: searchParams.destination || "",
+    dateRange: searchParams.dateRange || ""
+  };
 
-  const [filters, setFilters] = useState({
-    status: "",
-    driverId: "",
-    origin: "",
-    destination: "",
-    dateRange: "",
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
-  const [viewMode, setViewMode] = useState<"paginated" | "all">("paginated");
-
-  // Tab lists by status
-  const pendingLoads = loads.filter(load => load.status === "pending");
-  const assignedLoads = loads.filter(load => load.status === "assigned");
-  const inTransitLoads = loads.filter(load => load.status === "in_transit");
-  const completedLoads = loads.filter(load => load.status === "completed");
-
-  // Filter and paginate
-  const filterLoads = (list: any[]) => {
+  // Filter loads based on search params
+  const filterLoads = (list: Load[]) => {
     return list.filter(load => {
       if (filters.status && load.status !== filters.status) return false;
       if (filters.driverId && load.driver?.id !== filters.driverId) return false;
-      if (filters.origin && !(load.originCity?.toLowerCase() || "").includes(filters.origin.toLowerCase())) return false;
-      if (filters.destination && !(load.destinationCity?.toLowerCase() || "").includes(filters.destination.toLowerCase())) return false;
+      if (filters.origin && !(load.origin?.city?.toLowerCase() || "").includes(filters.origin.toLowerCase())) return false;
+      if (filters.destination && !(load.destination?.city?.toLowerCase() || "").includes(filters.destination.toLowerCase())) return false;
       if (filters.dateRange === "recent") {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        if (new Date(load.scheduledPickupDate) < thirtyDaysAgo) return false;
+        if (new Date(load.pickupDate) < thirtyDaysAgo) return false;
       }
       return true;
     });
   };
 
-  const paginateLoads = (list: any[]) => {
-    if (viewMode === "all" || list.length <= itemsPerPage) return list;
-    const start = (currentPage - 1) * itemsPerPage;
-    return list.slice(start, start + itemsPerPage);
+  // Filter by status and paginate
+  const pendingLoads = loads.filter(load => load.status === "pending");
+  const assignedLoads = loads.filter(load => load.status === "assigned");
+  const inTransitLoads = loads.filter(load => load.status === "in_transit");
+  const completedLoads = loads.filter(load => load.status === "completed");
+
+  const getPagedLoads = (list: Load[]) => {
+    const filtered = filterLoads(list);
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
   };
 
-  // Filtered lists
-  const filteredAll = paginateLoads(filterLoads(loads));
-  const filteredPending = paginateLoads(filterLoads(pendingLoads));
-  const filteredAssigned = paginateLoads(filterLoads(assignedLoads));
-  const filteredInTransit = paginateLoads(filterLoads(inTransitLoads));
-  const filteredCompleted = paginateLoads(filterLoads(completedLoads));
+  const filteredAll = getPagedLoads(loads);
+  const filteredPending = getPagedLoads(pendingLoads);
+  const filteredAssigned = getPagedLoads(assignedLoads);
+  const filteredInTransit = getPagedLoads(inTransitLoads);
+  const filteredCompleted = getPagedLoads(completedLoads);
 
-  // Handlers
-  const onTabChange = (tab: string) => setActiveTab(tab);
-  const onLoadClick = (load: any) => { setSelectedLoad(load); setIsDetailsOpen(true); };
-  const onNewLoadClick = () => setIsFormOpen(true);
-  const onFilterClick = () => setIsFilterOpen(true);
-  const onFilterChange = (field: string, value: any) => setFilters(prev => ({ ...prev, [field]: value }));
-  const onApplyFilters = () => { setIsFilterOpen(false); setActiveTab(activeTab); };
-  const onResetFilters = () => setFilters({ status: "", driverId: "", origin: "", destination: "", dateRange: "" });
+  // Handlers that update URL params instead of state
+  const onTabChange = (tab: string) => {
+    startTransition(() => {
+      router.push(`?tab=${tab}`);
+    });
+  };
+
+  const onLoadClick = (load: Load) => {
+    router.push(`/${orgId}/loads/${load.id}`);
+  };
+
+  const onStatusUpdate = async (loadId: string, newStatus: string) => {
+    startTransition(async () => {
+      await fetch(`/api/loads/${loadId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      router.refresh();
+    });
+  };
+
+  const onFilterChange = (field: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams as any);
+    if (value) {
+      newParams.set(field, value);
+    } else {
+      newParams.delete(field);
+    }
+    startTransition(() => {
+      router.push(`?${newParams.toString()}`);
+    });
+  };
+
+  const onResetFilters = () => {
+    startTransition(() => {
+      router.push('');
+    });
+  };
 
   return (
-    <DispatchBoardUI
-      loads={loads}
-      drivers={drivers}
-      vehicles={vehicles}
-      orgId={orgId}
-      filteredAll={filteredAll}
-      filteredPending={filteredPending}
-      filteredAssigned={filteredAssigned}
-      filteredInTransit={filteredInTransit}
-      filteredCompleted={filteredCompleted}
-      isFormOpen={isFormOpen}
-      isDetailsOpen={isDetailsOpen}
-      isFilterOpen={isFilterOpen}
-      activeTab={activeTab}
-      filters={filters}
-      selectedLoad={selectedLoad}
-      onTabChange={onTabChange}
-      onLoadClick={onLoadClick}
-      onNewLoadClick={onNewLoadClick}
-      onFilterClick={onFilterClick}
-      onFilterChange={onFilterChange}
-      onApplyFilters={onApplyFilters}
-      onResetFilters={onResetFilters}
-    />
+    <div>
+      <DispatchBoardUI
+        loads={loads}
+        drivers={drivers}
+        vehicles={vehicles}
+        orgId={orgId}
+        filteredAll={filteredAll}
+        filteredPending={filteredPending}
+        filteredAssigned={filteredAssigned}
+        filteredInTransit={filteredInTransit}
+        filteredCompleted={filteredCompleted}
+        currentTab={currentTab}
+        filters={filters}
+        isPending={isPending}
+        onTabChange={onTabChange}
+        onLoadClick={onLoadClick}
+        onStatusUpdate={onStatusUpdate}
+        onFilterChange={onFilterChange}
+        onResetFilters={onResetFilters}
+      />
+    </div>
   );
 }
+
