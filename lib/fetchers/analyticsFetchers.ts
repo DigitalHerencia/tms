@@ -736,7 +736,7 @@ export async function getAdvancedAnalytics(
             },
         })
 
-        let previousData = null
+        let previousData: any[] = []
         let comparisonMetrics = null
 
         // Get comparison data if requested
@@ -779,18 +779,14 @@ export async function getAdvancedAnalytics(
                 },
             })
 
-            // Calculate comparison metrics
-            comparisonMetrics = calculateComparisonMetrics(
-                currentData,
-                previousData
-            )
+        
         } // Process and group data
         const analytics: any = {
             current: processAnalyticsData(
                 currentData,
                 filters.groupBy || "day"
             ),
-            previous: previousData
+            previous: previousData.length > 0
                 ? processAnalyticsData(previousData, filters.groupBy || "day")
                 : null,
             comparison: comparisonMetrics,

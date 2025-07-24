@@ -925,7 +925,7 @@ export async function getHOSViolations(
         ])
 
         const transformedViolations = violations.map(doc => {
-            let driver = null;
+            let driver: { id: string; name: string } | null = null
             if (Array.isArray(doc.drivers) && doc.drivers.length > 0) {
                 driver = {
                     id: doc.drivers[0].id,

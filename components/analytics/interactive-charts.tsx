@@ -102,7 +102,7 @@ export function InteractiveCharts({
         if (!firstPoint || !lastPoint) return []
 
         const trend = (lastPoint.value - firstPoint.value) / 2
-        const predictions = []
+        const predictions: { date: string; value: number; isPrediction: boolean }[] = []
 
         for (let i = 1; i <= 7; i++) {
             const lastDate = new Date(lastPoint.date)

@@ -454,7 +454,7 @@ export async function getTodaysScheduleAction(
             },
         })
 
-        const scheduleItems = []
+        const scheduleItems: DashboardScheduleItem[] = []
 
         if (scheduledPickups > 0) {
             scheduleItems.push({

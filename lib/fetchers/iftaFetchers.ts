@@ -935,7 +935,7 @@ function validateJurisdictionCompleteness(calculated: any, data: any) {
 }
 
 function generateRecommendedActions(validationResults: any) {
-  const actions = [];
+  const actions: string[] = [];
   
   if (!validationResults.mileageConsistency.isValid) {
     actions.push('Review trip records for missing or duplicate entries');
@@ -1070,7 +1070,7 @@ function getBenchmarkComparison(mpg: number): string {
 }
 
 function generateEfficiencyRecommendations(metrics: any): string[] {
-  const recommendations = [];
+  const recommendations: string[] = [];
   
   if (metrics.averageMpg < 6) {
     recommendations.push('Consider driver training programs to improve fuel efficiency');
