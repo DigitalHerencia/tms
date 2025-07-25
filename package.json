@@ -15,7 +15,6 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
     "db:generate": "prisma generate"
-
   },
   "dependencies": {
     "@clerk/agent-toolkit": "^0.1.1",
@@ -98,6 +97,8 @@
     "@faker-js/faker": "^9.8.0",
     "@playwright/test": "^1.53.1",
     "@previewjs/config-helper-nextjs": "^1.0.29",
+    "@swc/core": "^1.13.2",
+    "@swc/helpers": "^0.5.17",
     "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",

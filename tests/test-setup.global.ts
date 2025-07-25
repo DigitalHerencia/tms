@@ -1,7 +1,7 @@
+import { UserRole } from "@/types/auth"
 import { test as setup } from "@playwright/test"
-import { PrismaClient, UserRole } from "@prisma/client" // fixed import
-
-const prisma = new PrismaClient()
+import { PrismaClient } from "@prisma/client" 
+const prisma =  new PrismaClient()
 
 /**
  * Global test setup for Playwright E2E tests
@@ -60,7 +60,7 @@ async function setupTestDatabase() {
                 email: "admin@test.com",
                 firstName: "Admin",
                 lastName: "User",
-                role: UserRole.admin,
+                role: UserRole.ADMIN,
                 organizationId: organization.id,
             },
             {
@@ -68,7 +68,7 @@ async function setupTestDatabase() {
                 email: "driver@test.com",
                 firstName: "Test",
                 lastName: "Driver",
-                role: UserRole.driver,
+                role: UserRole.DRIVER,
                 organizationId: organization.id,
             },
             {
@@ -76,7 +76,7 @@ async function setupTestDatabase() {
                 email: "dispatcher@test.com",
                 firstName: "Test",
                 lastName: "Dispatcher",
-                role: UserRole.dispatcher,
+                role: UserRole.DISPATCHER,
                 organizationId: organization.id,
             },
         ]

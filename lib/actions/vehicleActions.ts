@@ -8,11 +8,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
-import { VehicleStatus as PrismaVehicleStatus, type $Enums } from '@prisma/client';
 
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import { hasPermission } from '@/lib/auth/permissions';
 import {
   VehicleFormSchema,
 } from '@/schemas/vehicles';
@@ -24,22 +22,6 @@ import type {
 } from '@/types/vehicles';
 import type { JsonValue } from '@prisma/client/runtime/library';
 
-// Helper: Map app VehicleStatus to Prisma enum
-function toPrismaVehicleStatus(status: VehicleStatus): PrismaVehicleStatus {
-  switch (status) {
-    case 'available':
-    case 'assigned':
-      return PrismaVehicleStatus.active;
-    case 'in_maintenance':
-      return PrismaVehicleStatus.maintenance;
-    case 'out_of_service':
-      return PrismaVehicleStatus.inactive;
-    case 'retired':
-      return PrismaVehicleStatus.decommissioned;
-    default:
-      return PrismaVehicleStatus.active;
-  }
-}
 
 export async function createVehicleAction(
   _prevState: VehicleActionResult | null, // Added prevState for useActionState
@@ -86,7 +68,6 @@ export async function createVehicleAction(
     const vehicleData = {
       ...validatedData,
       organizationId: currentOrgId, // Use orgId from auth
-      status: toPrismaVehicleStatus('available'),
       unitNumber: validatedData.unitNumber ?? '', // ensure string
       registrationExpiration: validatedData.registrationExpiry
         ? new Date(validatedData.registrationExpiry)
@@ -107,7 +88,7 @@ export async function createVehicleAction(
     const vehicle = await db.vehicle.create({ data: vehicleData as any }); // Use 'as any' for now, refine Prisma types later
 
     revalidatePath(`/${currentOrgId}/vehicles`);
-    return { success: true, vehicle: toPublicVehicle(vehicle), data: true };
+    return { success: true,  data: true };
   } catch (error) {
     const result = handleError(error, 'Create Vehicle');
     return { success: false, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
@@ -202,7 +183,7 @@ export async function updateVehicleAction(
     revalidatePath(
       `/${existingVehicle.organizationId}/vehicles/${vehicleId}`
     );
-    return { success: true, vehicle: toPublicVehicle(vehicle), data: true };
+    return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Update Vehicle');
     return { success: false, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
@@ -247,7 +228,7 @@ vehicleId: string, p0: { status: VehicleStatus; },
     revalidatePath(
       `/${existingVehicle.organizationId}/vehicles/${vehicleId}`
     );
-    return { success: true, vehicle: toPublicVehicle(updatedVehicle), data: true };
+    return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Update Vehicle Status');
     return { success: result.success, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
@@ -342,7 +323,6 @@ export async function assignVehicleToDriverAction(
     });
     return {
       success: true,
-      vehicle: updatedVehicle ? toPublicVehicle(updatedVehicle) : undefined,
       data: true,
     };
   } catch (error) {
@@ -355,7 +335,7 @@ function toPublicVehicle(
     id: string;
     organizationId: string;
     type: string;
-    status: $Enums.VehicleStatus;
+    status: VehicleStatus;
     make: string | null;
     model: string | null;
     year: number | null;
@@ -378,25 +358,7 @@ function toPublicVehicle(
 ): Vehicle | undefined {
   if (!updatedVehicle) return undefined;
 
-  // Map Prisma status to app VehicleStatus
-  let status: VehicleStatus;
-  switch (updatedVehicle.status) {
-    case 'active':
-      status = 'available';
-      break;
-    case 'maintenance':
-      status = 'in_maintenance';
-      break;
-    case 'inactive':
-      status = 'out_of_service';
-      break;
-    case 'decommissioned':
-      status = 'retired';
-      break;
-    default:
-      status = 'available';
-  }
-
+  const status = updatedVehicle.status as VehicleStatus;
   return {
     id: updatedVehicle.id,
     organizationId: updatedVehicle.organizationId,

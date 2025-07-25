@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Vehicle } from '@/types/vehicles';
-import { VehicleStatus } from '@prisma/client';
+import { VehicleStatus } from '@/types/vehicles';
 
 interface VehicleUtilizationProps {
   timeRange: string;

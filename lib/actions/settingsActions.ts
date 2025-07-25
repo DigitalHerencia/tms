@@ -93,10 +93,3 @@ export async function exportSettings(orgId: string) {
   const org = await db.organization.findUnique({ where: { id: orgId } });
   return org?.settings || {};
 }
-
-export async function importSettings(orgId: string, settings: Prisma.JsonObject) {
-  const userId = await verifyOrgAccess(orgId);
-  await db.organization.update({ where: { id: orgId }, data: { settings } });
-  await logChange(orgId, userId, 'importSettings');
-  return { success: true };
-}

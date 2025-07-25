@@ -1,7 +1,7 @@
 'use client';
 
 import { MapPin, Calendar, User, Truck } from 'lucide-react';
-import type { LoadStatus, LoadPriority, LoadStatusEvent } from '@prisma/client';
+import type { LoadStatus, LoadPriority, LoadStatusEvent } from '@/types/dispatch';
 
 import {
   Card,
