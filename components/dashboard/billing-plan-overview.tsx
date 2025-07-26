@@ -23,14 +23,14 @@ export function BillingPlanOverview({
   getStatusBadge,
 }: BillingPlanOverviewProps) {
   return (
-    <Card className="rounded-md shadow-md bg-black border border-gray-200">
+    <Card className="rounded-md bg-black border border-gray-200">
       <CardHeader className="flex items-center justify-between pb-2">
         <CardTitle className="text-white flex items-center gap-2">
           <CreditCard className="h-8 w-8 text-white" />
           Subscription
         </CardTitle>
       </CardHeader>
-      <CardContent className="w-full p-2 ml-4 space-y-2">
+      <CardContent className="w-full p-2 ml-4 space-y-3">
         {/* Top row: plan name/price + status badge */}
           <div className="flex flex-row justify-evenly items-stretch ">
           <div className='flex flex-col items-left justify-center space-y-2'>

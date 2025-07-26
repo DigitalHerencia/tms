@@ -1,12 +1,18 @@
 "use server";
 
-import  { DispatchBoardFeature }  from "@/features/dispatch/DispatchBoardFeature";
-import { getCurrentUser } from "@/lib/auth/auth";
 import { Suspense } from "react";
 import DispatchHeader from "@/components/dispatch/dispatch-header";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { getLoadsByOrg, getDriversByOrg, getVehiclesByOrg, getRecentDispatchActivity, getLoadSummaryStats } from "@/lib/fetchers/dispatchFetchers";
+import { DispatchSkeleton } from "@/components/dispatch/dispatch-skeleton";
+import { DispatchBoardFeature } from "@/features/dispatch/DispatchBoardFeature";
 import { RecentActivityRow } from "@/components/dispatch/recent-activity";
+import {
+  getLoadsByOrg,
+  getDriversByOrg,
+  getVehiclesByOrg,
+  getRecentDispatchActivity,
+  getLoadSummaryStats,
+} from "@/lib/fetchers/dispatchFetchers";
+import { getCurrentUser } from "@/lib/auth/auth";
 
 interface DispatchPageProps {
   params: Promise<{ orgId: string; userId: string }>;
@@ -15,50 +21,54 @@ interface DispatchPageProps {
 export default async function DispatchPage({ params }: DispatchPageProps) {
   const { orgId, userId } = await params;
 
-  // Fetch all required data
-  const [loads, drivers, vehicles, RecentActivity, summaryStats] = await Promise.all([
+  // Fetch all required data in parallel
+  const [loads, drivers, vehicles, recentActivity, summaryStats] = await Promise.all([
     getLoadsByOrg(orgId),
     getDriversByOrg(orgId),
     getVehiclesByOrg(orgId),
     getRecentDispatchActivity(orgId),
-    getLoadSummaryStats(orgId)
+    getLoadSummaryStats(orgId),
   ]);
-   
-  // Get current user to check role
+
+  // Check current user for auth
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-red-500 text-xl">Unauthorized access</div>
+      <div className="flex items-center justify-center p-6 bg-neutral-900 min-h-screen">
+        <span className="text-red-500 text-xl">Unauthorized access</span>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3 p-6 bg-neutral-900 text-white min-h-screen">
-
-      {/* Recent activity feed for dispatch operations */}
-      <Suspense fallback={<LoadingSpinner/>}>
-        <DispatchHeader orgId={ orgId } userId={ userId } />
+    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+      {/* Header - Real-time status & connection */}
+      <Suspense fallback={<DispatchSkeleton />}>
+        <DispatchHeader orgId={orgId} userId={userId} />
       </Suspense>
 
-      {/* Additional features can be added here */}
-      <RecentActivityRow 
-        stats={ summaryStats }
+      {/* Recent Activity & Quick Actions */}
+      <RecentActivityRow
         params={{ userId }}
-        RecentActivity={ RecentActivity.data.map(activity => ({
+        stats={summaryStats}
+        RecentActivity={recentActivity.data.map((activity) => ({
           ...activity,
-          timestamp: activity.timestamp instanceof Date ? activity.timestamp.toISOString() : activity.timestamp
-        })) }
+          timestamp:
+            activity.timestamp instanceof Date
+              ? activity.timestamp.toISOString()
+              : activity.timestamp,
+        }))}
       />
-      
+
       {/* Main Dispatch Board */}
-        <DispatchBoardFeature 
-          orgId={ orgId }
-          drivers={ drivers }
-          loads={ loads }
-          vehicles={ vehicles } 
-        />      
-  </div>
+      <Suspense fallback={<DispatchSkeleton />}>
+        <DispatchBoardFeature
+          orgId={orgId}
+          loads={loads}
+          drivers={drivers}
+          vehicles={vehicles}
+        />
+      </Suspense>
+    </div>
   );
 }

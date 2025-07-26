@@ -132,9 +132,9 @@ export function BillingManagementClient({
               Active Users
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 flex flex-col justify-between items-center mt-4 space-y-4">
+          <CardContent className="flex flex-col justify-between items-center mt-8 space-y-4">
             {/* Top: used / limit */}
-            <div className='flex flex-row mt-8 gap-4 items-baseline'>
+            <div className='flex flex-row gap-4 items-baseline'>
               <h3 className="text-4xl font-bold text-white">{users}</h3>
               <p className="text-2xl text-gray-400">
                 of {maxUsers} seats
@@ -144,13 +144,13 @@ export function BillingManagementClient({
             <Separator />
 
             {/* Usage summary */}
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-6 w-6 text-green-500" />
+            <div className="flex items-center mt-4 gap-2">
+              <CheckCircle className="h-8 w-8 text-green-500" />
               <h4 className="text-lg text-white">Usage Summary</h4>
             </div>
-            <ul className="ml-4 space-y-1 text-gray-400 text-sm">
+            <ul className="ml-4 space-y-1 text-gray-400 text-med">
               <li>Capacity used: {userPct.toFixed(1)}%</li>
-              <li className="text-2xl font-semibold text-gray-400">
+              <li className="text-med font-semibold text-gray-400">
                 {maxUsers - users} seats remaining
               </li>
             </ul>
@@ -170,16 +170,16 @@ export function BillingManagementClient({
               Active Vehicles
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 flex flex-col justify-between space-y-4">
+          <CardContent className="flex flex-col items-center justify-between space-y-4">
             {/* Top: used / limit or over-limit */}
             <div>
               {vehicles <= maxVehicles ? (
-                <>
+                <div className='flex flex-row gap-4 mt-8 items-baseline'>
                   <h3 className="text-4xl font-bold text-white">{vehicles}</h3>
                   <p className="text-2xl text-gray-400">
                     of {maxVehicles} vehicles
                   </p>
-                </>
+                </div>
               ) : (
                 <>
                   <h3 className="text-4xl font-bold text-red-500">{vehicles}</h3>
@@ -193,13 +193,13 @@ export function BillingManagementClient({
             <Separator />
 
             {/* Usage summary */}
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-6 w-6 text-green-500" />
+            <div className="flex flex-row items-center mt-4 gap-2">
+              <CheckCircle className="h-8 w-8 text-green-500" />
               <h4 className="text-lg text-white">Usage Summary</h4>
             </div>
-            <ul className="ml-4 space-y-1 text-gray-400 text-sm">
+            <ul className="ml-4 space-y-1 text-gray-400 text-med">
               <li>Capacity used: {rawVehiclePct.toFixed(1)}%</li>
-              <li className="text-2xl font-semibold text-gray-400">
+              <li className="text-med font-semibold text-gray-400">
                 {vehicles <= maxVehicles
                   ? `${remainingVehicles} slots remaining`
                   : `${vehicleOver} over limit`}

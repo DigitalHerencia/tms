@@ -117,8 +117,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
         <TabsContent value="billing" className="mt-6 space-y-6">
           <Card className='bg-blue-500/60'>
-            <div className='flex flex-row justify-between items-baseline'>
-            <CardHeader >
+            <CardHeader className='flex flex-row'>
+              <div>
               <CardTitle>
                 <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
                   <CreditCard className="h-8 w-8" />
@@ -128,9 +128,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <CardDescription className="text-gray-400">
                 Monitor subscription status, usage, and manage billing settings
               </CardDescription>
-              </CardHeader>
+              </div>
               <BillingActions />
-            </div>
+              </CardHeader>
             <CardContent>
               <Suspense fallback={<LoadingSpinner />}>
             <BillingManagementClient billingInfo={billingInfo} />

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import type { UserWithRole } from '@/types/dashboard';
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SquareUser } from 'lucide-react';
 import { listOrganizationUsers } from '@/lib/fetchers/userFetchers';
 import { RoleAssignmentModal } from '@/components/dashboard/role-assignment-modal';
@@ -49,15 +49,17 @@ export function UserTable({ orgId }: UserTableProps) {
 
 
   return (
-    <div className="mt-6">
+    <div className="mt-2">
       <Card className="border border-gray-200 bg-black">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
           <SquareUser className="h-5 w-5" />
           User Table
         </CardTitle>
-        <CardDescription className="mt-2 text-gray-400">
+        <CardDescription className="text-gray-400">
           View and manage users in your organization
         </CardDescription>
+      </CardHeader>
         <CardContent className="mt-2">
           {loading ? (
             <div className="p-6 text-center text-gray-400">Loading users...</div>
