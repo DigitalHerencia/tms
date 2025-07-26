@@ -1,109 +1,31 @@
-import path from "path"
+/** @type {import('next').NextConfig} */
+const nextConfig: import( 'next' ).NextConfig = {
+  // React 19 strict‑mode everywhere
+  reactStrictMode: true,
 
-const nextConfig: import("next").NextConfig = {
-    images: {
-        // Enhanced image optimization for Next.js 15
-        formats: ["image/avif", "image/webp"],
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "fleet-fusion.vercel.app",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "*.clerk.dev",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "*.clerk.accounts.dev",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "images.clerk.dev",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "api.mapbox.com",
-                pathname: "/**",
-            },
-            {
-                protocol: "http",
-                hostname: "localhost",
-                port: "3000",
-                pathname: "/**",
-            },
-            // Added for Clerk CAPTCHA and Google images
-            {
-                protocol: "https",
-                hostname: "www.google.com",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "www.gstatic.com",
-                pathname: "/**",
-            },
-            {
-                protocol: "https",
-                hostname: "*.clerk.com",
-                pathname: "/**",
-            },
-        ],
-        // Optimized settings for Next.js 15 Image component
-        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-        minimumCacheTTL: 60,
-        dangerouslyAllowSVG: true, // Allow SVG for icons
-    },
+  /* ───── Development ergonomics ───── */
+  // Let the File‑System Access API (and other cross‑origin tools) hit your
+  // dev server without CORS errors.
+  allowedDevOrigins: ['http://localhost:3000', 'chrome-extension://*'], // tweak as needed :contentReference[oaicite:0]{index=0}
 
-    experimental: {
-        // Next.js 15 specific features
-        serverActions: {
-            allowedOrigins: [
-                "localhost:3000",
-                "fleet-fusion.vercel.app",
-                "liberal-gull-quietly.ngrok-free.app:3000",
-            ],
-            bodySizeLimit: "2mb",
-        },
-    },
+  /* ───── RSC / Route‑handler bundling ───── */
+  // NEW in v15 → top‑level, renamed from `serverComponentsExternalPackages`
+  // Opt‑out packages that rely on Node APIs so they’re required() at runtime.
+  serverExternalPackages: ['@babel/parser', '@babel/traverse'] ,
 
-    // Move typescript and eslint here, outside experimental
-    typescript: {
-        // Type-check during builds
-        ignoreBuildErrors: true,
-    },
+  /* ───── Build‑performance toggles ───── */
+  experimental: {
+    webpackBuildWorker: true,           // spawn a worker for each webpack job (on by default, but keep explicit)
+    parallelServerBuildTraces: true,    // needs `webpackBuildWorker: true` :contentReference[oaicite:2]{index=2}
+    parallelServerCompiles: true        // ditto
+  },
 
-    eslint: {
-        // Lint during builds
-        ignoreDuringBuilds: true,
-    },
-    webpack: (config, { isServer, dev }) => {
-        config.resolve.alias = {
-            ...(config.resolve.alias || {}),
-            "@": path.resolve(__dirname),
-        }
+  /* ───── Quality‑gating you’re intentionally relaxing ───── */
+  eslint:     { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 
+  /* ───── Images ───── */
+  images: { unoptimized: true }
+};
 
-        // Optimize webpack module resolution for better performance
-        config.resolve = {
-            ...config.resolve,
-            unsafeCache: false,
-            symlinks: false,
-        }
-
-
-        if (isServer) {
-            // Ensure Prisma client is bundled only for the server
-            config.externals = [...(config.externals || []), "@prisma/client"]
-        }
-
-        return config
-    },
-} satisfies import("next").NextConfig
-
-export default nextConfig
+export default nextConfig;
