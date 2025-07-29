@@ -578,6 +578,8 @@ All tenant-specific pages are now under:
 - All types in `types/auth.ts` strictly aligned with ABAC specification.
 - Zod schemas in `schemas/auth.ts` deduplicated and documented.
 - New server mutation and fetcher stubs for login, registration, session, and RBAC.
+- Added `types/prisma-models.ts` containing enums and interfaces generated from `prisma/schema.prisma`.
+- `PaginatedResponse<T>` and `ApiResponse<T>` are now used across actions and fetchers for consistent API contracts.
 
 ## Migration Notes
 - No breaking changes; all new files are additive and existing logic is documented.

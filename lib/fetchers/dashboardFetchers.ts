@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 /**
  * Dashboard data fetchers.

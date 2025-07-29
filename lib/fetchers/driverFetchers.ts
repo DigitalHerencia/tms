@@ -249,7 +249,7 @@ export const listDriversByOrg = async (
   try {
     const { userId } = await auth();
     if (!userId) {
-      return { drivers: [], total: 0, page: 1, limit: 20, totalPages: 0 };
+      return { data: [], total: 0, page: 1, limit: 20, totalPages: 0 };
     }
     
     // Check if user is a member of the organization (emulating dashboard pattern)
@@ -411,7 +411,7 @@ export const listDriversByOrg = async (
     });
 
     return {
-      drivers: parsedDriversData,
+      data: parsedDriversData,
       total,
       page,
       limit,
@@ -419,7 +419,7 @@ export const listDriversByOrg = async (
     };
   } catch (error) {
     console.error('Error listing drivers:', error);
-    return { drivers: [], total: 0, page: 1, limit: 20, totalPages: 0 };
+    return { data: [], total: 0, page: 1, limit: 20, totalPages: 0 };
   }
 };
 

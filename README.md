@@ -85,6 +85,14 @@ npm install
 npm test
 ```
 
+### PDF Storage Provider
+
+Generated PDF reports are uploaded via a configurable provider.
+Set `STORAGE_PROVIDER` to `filesystem` (default) or `s3`.
+For S3, also define `S3_BUCKET`, `S3_REGION`, `S3_PUBLIC_URL`,
+`AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY`.
+Local storage writes to the path defined in `config/pdf.ts`.
+
 ## Feature Flags
 FleetFusion supports runtime toggles via environment variables. See [docs/feature-flags.md](./docs/feature-flags.md) for details.
 
