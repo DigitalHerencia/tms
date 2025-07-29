@@ -2,15 +2,11 @@ import type { UserRole } from './auth';
 import type { ApiResponse, PaginatedResponse } from './index';
 
 export type VehicleType = 'tractor' | 'trailer' | 'straight_truck' | 'other';
-export type VehicleStatus =
-  | 'active'
-  | 'inactive'
-  | 'maintenance'
-  | 'decommissioned';
+export type VehicleStatus = 'active' | 'inactive' | 'maintenance' | 'decommissioned';
 
 export interface Vehicle {
-  lastMaintenanceDate: any;
-  lastMaintenanceMileage: any;
+  lastMaintenanceDate: Date | null;
+  lastMaintenanceMileage: number | null;
   id: string;
   organizationId: string;
   type: VehicleType;
@@ -58,7 +54,7 @@ export interface Vehicle {
 
   // Additional
   notes?: string;
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 
   // Timestamps
   createdAt: Date;

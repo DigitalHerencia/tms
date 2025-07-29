@@ -5,18 +5,39 @@
 
 // Enums
 export type LoadStatus =
-  | "draft" | "pending" | "posted" | "booked" | "confirmed"
-  | "assigned" | "dispatched" | "in_transit" | "at_pickup" | "picked_up"
-  | "en_route" | "at_delivery" | "delivered" | "pod_required"
-  | "completed" | "invoiced" | "paid" | "cancelled" | "problem";
+  | 'draft'
+  | 'pending'
+  | 'posted'
+  | 'booked'
+  | 'confirmed'
+  | 'assigned'
+  | 'dispatched'
+  | 'in_transit'
+  | 'at_pickup'
+  | 'picked_up'
+  | 'en_route'
+  | 'at_delivery'
+  | 'delivered'
+  | 'pod_required'
+  | 'completed'
+  | 'invoiced'
+  | 'paid'
+  | 'cancelled'
+  | 'problem';
 
-export type LoadPriority = "low" | "medium" | "high" | "urgent";
+export type LoadPriority = 'low' | 'medium' | 'high' | 'urgent';
 
-export type EquipmentType = 
-  | "dry_van" | "reefer" | "flatbed" | "step_deck" 
-  | "lowboy" | "tanker" | "container" | "other";
+export type EquipmentType =
+  | 'dry_van'
+  | 'reefer'
+  | 'flatbed'
+  | 'step_deck'
+  | 'lowboy'
+  | 'tanker'
+  | 'container'
+  | 'other';
 
-export type TemperatureUnit = "F" | "C";
+export type TemperatureUnit = 'F' | 'C';
 
 // Core Interfaces
 export interface Load {
@@ -72,7 +93,7 @@ export interface LoadStatusEvent {
   location?: Partial<Location>;
   notes?: string;
   automaticUpdate: boolean;
-  source: "system" | "driver" | "dispatcher" | "customer" | "eld";
+  source: 'system' | 'driver' | 'dispatcher' | 'customer' | 'eld';
   createdById: string;
 }
 
@@ -90,7 +111,7 @@ export interface TrackingUpdate {
   };
   speed?: number;
   heading?: number;
-  source: "gps" | "manual" | "eld" | "driver_app";
+  source: 'gps' | 'manual' | 'eld' | 'driver_app';
   accuracy?: number;
   createdAt: Date;
   updatedAt: Date;
@@ -134,7 +155,15 @@ export interface LoadAssignedTrailer {
 }
 
 export interface EquipmentRequirement {
-  type: "dry_van" | "reefer" | "flatbed" | "step_deck" | "lowboy" | "tanker" | "container" | "other";
+  type:
+    | 'dry_van'
+    | 'reefer'
+    | 'flatbed'
+    | 'step_deck'
+    | 'lowboy'
+    | 'tanker'
+    | 'container'
+    | 'other';
   length?: number;
   temperatureMin?: number;
   temperatureMax?: number;
@@ -166,7 +195,7 @@ export interface CargoDetails {
   temperature?: {
     min: number;
     max: number;
-    unit: "F" | "C";
+    unit: 'F' | 'C';
   };
   specialHandling?: string[];
 }
@@ -194,8 +223,8 @@ export interface FactoringInfo {
 
 export interface LoadAlert {
   id: string;
-  type: "warning" | "error" | "info";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'warning' | 'error' | 'info';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   message: string;
   acknowledged: boolean;
@@ -232,8 +261,16 @@ export interface LoadDocument {
   id: string;
   loadId: string;
   name: string;
-  type: "bol" | "pod" | "invoice" | "receipt" | "permit" | "contract" | "rate_confirmation" | "other";
-  category: "pickup" | "delivery" | "administrative" | "billing" | "compliance";
+  type:
+    | 'bol'
+    | 'pod'
+    | 'invoice'
+    | 'receipt'
+    | 'permit'
+    | 'contract'
+    | 'rate_confirmation'
+    | 'other';
+  category: 'pickup' | 'delivery' | 'administrative' | 'billing' | 'compliance';
   url: string;
   fileSize: number;
   mimeType: string;
@@ -243,7 +280,7 @@ export interface LoadDocument {
   uploadedAt: Date;
   uploadedBy: string;
   description?: string;
-  metadata?: any;
+  metadata?: import('./metadata').MetadataRecord;
 }
 
 export interface Location {
@@ -262,7 +299,7 @@ export interface Location {
 export interface Rate {
   total: number;
   currency: string;
-  type: "flat" | "per_mile" | "percentage";
+  type: 'flat' | 'per_mile' | 'percentage';
   lineHaul: number;
   fuelSurcharge?: number;
   detention?: number;
@@ -279,7 +316,7 @@ export interface Rate {
   brokerageRate?: number;
   commissionRate?: number;
   driverPay?: number;
-  driverPayType?: "percentage" | "flat" | "per_mile";
+  driverPayType?: 'percentage' | 'flat' | 'per_mile';
   profit?: number;
   profitMargin?: number;
   notes?: string;
@@ -288,30 +325,30 @@ export interface Rate {
 export interface Vehicle {
   id: string;
   tenantId: string;
-  type: "truck" | "van" | "trailer";
+  type: 'truck' | 'van' | 'trailer';
   make: string;
   model: string;
   year: number;
   vin: string;
   licensePlate: string;
-  status: "active" | "maintenance" | "out_of_service";
+  status: 'active' | 'maintenance' | 'out_of_service';
   lastMaintenanceDate?: Date;
   nextMaintenanceDate?: Date;
-  fuelType: "diesel" | "gasoline" | "electric" | "hybrid";
+  fuelType: 'diesel' | 'gasoline' | 'electric' | 'hybrid';
   currentOdometer?: number;
 }
 
 export interface Trailer {
   id: string;
   tenantId: string;
-  type: "dry_van" | "reefer" | "flatbed" | "step_deck" | "other";
+  type: 'dry_van' | 'reefer' | 'flatbed' | 'step_deck' | 'other';
   length: number;
   make: string;
   model: string;
   year: number;
   vin: string;
   licensePlate: string;
-  status: "active" | "maintenance" | "out_of_service";
+  status: 'active' | 'maintenance' | 'out_of_service';
 }
 
 export interface AssignmentMeta {
