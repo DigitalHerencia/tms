@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test('fleet manager vehicle workflow', async ({ page }) => {
   // Login placeholder
@@ -14,4 +14,4 @@ test('fleet manager vehicle workflow', async ({ page }) => {
   await page.fill('[name="year"]', '2024');
   await page.click('button[type="submit"]');
   await expect(page.locator('text=Vehicle created')).toBeVisible();
-})
+});

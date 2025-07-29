@@ -25,7 +25,6 @@
 - **prisma:** 1 files
 - **example:** 1 files
 
-
 ### Directory Structure
 
 - **D:/FleetFusion-MT_RBAC_TMS_SaaS/FleetFusion-Main:** 347 files
@@ -575,7 +574,7 @@ FleetFusion-Main
 
 ```
 
-## Architecture 
+## Architecture
 
 ### File Overview
 
@@ -583,25 +582,25 @@ FleetFusion-Main
 
 **Domains:**
 
-  - analytics
-  - auth
-  - compliance
-  - dashboard
-  - dispatch
-  - drivers
-  - ifta
-  - settings
-  - vehicles
+- analytics
+- auth
+- compliance
+- dashboard
+- dispatch
+- drivers
+- ifta
+- settings
+- vehicles
 
 **Public Pages:**
 
-  - About
-  - Features
-  - Home
-  - Pricing
-  - Privacy Policy
-  - Refunds
-  - Terms of Service
+- About
+- Features
+- Home
+- Pricing
+- Privacy Policy
+- Refunds
+- Terms of Service
 
 ### Tech Stack Summary
 
@@ -609,7 +608,7 @@ FleetFusion-Main
 
 | Layer                        | Main Libraries / Services                                                                         | Notes                                                        |
 | ---------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| **Core framework & runtime** | • Next.js 15.4 (App Router, RSC)  <br>• React 19.1 <br>• Node 18+                                 | First-class React Server Components, parallel builds enabled |
+| **Core framework & runtime** | • Next.js 15.4 (App Router, RSC) <br>• React 19.1 <br>• Node 18+                                  | First-class React Server Components, parallel builds enabled |
 | **Language & Tooling**       | • TypeScript 5.8.3                                                                                | Strict mode ON, Vitest type-level tests supported            |
 | **Database & ORM**           | • PostgreSQL (Neon Cloud) <br>• Prisma ORM 6.11.1 + `@prisma/adapter-neon`                        | Row-level multitenancy (`companyId` FK)                      |
 | **Auth & Permissions**       | • Clerk 6.22 <br>• Custom ABAC + RBAC layers <br>• `@clerk/agent-toolkit`                         | Combines role + attribute checks in middleware               |
@@ -623,7 +622,6 @@ FleetFusion-Main
 | **Utilities**                | • clsx, cva, tailwind-merge, uuid, js-cookie                                                      | Standard helpers                                             |
 | **Date / Time**              | • date-fns, react-datepicker + TZ support                                                         | Handles carrier local times                                  |
 | **Mobile & UX extras**       | • Vaul drawers, `react-resizable-panels`, Embla Carousel                                          | Responsive layout patterns                                   |
-
 
 ### Files by Directory
 
@@ -692,11 +690,11 @@ FleetFusion-Main
 - FleetFusion-Main/app/api/analytics/[orgId]/schedule/route.ts (typescript)
 - FleetFusion-Main/app/api/analytics/[orgId]/stream/route.ts (typescript)
 - FleetFusion-Main/app/api/clerk/webhook-handler/route.ts (typescript)
-- FleetFusion-Main/app/api/clerk/__tests__/webhook-handler.test.ts (typescript)
+- FleetFusion-Main/app/api/clerk/**tests**/webhook-handler.test.ts (typescript)
 - FleetFusion-Main/app/api/dispatch/[orgId]/stream/route.ts (typescript)
 - FleetFusion-Main/app/api/dispatch/[orgId]/updates/route.ts (typescript)
 - FleetFusion-Main/app/api/files/upload/route.ts (typescript)
-- FleetFusion-Main/app/api/files/__tests__/upload.test.ts (typescript)
+- FleetFusion-Main/app/api/files/**tests**/upload.test.ts (typescript)
 - FleetFusion-Main/app/api/test/auth/route.ts (typescript)
 - FleetFusion-Main/app/mobile/[orgId]/compliance/page.tsx (tsx)
 - FleetFusion-Main/app/mobile/[orgId]/dashboard/[userId]/mobile-dashboard-layout.tsx (tsx)
@@ -882,7 +880,7 @@ FleetFusion-Main
 - FleetFusion-Main/features/drivers/DriversListClient.tsx (tsx)
 - FleetFusion-Main/features/ifta/IftaReportingFeature.tsx (tsx)
 - FleetFusion-Main/features/onboarding/OnboardingStepper.tsx (tsx)
-- FleetFusion-Main/features/settings/__tests__/CompanySettingsPage.test.tsx (tsx)
+- FleetFusion-Main/features/settings/**tests**/CompanySettingsPage.test.tsx (tsx)
 - FleetFusion-Main/features/settings/CompanySettingsPage.tsx (tsx)
 - FleetFusion-Main/features/settings/UserSettingsPage.tsx (tsx)
 - FleetFusion-Main/features/vehicles/add-vehicle-dialog.tsx (tsx)
@@ -1224,9 +1222,9 @@ FleetFusion-Main
 - FleetFusion-Main/app/api/clerk/webhook-handler/route.ts
   - Imports: @clerk/types, next/server, svix, @/lib/database/db
 
-#### FleetFusion-Main/app/api/clerk/__tests__
+#### FleetFusion-Main/app/api/clerk/**tests**
 
-- FleetFusion-Main/app/api/clerk/__tests__/webhook-handler.test.ts
+- FleetFusion-Main/app/api/clerk/**tests**/webhook-handler.test.ts
   - Imports: vitest, next/server
 
 #### FleetFusion-Main/app/api/dispatch/[orgId]/stream
@@ -1244,9 +1242,9 @@ FleetFusion-Main
 - FleetFusion-Main/app/api/files/upload/route.ts
   - Imports: next/server, @clerk/nextjs/server, @vercel/blob/client
 
-#### FleetFusion-Main/app/api/files/__tests__
+#### FleetFusion-Main/app/api/files/**tests**
 
-- FleetFusion-Main/app/api/files/__tests__/upload.test.ts
+- FleetFusion-Main/app/api/files/**tests**/upload.test.ts
   - Imports: vitest, next/server, ../upload/route
 
 #### FleetFusion-Main/app/api/test/auth
@@ -1683,9 +1681,9 @@ FleetFusion-Main
 - FleetFusion-Main/features/onboarding/OnboardingStepper.tsx
   - Imports: @/components/ui/progress, @/hooks/use-toast, @clerk/nextjs, lucide-react, next/navigation, react, @/components/onboarding/CompanySetupStep, @/components/onboarding/EmployeeJoinStep, @/components/onboarding/PersonalInfoStep, @/components/onboarding/ReviewSubmitStep, @/components/onboarding/RoleSelectionStep, @/lib/actions/onboardingActions, @/schemas/onboarding, @/types/abac
 
-#### FleetFusion-Main/features/settings/__tests__
+#### FleetFusion-Main/features/settings/**tests**
 
-- FleetFusion-Main/features/settings/__tests__/CompanySettingsPage.test.tsx
+- FleetFusion-Main/features/settings/**tests**/CompanySettingsPage.test.tsx
   - Imports: react, @testing-library/dom, @testing-library/react, vitest, ../CompanySettingsPage
 
 #### FleetFusion-Main/features/settings
@@ -1956,4 +1954,3 @@ FleetFusion-Main
 - FleetFusion-Main/prisma/schema.prisma
 - FleetFusion-Main/prisma/seed.ts
   - Imports: @prisma/client, @prisma/adapter-neon
-

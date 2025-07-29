@@ -3,13 +3,7 @@
 import { MapPin, Calendar, User, Truck } from 'lucide-react';
 import type { LoadStatus, LoadPriority, LoadStatusEvent } from '@/types/dispatch';
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDate } from '@/lib/utils/utils';
@@ -27,7 +21,7 @@ import type {
   FactoringInfo,
   LoadAlert,
 } from '@/types/dispatch';
-import type { Load } from "@/types/dispatch";
+import type { Load } from '@/types/dispatch';
 
 interface LoadCardProps {
   load: Load;
@@ -36,11 +30,7 @@ interface LoadCardProps {
   isUpdating?: boolean;
 }
 
-export function LoadCard({
-  load,
-  onStatusUpdate,
-  isUpdating,
-}: LoadCardProps) {
+export function LoadCard({ load, onStatusUpdate, isUpdating }: LoadCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'assigned':
@@ -82,9 +72,7 @@ export function LoadCard({
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{load.referenceNumber}</CardTitle>
           <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(load.status)}>
-              {load.status.replace(/_/g, ' ')}
-            </Badge>
+            <Badge className={getStatusColor(load.status)}>{load.status.replace(/_/g, ' ')}</Badge>
           </div>
         </div>
         <p className="text-muted-foreground text-sm">
@@ -116,9 +104,7 @@ export function LoadCard({
             <Calendar className="text-muted-foreground mt-0.5 h-4 w-4" />
             <div>
               <p className="text-sm font-medium">Pickup</p>
-              <p className="text-muted-foreground text-sm">
-                {formatDate(load.pickupDate)}
-              </p>
+              <p className="text-muted-foreground text-sm">{formatDate(load.pickupDate)}</p>
             </div>
           </div>
         </div>
@@ -147,18 +133,16 @@ export function LoadCard({
       </CardFooter>
       {nextStatusOptions.length > 0 && (
         <div className="mt-2 flex gap-2">
-          {nextStatusOptions.map(status => (
+          {nextStatusOptions.map((status) => (
             <Button
               key={status}
               size="sm"
               variant="secondary"
               className="px-3 py-1 text-xs"
               disabled={isUpdating}
-              onClick={e => handleStatusClick(e, status)}
+              onClick={(e) => handleStatusClick(e, status)}
             >
-              {isUpdating
-                ? 'Updating...'
-                : `Mark as ${status.replace(/_/g, ' ')}`}
+              {isUpdating ? 'Updating...' : `Mark as ${status.replace(/_/g, ' ')}`}
             </Button>
           ))}
         </div>

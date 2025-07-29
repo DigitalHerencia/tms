@@ -46,26 +46,30 @@ function parseDriverData(raw: any): Driver {
     drugTestDate: raw.drugTestDate,
     notes: raw.notes,
     // Add address if available
-    address: raw.address ? {
-      street: raw.address,
-      city: raw.city || '',
-      state: raw.state || '',
-      zipCode: raw.zip || '',
-      country: 'USA' // Default country
-    } : undefined,
+    address: raw.address
+      ? {
+          street: raw.address,
+          city: raw.city || '',
+          state: raw.state || '',
+          zipCode: raw.zip || '',
+          country: 'USA', // Default country
+        }
+      : undefined,
     // Parse emergency contacts if available
-    emergencyContact: raw.emergencyContact1 ? {
-      name: raw.emergencyContact1,
-      phone: raw.emergencyContact2 || '',
-      relationship: '',
-      email: '',
-      address: raw.emergencyContact3 || ''
-    } : undefined,
+    emergencyContact: raw.emergencyContact1
+      ? {
+          name: raw.emergencyContact1,
+          phone: raw.emergencyContact2 || '',
+          relationship: '',
+          email: '',
+          address: raw.emergencyContact3 || '',
+        }
+      : undefined,
     // Parse current assignment from loads (just the load ID)
     currentAssignment: raw.loads?.[0]?.id || undefined,
   };
 
-    // Add assignment details for components that need the full object
+  // Add assignment details for components that need the full object
   if (raw.loads?.[0]) {
     (driver as any).currentAssignmentDetails = {
       id: raw.loads[0].id,
@@ -83,7 +87,7 @@ function parseDriverData(raw: any): Driver {
   if (raw.organization) {
     (driver as any).companyName = raw.organization.name;
   }
-  
+
   if (raw.user) {
     (driver as any).profileImage = raw.user.profileImageUrl;
   }
@@ -113,7 +117,7 @@ type DriverWithAssignment = Driver & {
  */
 export const getDriverById = async (
   userIdOrDriverId: string,
-  orgId: string
+  orgId: string,
 ): Promise<Driver | null> => {
   try {
     const { userId: sessionUserId } = await auth();
@@ -121,7 +125,7 @@ export const getDriverById = async (
       console.log('No session user ID found');
       return null;
     }
-    
+
     // Check if user is a member of the organization (emulating dashboard pattern)
     const user = await prisma.user.findFirst({
       where: { id: sessionUserId, organizationId: orgId },
@@ -146,14 +150,7 @@ export const getDriverById = async (
         loads: {
           where: {
             status: {
-              in: [
-                'assigned',
-                'dispatched',
-                'in_transit',
-                'at_pickup',
-                'picked_up',
-                'en_route',
-              ],
+              in: ['assigned', 'dispatched', 'in_transit', 'at_pickup', 'picked_up', 'en_route'],
             },
           },
           select: {
@@ -194,14 +191,7 @@ export const getDriverById = async (
           loads: {
             where: {
               status: {
-                in: [
-                  'assigned',
-                  'dispatched',
-                  'in_transit',
-                  'at_pickup',
-                  'picked_up',
-                  'en_route',
-                ],
+                in: ['assigned', 'dispatched', 'in_transit', 'at_pickup', 'picked_up', 'en_route'],
               },
             },
             select: {
@@ -231,7 +221,11 @@ export const getDriverById = async (
       return null;
     }
 
-    console.log('Driver found:', { driverId: driver.id, userId: driver.userId, orgId: driver.organizationId });
+    console.log('Driver found:', {
+      driverId: driver.id,
+      userId: driver.userId,
+      orgId: driver.organizationId,
+    });
     return parseDriverData(driver);
   } catch (error) {
     console.error('Error fetching driver:', error);
@@ -244,14 +238,14 @@ export const getDriverById = async (
  */
 export const listDriversByOrg = async (
   orgId: string,
-  filters: DriverFilters = {}
+  filters: DriverFilters = {},
 ): Promise<DriverListResponse> => {
   try {
     const { userId } = await auth();
     if (!userId) {
       return { data: [], total: 0, page: 1, limit: 20, totalPages: 0 };
     }
-    
+
     // Check if user is a member of the organization (emulating dashboard pattern)
     const user = await prisma.user.findFirst({
       where: { id: userId, organizationId: orgId },
@@ -294,17 +288,13 @@ export const listDriversByOrg = async (
     // Expiration filters
     if (filters.cdlExpiringInDays !== undefined) {
       const expirationDate = new Date();
-      expirationDate.setDate(
-        expirationDate.getDate() + filters.cdlExpiringInDays
-      );
+      expirationDate.setDate(expirationDate.getDate() + filters.cdlExpiringInDays);
       where.licenseExpiration = { lte: expirationDate };
     }
 
     if (filters.medicalExpiringInDays !== undefined) {
       const expirationDate = new Date();
-      expirationDate.setDate(
-        expirationDate.getDate() + filters.medicalExpiringInDays
-      );
+      expirationDate.setDate(expirationDate.getDate() + filters.medicalExpiringInDays);
       where.medicalCardExpiration = { lte: expirationDate };
     }
 
@@ -371,14 +361,7 @@ export const listDriversByOrg = async (
         loads: {
           where: {
             status: {
-              in: [
-                'assigned',
-                'dispatched',
-                'in_transit',
-                'at_pickup',
-                'picked_up',
-                'en_route',
-              ],
+              in: ['assigned', 'dispatched', 'in_transit', 'at_pickup', 'picked_up', 'en_route'],
             },
           },
           select: {
@@ -406,7 +389,7 @@ export const listDriversByOrg = async (
       take: limit,
     });
 
-    const parsedDriversData = driverResults.map(driver => {
+    const parsedDriversData = driverResults.map((driver) => {
       return parseDriverData(driver);
     });
 
@@ -430,13 +413,11 @@ export const listDriversByOrg = async (
 /**
  * Get driver statistics for dashboard
  */
-export const getDriverStats = async (
-  orgId: string
-): Promise<DriverStatsResponse> => {
+export const getDriverStats = async (orgId: string): Promise<DriverStatsResponse> => {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error('Authentication required');
-    
+
     // Check if user is a member of the organization (emulating dashboard pattern)
     const user = await prisma.user.findFirst({
       where: { id: userId, organizationId: orgId },

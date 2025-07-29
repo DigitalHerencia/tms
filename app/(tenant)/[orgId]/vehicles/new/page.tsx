@@ -17,7 +17,7 @@ export default async function NewVehiclePage({ params }: NewVehiclePageProps) {
           <p className="text-white/70">Enter the details for your new vehicle</p>
         </div>
       </div>
-      
+
       <Suspense fallback={<div className="text-white/70">Loading form...</div>}>
         <NewVehicleClient orgId={orgId} />
       </Suspense>

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import type { Load } from "@/types/dispatch";
-import type { Driver } from "@/types/drivers";
-import type { Vehicle } from "@/types/vehicles";
-import { LoadCard } from "@/components/dispatch/load-card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Load } from '@/types/dispatch';
+import type { Driver } from '@/types/drivers';
+import type { Vehicle } from '@/types/vehicles';
+import { LoadCard } from '@/components/dispatch/load-card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DispatchBoardUIProps {
   loads: Load[];
@@ -45,12 +45,19 @@ export function DispatchBoardUI(props: DispatchBoardUIProps) {
   } = props;
 
   if (!loads || loads.length === 0) {
-    return <div className="py-12 text-center text-gray-500">No loads found for this organization.</div>;
+    return (
+      <div className="py-12 text-center text-gray-500">No loads found for this organization.</div>
+    );
   }
 
   return (
     <div className="mt-4 space-y-6">
-      <Tabs defaultValue="all" value={currentTab} onValueChange={props.onTabChange} className="w-full">
+      <Tabs
+        defaultValue="all"
+        value={currentTab}
+        onValueChange={props.onTabChange}
+        className="w-full"
+      >
         <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
           <TabsTrigger
             value="all"
@@ -85,11 +92,11 @@ export function DispatchBoardUI(props: DispatchBoardUIProps) {
         </TabsList>
 
         {[
-          { value: "all", list: filteredAll },
-          { value: "pending", list: filteredPending },
-          { value: "assigned", list: filteredAssigned },
-          { value: "in_transit", list: filteredInTransit },
-          { value: "completed", list: filteredCompleted },
+          { value: 'all', list: filteredAll },
+          { value: 'pending', list: filteredPending },
+          { value: 'assigned', list: filteredAssigned },
+          { value: 'in_transit', list: filteredInTransit },
+          { value: 'completed', list: filteredCompleted },
         ].map((tab) => (
           <TabsContent key={tab.value} value={tab.value} className="mt-6 space-y-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

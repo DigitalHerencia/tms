@@ -2,12 +2,7 @@
 
 import { Truck, Calendar, Gauge, AlertTriangle } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils/utils';
 
@@ -57,7 +52,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
   };
 
   const upcomingMaintenance = vehicle.maintenanceRecords?.find(
-    record => record.status === 'scheduled' && record.scheduledDate
+    (record) => record.status === 'scheduled' && record.scheduledDate,
   );
 
   return (
@@ -117,8 +112,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           <div className="flex w-full items-center gap-2 text-xs">
             <AlertTriangle className="h-3.5 w-3.5 text-yellow-400" />
             <span className="text-yellow-400">
-              Maintenance scheduled:{' '}
-              {formatDate(upcomingMaintenance.scheduledDate!)}
+              Maintenance scheduled: {formatDate(upcomingMaintenance.scheduledDate!)}
             </span>
           </div>
         ) : (

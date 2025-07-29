@@ -59,7 +59,7 @@ export function TopNavBar({ user, organization }: TopNavBarProps) {
           <span className="hidden text-xl font-medium text-zinc-200 sm:block">
             {organization.name || ' '}
           </span>
-        {/* Notifications */}
+          {/* Notifications */}
           <NotificationCenter />
           {/* User Profile */}
           <DropdownMenu>
@@ -78,10 +78,7 @@ export function TopNavBar({ user, organization }: TopNavBarProps) {
                 </Button>
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-64 border-gray-700 bg-black p-2"
-              align="end"
-            >
+            <DropdownMenuContent className="w-64 border-gray-700 bg-black p-2" align="end">
               <div className="flex items-center gap-3 px-2 py-2">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={user.profileImage} alt={user.name} />
@@ -93,9 +90,7 @@ export function TopNavBar({ user, organization }: TopNavBarProps) {
                   <span className="truncate text-sm leading-tight font-semibold text-zinc-200">
                     {user.name}
                   </span>
-                  <span className="truncate text-xs text-zinc-200">
-                    {user.email}
-                  </span>
+                  <span className="truncate text-xs text-zinc-200">{user.email}</span>
                   <Badge className="mt-1 bg-blue-500 text-center text-xs text-zinc-200">
                     {organization.name}
                   </Badge>

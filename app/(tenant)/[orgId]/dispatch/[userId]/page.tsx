@@ -1,18 +1,18 @@
-"use server";
+'use server';
 
-import { Suspense } from "react";
-import DispatchHeader from "@/components/dispatch/dispatch-header";
-import { DispatchSkeleton } from "@/components/dispatch/dispatch-skeleton";
-import { DispatchBoardFeature } from "@/features/dispatch/DispatchBoardFeature";
-import { RecentActivityRow } from "@/components/dispatch/recent-activity";
+import { Suspense } from 'react';
+import DispatchHeader from '@/components/dispatch/dispatch-header';
+import { DispatchSkeleton } from '@/components/dispatch/dispatch-skeleton';
+import { DispatchBoardFeature } from '@/features/dispatch/DispatchBoardFeature';
+import { RecentActivityRow } from '@/components/dispatch/recent-activity';
 import {
   getLoadsByOrg,
   getDriversByOrg,
   getVehiclesByOrg,
   getRecentDispatchActivity,
   getLoadSummaryStats,
-} from "@/lib/fetchers/dispatchFetchers";
-import { getCurrentUser } from "@/lib/auth/auth";
+} from '@/lib/fetchers/dispatchFetchers';
+import { getCurrentUser } from '@/lib/auth/auth';
 
 interface DispatchPageProps {
   params: Promise<{ orgId: string; userId: string }>;
@@ -62,12 +62,7 @@ export default async function DispatchPage({ params }: DispatchPageProps) {
 
       {/* Main Dispatch Board */}
       <Suspense fallback={<DispatchSkeleton />}>
-        <DispatchBoardFeature
-          orgId={orgId}
-          loads={loads}
-          drivers={drivers}
-          vehicles={vehicles}
-        />
+        <DispatchBoardFeature orgId={orgId} loads={loads} drivers={drivers} vehicles={vehicles} />
       </Suspense>
     </div>
   );

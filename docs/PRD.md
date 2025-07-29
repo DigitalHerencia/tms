@@ -95,20 +95,24 @@
 ## 3. LLM Coding Agent Process for Full-Project Analysis
 
 1. **Load Project Structure**
+
    - Enumerate all files and directories, including app, components, features, lib, types, schemas, etc.
 
 2. **Analyze Each File**
+
    - Check for syntax errors, type mismatches, and linting issues.
    - Validate adherence to project conventions (feature-driven, modular, server-first).
    - Identify anti-patterns (e.g., over-broad props, missing input validation, direct DB access outside fetchers/actions).
 
 3. **Security & Best Practices Audit**
+
    - Ensure all mutations use server actions with input validation (Zod or equivalent).
    - Confirm all fetchers are async, typed, and colocated by domain.
    - Check for proper RBAC enforcement and tenant isolation in all data access.
    - Validate that sensitive data is never sent to the client or logged.
 
 4. **Suggest and Implement Corrections**
+
    - Propose code changes for errors, anti-patterns, or missing validation.
    - Refactor code to align with Next.js 15, React 19, and project conventions.
    - Add or update tests for all critical logic and flows.

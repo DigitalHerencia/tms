@@ -1,35 +1,39 @@
 import React from 'react';
 
 export function InviteUserForm({ onInvite }: { onInvite: (email: string, role: string) => void }) {
-  const [email, setEmail] = React.useState("");
-  const [role, setRole] = React.useState("driver");
+  const [email, setEmail] = React.useState('');
+  const [role, setRole] = React.useState('driver');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onInvite(email, role);
-    setEmail("");
-    setRole("driver");
+    setEmail('');
+    setRole('driver');
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>
+        <label htmlFor="email" className="block text-sm font-medium text-white">
+          Email
+        </label>
         <input
           id="email"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
           className="mt-1 block w-full rounded-md bg-neutral-800 text-white border-gray-600 p-2"
         />
       </div>
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-white">Role</label>
+        <label htmlFor="role" className="block text-sm font-medium text-white">
+          Role
+        </label>
         <select
           id="role"
           value={role}
-          onChange={e => setRole(e.target.value)}
+          onChange={(e) => setRole(e.target.value)}
           className="mt-1 block w-full rounded-md bg-neutral-800 text-white border-gray-600 p-2"
         >
           <option value="admin">Administrator</option>

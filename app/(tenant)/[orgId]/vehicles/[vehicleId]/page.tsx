@@ -9,10 +9,10 @@ interface VehicleDetailsPageProps {
 
 export default async function VehicleDetailsPage({ params }: VehicleDetailsPageProps) {
   const { orgId, vehicleId } = await params;
-  
+
   try {
     const vehicle = await getVehicleById(orgId, vehicleId);
-    
+
     if (!vehicle || vehicle.organizationId !== orgId) {
       notFound();
     }
@@ -30,7 +30,7 @@ export default async function VehicleDetailsPage({ params }: VehicleDetailsPageP
             </p>
           </div>
         </div>
-        
+
         <Suspense fallback={<div className="text-white/70">Loading vehicle details...</div>}>
           <VehicleDetailsClient orgId={orgId} vehicle={vehicle} />
         </Suspense>

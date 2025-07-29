@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Vehicle } from '@/types/vehicles';
+import type { Vehicle } from '@/types/vehicles';
 import { VehicleTable } from '@/components/vehicles/vehicle-table';
 import { VehicleCard } from '@/components/vehicles/vehicle-card';
 import { VehicleDetailsDialog } from '@/components/vehicles/vehicle-details-dialog';
@@ -25,7 +25,6 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
   };
 
   const handleVehicleUpdate = (updatedVehicle: Vehicle) => {
-;
     setSelectedVehicle(updatedVehicle);
   };
 
@@ -39,8 +38,8 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
             size="sm"
             onClick={() => setViewMode('table')}
             className={`rounded-none px-3 py-2 ${
-              viewMode === 'table' 
-                ? 'bg-blue-500 text-white hover:bg-blue-800' 
+              viewMode === 'table'
+                ? 'bg-blue-500 text-white hover:bg-blue-800'
                 : 'text-white/70 hover:text-white hover:bg-neutral-800'
             }`}
           >
@@ -51,8 +50,8 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
             size="sm"
             onClick={() => setViewMode('grid')}
             className={`rounded-none px-3 py-2 ${
-              viewMode === 'grid' 
-                ? 'bg-blue-500 text-white hover:bg-blue-800' 
+              viewMode === 'grid'
+                ? 'bg-blue-500 text-white hover:bg-blue-800'
                 : 'text-white/70 hover:text-white hover:bg-neutral-800'
             }`}
           >
@@ -63,18 +62,11 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
 
       {/* Content */}
       {viewMode === 'table' ? (
-        <VehicleTable 
-          vehicles={vehicles} 
-          orgId={orgId} 
-          onVehicleSelect={handleVehicleSelect}
-        />
+        <VehicleTable vehicles={vehicles} orgId={orgId} onVehicleSelect={handleVehicleSelect} />
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {vehicles.map(vehicle => (
-            <VehicleCard 
-              vehicle={vehicle} 
-              onClick={() => handleVehicleSelect(vehicle)} 
-            />
+          {vehicles.map((vehicle) => (
+            <VehicleCard vehicle={vehicle} onClick={() => handleVehicleSelect(vehicle)} />
           ))}
         </div>
       )}

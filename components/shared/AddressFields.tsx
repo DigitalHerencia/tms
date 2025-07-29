@@ -10,11 +10,7 @@ interface AddressFieldsProps {
   required?: boolean;
 }
 
-export function AddressFields({
-  prefix = '',
-  values = {},
-  required = false,
-}: AddressFieldsProps) {
+export function AddressFields({ prefix = '', values = {}, required = false }: AddressFieldsProps) {
   const field = (name: string) =>
     prefix ? `${prefix}${name.charAt(0).toUpperCase() + name.slice(1)}` : name;
   return (

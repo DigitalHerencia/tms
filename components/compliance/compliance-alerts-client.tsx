@@ -14,20 +14,10 @@ import {
   User,
 } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import type { ComplianceAlert } from '@/types/compliance';
 
@@ -82,20 +72,16 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
   const [showAcknowledged, setShowAcknowledged] = useState(false);
 
   const handleAcknowledge = (alertId: string) => {
-    setAlerts(prev => 
-      prev.map(alert => 
-        alert.id === alertId 
-          ? { ...alert, acknowledged: true }
-          : alert
-      )
+    setAlerts((prev) =>
+      prev.map((alert) => (alert.id === alertId ? { ...alert, acknowledged: true } : alert)),
     );
   };
 
   const handleDismiss = (alertId: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+    setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
   };
 
-  const filteredAlerts = alerts.filter(alert => {
+  const filteredAlerts = alerts.filter((alert) => {
     const matchesType = filter === 'all' || alert.type === filter;
     const matchesAcknowledged = showAcknowledged || !alert.acknowledged;
     return matchesType && matchesAcknowledged;
@@ -103,9 +89,9 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
 
   const stats = {
     total: alerts.length,
-    critical: alerts.filter(a => a.type === 'critical' && !a.acknowledged).length,
-    warning: alerts.filter(a => a.type === 'warning' && !a.acknowledged).length,
-    actionRequired: alerts.filter(a => a.actionRequired && !a.acknowledged).length,
+    critical: alerts.filter((a) => a.type === 'critical' && !a.acknowledged).length,
+    warning: alerts.filter((a) => a.type === 'warning' && !a.acknowledged).length,
+    actionRequired: alerts.filter((a) => a.actionRequired && !a.acknowledged).length,
   };
 
   return (
@@ -167,7 +153,7 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
 
       {/* Filter Controls */}
       <div className="flex gap-2">
-        {(['all', 'critical', 'warning', 'info', 'success'] as const).map(type => (
+        {(['all', 'critical', 'warning', 'info', 'success'] as const).map((type) => (
           <Button
             key={type}
             variant={filter === type ? 'default' : 'outline'}
@@ -196,16 +182,15 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                 <CheckCircle className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-medium">No alerts</h3>
                 <p className="mt-2 text-muted-foreground">
-                  {filter === 'all' 
+                  {filter === 'all'
                     ? 'All compliance items are up to date'
-                    : `No ${filter} alerts at this time`
-                  }
+                    : `No ${filter} alerts at this time`}
                 </p>
               </div>
             </CardContent>
           </Card>
         ) : (
-          filteredAlerts.map(alert => {
+          filteredAlerts.map((alert) => {
             const config = alertTypeConfig[alert.type];
             const categoryIcon = categoryConfig[alert.category];
             const Icon = config.icon;
@@ -221,9 +206,7 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                     <Icon className={`h-5 w-5 ${config.iconColor} mt-0.5`} />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <AlertTitle className={config.titleColor}>
-                          {alert.title}
-                        </AlertTitle>
+                        <AlertTitle className={config.titleColor}>{alert.title}</AlertTitle>
                         <Badge className={config.badge}>
                           {alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}
                         </Badge>
@@ -237,11 +220,9 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                           </Badge>
                         )}
                       </div>
-                      
-                      <AlertDescription className="text-sm">
-                        {alert.description}
-                      </AlertDescription>
-                      
+
+                      <AlertDescription className="text-sm">{alert.description}</AlertDescription>
+
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           {alert.entityType === 'driver' ? (
@@ -259,11 +240,9 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                             Due: {new Date(alert.dueDate).toLocaleDateString()}
                           </div>
                         )}
-                        <div>
-                          Created: {new Date(alert.createdAt).toLocaleDateString()}
-                        </div>
+                        <div>Created: {new Date(alert.createdAt).toLocaleDateString()}</div>
                       </div>
-                      
+
                       {alert.actionRequired && alert.actionUrl && (
                         <div className="pt-2">
                           <Button size="sm" variant="outline">
@@ -273,7 +252,7 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-1">
                     {!alert.acknowledged && (
                       <Button
@@ -285,11 +264,7 @@ export function ComplianceAlertsClient({ orgId, initialAlerts }: ComplianceAlert
                         <CheckCircle className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDismiss(alert.id)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleDismiss(alert.id)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>

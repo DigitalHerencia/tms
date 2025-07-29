@@ -1,313 +1,300 @@
+'use server';
 
+import type { z } from 'zod';
 
-"use server"
-
-import { z } from "zod"
-
-import { getCurrentUser } from "@/lib/auth/auth"
-import { handleError } from "@/lib/errors/handleError"
-import type { UpdateComplianceDocumentInput } from "@/schemas/compliance"
+import { getCurrentUser } from '@/lib/auth/auth';
+import { handleError } from '@/lib/errors/handleError';
+import type { UpdateComplianceDocumentInput, createDvirSchema } from '@/schemas/compliance';
 import {
-    bulkComplianceOperationSchema,
-    createComplianceDocumentSchema,
-    createDvirSchema,
-    updateComplianceDocumentSchema,
-} from "@/schemas/compliance"
+  bulkComplianceOperationSchema,
+  createComplianceDocumentSchema,
+  updateComplianceDocumentSchema,
+} from '@/schemas/compliance';
 
-import db from "../database/db"
-import { createAuditLog } from "./auditLogActions"
+import db from '../database/db';
+import { createAuditLog } from './auditLogActions';
 
 // Document Management Actions
 export async function createComplianceDocument(
-    data: z.infer<typeof createComplianceDocumentSchema>
+  data: z.infer<typeof createComplianceDocumentSchema>,
 ) {
-    try {
-        const user = await getCurrentUser()
-        const userId = user?.userId
-        const orgId = user?.organizationId
+  try {
+    const user = await getCurrentUser();
+    const userId = user?.userId;
+    const orgId = user?.organizationId;
 
-        if (!userId || !orgId) {
-            throw new Error("Unauthorized")
-        }
-
-        // Validate input
-        const validatedData = createComplianceDocumentSchema.parse(data)
-
-        // Map entityType/entityId to driverId/vehicleId
-        let driverId: string | undefined = undefined
-        let vehicleId: string | undefined = undefined
-        if (validatedData.entityType === "driver") {
-            driverId = validatedData.entityId
-        } else if (validatedData.entityType === "vehicle") {
-            vehicleId = validatedData.entityId
-        }
-
-        // Check if document already exists for driver/vehicle if applicable
-        if (driverId || vehicleId) {
-            const existingDoc = await db.complianceDocument.findFirst({
-                where: {
-                    organizationId: orgId,
-                    type: validatedData.type,
-                    driver_id: driverId,
-                    vehicleId,
-                    expirationDate: { gte: new Date() },
-                },
-            })
-            if (existingDoc) {
-                throw new Error("A valid document of this type already exists")
-            }
-        }
-
-        const document = await db.complianceDocument.create({
-            data: {
-                organizationId: orgId,
-                driver_id: driverId,
-                vehicleId,
-                type: validatedData.type,
-                title: validatedData.name,
-                documentNumber: validatedData.documentNumber,
-                issuingAuthority: validatedData.issuingAuthority,
-                fileUrl: undefined, // File upload handled elsewhere
-                fileName: undefined,
-                fileSize: undefined,
-                mimeType: undefined,
-                issueDate: validatedData.issuedDate
-                    ? new Date(validatedData.issuedDate)
-                    : undefined,
-                expirationDate: validatedData.expirationDate
-                    ? new Date(validatedData.expirationDate)
-                    : undefined,
-                status: "active",
-                isVerified: false,
-                notes: validatedData.notes,
-                tags: validatedData.tags,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            include: {
-                drivers: {
-                    select: { id: true, firstName: true, lastName: true },
-                },
-                vehicle: {
-                    select: {
-                        id: true,
-                        unitNumber: true,
-                        make: true,
-                        model: true,
-                    },
-                },
-            },
-        })
-
-        // Audit log
-        await createAuditLog({
-            organizationId: orgId,
-            userId,
-            entityType: "ComplianceDocument",
-            entityId: document.id,
-            action: "create",
-            changes: document,
-        })
-
-        // Create alert if document is expiring or expired
-        if (
-            document.expirationDate &&
-            new Date(document.expirationDate) < new Date()
-        ) {
-            await db.complianceAlert.create({
-                data: {
-                    organizationId: orgId,
-                    userId,
-                    ...(driverId ? { driverId } : {}),
-                    ...(vehicleId ? { vehicleId } : {}),
-                    type: "expiring_document",
-                    severity: "high",
-                    title: "Document Expired",
-                    message: `Document ${document.title} has expired.`,
-                    entityType: "compliance_document",
-                    entityId: document.id,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                },
-            })
-        }
-
-        return { success: true, data: document }
-    } catch (error) {
-        return handleError(error, "Compliance Action")
+    if (!userId || !orgId) {
+      throw new Error('Unauthorized');
     }
+
+    // Validate input
+    const validatedData = createComplianceDocumentSchema.parse(data);
+
+    // Map entityType/entityId to driverId/vehicleId
+    let driverId: string | undefined = undefined;
+    let vehicleId: string | undefined = undefined;
+    if (validatedData.entityType === 'driver') {
+      driverId = validatedData.entityId;
+    } else if (validatedData.entityType === 'vehicle') {
+      vehicleId = validatedData.entityId;
+    }
+
+    // Check if document already exists for driver/vehicle if applicable
+    if (driverId || vehicleId) {
+      const existingDoc = await db.complianceDocument.findFirst({
+        where: {
+          organizationId: orgId,
+          type: validatedData.type,
+          driver_id: driverId,
+          vehicleId,
+          expirationDate: { gte: new Date() },
+        },
+      });
+      if (existingDoc) {
+        throw new Error('A valid document of this type already exists');
+      }
+    }
+
+    const document = await db.complianceDocument.create({
+      data: {
+        organizationId: orgId,
+        driver_id: driverId,
+        vehicleId,
+        type: validatedData.type,
+        title: validatedData.name,
+        documentNumber: validatedData.documentNumber,
+        issuingAuthority: validatedData.issuingAuthority,
+        fileUrl: undefined, // File upload handled elsewhere
+        fileName: undefined,
+        fileSize: undefined,
+        mimeType: undefined,
+        issueDate: validatedData.issuedDate ? new Date(validatedData.issuedDate) : undefined,
+        expirationDate: validatedData.expirationDate
+          ? new Date(validatedData.expirationDate)
+          : undefined,
+        status: 'active',
+        isVerified: false,
+        notes: validatedData.notes,
+        tags: validatedData.tags,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      include: {
+        drivers: {
+          select: { id: true, firstName: true, lastName: true },
+        },
+        vehicle: {
+          select: {
+            id: true,
+            unitNumber: true,
+            make: true,
+            model: true,
+          },
+        },
+      },
+    });
+
+    // Audit log
+    await createAuditLog({
+      organizationId: orgId,
+      userId,
+      entityType: 'ComplianceDocument',
+      entityId: document.id,
+      action: 'create',
+      changes: document,
+    });
+
+    // Create alert if document is expiring or expired
+    if (document.expirationDate && new Date(document.expirationDate) < new Date()) {
+      await db.complianceAlert.create({
+        data: {
+          organizationId: orgId,
+          userId,
+          ...(driverId ? { driverId } : {}),
+          ...(vehicleId ? { vehicleId } : {}),
+          type: 'expiring_document',
+          severity: 'high',
+          title: 'Document Expired',
+          message: `Document ${document.title} has expired.`,
+          entityType: 'compliance_document',
+          entityId: document.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    return { success: true, data: document };
+  } catch (error) {
+    return handleError(error, 'Compliance Action');
+  }
 }
 
 export async function updateComplianceDocument(
-    id: string,
-    data: z.infer<typeof updateComplianceDocumentSchema>
+  id: string,
+  data: z.infer<typeof updateComplianceDocumentSchema>,
 ) {
-    try {
-        const user = await getCurrentUser()
-        const userId = user?.userId
-        const orgId = user?.organizationId
+  try {
+    const user = await getCurrentUser();
+    const userId = user?.userId;
+    const orgId = user?.organizationId;
 
-        if (!userId || !orgId) {
-            throw new Error("Unauthorized")
-        }
-
-        const validatedData = updateComplianceDocumentSchema.parse(data)
-
-        const existingDocument = await db.complianceDocument.findFirst({
-            where: { id, organizationId: orgId },
-        })
-        if (!existingDocument) {
-            throw new Error("Document not found")
-        }
-
-        // Map name to title if present
-        const updateData: Partial<UpdateComplianceDocumentInput> & {
-            updatedAt: Date
-            title?: string
-        } = {
-            ...validatedData,
-            updatedAt: new Date(),
-        }
-        if (validatedData.name) {
-            updateData.title = validatedData.name
-            delete updateData.name
-        }
-        if (validatedData.expirationDate) {
-            updateData.expirationDate = new Date(
-                validatedData.expirationDate
-            ).toISOString()
-        }
-
-        const updatedDocument = await db.complianceDocument.update({
-            where: { id },
-            data: updateData,
-            include: {
-                drivers: {
-                    select: { id: true, firstName: true, lastName: true },
-                },
-                vehicle: {
-                    select: {
-                        id: true,
-                        unitNumber: true,
-                        make: true,
-                        model: true,
-                    },
-                },
-            },
-        })
-
-        // Audit log
-        await createAuditLog({
-            organizationId: orgId,
-            userId,
-            entityType: "ComplianceDocument",
-            entityId: updatedDocument.id,
-            action: "update",
-            changes: updateData,
-        })
-
-        // Create alert if document is expiring or expired
-        if (
-            updatedDocument.expirationDate &&
-            new Date(updatedDocument.expirationDate) < new Date()
-        ) {
-            await db.complianceAlert.create({
-                data: {
-                    organizationId: orgId,
-                    userId,
-                    ...(updatedDocument.driver_id && {
-                        userId: updatedDocument.driver_id,
-                    }),
-                    ...(updatedDocument.vehicleId && {
-                        vehicleId: updatedDocument.vehicleId,
-                    }),
-                    type: "expiring_document",
-                    severity: "high",
-                    title: "Document Expired",
-                    message: `Document ${updatedDocument.title} has expired.`,
-                    entityType: "compliance_document",
-                    entityId: updatedDocument.id,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                },
-            })
-        }
-
-        return { success: true, data: updatedDocument }
-    } catch (error) {
-        return handleError(error, "Compliance Action")
+    if (!userId || !orgId) {
+      throw new Error('Unauthorized');
     }
+
+    const validatedData = updateComplianceDocumentSchema.parse(data);
+
+    const existingDocument = await db.complianceDocument.findFirst({
+      where: { id, organizationId: orgId },
+    });
+    if (!existingDocument) {
+      throw new Error('Document not found');
+    }
+
+    // Map name to title if present
+    const updateData: Partial<UpdateComplianceDocumentInput> & {
+      updatedAt: Date;
+      title?: string;
+    } = {
+      ...validatedData,
+      updatedAt: new Date(),
+    };
+    if (validatedData.name) {
+      updateData.title = validatedData.name;
+      delete updateData.name;
+    }
+    if (validatedData.expirationDate) {
+      updateData.expirationDate = new Date(validatedData.expirationDate).toISOString();
+    }
+
+    const updatedDocument = await db.complianceDocument.update({
+      where: { id },
+      data: updateData,
+      include: {
+        drivers: {
+          select: { id: true, firstName: true, lastName: true },
+        },
+        vehicle: {
+          select: {
+            id: true,
+            unitNumber: true,
+            make: true,
+            model: true,
+          },
+        },
+      },
+    });
+
+    // Audit log
+    await createAuditLog({
+      organizationId: orgId,
+      userId,
+      entityType: 'ComplianceDocument',
+      entityId: updatedDocument.id,
+      action: 'update',
+      changes: updateData,
+    });
+
+    // Create alert if document is expiring or expired
+    if (updatedDocument.expirationDate && new Date(updatedDocument.expirationDate) < new Date()) {
+      await db.complianceAlert.create({
+        data: {
+          organizationId: orgId,
+          userId,
+          ...(updatedDocument.driver_id && {
+            userId: updatedDocument.driver_id,
+          }),
+          ...(updatedDocument.vehicleId && {
+            vehicleId: updatedDocument.vehicleId,
+          }),
+          type: 'expiring_document',
+          severity: 'high',
+          title: 'Document Expired',
+          message: `Document ${updatedDocument.title} has expired.`,
+          entityType: 'compliance_document',
+          entityId: updatedDocument.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    return { success: true, data: updatedDocument };
+  } catch (error) {
+    return handleError(error, 'Compliance Action');
+  }
 }
 
 export async function deleteComplianceDocument(id: string) {
-    try {
-        const user = await getCurrentUser()
-        const userId = user?.userId
-        const orgId = user?.organizationId
+  try {
+    const user = await getCurrentUser();
+    const userId = user?.userId;
+    const orgId = user?.organizationId;
 
-        if (!userId || !orgId) {
-            throw new Error("Unauthorized")
-        }
-
-        // Get document for audit log
-        const document = await db.complianceDocument.findFirst({
-            where: { id, organizationId: orgId },
-        })
-        if (!document) {
-            throw new Error("Document not found")
-        }
-
-        await db.complianceDocument.delete({
-            where: { id },
-        })
-
-        // Audit log
-        await createAuditLog({
-            organizationId: orgId,
-            userId,
-            entityType: "ComplianceDocument",
-            entityId: id,
-            action: "delete",
-            changes: document,
-        })
-
-        return { success: true }
-    } catch (error) {
-        return handleError(error, "Compliance Action")
+    if (!userId || !orgId) {
+      throw new Error('Unauthorized');
     }
+
+    // Get document for audit log
+    const document = await db.complianceDocument.findFirst({
+      where: { id, organizationId: orgId },
+    });
+    if (!document) {
+      throw new Error('Document not found');
+    }
+
+    await db.complianceDocument.delete({
+      where: { id },
+    });
+
+    // Audit log
+    await createAuditLog({
+      organizationId: orgId,
+      userId,
+      entityType: 'ComplianceDocument',
+      entityId: id,
+      action: 'delete',
+      changes: document,
+    });
+
+    return { success: true };
+  } catch (error) {
+    return handleError(error, 'Compliance Action');
+  }
 }
 
 // DVIR Management Actions
 export async function createDVIRReport(data: z.infer<typeof createDvirSchema>) {
-    try {
-        const authData = await getCurrentUser()
-        const userId = authData?.userId
+  try {
+    const authData = await getCurrentUser();
+    const userId = authData?.userId;
 
-        if (!userId) {
-            throw new Error("Unauthorized")
-        }
-
-        // Validate input
-
-        // Create audit log
-        // await createAuditLog({
-        //   action: 'CREATE',
-        //   resource: 'dvir_report',
-        //   resourceId: dvirReport.id,
-        //   details: {
-        //     vehicleId: dvirReport.vehicleId,
-        //     driverId: dvirReport.driverId,
-        //     defectsFound: dvirReport.defectsFound,
-        //     inspectionType: dvirReport.inspectionType
-        //   },
-        //   userId,
-        //   organizationId: orgId
-        // });
-
-        // revalidatePath('/[orgId]/compliance/dvir');
-    } catch (error) {
-        return handleError(error, "Compliance Action")
+    if (!userId) {
+      throw new Error('Unauthorized');
     }
+
+    // Validate input
+
+    // Create audit log
+    // await createAuditLog({
+    //   action: 'CREATE',
+    //   resource: 'dvir_report',
+    //   resourceId: dvirReport.id,
+    //   details: {
+    //     vehicleId: dvirReport.vehicleId,
+    //     driverId: dvirReport.driverId,
+    //     defectsFound: dvirReport.defectsFound,
+    //     inspectionType: dvirReport.inspectionType
+    //   },
+    //   userId,
+    //   organizationId: orgId
+    // });
+
+    // revalidatePath('/[orgId]/compliance/dvir');
+  } catch (error) {
+    return handleError(error, 'Compliance Action');
+  }
 }
 
 // Maintenance Management Actions
@@ -349,56 +336,52 @@ export async function createDVIRReport(data: z.infer<typeof createDvirSchema>) {
 
 // Bulk Operations
 export async function bulkUpdateComplianceDocuments(
-    data: z.infer<typeof bulkComplianceOperationSchema>
+  data: z.infer<typeof bulkComplianceOperationSchema>,
 ) {
-    try {
-        const user = await getCurrentUser()
-        const userId = user?.userId
-        const orgId = user?.organizationId
+  try {
+    const user = await getCurrentUser();
+    const userId = user?.userId;
+    const orgId = user?.organizationId;
 
-        if (!userId || !orgId) {
-            throw new Error("Unauthorized")
-        }
-
-        const validatedData = bulkComplianceOperationSchema.parse(data)
-
-        const results = await Promise.allSettled(
-            validatedData.ids.map(async (documentId: string) => {
-                const updated = await db.complianceDocument.update({
-                    where: {
-                        id: documentId,
-                        organizationId: orgId,
-                    },
-                    data: {
-                        updatedAt: new Date(),
-                    },
-                })
-                // Audit log for each bulk update
-                await createAuditLog({
-                    organizationId: orgId,
-                    userId,
-                    entityType: "ComplianceDocument",
-                    entityId: documentId,
-                    action: "bulk_update",
-                })
-                return updated
-            })
-        )
-
-        const successful = results.filter(
-            (r: any) => r.status === "fulfilled"
-        ).length
-        const failed = results.filter(
-            (r: any) => r.status === "rejected"
-        ).length
-
-        return {
-            success: true,
-            data: { successful, failed, total: validatedData.ids.length },
-        }
-    } catch (error) {
-        return handleError(error, "Compliance Action")
+    if (!userId || !orgId) {
+      throw new Error('Unauthorized');
     }
+
+    const validatedData = bulkComplianceOperationSchema.parse(data);
+
+    const results = await Promise.allSettled(
+      validatedData.ids.map(async (documentId: string) => {
+        const updated = await db.complianceDocument.update({
+          where: {
+            id: documentId,
+            organizationId: orgId,
+          },
+          data: {
+            updatedAt: new Date(),
+          },
+        });
+        // Audit log for each bulk update
+        await createAuditLog({
+          organizationId: orgId,
+          userId,
+          entityType: 'ComplianceDocument',
+          entityId: documentId,
+          action: 'bulk_update',
+        });
+        return updated;
+      }),
+    );
+
+    const successful = results.filter((r: any) => r.status === 'fulfilled').length;
+    const failed = results.filter((r: any) => r.status === 'rejected').length;
+
+    return {
+      success: true,
+      data: { successful, failed, total: validatedData.ids.length },
+    };
+  } catch (error) {
+    return handleError(error, 'Compliance Action');
+  }
 }
 
 // Alert Management
@@ -466,70 +449,67 @@ export async function bulkUpdateComplianceDocuments(
 // }
 
 export async function generateExpirationAlertsAction(daysAhead = 30) {
-    try {
-        const user = await getCurrentUser()
-        const userId = user?.userId
-        const orgId = user?.organizationId
-        if (!userId || !orgId) {
-            throw new Error("Unauthorized")
-        }
-
-        const today = new Date()
-        const dueDate = new Date(
-            today.getTime() + daysAhead * 24 * 60 * 60 * 1000
-        )
-
-        const documents = await db.complianceDocument.findMany({
-            where: {
-                organizationId: orgId,
-                expirationDate: {
-                    gte: today,
-                    lte: dueDate,
-                },
-            },
-            select: {
-                id: true,
-                driver_id: true,
-                vehicleId: true,
-                title: true,
-                expirationDate: true,
-            },
-        })
-
-        await Promise.all(
-            documents.map(async doc => {
-                const existing = await db.complianceAlert.findFirst({
-                    where: {
-                        organizationId: orgId,
-                        type: "expiring_document",
-                    },
-                })
-                if (existing) return
-
-                const daysLeft = Math.ceil(
-                    (doc.expirationDate!.getTime() - today.getTime()) /
-                        (24 * 60 * 60 * 1000)
-                )
-                await db.complianceAlert.create({
-                    data: {
-                        organizationId: orgId,
-                        userId: doc.driver_id || undefined,
-                        vehicleId: doc.vehicleId || undefined,
-                        type: "expiring_document",
-                        severity: daysLeft <= 7 ? "high" : "medium",
-                        title: "Document Expiring",
-                        message: `${doc.title} expires in ${daysLeft} days`,
-                        entityType: "compliance_document",
-                        entityId: doc.id,
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                    },
-                })
-            })
-        )
-
-        return { success: true, count: documents.length }
-    } catch (error) {
-        return handleError(error, "Generate Expiration Alerts")
+  try {
+    const user = await getCurrentUser();
+    const userId = user?.userId;
+    const orgId = user?.organizationId;
+    if (!userId || !orgId) {
+      throw new Error('Unauthorized');
     }
+
+    const today = new Date();
+    const dueDate = new Date(today.getTime() + daysAhead * 24 * 60 * 60 * 1000);
+
+    const documents = await db.complianceDocument.findMany({
+      where: {
+        organizationId: orgId,
+        expirationDate: {
+          gte: today,
+          lte: dueDate,
+        },
+      },
+      select: {
+        id: true,
+        driver_id: true,
+        vehicleId: true,
+        title: true,
+        expirationDate: true,
+      },
+    });
+
+    await Promise.all(
+      documents.map(async (doc) => {
+        const existing = await db.complianceAlert.findFirst({
+          where: {
+            organizationId: orgId,
+            type: 'expiring_document',
+          },
+        });
+        if (existing) return;
+
+        const daysLeft = Math.ceil(
+          (doc.expirationDate!.getTime() - today.getTime()) / (24 * 60 * 60 * 1000),
+        );
+        await db.complianceAlert.create({
+          data: {
+            organizationId: orgId,
+            userId: doc.driver_id || undefined,
+            vehicleId: doc.vehicleId || undefined,
+            type: 'expiring_document',
+            severity: daysLeft <= 7 ? 'high' : 'medium',
+            title: 'Document Expiring',
+            message: `${doc.title} expires in ${daysLeft} days`,
+            entityType: 'compliance_document',
+            entityId: doc.id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      }),
+    );
+
+    return { success: true, count: documents.length };
+  } catch (error) {
+    return handleError(error, 'Generate Expiration Alerts');
+  }
 }

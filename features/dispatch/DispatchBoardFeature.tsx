@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useTransition } from "react";
-import type { Load, LoadStatus } from "@/types/dispatch";
-import type { Driver } from "@/types/drivers";
-import type { Vehicle } from "@/types/vehicles";
-import { DispatchBoardUI } from "@/components/dispatch/dispatch-board";
-import { useRouter } from "next/navigation";
-import { updateLoadStatusAction } from "@/lib/actions/dispatchActions";
+import { useTransition } from 'react';
+import type { Load, LoadStatus } from '@/types/dispatch';
+import type { Driver } from '@/types/drivers';
+import type { Vehicle } from '@/types/vehicles';
+import { DispatchBoardUI } from '@/components/dispatch/dispatch-board';
+import { useRouter } from 'next/navigation';
+import { updateLoadStatusAction } from '@/lib/actions/dispatchActions';
 
 interface DispatchBoardFeatureProps {
   loads: Load[];
   drivers: Driver[];
   vehicles: Vehicle[];
   orgId: string;
-  searchParams?: { 
+  searchParams?: {
     tab?: string;
     status?: string;
     driverId?: string;
@@ -29,7 +29,7 @@ const ITEMS_PER_PAGE = 50;
 /**
  * Dispatch board for managing and filtering loads.
  *
- * The board layout reflows from lists to tabs depending on screen width. 
+ * The board layout reflows from lists to tabs depending on screen width.
  *
  * @param loads - Array of loads to display
  * @param drivers - Available drivers
@@ -37,31 +37,45 @@ const ITEMS_PER_PAGE = 50;
  * @param orgId - Organization identifier
  * @param searchParams - Optional query parameters used for filtering
  *
-**/
+ **/
 
-export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchParams = {} }: DispatchBoardFeatureProps) {
+export function DispatchBoardFeature({
+  loads,
+  drivers,
+  vehicles,
+  orgId,
+  searchParams = {},
+}: DispatchBoardFeatureProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  
-  const currentTab = searchParams.tab || "all";
-  const currentPage = parseInt(searchParams.page || "1", 10);
-  
+
+  const currentTab = searchParams.tab || 'all';
+  const currentPage = parseInt(searchParams.page || '1', 10);
+
   const filters = {
-    status: searchParams.status || "",
-    driverId: searchParams.driverId || "",
-    origin: searchParams.origin || "",
-    destination: searchParams.destination || "",
-    dateRange: searchParams.dateRange || ""
+    status: searchParams.status || '',
+    driverId: searchParams.driverId || '',
+    origin: searchParams.origin || '',
+    destination: searchParams.destination || '',
+    dateRange: searchParams.dateRange || '',
   };
 
   // Filter loads based on search params
   const filterLoads = (list: Load[]) => {
-    return list.filter(load => {
+    return list.filter((load) => {
       if (filters.status && load.status !== filters.status) return false;
       if (filters.driverId && load.driver?.id !== filters.driverId) return false;
-      if (filters.origin && !(load.origin?.city?.toLowerCase() || "").includes(filters.origin.toLowerCase())) return false;
-      if (filters.destination && !(load.destination?.city?.toLowerCase() || "").includes(filters.destination.toLowerCase())) return false;
-      if (filters.dateRange === "recent") {
+      if (
+        filters.origin &&
+        !(load.origin?.city?.toLowerCase() || '').includes(filters.origin.toLowerCase())
+      )
+        return false;
+      if (
+        filters.destination &&
+        !(load.destination?.city?.toLowerCase() || '').includes(filters.destination.toLowerCase())
+      )
+        return false;
+      if (filters.dateRange === 'recent') {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         if (new Date(load.pickupDate) < thirtyDaysAgo) return false;
@@ -71,10 +85,10 @@ export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchPa
   };
 
   // Filter by status and paginate
-  const pendingLoads = loads.filter(load => load.status === "pending");
-  const assignedLoads = loads.filter(load => load.status === "assigned");
-  const inTransitLoads = loads.filter(load => load.status === "in_transit");
-  const completedLoads = loads.filter(load => load.status === "completed");
+  const pendingLoads = loads.filter((load) => load.status === 'pending');
+  const assignedLoads = loads.filter((load) => load.status === 'assigned');
+  const inTransitLoads = loads.filter((load) => load.status === 'in_transit');
+  const completedLoads = loads.filter((load) => load.status === 'completed');
 
   const getPagedLoads = (list: Load[]) => {
     const filtered = filterLoads(list);
@@ -148,4 +162,3 @@ export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchPa
     </div>
   );
 }
-

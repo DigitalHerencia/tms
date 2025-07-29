@@ -28,27 +28,23 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Driver Compliance</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <span className="text-3xl font-bold">
-            {data.driverComplianceRate}%
-          </span>
+          <span className="text-3xl font-bold">{data.driverComplianceRate}%</span>
         </CardContent>
       </Card>
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Vehicle Compliance</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
-          <span className="text-3xl font-bold">
-            {data.vehicleComplianceRate}%
-          </span>
+          <span className="text-3xl font-bold">{data.vehicleComplianceRate}%</span>
         </CardContent>
       </Card>
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Pending Documents</CardTitle>
         </CardHeader>
@@ -56,7 +52,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           <span className="text-3xl font-bold">{data.pendingDocuments}</span>
         </CardContent>
       </Card>
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Expired Documents</CardTitle>
         </CardHeader>
@@ -64,7 +60,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           <span className="text-3xl font-bold">{data.expiredDocuments}</span>
         </CardContent>
       </Card>
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Recent Inspections</CardTitle>
         </CardHeader>
@@ -72,7 +68,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           <span className="text-3xl font-bold">{data.recentInspections}</span>
         </CardContent>
       </Card>
-      <Card className='border border-gray-200 shadow-sm'>
+      <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Overdue Inspections</CardTitle>
         </CardHeader>

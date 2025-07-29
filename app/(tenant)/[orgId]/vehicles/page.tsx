@@ -28,7 +28,7 @@ export default async function VehiclesPage({ params }: VehiclesPageProps) {
           </button>
         </Link>
       </div>
-      
+
       <Suspense fallback={<VehicleListSkeleton />}>
         <VehiclesClient orgId={orgId} initialVehicles={data} />
       </Suspense>

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -12,12 +12,12 @@ interface ResponsiveLayoutProps {
   desktopClassName?: string;
 }
 
-export function ResponsiveLayout({ 
-  children, 
+export function ResponsiveLayout({
+  children,
   mobileLayout = 'stack',
   className,
   mobileClassName,
-  desktopClassName
+  desktopClassName,
 }: ResponsiveLayoutProps) {
   const isMobile = useIsMobile();
 
@@ -25,29 +25,13 @@ export function ResponsiveLayout({
     const mobileLayoutClass = {
       stack: 'flex flex-col space-y-4',
       scroll: 'flex overflow-x-auto space-x-4 pb-4',
-      sheet: 'flex flex-col'
+      sheet: 'flex flex-col',
     }[mobileLayout];
 
-    return (
-      <div className={cn(
-        mobileLayoutClass,
-        mobileClassName,
-        className
-      )}>
-        {children}
-      </div>
-    );
+    return <div className={cn(mobileLayoutClass, mobileClassName, className)}>{children}</div>;
   }
 
-  return (
-    <div className={cn(
-      'grid gap-6',
-      desktopClassName,
-      className
-    )}>
-      {children}
-    </div>
-  );
+  return <div className={cn('grid gap-6', desktopClassName, className)}>{children}</div>;
 }
 
 interface MobileCardProps {
@@ -65,16 +49,11 @@ export function MobileCard({ children, title, subtitle, className }: MobileCardP
   }
 
   return (
-    <div className={cn(
-      'bg-card border rounded-lg p-4 shadow-sm',
-      className
-    )}>
+    <div className={cn('bg-card border rounded-lg p-4 shadow-sm', className)}>
       {title && (
         <div className="mb-3 pb-2 border-b">
           <h3 className="font-semibold text-base">{title}</h3>
-          {subtitle && (
-            <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
         </div>
       )}
       {children}

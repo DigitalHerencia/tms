@@ -25,11 +25,16 @@ export function HosStatusCards({ hosStatus }: { hosStatus: any }) {
   };
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'driving': return 'bg-blue-100 text-blue-800';
-      case 'on_duty': return 'bg-green-100 text-green-800';
-      case 'off_duty': return 'bg-gray-100 text-gray-800';
-      case 'sleeper_berth': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'driving':
+        return 'bg-blue-100 text-blue-800';
+      case 'on_duty':
+        return 'bg-green-100 text-green-800';
+      case 'off_duty':
+        return 'bg-gray-100 text-gray-800';
+      case 'sleeper_berth':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
   return (
@@ -48,10 +53,15 @@ export function HosStatusCards({ hosStatus }: { hosStatus: any }) {
             </Badge>
             <div className="text-right">
               <div className="text-xs text-gray-400">Compliance</div>
-              <div className={`text-xs font-medium ${
-                data.complianceStatus === 'compliant' ? 'text-green-400' :
-                data.complianceStatus === 'violation' ? 'text-red-400' : 'text-yellow-400'
-              }`}>
+              <div
+                className={`text-xs font-medium ${
+                  data.complianceStatus === 'compliant'
+                    ? 'text-green-400'
+                    : data.complianceStatus === 'violation'
+                      ? 'text-red-400'
+                      : 'text-yellow-400'
+                }`}
+              >
                 {data.complianceStatus.toUpperCase()}
               </div>
             </div>
@@ -69,7 +79,10 @@ export function HosStatusCards({ hosStatus }: { hosStatus: any }) {
           <div className="text-2xl font-bold text-white">{formatTime(data.availableDriveTime)}</div>
           <p className="text-xs text-gray-400">Remaining of 11:00 limit</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${((660 - data.availableDriveTime) / 660) * 100}%` }}></div>
+            <div
+              className="bg-blue-600 h-2 rounded-full"
+              style={{ width: `${((660 - data.availableDriveTime) / 660) * 100}%` }}
+            ></div>
           </div>
         </CardContent>
       </Card>
@@ -78,10 +91,15 @@ export function HosStatusCards({ hosStatus }: { hosStatus: any }) {
           <CardTitle className="text-sm font-medium text-gray-300">On-Duty Time</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-white">{formatTime(data.availableOnDutyTime)}</div>
+          <div className="text-2xl font-bold text-white">
+            {formatTime(data.availableOnDutyTime)}
+          </div>
           <p className="text-xs text-gray-400">Remaining of 14:00 limit</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-600 h-2 rounded-full" style={{ width: `${((840 - data.availableOnDutyTime) / 840) * 100}%` }}></div>
+            <div
+              className="bg-green-600 h-2 rounded-full"
+              style={{ width: `${((840 - data.availableOnDutyTime) / 840) * 100}%` }}
+            ></div>
           </div>
         </CardContent>
       </Card>
@@ -90,10 +108,15 @@ export function HosStatusCards({ hosStatus }: { hosStatus: any }) {
           <CardTitle className="text-sm font-medium text-gray-300">70-Hour Cycle</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-white">{formatTime(data.cycleHours - data.usedCycleHours)}</div>
+          <div className="text-2xl font-bold text-white">
+            {formatTime(data.cycleHours - data.usedCycleHours)}
+          </div>
           <p className="text-xs text-gray-400">Remaining of 70:00 limit</p>
           <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${(data.usedCycleHours / data.cycleHours) * 100}%` }}></div>
+            <div
+              className="bg-purple-600 h-2 rounded-full"
+              style={{ width: `${(data.usedCycleHours / data.cycleHours) * 100}%` }}
+            ></div>
           </div>
           {data.violations?.length > 0 && (
             <div className="mt-2 text-xs text-red-400">{data.violations.length} violation(s)</div>

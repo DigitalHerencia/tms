@@ -9,10 +9,10 @@ interface EditVehiclePageProps {
 
 export default async function EditVehiclePage({ params }: EditVehiclePageProps) {
   const { orgId, vehicleId } = await params;
-  
+
   try {
     const vehicle = await getVehicleById(orgId, vehicleId);
-    
+
     if (!vehicle || vehicle.organizationId !== orgId) {
       notFound();
     }
@@ -30,7 +30,7 @@ export default async function EditVehiclePage({ params }: EditVehiclePageProps) 
             </p>
           </div>
         </div>
-        
+
         <Suspense fallback={<div className="text-white/70">Loading form...</div>}>
           <EditVehicleClient orgId={orgId} vehicle={vehicle} />
         </Suspense>

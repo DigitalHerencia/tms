@@ -11,13 +11,8 @@
  */
 
 // Import ABAC types as the source of truth
-import {
-  SystemRole,
-  SystemRoles,
-  Permission,
-  RolePermissions as ABACRolePermissions,
-  UserSessionAttributes
-} from './abac';
+import type { SystemRole, Permission, UserSessionAttributes } from './abac';
+import { SystemRoles, RolePermissions as ABACRolePermissions } from './abac';
 
 /**
  * UserRole: ABAC system role type
@@ -139,10 +134,7 @@ export interface OrganizationWebhookPayload {
     public_metadata: ClerkOrganizationMetadata;
     members_count: number;
   };
-  type:
-    | 'organization.created'
-    | 'organization.updated'
-    | 'organization.deleted';
+  type: 'organization.created' | 'organization.updated' | 'organization.deleted';
 }
 
 // Database sync types

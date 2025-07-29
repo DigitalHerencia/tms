@@ -7,12 +7,7 @@ import { Suspense } from 'react';
 import { BillingPlanOverview } from '@/components/dashboard/billing-plan-overview';
 import type { BillingPlanOverviewProps } from '@/components/dashboard/billing-plan-overview';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -27,9 +22,7 @@ interface BillingManagementClientProps {
   billingInfo: BillingInfo;
 }
 
-export function BillingManagementClient({
-  billingInfo,
-}: BillingManagementClientProps) {
+export function BillingManagementClient({ billingInfo }: BillingManagementClientProps) {
   const collapsed = useSidebarCollapsed();
 
   // ── 1) planMap & tier narrowing ──
@@ -65,11 +58,7 @@ export function BillingManagementClient({
       name: 'Enterprise',
       price: '$799/mo',
       color: 'text-purple-500',
-      features: [
-        'Advanced features',
-        'Priority support',
-        'Unlimited everything',
-      ],
+      features: ['Advanced features', 'Priority support', 'Unlimited everything'],
     },
   };
 
@@ -83,15 +72,15 @@ export function BillingManagementClient({
       status === 'active'
         ? 'bg-green-600'
         : status === 'trial'
-        ? 'bg-blue-600'
-        : status === 'cancelled'
-        ? 'bg-red-600'
-        : 'bg-gray-600';
+          ? 'bg-blue-600'
+          : status === 'cancelled'
+            ? 'bg-red-600'
+            : 'bg-gray-600';
     return (
       <span
         className={cn(
           'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold text-white',
-          bg
+          bg,
         )}
       >
         {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -134,11 +123,9 @@ export function BillingManagementClient({
           </CardHeader>
           <CardContent className="flex flex-col justify-between items-center mt-8 space-y-4">
             {/* Top: used / limit */}
-            <div className='flex flex-row gap-4 items-baseline'>
+            <div className="flex flex-row gap-4 items-baseline">
               <h3 className="text-4xl font-bold text-white">{users}</h3>
-              <p className="text-2xl text-gray-400">
-                of {maxUsers} seats
-              </p>
+              <p className="text-2xl text-gray-400">of {maxUsers} seats</p>
             </div>
 
             <Separator />
@@ -174,18 +161,14 @@ export function BillingManagementClient({
             {/* Top: used / limit or over-limit */}
             <div>
               {vehicles <= maxVehicles ? (
-                <div className='flex flex-row gap-4 mt-8 items-baseline'>
+                <div className="flex flex-row gap-4 mt-8 items-baseline">
                   <h3 className="text-4xl font-bold text-white">{vehicles}</h3>
-                  <p className="text-2xl text-gray-400">
-                    of {maxVehicles} vehicles
-                  </p>
+                  <p className="text-2xl text-gray-400">of {maxVehicles} vehicles</p>
                 </div>
               ) : (
                 <>
                   <h3 className="text-4xl font-bold text-red-500">{vehicles}</h3>
-                  <p className="text-2xl text-gray-400">
-                    over by {vehicleOver} vehicles
-                  </p>
+                  <p className="text-2xl text-gray-400">over by {vehicleOver} vehicles</p>
                 </>
               )}
             </div>

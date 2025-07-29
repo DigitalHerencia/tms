@@ -12,9 +12,7 @@ export type UserWithRole = {
 /**
  * Retrieve all users for an organization along with their assigned roles.
  */
-export async function listOrganizationUsers(
-  orgId: string
-): Promise<UserWithRole[]> {
+export async function listOrganizationUsers(orgId: string): Promise<UserWithRole[]> {
   const memberships = await prisma.organizationMembership.findMany({
     where: { organizationId: orgId },
     include: {
@@ -25,7 +23,7 @@ export async function listOrganizationUsers(
     orderBy: { createdAt: 'asc' },
   });
 
-  return memberships.map(m => ({
+  return memberships.map((m) => ({
     id: m.user.id,
     name: `${m.user.firstName ?? ''} ${m.user.lastName ?? ''}`.trim(),
     role: m.role as UserRole,
@@ -35,10 +33,7 @@ export async function listOrganizationUsers(
 /**
  * Retrieve a single user by userId, including their role in the organization.
  */
-export async function getUserById(
-  orgId: string,
-  userId: string
-): Promise<UserWithRole | null> {
+export async function getUserById(orgId: string, userId: string): Promise<UserWithRole | null> {
   const membership = await prisma.organizationMembership.findFirst({
     where: {
       organizationId: orgId,

@@ -32,9 +32,7 @@ const mockUser = {
 };
 
 const mockDbUser = {
-  memberships: [
-    { organizationId: 'org-123', role: 'admin' },
-  ],
+  memberships: [{ organizationId: 'org-123', role: 'admin' }],
 };
 
 describe('auth.ts', () => {
@@ -64,7 +62,9 @@ describe('auth.ts', () => {
     it('returns user context if allowNoOrg', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
       require('@clerk/nextjs/server').currentUser.mockResolvedValue(mockUser);
-      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({ memberships: [] });
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({
+        memberships: [],
+      });
       const result = await authModule.getCurrentUser(true);
       expect(result).toMatchObject({
         userId: 'u1',
@@ -104,7 +104,9 @@ describe('auth.ts', () => {
     });
     it('returns null if no org', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
-      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({ memberships: [] });
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({
+        memberships: [],
+      });
       const result = await authModule.getCurrentCompany();
       expect(result).toBeNull();
     });
@@ -131,11 +133,8 @@ describe('auth.ts', () => {
       const result = await authModule.checkUserRole('admin');
       expect(result).toBe(false);
     });
-  
-      const result = await authModule.checkUserRole('admin');
-      expect(result).toBe(true);
-    });
-    
+
+    const result = await authModule.checkUserRole('admin');
+    expect(result).toBe(true);
   });
-
-
+});

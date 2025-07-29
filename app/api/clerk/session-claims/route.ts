@@ -1,6 +1,7 @@
-"use server";
+'use server';
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { validateSessionClaims, createTestSessionClaims } from '@/lib/auth/session-claims-utils';
 import type { SystemRole } from '@/types/abac';
 
@@ -13,9 +14,7 @@ export async function POST(req: NextRequest) {
 
     const role = (user.public_metadata?.role as SystemRole) || 'member';
     const organizationId =
-      user.private_metadata?.organizationId ||
-      user.public_metadata?.organizationId ||
-      '';
+      user.private_metadata?.organizationId || user.public_metadata?.organizationId || '';
 
     const claims = createTestSessionClaims({
       userId: user.id,
@@ -40,7 +39,7 @@ export async function POST(req: NextRequest) {
     if (!validation.isValid) {
       return NextResponse.json(
         { error: 'Invalid claims', details: validation.errors },
-        { status: 500 }
+        { status: 500 },
       );
     }
 

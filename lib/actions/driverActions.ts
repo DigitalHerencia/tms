@@ -2,7 +2,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { handleError } from '@/lib/errors/handleError';
 
 import type {
@@ -29,7 +29,7 @@ import {
  */
 export async function createDriverAction(
   tenantId: string,
-  data: DriverFormData
+  data: DriverFormData,
 ): Promise<DriverActionResult> {
   const parsed = driverFormSchema.safeParse(data);
   if (!parsed.success) {
@@ -47,7 +47,7 @@ export async function createDriverAction(
 
     // Validate input data
     const validatedData = driverFormSchema.parse(data);
-    
+
     // Check for duplicate CDL number within tenant
     const existingDriver = await db.driver.findFirst({
       where: {
@@ -87,7 +87,7 @@ export async function createDriverAction(
     }
 
     // Convert date string fields to Date objects if present
-    const toDate = (val: any) => val ? new Date(val) : null;
+    const toDate = (val: any) => (val ? new Date(val) : null);
     const newDriver = await db.driver.create({
       data: {
         organizationId: tenantId,
@@ -142,7 +142,7 @@ export async function createDriverAction(
  */
 export async function updateDriverAction(
   driverId: string,
-  data: DriverUpdateData
+  data: DriverUpdateData,
 ): Promise<DriverActionResult> {
   const parsed = driverUpdateSchema.safeParse(data);
   if (!parsed.success) {
@@ -176,12 +176,9 @@ export async function updateDriverAction(
     };
 
     // Direct field mappings to Prisma Driver schema
-    if (validatedData.phone !== undefined)
-      updateData.phone = validatedData.phone;
-    if (validatedData.notes !== undefined)
-      updateData.notes = validatedData.notes;
-    if (validatedData.status !== undefined)
-      updateData.status = validatedData.status;
+    if (validatedData.phone !== undefined) updateData.phone = validatedData.phone;
+    if (validatedData.notes !== undefined) updateData.notes = validatedData.notes;
+    if (validatedData.status !== undefined) updateData.status = validatedData.status;
     if (validatedData.cdlExpiration !== undefined)
       updateData.licenseExpiration = validatedData.cdlExpiration;
     if (validatedData.medicalCardExpiration !== undefined)
@@ -196,7 +193,7 @@ export async function updateDriverAction(
         const addressParts = [
           validatedData.address.street,
           validatedData.address.city,
-          `${validatedData.address.state || ''} ${validatedData.address.zipCode }`.trim()
+          `${validatedData.address.state || ''} ${validatedData.address.zipCode}`.trim(),
         ].filter(Boolean);
         updateData.address = addressParts.join(', ');
       } else {
@@ -207,24 +204,21 @@ export async function updateDriverAction(
     // Store complex fields in customFields JSON
     const existingCustomFields = (existingDriver.customFields as any) || {};
     const customFieldsUpdate: any = { ...existingCustomFields };
-    
+
     if (validatedData.endorsements !== undefined)
       customFieldsUpdate.endorsements = validatedData.endorsements;
     if (validatedData.restrictions !== undefined)
       customFieldsUpdate.restrictions = validatedData.restrictions;
     if (validatedData.emergencyContact !== undefined)
       customFieldsUpdate.emergencyContact = validatedData.emergencyContact;
-    if (validatedData.tags !== undefined)
-      customFieldsUpdate.tags = validatedData.tags;
-    if (validatedData.payRate !== undefined)
-      customFieldsUpdate.payRate = validatedData.payRate;
-    if (validatedData.payType !== undefined)
-      customFieldsUpdate.payType = validatedData.payType;
+    if (validatedData.tags !== undefined) customFieldsUpdate.tags = validatedData.tags;
+    if (validatedData.payRate !== undefined) customFieldsUpdate.payRate = validatedData.payRate;
+    if (validatedData.payType !== undefined) customFieldsUpdate.payType = validatedData.payType;
     if (validatedData.homeTerminal !== undefined)
       customFieldsUpdate.homeTerminal = validatedData.homeTerminal;
     if (validatedData.availabilityStatus !== undefined)
       customFieldsUpdate.availabilityStatus = validatedData.availabilityStatus;
-    
+
     updateData.customFields = customFieldsUpdate;
 
     // Update driver
@@ -242,9 +236,7 @@ export async function updateDriverAction(
     }
 
     await logAuditEvent('driver.updated', 'driver', driverId, {
-      updatedFields: Object.keys(updateData).filter(
-        key => key !== 'updatedAt'
-      ),
+      updatedFields: Object.keys(updateData).filter((key) => key !== 'updatedAt'),
     });
     return {
       success: true,
@@ -258,9 +250,7 @@ export async function updateDriverAction(
 /**
  * Delete (deactivate) a driver
  */
-export async function deleteDriverAction(
-  driverId: string
-): Promise<DriverActionResult> {
+export async function deleteDriverAction(driverId: string): Promise<DriverActionResult> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -313,7 +303,7 @@ export async function deleteDriverAction(
  */
 export async function updateDriverStatusAction(
   driverId: string,
-  statusUpdate: z.infer<typeof driverStatusUpdateSchema>
+  statusUpdate: z.infer<typeof driverStatusUpdateSchema>,
 ): Promise<DriverActionResult> {
   const parsed = driverStatusUpdateSchema.safeParse(statusUpdate);
   if (!parsed.success) {
@@ -344,11 +334,11 @@ export async function updateDriverStatusAction(
     // Prepare customFields update with location and availability status
     const existingCustomFields = (existingDriver.customFields as any) || {};
     const customFieldsUpdate: any = { ...existingCustomFields };
-    
+
     if (validatedData.availabilityStatus) {
       customFieldsUpdate.availabilityStatus = validatedData.availabilityStatus;
     }
-    
+
     if (validatedData.location) {
       customFieldsUpdate.currentLocation = validatedData.location;
     }
@@ -384,7 +374,7 @@ export async function updateDriverStatusAction(
  * Bulk update drivers
  */
 export async function bulkUpdateDriversAction(
-  bulkUpdate: z.infer<typeof driverBulkUpdateSchema>
+  bulkUpdate: z.infer<typeof driverBulkUpdateSchema>,
 ): Promise<DriverBulkActionResult> {
   try {
     const { userId } = await auth();
@@ -394,7 +384,7 @@ export async function bulkUpdateDriversAction(
         processed: 0,
         succeeded: 0,
         failed: bulkUpdate.driverIds.length,
-        errors: bulkUpdate.driverIds.map(id => ({
+        errors: bulkUpdate.driverIds.map((id) => ({
           driverId: id,
           error: 'Authentication required',
         })),
@@ -430,14 +420,12 @@ export async function bulkUpdateDriversAction(
           updatedAt: new Date(),
         };
 
-        if (validatedData.updates.status)
-          updateData.status = validatedData.updates.status;
+        if (validatedData.updates.status) updateData.status = validatedData.updates.status;
         if (validatedData.updates.availabilityStatus)
           customFieldsUpdate.availabilityStatus = validatedData.updates.availabilityStatus;
         if (validatedData.updates.homeTerminal)
           customFieldsUpdate.homeTerminal = validatedData.updates.homeTerminal;
-        if (validatedData.updates.tags)
-          customFieldsUpdate.tags = validatedData.updates.tags;
+        if (validatedData.updates.tags) customFieldsUpdate.tags = validatedData.updates.tags;
 
         updateData.customFields = customFieldsUpdate;
 
@@ -469,7 +457,7 @@ export async function bulkUpdateDriversAction(
       processed: bulkUpdate.driverIds.length,
       succeeded: 0,
       failed: bulkUpdate.driverIds.length,
-      errors: bulkUpdate.driverIds.map(id => ({
+      errors: bulkUpdate.driverIds.map((id) => ({
         driverId: id,
         error: 'Internal error',
       })),
@@ -483,7 +471,7 @@ export async function bulkUpdateDriversAction(
  * Assign driver to a load/vehicle
  */
 export async function assignDriverAction(
-  assignmentData: z.infer<typeof driverAssignmentSchema>
+  assignmentData: z.infer<typeof driverAssignmentSchema>,
 ): Promise<DriverActionResult> {
   const parsed = driverAssignmentSchema.safeParse(assignmentData);
   if (!parsed.success) {
@@ -510,7 +498,7 @@ export async function assignDriverAction(
   } = parsed.data;
 
   try {
-    await db.$transaction(async tx => {
+    await db.$transaction(async (tx) => {
       if (loadId) {
         await tx.load.update({
           where: { id: loadId },
@@ -564,9 +552,7 @@ export async function assignDriverAction(
 /**
  * Unassign driver from current assignment
  */
-export async function unassignDriverAction(
-  driverId: string
-): Promise<DriverActionResult> {
+export async function unassignDriverAction(driverId: string): Promise<DriverActionResult> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -612,7 +598,7 @@ export async function unassignDriverAction(
     }
 
     // Start database transaction for unassignment
-    await db.$transaction(async tx => {
+    await db.$transaction(async (tx) => {
       const updates: Promise<unknown>[] = [];
 
       // Unassign from all active loads
@@ -625,7 +611,7 @@ export async function unassignDriverAction(
               status: load.status === 'assigned' ? 'pending' : load.status,
               updatedAt: new Date(),
             },
-          })
+          }),
         );
 
         // Create load status event
@@ -640,7 +626,7 @@ export async function unassignDriverAction(
               source: 'dispatcher',
               createdBy: userId, // <-- FIX: Add required field
             },
-          })
+          }),
         );
       }
 
@@ -651,7 +637,7 @@ export async function unassignDriverAction(
           data: {
             updatedAt: new Date(),
           },
-        })
+        }),
       );
 
       // Execute all updates
@@ -660,7 +646,7 @@ export async function unassignDriverAction(
 
     // Log audit event
     await logAuditEvent('driver.unassigned', 'driver', driverId, {
-      loadIds: driver.loads.map(l => l.id),
+      loadIds: driver.loads.map((l) => l.id),
       unassignedBy: userId,
     });
 

@@ -81,7 +81,9 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
                     <td className="p-2">
                       <div>
                         <div className="font-medium">{item.title}</div>
-                        {item.subtitle && <div className="text-sm text-muted-foreground">{item.subtitle}</div>}
+                        {item.subtitle && (
+                          <div className="text-sm text-muted-foreground">{item.subtitle}</div>
+                        )}
                       </div>
                     </td>
                     <td className="p-2">
@@ -92,7 +94,9 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
                     </td>
                     <td className="p-2">
                       <div className="font-medium">{item.primaryValue}</div>
-                      {item.secondaryValue && <div className="text-sm text-muted-foreground">{item.secondaryValue}</div>}
+                      {item.secondaryValue && (
+                        <div className="text-sm text-muted-foreground">{item.secondaryValue}</div>
+                      )}
                     </td>
                     <td className="p-2">
                       <div className="flex gap-1">
@@ -125,7 +129,7 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
         <h2 className="text-lg font-semibold">{title}</h2>
         <Badge variant="outline">{data.length} items</Badge>
       </div>
-      
+
       {data.length === 0 ? (
         <Card>
           <CardContent className="flex items-center justify-center py-8">
@@ -146,11 +150,11 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
                         <span className="ml-1 capitalize">{item.status}</span>
                       </Badge>
                     </div>
-                    
+
                     {item.subtitle && (
                       <p className="text-sm text-muted-foreground mb-2 truncate">{item.subtitle}</p>
                     )}
-                    
+
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-semibold text-lg">{item.primaryValue}</div>
@@ -158,7 +162,7 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
                           <div className="text-sm text-muted-foreground">{item.secondaryValue}</div>
                         )}
                       </div>
-                      
+
                       {item.timestamp && (
                         <div className="text-xs text-muted-foreground">
                           {new Date(item.timestamp).toLocaleDateString()}
@@ -166,7 +170,7 @@ export function MobileOptimizedTable({ data, title, emptyMessage }: MobileOptimi
                       )}
                     </div>
                   </div>
-                  
+
                   {item.actions && item.actions.length > 0 && (
                     <Sheet>
                       <SheetTrigger asChild>

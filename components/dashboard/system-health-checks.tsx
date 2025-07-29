@@ -4,7 +4,7 @@ import React from 'react';
 
 export function SystemHealthChecks() {
   return (
-    <Card className='bg-black border border-gray-200'>
+    <Card className="bg-black border border-gray-200">
       <CardHeader>
         <div className="flex items-center gap-2">
           <CheckCircle className="w-5 h-5 text-white" />

@@ -1,4 +1,4 @@
-import type { MetadataRecord } from "./metadata";
+import type { MetadataRecord } from './metadata';
 /**
  * Type definitions for the compliance module
  */
@@ -24,12 +24,7 @@ export interface ComplianceDocument {
   notes?: string;
   reminderDays: number[];
   autoRenewal?: boolean;
-  renewalStatus?:
-    | 'not_applicable'
-    | 'pending'
-    | 'in_progress'
-    | 'completed'
-    | 'failed';
+  renewalStatus?: 'not_applicable' | 'pending' | 'in_progress' | 'completed' | 'failed';
   renewalNotes?: string;
   tags?: string[];
   metadata?: ComplianceMetadata;
@@ -141,10 +136,7 @@ export interface HosBreak {
 
 export interface HosViolation {
   id: string;
-  type:
-    | '11_hour'
-    | '14_hour'
-    | '70_hour'
+  type: '11_hour' | '14_hour' | '70_hour';
 
   deviceManufacturer: string;
   deviceModel: string;
@@ -158,13 +150,7 @@ export interface HosViolation {
 
 export interface EldMalfunction {
   id: string;
-  type:
-    | 'power'
-    | 'engine_sync'
-    | 'positioning'
-    | 'data_recording'
-    | 'data_transfer'
-    | 'other';
+  type: 'power' | 'engine_sync' | 'positioning' | 'data_recording' | 'data_transfer' | 'other';
   description: string;
   detectedAt: Date;
   resolvedAt?: Date;
@@ -319,13 +305,7 @@ export interface MaintenanceWarranty {
 export interface SafetyEvent {
   id: string;
   tenantId: string;
-  type:
-    | 'accident'
-    | 'violation'
-    | 'inspection'
-    | 'complaint'
-    | 'incident'
-    | 'citation';
+  type: 'accident' | 'violation' | 'inspection' | 'complaint' | 'incident' | 'citation';
   severity: 'minor' | 'major' | 'serious' | 'critical';
   status: 'open' | 'under_review' | 'closed' | 'disputed';
   date: Date;

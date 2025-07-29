@@ -30,15 +30,15 @@ export function validateSessionClaims(claims: any): {
     warnings.push('Missing ABAC claims structure');
   } else {
     const abac = claims.abac as UserSessionAttributes;
-    
+
     if (!abac.role) {
       errors.push('Missing ABAC role');
     }
-    
+
     if (!abac.organizationId) {
       warnings.push('Missing ABAC organizationId');
     }
-    
+
     if (!Array.isArray(abac.permissions)) {
       errors.push('ABAC permissions must be an array');
     }
@@ -79,13 +79,19 @@ export function extractUserContextFromClaims(claims: any): {
 } {
   // Primary source: ABAC claims
   const abac = claims.abac as UserSessionAttributes | undefined;
-  
+
   return {
     userId: claims['user.id'] || '',
-    organizationId: abac?.organizationId || claims['org.id'] || claims.metadata?.organizationId || '',
+    organizationId:
+      abac?.organizationId || claims['org.id'] || claims.metadata?.organizationId || '',
     role: abac?.role || claims['org.role'] || claims.metadata?.role || 'member',
-    permissions: abac?.permissions || claims['org_membership.permissions'] || claims.metadata?.permissions || [],
-    onboardingComplete: claims.publicMetadata?.onboardingComplete || claims.metadata?.onboardingComplete || false,
+    permissions:
+      abac?.permissions ||
+      claims['org_membership.permissions'] ||
+      claims.metadata?.permissions ||
+      [],
+    onboardingComplete:
+      claims.publicMetadata?.onboardingComplete || claims.metadata?.onboardingComplete || false,
     isActive: claims.metadata?.isActive ?? true,
   };
 }
@@ -115,25 +121,26 @@ export function createTestSessionClaims(options: {
     'org.id': organizationId,
     'org.name': 'Test Organization',
     'org.role': role,
-    
+
     abac: {
       role,
       organizationId,
       permissions,
     },
-    
+
     firstName: 'Test',
     lastName: 'User',
     primaryEmail: 'test@example.com',
     fullName: 'Test User',
-    
+
     publicMetadata: {
       onboardingComplete,
       organizationId,
       role,
-    },    'org_membership.permissions': permissions,
+    },
+    'org_membership.permissions': permissions,
     'user.organizations': [organizationId],
-      metadata: {
+    metadata: {
       organizationId,
       role: role as string,
       permissions: permissions,
@@ -161,7 +168,7 @@ export function checkSessionClaimsHealth(claims: any): {
     message: string;
     field?: string;
   }> = [];
-  
+
   let score = 100;
 
   // Critical checks (errors)
@@ -185,12 +192,20 @@ export function checkSessionClaimsHealth(claims: any): {
   }
 
   if (!claims.publicMetadata?.onboardingComplete) {
-    issues.push({ type: 'warning', message: 'Onboarding may not be complete', field: 'publicMetadata.onboardingComplete' });
+    issues.push({
+      type: 'warning',
+      message: 'Onboarding may not be complete',
+      field: 'publicMetadata.onboardingComplete',
+    });
     score -= 10;
   }
 
   if (!Array.isArray(claims.abac?.permissions) || claims.abac.permissions.length === 0) {
-    issues.push({ type: 'warning', message: 'No permissions array or empty permissions', field: 'abac.permissions' });
+    issues.push({
+      type: 'warning',
+      message: 'No permissions array or empty permissions',
+      field: 'abac.permissions',
+    });
     score -= 10;
   }
 
@@ -200,7 +215,11 @@ export function checkSessionClaimsHealth(claims: any): {
     score -= 5;
   }
 
-  if (claims['org.id'] && claims.abac?.organizationId && claims['org.id'] !== claims.abac.organizationId) {
+  if (
+    claims['org.id'] &&
+    claims.abac?.organizationId &&
+    claims['org.id'] !== claims.abac.organizationId
+  ) {
     issues.push({ type: 'info', message: 'Organization ID inconsistency' });
     score -= 5;
   }
@@ -225,7 +244,7 @@ export function checkSessionClaimsHealth(claims: any): {
  */
 export function compareSessionClaims(
   actual: any,
-  expected: Partial<CustomJwtSessionClaims>
+  expected: Partial<CustomJwtSessionClaims>,
 ): {
   matches: boolean;
   differences: Array<{
@@ -242,7 +261,7 @@ export function compareSessionClaims(
 
   function compareValues(actualVal: any, expectedVal: any, path: string) {
     if (expectedVal === undefined) return; // Skip undefined expected values
-    
+
     if (JSON.stringify(actualVal) !== JSON.stringify(expectedVal)) {
       differences.push({
         field: path,
@@ -258,7 +277,11 @@ export function compareSessionClaims(
   compareValues(actual['org.role'], expected['org.role'], 'org.role');
   compareValues(actual.abac?.role, expected.abac?.role, 'abac.role');
   compareValues(actual.abac?.organizationId, expected.abac?.organizationId, 'abac.organizationId');
-  compareValues(actual.publicMetadata?.onboardingComplete, expected.publicMetadata?.onboardingComplete, 'publicMetadata.onboardingComplete');
+  compareValues(
+    actual.publicMetadata?.onboardingComplete,
+    expected.publicMetadata?.onboardingComplete,
+    'publicMetadata.onboardingComplete',
+  );
 
   return {
     matches: differences.length === 0,
@@ -282,14 +305,16 @@ export function formatSessionClaimsForDebug(claims: any): string {
       lastName: claims.lastName,
       primaryEmail: claims.primaryEmail,
     },
-    'Metadata': {
+    Metadata: {
       onboardingComplete: claims.publicMetadata?.onboardingComplete,
       isActive: claims.metadata?.isActive,
       lastLogin: claims.metadata?.lastLogin,
     },
-    'Permissions': {
+    Permissions: {
       count: Array.isArray(claims.abac?.permissions) ? claims.abac.permissions.length : 'N/A',
-      fromOrgMembership: Array.isArray(claims['org_membership.permissions']) ? claims['org_membership.permissions'].length : 'N/A',
+      fromOrgMembership: Array.isArray(claims['org_membership.permissions'])
+        ? claims['org_membership.permissions'].length
+        : 'N/A',
     },
   };
 

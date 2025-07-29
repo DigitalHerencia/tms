@@ -2,14 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import {
-  Truck,
-  Gauge,
-  FileText,
-  PenToolIcon as Tool,
-  AlertTriangle,
-  MapPin,
-} from 'lucide-react';
+import { Truck, Gauge, FileText, PenToolIcon as Tool, AlertTriangle, MapPin } from 'lucide-react';
 
 import {
   Dialog,
@@ -21,13 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { formatDate, formatCurrency } from '@/lib/utils/utils';
 import { updateVehicleStatusAction } from '@/lib/actions/vehicleActions';
@@ -184,22 +171,33 @@ export function VehicleDetailsDialog({
           // Defensive: result.data can be Vehicle or Vehicle[]
           const updated = Array.isArray(result.data) ? result.data[0] : result.data;
           if (onVehicleUpdate) onVehicleUpdate(updated);
-          toast({ title: 'Status Updated', description: `Vehicle status changed to ${status.replace('_', ' ')}` });
+          toast({
+            title: 'Status Updated',
+            description: `Vehicle status changed to ${status.replace('_', ' ')}`,
+          });
           onOpenChange(false);
         } else {
           setError(result.error || 'Failed to update vehicle status');
-          toast({ title: 'Error', description: result.error || 'Failed to update vehicle status', variant: 'destructive' });
+          toast({
+            title: 'Error',
+            description: result.error || 'Failed to update vehicle status',
+            variant: 'destructive',
+          });
         }
       } catch (err) {
         setIsUpdatingStatus(false);
         setError('An unexpected error occurred');
-        toast({ title: 'Error', description: 'An unexpected error occurred', variant: 'destructive' });
+        toast({
+          title: 'Error',
+          description: 'An unexpected error occurred',
+          variant: 'destructive',
+        });
       }
     });
   };
 
   const upcomingMaintenance = maintenanceRecords.filter(
-    (record: MaintenanceRecord) => record.status === 'scheduled' && record.scheduledDate
+    (record: MaintenanceRecord) => record.status === 'scheduled' && record.scheduledDate,
   );
 
   return (
@@ -214,25 +212,25 @@ export function VehicleDetailsDialog({
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="bg-card border-border">
-            <TabsTrigger 
+            <TabsTrigger
               value="overview"
               className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Overview
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="maintenance"
               className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Maintenance
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="inspections"
               className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Inspections
             </TabsTrigger>
-            <TabsTrigger 
+            <TabsTrigger
               value="loads"
               className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
@@ -244,7 +242,9 @@ export function VehicleDetailsDialog({
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Card className="bg-card border-border">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-card-foreground">Vehicle Information</CardTitle>
+                  <CardTitle className="text-sm text-card-foreground">
+                    Vehicle Information
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -305,7 +305,9 @@ export function VehicleDetailsDialog({
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs text-muted-foreground">Last Maintenance Mileage</Label>
+                      <Label className="text-xs text-muted-foreground">
+                        Last Maintenance Mileage
+                      </Label>
                       <div className="font-medium text-card-foreground">
                         {vehicle.lastMaintenanceMileage
                           ? `${vehicle.lastMaintenanceMileage.toLocaleString()} miles`
@@ -343,13 +345,9 @@ export function VehicleDetailsDialog({
                             </div>
                             <div className="text-muted-foreground text-sm">
                               Scheduled:{' '}
-                              {record.scheduledDate
-                                ? formatDate(record.scheduledDate)
-                                : 'N/A'}
+                              {record.scheduledDate ? formatDate(record.scheduledDate) : 'N/A'}
                             </div>
-                            {record.notes && (
-                              <div className="mt-1 text-sm">{record.notes}</div>
-                            )}
+                            {record.notes && <div className="mt-1 text-sm">{record.notes}</div>}
                           </div>
                         </div>
                       ))}
@@ -372,13 +370,9 @@ export function VehicleDetailsDialog({
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <h4 className="font-medium text-card-foreground">Schedule Maintenance</h4>
-                    <p className="text-muted-foreground text-sm">
-                      Add a new maintenance record
-                    </p>
+                    <p className="text-muted-foreground text-sm">Add a new maintenance record</p>
                   </div>
-                  <Button 
-                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
-                  >
+                  <Button className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800">
                     <Tool className="mr-2 h-4 w-4" />
                     Schedule
                   </Button>
@@ -387,29 +381,27 @@ export function VehicleDetailsDialog({
                 {maintenanceRecords.length > 0 ? (
                   <div className="space-y-4">
                     {maintenanceRecords.map((record: MaintenanceRecord) => (
-                      <div key={record.id} className="rounded-md border border-border/10 p-4 bg-card">
+                      <div
+                        key={record.id}
+                        className="rounded-md border border-border/10 p-4 bg-card"
+                      >
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="font-medium text-card-foreground">
                               {record.description}
                             </div>
                             <div className="text-muted-foreground text-sm">
-                              {record.type.charAt(0).toUpperCase() +
-                                record.type.slice(1)}{' '}
+                              {record.type.charAt(0).toUpperCase() + record.type.slice(1)}{' '}
                               maintenance
                             </div>
                           </div>
-                          <Badge
-                            className={getMaintenanceStatusColor(record.status)}
-                          >
+                          <Badge className={getMaintenanceStatusColor(record.status)}>
                             {record.status.replace('_', ' ')}
                           </Badge>
                         </div>
                         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="text-muted-foreground">
-                              Date:{' '}
-                            </span>
+                            <span className="text-muted-foreground">Date: </span>
                             <span className="text-card-foreground">
                               {record.completedDate
                                 ? formatDate(record.completedDate)
@@ -420,36 +412,26 @@ export function VehicleDetailsDialog({
                           </div>
                           {record.odometer && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Odometer:{' '}
-                              </span>
-                              <span>
-                                {record.odometer.toLocaleString()} miles
-                              </span>
+                              <span className="text-muted-foreground">Odometer: </span>
+                              <span>{record.odometer.toLocaleString()} miles</span>
                             </div>
                           )}
                           {record.cost && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Cost:{' '}
-                              </span>
+                              <span className="text-muted-foreground">Cost: </span>
                               <span>{formatCurrency(record.cost)}</span>
                             </div>
                           )}
                           {record.vendor && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Vendor:{' '}
-                              </span>
+                              <span className="text-muted-foreground">Vendor: </span>
                               <span>{record.vendor}</span>
                             </div>
                           )}
                         </div>
                         {record.notes && (
                           <div className="mt-2 text-sm">
-                            <span className="text-muted-foreground">
-                              Notes:{' '}
-                            </span>
+                            <span className="text-muted-foreground">Notes: </span>
                             <span>{record.notes}</span>
                           </div>
                         )}
@@ -470,21 +452,15 @@ export function VehicleDetailsDialog({
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle>Inspection Records</CardTitle>
-                <CardDescription>
-                  View and manage inspections for this vehicle
-                </CardDescription>
+                <CardDescription>View and manage inspections for this vehicle</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <h4 className="font-medium">Record Inspection</h4>
-                    <p className="text-muted-foreground text-sm">
-                      Add a new inspection record
-                    </p>
+                    <p className="text-muted-foreground text-sm">Add a new inspection record</p>
                   </div>
-                  <Button 
-                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
-                  >
+                  <Button className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800">
                     <FileText className="mr-2 h-4 w-4" />
                     Add Inspection
                   </Button>
@@ -493,26 +469,18 @@ export function VehicleDetailsDialog({
                 {inspections.length > 0 ? (
                   <div className="space-y-4">
                     {inspections.map((inspection: Inspection) => (
-                      <div
-                        key={inspection.id}
-                        className="rounded-md border p-4"
-                      >
+                      <div key={inspection.id} className="rounded-md border p-4">
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="font-medium">
-                              {inspection.type.charAt(0).toUpperCase() +
-                                inspection.type.slice(1)}{' '}
+                              {inspection.type.charAt(0).toUpperCase() + inspection.type.slice(1)}{' '}
                               Inspection
                             </div>
                             <div className="text-muted-foreground text-sm">
                               {formatDate(inspection.date)}
                             </div>
                           </div>
-                          <Badge
-                            className={getInspectionStatusColor(
-                              inspection.status
-                            )}
-                          >
+                          <Badge className={getInspectionStatusColor(inspection.status)}>
                             {inspection.status.replace('_', ' ')}
                           </Badge>
                         </div>
@@ -524,30 +492,23 @@ export function VehicleDetailsDialog({
                         )}
                         {inspection.notes && (
                           <div className="mt-2 text-sm">
-                            <span className="text-muted-foreground">
-                              Notes:{' '}
-                            </span>
+                            <span className="text-muted-foreground">Notes: </span>
                             <span>{inspection.notes}</span>
                           </div>
                         )}
-                        {inspection.defects &&
-                          inspection.defects.length > 0 && (
-                            <div className="mt-2">
-                              <div className="text-sm font-medium">
-                                Defects:
-                              </div>
-                              <ul className="mt-1 list-inside list-disc text-sm">
-                                {inspection.defects.map(
-                                  (defect: any, index: number) => (
-                                    <li key={index}>
-                                      {defect.component}: {defect.description} (
-                                      {defect.severity} severity)
-                                    </li>
-                                  )
-                                )}
-                              </ul>
-                            </div>
-                          )}
+                        {inspection.defects && inspection.defects.length > 0 && (
+                          <div className="mt-2">
+                            <div className="text-sm font-medium">Defects:</div>
+                            <ul className="mt-1 list-inside list-disc text-sm">
+                              {inspection.defects.map((defect: any, index: number) => (
+                                <li key={index}>
+                                  {defect.component}: {defect.description} ({defect.severity}{' '}
+                                  severity)
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -576,12 +537,9 @@ export function VehicleDetailsDialog({
                       <div key={load.id} className="rounded-md border p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <div className="font-medium">
-                              {load.referenceNumber}
-                            </div>
+                            <div className="font-medium">{load.referenceNumber}</div>
                             <div className="text-muted-foreground text-sm">
-                              {formatDate(load.pickupDate)} -{' '}
-                              {formatDate(load.deliveryDate)}
+                              {formatDate(load.pickupDate)} - {formatDate(load.deliveryDate)}
                             </div>
                           </div>
                           <Badge className={getLoadStatusColor(load.status)}>
@@ -591,15 +549,13 @@ export function VehicleDetailsDialog({
                         <div className="mt-2 flex items-center gap-2 text-sm">
                           <MapPin className="text-muted-foreground h-4 w-4" />
                           <span>
-                            {load.originCity}, {load.originState} to{' '}
-                            {load.destinationCity}, {load.destinationState}
+                            {load.originCity}, {load.originState} to {load.destinationCity},{' '}
+                            {load.destinationState}
                           </span>
                         </div>
                         {load.driver && (
                           <div className="mt-2 text-sm">
-                            <span className="text-muted-foreground">
-                              Driver:{' '}
-                            </span>
+                            <span className="text-muted-foreground">Driver: </span>
                             <span>
                               {load.driver.firstName} {load.driver.lastName}
                             </span>
@@ -627,13 +583,13 @@ export function VehicleDetailsDialog({
 
         <DialogFooter className="flex items-center justify-between">
           <div className="flex gap-2">
-            <Button 
+            <Button
               asChild
               className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
             >
               <Link href={`/vehicles/${vehicle.id}/edit`}>Edit Vehicle</Link>
             </Button>
-            <Button 
+            <Button
               onClick={() => onOpenChange(false)}
               className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
             >

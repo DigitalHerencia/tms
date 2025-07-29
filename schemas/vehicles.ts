@@ -6,7 +6,6 @@
 import { z } from 'zod';
 
 export const VehicleFormSchema = z.object({
-
   make: z.string().min(1, 'Make is required').max(50, 'Make is too long'),
   model: z.string().min(1, 'Model is required').max(50, 'Model is too long'),
   year: z
@@ -36,26 +35,14 @@ export const VehicleFormSchema = z.object({
   engineType: z.string().max(50, 'Engine type is too long').optional(),
 
   // Registration & Insurance
-  registrationNumber: z
-    .string()
-    .max(50, 'Registration number is too long')
-    .optional(),
+  registrationNumber: z.string().max(50, 'Registration number is too long').optional(),
   registrationExpiry: z.string().optional(),
-  insuranceProvider: z
-    .string()
-    .max(100, 'Insurance provider name is too long')
-    .optional(),
-  insurancePolicyNumber: z
-    .string()
-    .max(50, 'Insurance policy number is too long')
-    .optional(),
+  insuranceProvider: z.string().max(100, 'Insurance provider name is too long').optional(),
+  insurancePolicyNumber: z.string().max(50, 'Insurance policy number is too long').optional(),
   insuranceExpiry: z.string().optional(),
 
   // Location & Mileage
-  currentLocation: z
-    .string()
-    .max(200, 'Current location is too long')
-    .optional(),
+  currentLocation: z.string().max(200, 'Current location is too long').optional(),
   totalMileage: z
     .number()
     .min(0, 'Total mileage cannot be negative')
@@ -71,20 +58,10 @@ export const VehicleFormSchema = z.object({
     .optional(),
 });
 
-
-
 export const VehicleMaintenanceSchema = z.object({
-
-  description: z
-    .string()
-    .min(1, 'Description is required')
-    .max(500, 'Description is too long'),
+  description: z.string().min(1, 'Description is required').max(500, 'Description is too long'),
   performedBy: z.string().max(100, 'Performed by is too long').optional(),
-  cost: z
-    .number()
-    .min(0, 'Cost cannot be negative')
-    .max(999999.99, 'Cost is too large')
-    .optional(),
+  cost: z.number().min(0, 'Cost cannot be negative').max(999999.99, 'Cost is too large').optional(),
   mileageAtService: z
     .number()
     .min(0, 'Mileage at service cannot be negative')
@@ -109,9 +86,7 @@ export const VehicleMaintenanceSchema = z.object({
 export const VehicleFiltersSchema = z.object({
   search: z.string().optional(),
   type: z.enum(['tractor', 'trailer', 'straight_truck', 'other']).optional(),
-  status: z
-    .enum(['active', 'inactive', 'maintenance', 'decommissioned'])
-    .optional(),
+  status: z.enum(['active', 'inactive', 'maintenance', 'decommissioned']).optional(),
   make: z.string().optional(),
   model: z.string().optional(),
   year: z.number().optional(),

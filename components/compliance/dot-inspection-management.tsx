@@ -8,6 +8,6 @@ interface Props {
 
 export async function DOTInspectionManagement({ orgId }: Props) {
   const result = await getDOTInspections(orgId);
-  const inspections = (result as any).success ? (result as any).data as DOTInspection[] : [];
+  const inspections = (result as any).success ? ((result as any).data as DOTInspection[]) : [];
   return <DOTInspectionManagementClient orgId={orgId} initialInspections={inspections} />;
 }

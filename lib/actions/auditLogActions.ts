@@ -1,6 +1,6 @@
 'use server';
 
-import { z } from 'zod';
+import type { z } from 'zod';
 
 import db from '../database/db';
 import { auditLogSchema } from '@/schemas/auditLogSchema';
@@ -24,11 +24,7 @@ export async function createAuditLog(data: z.infer<typeof auditLogSchema>) {
   });
 }
 
-export async function getAuditLogs(
-  organizationId: string,
-  entityType?: string,
-  entityId?: string
-) {
+export async function getAuditLogs(organizationId: string, entityType?: string, entityId?: string) {
   return db.auditLog.findMany({
     where: {
       organizationId,

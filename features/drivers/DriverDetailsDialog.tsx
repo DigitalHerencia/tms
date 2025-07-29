@@ -26,24 +26,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { formatDate } from '@/lib/utils/utils';
-import {
-  DocumentUpload,
-  DocumentListEmpty,
-} from '@/components/shared/DocumentUpload';
+import { DocumentUpload, DocumentListEmpty } from '@/components/shared/DocumentUpload';
 import { updateDriverStatusAction } from '@/lib/actions/driverActions';
 import type { DriverStatus } from '@/types/drivers';
 import { toast } from '@/hooks/use-toast';
 import type { Driver } from '@/types/drivers';
-
 
 interface Load {
   id: string;
@@ -93,7 +83,7 @@ export function DriverDetailsDialog({
 
   const handleStatusUpdate = async (newStatus: string) => {
     setIsUpdatingStatus(true);
-    
+
     try {
       const result = await updateDriverStatusAction(driver.id, {
         status: newStatus as DriverStatus,
@@ -192,16 +182,24 @@ export function DriverDetailsDialog({
               </Badge>
             </div>
           </div>
-          
+
           {/* Quick Action Buttons */}
           <div className="flex gap-2 pt-2 border-t border-white/10">
-            <Button variant="default" asChild className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+            <Button
+              variant="default"
+              asChild
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+            >
               <Link href={`/${orgId}/drivers/${driver.id}`}>
                 <BarChart3 className="h-4 w-4" />
                 View Dashboard
               </Link>
             </Button>
-            <Button variant="outline" asChild className="flex items-center gap-2 border-blue-500 text-blue-400 hover:bg-blue-500/10">
+            <Button
+              variant="outline"
+              asChild
+              className="flex items-center gap-2 border-blue-500 text-blue-400 hover:bg-blue-500/10"
+            >
               <Link href={`/${orgId}/drivers/${driver.id}/edit`}>
                 <Edit className="h-4 w-4" />
                 Edit Profile
@@ -265,161 +263,157 @@ export function DriverDetailsDialog({
                       {driver.hireDate && (
                         <div className="flex items-center gap-2">
                           <Calendar className="text-white/70 h-4 w-4" />
-                          <span className="text-white">Hire Date: {formatDate(driver.hireDate)}</span>
+                          <span className="text-white">
+                            Hire Date: {formatDate(driver.hireDate)}
+                          </span>
                         </div>
                       )}
                       {driver.terminationDate && (
                         <div className="flex items-center gap-2">
                           <Calendar className="text-white/70 h-4 w-4" />
-                        <span>
-                          Termination Date: {formatDate(driver.terminationDate)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-black border border-white/10">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-white">License Information</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-6">
-                  <div className="space-y-2">
-                    {driver.cdlNumber && (
-                      <div className="flex items-center gap-2">
-                        <FileText className="text-white/70 h-4 w-4" />
-                        <span className="text-white">
-                          License: {driver.cdlNumber} ({driver.licenseState}
-                          )
-                        </span>
-                      </div>
-                    )}
-                    {driver.licenseExpiration && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="text-white/70 h-4 w-4" />
-                        <span className="text-white">
-                          Expiration: {formatDate(driver.licenseExpiration)}
-                          {isLicenseExpiringSoon && (
-                            <Badge
-                              variant="outline"
-                              className="ml-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                            >
-                              Expiring Soon
-                            </Badge>
-                          )}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-black border border-white/10">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-white">Medical Information</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-6">
-                  <div className="space-y-2">
-                    {driver.medicalCardExpiration && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="text-white/70 h-4 w-4" />
-                        <span className="text-white">
-                          Medical Card Expiration:{' '}
-                          {formatDate(driver.medicalCardExpiration)}
-                          {isMedicalCardExpiringSoon && (
-                            <Badge
-                              variant="outline"
-                              className="ml-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                            >
-                              Expiring Soon
-                            </Badge>
-                          )}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {driver.notes && (
-                <Card className="md:col-span-2 bg-black border border-white/10">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-white">Notes</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6 space-y-6">
-                    <p className="text-white">{driver.notes}</p>
+                          <span>Termination Date: {formatDate(driver.terminationDate)}</span>
+                        </div>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
-              )}
+
+                <Card className="bg-black border border-white/10">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-white">License Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="space-y-2">
+                      {driver.cdlNumber && (
+                        <div className="flex items-center gap-2">
+                          <FileText className="text-white/70 h-4 w-4" />
+                          <span className="text-white">
+                            License: {driver.cdlNumber} ({driver.licenseState})
+                          </span>
+                        </div>
+                      )}
+                      {driver.licenseExpiration && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="text-white/70 h-4 w-4" />
+                          <span className="text-white">
+                            Expiration: {formatDate(driver.licenseExpiration)}
+                            {isLicenseExpiringSoon && (
+                              <Badge
+                                variant="outline"
+                                className="ml-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                              >
+                                Expiring Soon
+                              </Badge>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-black border border-white/10">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-white">Medical Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-6">
+                    <div className="space-y-2">
+                      {driver.medicalCardExpiration && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="text-white/70 h-4 w-4" />
+                          <span className="text-white">
+                            Medical Card Expiration: {formatDate(driver.medicalCardExpiration)}
+                            {isMedicalCardExpiringSoon && (
+                              <Badge
+                                variant="outline"
+                                className="ml-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                              >
+                                Expiring Soon
+                              </Badge>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {driver.notes && (
+                  <Card className="md:col-span-2 bg-black border border-white/10">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm text-white">Notes</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 space-y-6">
+                      <p className="text-white">{driver.notes}</p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </TabsContent>
 
-          <TabsContent value="loads" className="mt-6 space-y-6">
-            <Card className="bg-black border border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white">Recent Loads</CardTitle>
-                <CardDescription className="text-white/70">
-                  Recent and upcoming loads assigned to this driver
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 space-y-6">
-                {recentLoads.length > 0 ? (
-                  <div className="space-y-4">
-                    {recentLoads.map(load => (
-                      <div key={load.id} className="rounded-md border border-white/10 bg-white/5 p-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="font-medium text-white">
-                              {load.referenceNumber}
+            <TabsContent value="loads" className="mt-6 space-y-6">
+              <Card className="bg-black border border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">Recent Loads</CardTitle>
+                  <CardDescription className="text-white/70">
+                    Recent and upcoming loads assigned to this driver
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6">
+                  {recentLoads.length > 0 ? (
+                    <div className="space-y-4">
+                      {recentLoads.map((load) => (
+                        <div
+                          key={load.id}
+                          className="rounded-md border border-white/10 bg-white/5 p-4"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="font-medium text-white">{load.referenceNumber}</div>
+                              <div className="text-white/70 text-sm">
+                                {formatDate(load.pickupDate)} - {formatDate(load.deliveryDate)}
+                              </div>
                             </div>
-                            <div className="text-white/70 text-sm">
-                              {formatDate(load.pickupDate)} -{' '}
-                              {formatDate(load.deliveryDate)}
-                            </div>
+                            <Badge className={getLoadStatusColor(load.status)}>
+                              {load.status.replace('_', ' ')}
+                            </Badge>
                           </div>
-                          <Badge className={getLoadStatusColor(load.status)}>
-                            {load.status.replace('_', ' ')}
-                          </Badge>
+                          <div className="mt-2 flex items-center gap-2 text-sm">
+                            <MapPin className="text-white/70 h-4 w-4" />
+                            <span className="text-white">
+                              {load.originCity}, {load.originState} to {load.destinationCity},{' '}
+                              {load.destinationState}
+                            </span>
+                          </div>
                         </div>
-                        <div className="mt-2 flex items-center gap-2 text-sm">
-                          <MapPin className="text-white/70 h-4 w-4" />
-                          <span className="text-white">
-                            {load.originCity}, {load.originState} to{' '}
-                            {load.destinationCity}, {load.destinationState}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-white/70 py-8 text-center">
-                    <Truck className="mx-auto mb-2 h-12 w-12 opacity-50" />
-                    <p>No recent loads found</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-white/70 py-8 text-center">
+                      <Truck className="mx-auto mb-2 h-12 w-12 opacity-50" />
+                      <p>No recent loads found</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="documents" className="mt-6 space-y-6">
-            <Card className="bg-black border border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white">Driver Documents</CardTitle>
-                <CardDescription>
-                  Manage documents related to this driver
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <DocumentUpload
-                  label="Upload Document"
-                  description="Add license, medical card, or other documents"
-                />
-                <DocumentListEmpty />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="documents" className="mt-6 space-y-6">
+              <Card className="bg-black border border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">Driver Documents</CardTitle>
+                  <CardDescription>Manage documents related to this driver</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <DocumentUpload
+                    label="Upload Document"
+                    description="Add license, medical card, or other documents"
+                  />
+                  <DocumentListEmpty />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
         <DialogFooter className="flex items-center justify-between pt-4 border-t border-white/10 px-6 pb-6">
@@ -445,16 +439,17 @@ export function DriverDetailsDialog({
             )}
           </div>
           <div className="flex gap-2">
-            <Button 
-              asChild 
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
               <Link href={`/${orgId}/drivers/${driver.id}`}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 View Full Dashboard
               </Link>
             </Button>
-            <Button variant="outline" onClick={onClose} className="border-white/20 text-white hover:bg-white/10">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="border-white/20 text-white hover:bg-white/10"
+            >
               Close
             </Button>
           </div>

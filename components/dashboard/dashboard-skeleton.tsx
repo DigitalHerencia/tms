@@ -46,7 +46,6 @@ export function DashboardSkeleton() {
           </Card>
         ))}
       </div>
-
     </div>
   );
 }

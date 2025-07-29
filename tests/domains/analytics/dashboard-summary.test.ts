@@ -4,7 +4,7 @@ vi.mock('@clerk/nextjs/server', () => ({ auth: () => Promise.resolve({ userId: '
 vi.mock('../../lib/cache/auth-cache', () => ({
   getCachedData: () => null,
   setCachedData: vi.fn(),
-  CACHE_TTL: { DATA: 1000 }
+  CACHE_TTL: { DATA: 1000 },
 }));
 
 // Patch Next.js unstable_cache to avoid missing cache error
@@ -24,7 +24,7 @@ const mockDb = {
   driver: { count: driverCount },
   vehicle: { count: vehicleCount },
   iftaFuelPurchase: { aggregate: fuelAggregate },
-  complianceAlert: { count: complianceCount }
+  complianceAlert: { count: complianceCount },
 };
 
 vi.mock('../../../lib/database/db', () => ({ __esModule: true, default: mockDb }));
@@ -36,8 +36,20 @@ describe('getDashboardSummary', () => {
 
   it('calculates dashboard metrics', async () => {
     loadFindMany.mockResolvedValue([
-      { status: 'delivered', rate: 1000, actualMiles: 500, actualDeliveryDate: '2024-01-05', scheduledDeliveryDate: '2024-01-05' },
-      { status: 'in_transit', rate: 500, actualMiles: 200, actualDeliveryDate: '2024-01-08', scheduledDeliveryDate: '2024-01-07' }
+      {
+        status: 'delivered',
+        rate: 1000,
+        actualMiles: 500,
+        actualDeliveryDate: '2024-01-05',
+        scheduledDeliveryDate: '2024-01-05',
+      },
+      {
+        status: 'in_transit',
+        rate: 500,
+        actualMiles: 200,
+        actualDeliveryDate: '2024-01-08',
+        scheduledDeliveryDate: '2024-01-07',
+      },
     ]);
     driverCount.mockResolvedValue(1);
     vehicleCount

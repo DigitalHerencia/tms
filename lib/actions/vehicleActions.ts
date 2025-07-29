@@ -1,4 +1,4 @@
-"use server";
+'use server';
 
 // --- IMPORTANT ENUM SYNC ---
 // When updating VehicleStatus or VehicleType:
@@ -11,21 +11,13 @@ import { auth } from '@clerk/nextjs/server';
 
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import {
-  VehicleFormSchema,
-} from '@/schemas/vehicles';
-import type {
-  Vehicle,
-  VehicleActionResult,
-  VehicleStatus,
-  VehicleType,
-} from '@/types/vehicles';
+import { VehicleFormSchema } from '@/schemas/vehicles';
+import type { Vehicle, VehicleActionResult, VehicleStatus, VehicleType } from '@/types/vehicles';
 import type { JsonValue } from '@prisma/client/runtime/library';
-
 
 export async function createVehicleAction(
   _prevState: VehicleActionResult | null, // Added prevState for useActionState
-  formData: FormData // Changed to FormData for useActionState
+  formData: FormData, // Changed to FormData for useActionState
 ): Promise<VehicleActionResult> {
   try {
     const { userId, orgId: currentOrgId } = await auth(); // Get orgId from auth
@@ -81,23 +73,32 @@ export async function createVehicleAction(
       // Ensure numeric fields are numbers or undefined
       year: validatedData.year ? Number(validatedData.year) : new Date().getFullYear(),
       totalMileage: validatedData.totalMileage ? Number(validatedData.totalMileage) : undefined,
-      nextMaintenanceMileage: validatedData.nextMaintenanceMileage ? Number(validatedData.nextMaintenanceMileage) : undefined,
-      grossVehicleWeight: validatedData.grossVehicleWeight ? Number(validatedData.grossVehicleWeight) : undefined,
+      nextMaintenanceMileage: validatedData.nextMaintenanceMileage
+        ? Number(validatedData.nextMaintenanceMileage)
+        : undefined,
+      grossVehicleWeight: validatedData.grossVehicleWeight
+        ? Number(validatedData.grossVehicleWeight)
+        : undefined,
       maxPayload: validatedData.maxPayload ? Number(validatedData.maxPayload) : undefined,
     };
     const vehicle = await db.vehicle.create({ data: vehicleData as any }); // Use 'as any' for now, refine Prisma types later
 
     revalidatePath(`/${currentOrgId}/vehicles`);
-    return { success: true,  data: true };
+    return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Create Vehicle');
-    return { success: false, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
+    return {
+      success: false,
+      error: result.error,
+      fieldErrors: (result as any).fieldErrors,
+      data: false,
+    };
   }
 }
 
 export async function updateVehicleAction(
   prevState: VehicleActionResult | null, // Added prevState for useActionState
-  formData: FormData // Changed to FormData for useActionState
+  formData: FormData, // Changed to FormData for useActionState
 ): Promise<VehicleActionResult> {
   try {
     const { userId, orgId: currentOrgId } = await auth();
@@ -117,7 +118,11 @@ export async function updateVehicleAction(
     });
 
     if (!existingVehicle) {
-      return { success: false, error: 'Vehicle not found or you do not have permission to edit it.', data: false };
+      return {
+        success: false,
+        error: 'Vehicle not found or you do not have permission to edit it.',
+        data: false,
+      };
     }
 
     // Extract data from FormData
@@ -169,8 +174,12 @@ export async function updateVehicleAction(
       // Ensure numeric fields are numbers or undefined
       year: validatedData.year ? Number(validatedData.year) : new Date().getFullYear(),
       totalMileage: validatedData.totalMileage ? Number(validatedData.totalMileage) : undefined,
-      nextMaintenanceMileage: validatedData.nextMaintenanceMileage ? Number(validatedData.nextMaintenanceMileage) : undefined,
-      grossVehicleWeight: validatedData.grossVehicleWeight ? Number(validatedData.grossVehicleWeight) : undefined,
+      nextMaintenanceMileage: validatedData.nextMaintenanceMileage
+        ? Number(validatedData.nextMaintenanceMileage)
+        : undefined,
+      grossVehicleWeight: validatedData.grossVehicleWeight
+        ? Number(validatedData.grossVehicleWeight)
+        : undefined,
       maxPayload: validatedData.maxPayload ? Number(validatedData.maxPayload) : undefined,
     };
 
@@ -180,18 +189,22 @@ export async function updateVehicleAction(
     });
 
     revalidatePath(`/${existingVehicle.organizationId}/vehicles`);
-    revalidatePath(
-      `/${existingVehicle.organizationId}/vehicles/${vehicleId}`
-    );
+    revalidatePath(`/${existingVehicle.organizationId}/vehicles/${vehicleId}`);
     return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Update Vehicle');
-    return { success: false, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
+    return {
+      success: false,
+      error: result.error,
+      fieldErrors: (result as any).fieldErrors,
+      data: false,
+    };
   }
 }
 
 export async function updateVehicleStatusAction(
-vehicleId: string, p0: { status: VehicleStatus; },
+  vehicleId: string,
+  p0: { status: VehicleStatus },
 ): Promise<VehicleActionResult> {
   try {
     const { userId } = await auth();
@@ -216,28 +229,27 @@ vehicleId: string, p0: { status: VehicleStatus; },
       return { success: false, error: 'Vehicle not found', data: false };
     }
 
-
     // Update status and notes
     const updatedVehicle = await db.vehicle.update({
       where: { id: vehicleId },
-      data: {
-      },
+      data: {},
     });
 
     revalidatePath(`/${existingVehicle.organizationId}/vehicles`);
-    revalidatePath(
-      `/${existingVehicle.organizationId}/vehicles/${vehicleId}`
-    );
+    revalidatePath(`/${existingVehicle.organizationId}/vehicles/${vehicleId}`);
     return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Update Vehicle Status');
-    return { success: result.success, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
+    return {
+      success: result.success,
+      error: result.error,
+      fieldErrors: (result as any).fieldErrors,
+      data: false,
+    };
   }
 }
 
-export async function deleteVehicleAction(
-  vehicleId: string
-): Promise<VehicleActionResult> {
+export async function deleteVehicleAction(vehicleId: string): Promise<VehicleActionResult> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -262,13 +274,18 @@ export async function deleteVehicleAction(
     return { success: true, data: true };
   } catch (error) {
     const result = handleError(error, 'Delete Vehicle');
-    return { success: result.success, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
+    return {
+      success: result.success,
+      error: result.error,
+      fieldErrors: (result as any).fieldErrors,
+      data: false,
+    };
   }
 }
 
 export async function assignVehicleToDriverAction(
   vehicleId: string,
-  driverId: string
+  driverId: string,
 ): Promise<VehicleActionResult> {
   try {
     const { userId } = await auth();
@@ -307,15 +324,13 @@ export async function assignVehicleToDriverAction(
         destinationCity: '',
         destinationState: '',
         destinationZip: '',
-        createdBy: userId,        // <-- FIX: Add required field
-        lastModifiedBy: userId,   // <-- FIX: Add required field
+        createdBy: userId, // <-- FIX: Add required field
+        lastModifiedBy: userId, // <-- FIX: Add required field
       },
     });
 
     revalidatePath(`/${vehicle.organizationId}/vehicles`);
-    revalidatePath(
-      `/${vehicle.organizationId}/vehicles/${vehicleId}`
-    );
+    revalidatePath(`/${vehicle.organizationId}/vehicles/${vehicleId}`);
 
     // Return the vehicle (not the load)
     const updatedVehicle = await db.vehicle.findUnique({
@@ -327,35 +342,38 @@ export async function assignVehicleToDriverAction(
     };
   } catch (error) {
     const result = handleError(error, 'Assign Vehicle To Driver');
-    return { success: result.success, error: result.error, fieldErrors: (result as any).fieldErrors, data: false };
+    return {
+      success: result.success,
+      error: result.error,
+      fieldErrors: (result as any).fieldErrors,
+      data: false,
+    };
   }
 }
-function toPublicVehicle(
-  updatedVehicle: {
-    id: string;
-    organizationId: string;
-    type: string;
-    status: VehicleStatus;
-    make: string | null;
-    model: string | null;
-    year: number | null;
-    vin: string | null;
-    licensePlate: string | null;
-    licensePlateState: string | null;
-    unitNumber: string;
-    currentOdometer: number | null;
-    lastOdometerUpdate: Date | null;
-    fuelType: string | null;
-    lastInspectionDate: Date | null;
-    insuranceExpiration: Date | null;
-    notes: string | null;
-    customFields: JsonValue | null;
-    createdAt: Date;
-    updatedAt: Date;
-    nextInspectionDue: Date | null;
-    registrationExpiration: Date | null;
-  }
-): Vehicle | undefined {
+function toPublicVehicle(updatedVehicle: {
+  id: string;
+  organizationId: string;
+  type: string;
+  status: VehicleStatus;
+  make: string | null;
+  model: string | null;
+  year: number | null;
+  vin: string | null;
+  licensePlate: string | null;
+  licensePlateState: string | null;
+  unitNumber: string;
+  currentOdometer: number | null;
+  lastOdometerUpdate: Date | null;
+  fuelType: string | null;
+  lastInspectionDate: Date | null;
+  insuranceExpiration: Date | null;
+  notes: string | null;
+  customFields: JsonValue | null;
+  createdAt: Date;
+  updatedAt: Date;
+  nextInspectionDue: Date | null;
+  registrationExpiration: Date | null;
+}): Vehicle | undefined {
   if (!updatedVehicle) return undefined;
 
   const status = updatedVehicle.status as VehicleStatus;
@@ -379,7 +397,7 @@ function toPublicVehicle(
     notes: updatedVehicle.notes ?? '',
     customFields:
       typeof updatedVehicle.customFields === 'object' && updatedVehicle.customFields !== null
-        ? updatedVehicle.customFields as Record<string, any>
+        ? (updatedVehicle.customFields as Record<string, any>)
         : {},
     createdAt: updatedVehicle.createdAt,
     updatedAt: updatedVehicle.updatedAt,
@@ -389,4 +407,3 @@ function toPublicVehicle(
     lastMaintenanceMileage: (updatedVehicle as any).lastMaintenanceMileage ?? undefined,
   };
 }
-

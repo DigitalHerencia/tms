@@ -1,7 +1,12 @@
 // FleetFusion Design System: PageHeader component
-import React from "react";
+import React from 'react';
 
-export function PageHeader({ title, description, action, className = "" }: {
+export function PageHeader({
+  title,
+  description,
+  action,
+  className = '',
+}: {
   title: React.ReactNode;
   description?: React.ReactNode;
   action?: React.ReactNode;
@@ -13,9 +18,7 @@ export function PageHeader({ title, description, action, className = "" }: {
         <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
         {action ? <div>{action}</div> : null}
       </div>
-      {description ? (
-        <p className="text-muted-foreground text-base">{description}</p>
-      ) : null}
+      {description ? <p className="text-muted-foreground text-base">{description}</p> : null}
     </div>
   );
 }

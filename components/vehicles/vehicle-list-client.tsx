@@ -23,15 +23,15 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
-  const filtered = vehicles.filter(v =>
+  const filtered = vehicles.filter((v) =>
     [v.unitNumber || '', v.vin, v.make, v.model]
       .join(' ')
       .toLowerCase()
-      .includes(search.toLowerCase())
+      .includes(search.toLowerCase()),
   );
 
   const handleAdd = (vehicle: Vehicle) => {
-    setVehicles(prev => [...prev, vehicle]);
+    setVehicles((prev) => [...prev, vehicle]);
     setAddDialogOpen(false);
   };
 
@@ -51,10 +51,10 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
             placeholder="Search vehicles..."
             className="pl-8 w-full bg-background border-border text-foreground placeholder:text-muted-foreground"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Button 
+        <Button
           onClick={() => setAddDialogOpen(true)}
           className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
         >
@@ -69,7 +69,7 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
             {search ? 'No vehicles found matching your search.' : 'No vehicles found.'}
           </div>
           {!search && (
-            <Button 
+            <Button
               onClick={() => setAddDialogOpen(true)}
               className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
             >
@@ -80,11 +80,11 @@ export default function VehicleListClient({ orgId, initialVehicles }: Props) {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map(vehicle => (
-            <VehicleCard 
-              key={vehicle.id} 
-              vehicle={vehicle} 
-              onClick={() => handleCardClick(vehicle)} 
+          {filtered.map((vehicle) => (
+            <VehicleCard
+              key={vehicle.id}
+              vehicle={vehicle}
+              onClick={() => handleCardClick(vehicle)}
             />
           ))}
         </div>

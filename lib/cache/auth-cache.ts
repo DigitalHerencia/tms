@@ -9,11 +9,8 @@
  * - Smart cache warming
  */
 
-import {
-  UserContext,
-  ClerkUserMetadata,
-  ClerkOrganizationMetadata,
-} from '@/types/auth';
+import type { UserContext, ClerkOrganizationMetadata } from '@/types/auth';
+import { ClerkUserMetadata } from '@/types/auth';
 
 interface CacheItem<T> {
   data: T;
@@ -57,7 +54,7 @@ class AuthCache {
       () => {
         this.cleanup();
       },
-      2 * 60 * 1000
+      2 * 60 * 1000,
     );
   }
 
@@ -273,11 +270,7 @@ export function getCachedData<T>(key: string): T | null {
 /**
  * Set cached data with specified TTL
  */
-export function setCachedData<T>(
-  key: string,
-  data: T,
-  ttl: number = CACHE_TTL.DATA
-): void {
+export function setCachedData<T>(key: string, data: T, ttl: number = CACHE_TTL.DATA): void {
   dataCache.set(key, {
     data,
     timestamp: Date.now(),
@@ -290,14 +283,14 @@ export function setCachedData<T>(
  */
 export function invalidateCache(
   organizationId: string,
-  type?: 'kpis' | 'loads' | 'vehicles' | 'drivers'
+  type?: 'kpis' | 'loads' | 'vehicles' | 'drivers',
 ): void {
   if (type) {
     // Invalidate specific cache type
     const patterns = [`${type}:${organizationId}:`, `batch:${organizationId}:`];
 
     for (const [key] of dataCache) {
-      if (patterns.some(pattern => key.startsWith(pattern))) {
+      if (patterns.some((pattern) => key.startsWith(pattern))) {
         dataCache.delete(key);
       }
     }

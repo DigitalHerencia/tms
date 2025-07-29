@@ -21,9 +21,9 @@ import {
   Wifi,
   WifiOff,
   Bell,
-  Zap
+  Zap,
 } from 'lucide-react';
-import { DashboardSummary } from '@/types/analytics';
+import type { DashboardSummary } from '@/types/analytics';
 import type { JSX } from 'react/jsx-runtime';
 
 interface RealtimeDashboardProps {
@@ -62,16 +62,18 @@ interface StreamData {
   timestamp: string;
 }
 
-export function RealtimeDashboard({ 
-  orgId, 
-  initial, 
-  timeRange, 
-  driver, 
-  metrics: initialMetrics 
+export function RealtimeDashboard({
+  orgId,
+  initial,
+  timeRange,
+  driver,
+  metrics: initialMetrics,
 }: RealtimeDashboardProps) {
   const [summary, setSummary] = useState(initial);
   const [liveMetrics, setLiveMetrics] = useState<LiveMetrics | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'disconnected'
+  >('connecting');
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [showNotifications, setShowNotifications] = useState(true);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -87,7 +89,7 @@ export function RealtimeDashboard({
     setConnectionStatus('connecting');
     const params = new URLSearchParams({ timeRange });
     if (driver) params.set('driver', driver);
-    
+
     const eventSource = new EventSource(`/api/analytics/${orgId}/stream?${params.toString()}`);
     eventSourceRef.current = eventSource;
 
@@ -109,32 +111,32 @@ export function RealtimeDashboard({
           case 'connected':
             setConnectionStatus('connected');
             break;
-            
+
           case 'metrics_update':
             if (data.data) {
               setLiveMetrics(data.data);
               // Update summary with live data
-              setSummary(prev => ({
+              setSummary((prev) => ({
                 ...prev,
                 totalRevenue: data.data!.totalRevenue,
                 totalLoads: data.data!.totalLoads,
-                activeDrivers: data.data!.activeDrivers
+                activeDrivers: data.data!.activeDrivers,
               }));
             }
             break;
-            
+
           case 'alert':
             if (data.message && showNotifications) {
               const alert: AlertData = {
                 type: 'alert',
                 level: (data.level as 'warning' | 'error' | 'info') || 'info',
                 message: data.message,
-                timestamp: data.timestamp
+                timestamp: data.timestamp,
               };
-              setAlerts(prev => [alert, ...prev].slice(0, 5)); // Keep only last 5 alerts
+              setAlerts((prev) => [alert, ...prev].slice(0, 5)); // Keep only last 5 alerts
             }
             break;
-            
+
           case 'error':
             console.error('Stream error:', data.message);
             break;
@@ -147,7 +149,7 @@ export function RealtimeDashboard({
     eventSource.onerror = () => {
       setConnectionStatus('disconnected');
       eventSource.close();
-      
+
       // Attempt to reconnect after 5 seconds
       reconnectTimeoutRef.current = setTimeout(() => {
         console.log('Attempting to reconnect...');
@@ -158,7 +160,7 @@ export function RealtimeDashboard({
 
   useEffect(() => {
     connectToStream();
-    
+
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -175,7 +177,7 @@ export function RealtimeDashboard({
     return {
       percentage: Math.abs(change).toFixed(1),
       direction: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral',
-      color: change > 0 ? 'text-green-500' : change < 0 ? 'text-red-500' : 'text-gray-500'
+      color: change > 0 ? 'text-green-500' : change < 0 ? 'text-red-500' : 'text-gray-500',
     };
   };
 
@@ -188,7 +190,7 @@ export function RealtimeDashboard({
     onTimeDeliveryRate: 88,
     averageLoadValue: summary.totalRevenue / Math.max(summary.totalLoads, 1),
     profitMargin: 15.5,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   const metrics = [
@@ -198,7 +200,7 @@ export function RealtimeDashboard({
       value: `$${currentMetrics.totalRevenue.toLocaleString()}`,
       change: initialMetrics[0]?.change || '+12.5%',
       trend: calculateTrend(currentMetrics.totalRevenue, summary.totalRevenue * 0.9),
-      status: 'positive'
+      status: 'positive',
     },
     {
       icon: <Truck className="h-4 w-4" />,
@@ -206,7 +208,7 @@ export function RealtimeDashboard({
       value: currentMetrics.totalLoads.toLocaleString(),
       change: initialMetrics[1]?.change || '+8.3%',
       trend: calculateTrend(currentMetrics.totalLoads, summary.totalLoads * 0.95),
-      status: 'positive'
+      status: 'positive',
     },
     {
       icon: <Users className="h-4 w-4" />,
@@ -214,7 +216,7 @@ export function RealtimeDashboard({
       value: currentMetrics.activeDrivers.toLocaleString(),
       change: initialMetrics[2]?.change || '+2.1%',
       trend: calculateTrend(currentMetrics.activeDrivers, summary.activeDrivers * 0.98),
-      status: 'neutral'
+      status: 'neutral',
     },
     {
       icon: <Activity className="h-4 w-4" />,
@@ -222,8 +224,8 @@ export function RealtimeDashboard({
       value: `${currentMetrics.utilizationRate.toFixed(1)}%`,
       change: initialMetrics[3]?.change || '-3.2%',
       trend: calculateTrend(currentMetrics.utilizationRate, 78),
-      status: currentMetrics.utilizationRate >= 75 ? 'positive' : 'warning'
-    }
+      status: currentMetrics.utilizationRate >= 75 ? 'positive' : 'warning',
+    },
   ];
 
   const performanceIndicators = [
@@ -233,7 +235,7 @@ export function RealtimeDashboard({
       target: 85,
       unit: '%',
       icon: <Clock className="h-4 w-4" />,
-      status: currentMetrics.onTimeDeliveryRate >= 85 ? 'good' : 'warning'
+      status: currentMetrics.onTimeDeliveryRate >= 85 ? 'good' : 'warning',
     },
     {
       label: 'Average Load Value',
@@ -241,7 +243,7 @@ export function RealtimeDashboard({
       target: 3000,
       unit: '$',
       icon: <DollarSign className="h-4 w-4" />,
-      status: currentMetrics.averageLoadValue >= 3000 ? 'good' : 'warning'
+      status: currentMetrics.averageLoadValue >= 3000 ? 'good' : 'warning',
     },
     {
       label: 'Profit Margin',
@@ -249,8 +251,8 @@ export function RealtimeDashboard({
       target: 15,
       unit: '%',
       icon: <TrendingUp className="h-4 w-4" />,
-      status: currentMetrics.profitMargin >= 15 ? 'good' : 'warning'
-    }
+      status: currentMetrics.profitMargin >= 15 ? 'good' : 'warning',
+    },
   ];
 
   return (
@@ -263,7 +265,7 @@ export function RealtimeDashboard({
           ) : connectionStatus === 'connecting' ? (
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             >
               <Activity className="h-4 w-4 text-blue-500" />
             </motion.div>
@@ -271,9 +273,11 @@ export function RealtimeDashboard({
             <WifiOff className="h-4 w-4 text-red-500" />
           )}
           <span className="text-sm">
-            {connectionStatus === 'connected' ? 'Live' : 
-             connectionStatus === 'connecting' ? 'Connecting...' : 
-             'Disconnected'}
+            {connectionStatus === 'connected'
+              ? 'Live'
+              : connectionStatus === 'connecting'
+                ? 'Connecting...'
+                : 'Disconnected'}
           </span>
           {connectionStatus === 'connected' && (
             <Badge variant="outline" className="text-xs">
@@ -281,7 +285,7 @@ export function RealtimeDashboard({
             </Badge>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -312,11 +316,15 @@ export function RealtimeDashboard({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className={`relative overflow-hidden ${
-              metric.status === 'positive' ? 'border-green-200 dark:border-green-800' :
-              metric.status === 'warning' ? 'border-yellow-200 dark:border-yellow-800' :
-              'border-gray-200 dark:border-gray-700'
-            }`}>
+            <Card
+              className={`relative overflow-hidden ${
+                metric.status === 'positive'
+                  ? 'border-green-200 dark:border-green-800'
+                  : metric.status === 'warning'
+                    ? 'border-yellow-200 dark:border-yellow-800'
+                    : 'border-gray-200 dark:border-gray-700'
+              }`}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -331,7 +339,7 @@ export function RealtimeDashboard({
                     />
                   )}
                 </div>
-                
+
                 <div className="mt-2 flex items-end justify-between">
                   <div className="text-2xl font-bold">{metric.value}</div>
                   <div className={`flex items-center gap-1 text-sm ${metric.trend.color}`}>
@@ -345,18 +353,22 @@ export function RealtimeDashboard({
                     {metric.trend.percentage}%
                   </div>
                 </div>
-                
+
                 {/* Animated progress bar for real-time feel */}
                 <div className="mt-2 h-1 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
                   <motion.div
                     className={`h-full ${
-                      metric.status === 'positive' ? 'bg-green-500' :
-                      metric.status === 'warning' ? 'bg-yellow-500' :
-                      'bg-gray-500'
+                      metric.status === 'positive'
+                        ? 'bg-green-500'
+                        : metric.status === 'warning'
+                          ? 'bg-yellow-500'
+                          : 'bg-gray-500'
                     }`}
                     initial={{ width: '0%' }}
-                    animate={{ width: `${Math.min(100, Math.max(10, parseFloat(metric.trend.percentage)))}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
+                    animate={{
+                      width: `${Math.min(100, Math.max(10, parseFloat(metric.trend.percentage)))}%`,
+                    }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
                   />
                 </div>
               </CardContent>
@@ -388,14 +400,17 @@ export function RealtimeDashboard({
                   <div>
                     <p className="font-medium text-sm">{indicator.label}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      Target: {indicator.target}{indicator.unit}
+                      Target: {indicator.target}
+                      {indicator.unit}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold">
-                    {indicator.unit === '$' ? '$' : ''}{indicator.value.toLocaleString()}{indicator.unit !== '$' ? indicator.unit : ''}
+                    {indicator.unit === '$' ? '$' : ''}
+                    {indicator.value.toLocaleString()}
+                    {indicator.unit !== '$' ? indicator.unit : ''}
                   </span>
                   {indicator.status === 'good' ? (
                     <CheckCircle className="h-4 w-4 text-green-500" />
@@ -430,11 +445,15 @@ export function RealtimeDashboard({
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Alert className={
-                  alert.level === 'error' ? 'border-red-200 dark:border-red-800' :
-                  alert.level === 'warning' ? 'border-yellow-200 dark:border-yellow-800' :
-                  'border-blue-200 dark:border-blue-800'
-                }>
+                <Alert
+                  className={
+                    alert.level === 'error'
+                      ? 'border-red-200 dark:border-red-800'
+                      : alert.level === 'warning'
+                        ? 'border-yellow-200 dark:border-yellow-800'
+                        : 'border-blue-200 dark:border-blue-800'
+                  }
+                >
                   {alert.level === 'error' ? (
                     <XCircle className="h-4 w-4 text-red-500" />
                   ) : alert.level === 'warning' ? (

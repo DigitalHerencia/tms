@@ -1,6 +1,3 @@
-
-
-
 export const usageInfoSchema = z.object({
   users: z.number().min(0),
   maxUsers: z.number().min(1),

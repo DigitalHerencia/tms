@@ -58,7 +58,9 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
   };
 }
 
-export async function getNotificationSettings(userId: string): Promise<NotificationSettings | null> {
+export async function getNotificationSettings(
+  userId: string,
+): Promise<NotificationSettings | null> {
   const { userId: sessionUser } = await auth();
   if (!sessionUser || sessionUser !== userId) return null;
   const user = await db.user.findUnique({ where: { id: userId } });
@@ -92,7 +94,7 @@ export async function getSettingsAuditLog(orgId: string): Promise<SettingsAuditL
     where: { organizationId: orgId, entityType: 'settings' },
     orderBy: { timestamp: 'desc' },
   });
-  return logs.map(l => ({
+  return logs.map((l) => ({
     id: l.id,
     orgId: l.organizationId,
     userId: l.userId || '',

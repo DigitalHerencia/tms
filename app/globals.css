@@ -1,93 +1,93 @@
-@import "tailwindcss";
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import 'tailwindcss';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
 @layer theme, base, components, utilities;
 
 @theme {
-    --color-background: 240 10% 3.9%;
-    --color-background-soft: 240 10% 10%;
-    --color-background-muted: 240 5% 15%;
+  --color-background: 240 10% 3.9%;
+  --color-background-soft: 240 10% 10%;
+  --color-background-muted: 240 5% 15%;
 
-    --color-foreground: 0 0% 98%;
-    --color-foreground-muted: 0 0% 63.9%;
-    --color-foreground-subtle: 0 0% 40%;
+  --color-foreground: 0 0% 98%;
+  --color-foreground-muted: 0 0% 63.9%;
+  --color-foreground-subtle: 0 0% 40%;
 
-    --color-primary: 217 91% 60%;
-    --color-primary-foreground: 0 0% 100%;
+  --color-primary: 217 91% 60%;
+  --color-primary-foreground: 0 0% 100%;
 
-    --color-secondary: 240 5% 25%;
-    --color-secondary-foreground: 0 0% 98%;
+  --color-secondary: 240 5% 25%;
+  --color-secondary-foreground: 0 0% 98%;
 
-    --color-accent: 190 80% 50%;
-    --color-accent-foreground: 240 10% 3.9%;
+  --color-accent: 190 80% 50%;
+  --color-accent-foreground: 240 10% 3.9%;
 
-    --color-destructive: 0 70% 50%;
-    --color-destructive-foreground: 0 0% 100%;
+  --color-destructive: 0 70% 50%;
+  --color-destructive-foreground: 0 0% 100%;
 
-    --color-success: 140 60% 45%;
-    --color-success-foreground: 0 0% 100%;
+  --color-success: 140 60% 45%;
+  --color-success-foreground: 0 0% 100%;
 
-    --color-warning: 45 90% 50%;
-    --color-warning-foreground: 240 10% 3.9%;
+  --color-warning: 45 90% 50%;
+  --color-warning-foreground: 240 10% 3.9%;
 
-    --color-muted: 240 5% 15%;
-    --color-muted-foreground: 0 0% 63.9%;
+  --color-muted: 240 5% 15%;
+  --color-muted-foreground: 0 0% 63.9%;
 
-    --color-border: 240 4% 20%;
-    --color-ring: 217 91% 65%;
+  --color-border: 240 4% 20%;
+  --color-ring: 217 91% 65%;
 
-    --color-input: 240 5% 18%;
+  --color-input: 240 5% 18%;
 
-    --color-card: 240 8% 12%;
-    --color-card-foreground: 0 0% 98%;
+  --color-card: 240 8% 12%;
+  --color-card-foreground: 0 0% 98%;
 
-    --color-popover: 240 10% 8%;
-    --color-popover-foreground: 0 0% 98%;
+  --color-popover: 240 10% 8%;
+  --color-popover-foreground: 0 0% 98%;
 
-    --color-chart-1: 221 83% 53%;
-    --color-chart-2: 162 70% 51%;
-    --color-chart-3: 41 97% 56%;
-    --color-chart-4: 340 82% 52%;
-    --color-chart-5: 271 91% 65%;
+  --color-chart-1: 221 83% 53%;
+  --color-chart-2: 162 70% 51%;
+  --color-chart-3: 41 97% 56%;
+  --color-chart-4: 340 82% 52%;
+  --color-chart-5: 271 91% 65%;
 
-    /* Sidebar colors */
-    --color-sidebar: 240 8% 12%;
-    --color-sidebar-foreground: 0 0% 98%;
-    --color-sidebar-border: 240 4% 20%;
-    --color-sidebar-accent: 240 5% 18%;
-    --color-sidebar-accent-foreground: 0 0% 98%;
-    --color-sidebar-ring: 217 91% 65%;
+  /* Sidebar colors */
+  --color-sidebar: 240 8% 12%;
+  --color-sidebar-foreground: 0 0% 98%;
+  --color-sidebar-border: 240 4% 20%;
+  --color-sidebar-accent: 240 5% 18%;
+  --color-sidebar-accent-foreground: 0 0% 98%;
+  --color-sidebar-ring: 217 91% 65%;
 
-    /* Border radius */
-    --radius-lg: 1rem;
-    --radius-md: 0.5rem;
-    --radius-sm: 0.25rem;
-    --radius-full: 9999px;
+  /* Border radius */
+  --radius-lg: 1rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-full: 9999px;
 
-    /* Box shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(240 10% 3.9% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(240 10% 3.9% / 0.1), 0 2px 4px -2px hsl(240 10% 3.9% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(240 10% 3.9% / 0.1), 0 4px 6px -4px hsl(240 10% 3.9% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(240 10% 3.9% / 0.1), 0 8px 10px -6px hsl(240 10% 3.9% / 0.1);
+  /* Box shadows */
+  --shadow-sm: 0 1px 2px 0 hsl(240 10% 3.9% / 0.05);
+  --shadow-md: 0 4px 6px -1px hsl(240 10% 3.9% / 0.1), 0 2px 4px -2px hsl(240 10% 3.9% / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(240 10% 3.9% / 0.1), 0 4px 6px -4px hsl(240 10% 3.9% / 0.1);
+  --shadow-xl: 0 20px 25px -5px hsl(240 10% 3.9% / 0.1), 0 8px 10px -6px hsl(240 10% 3.9% / 0.1);
 }
 
 /* Clerk CAPTCHA styling */
 .clerk-captcha-container {
-    margin: 0.5rem 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 78px; /* Standard CAPTCHA height */
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 78px; /* Standard CAPTCHA height */
 }
 
 /* Ensure Clerk CAPTCHA iframe is styled correctly */
 .clerk-captcha-container iframe {
-    border-radius: 4px;
-    border: 1px solid hsl(var(--color-border));
+  border-radius: 4px;
+  border: 1px solid hsl(var(--color-border));
 }
 
 /* Handle invisible CAPTCHA gracefully */
 .clerk-captcha-container:empty {
-    display: none;
+  display: none;
 }

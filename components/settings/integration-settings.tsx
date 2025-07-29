@@ -46,8 +46,7 @@ const realIntegrations = [
   {
     id: 2,
     name: 'QuickBooks',
-    description:
-      'Integrate with QuickBooks to sync invoices, payments, and financial data.',
+    description: 'Integrate with QuickBooks to sync invoices, payments, and financial data.',
     status: 'Connected',
     lastSync: '2023-06-28 09:30 AM',
     icon: '💰',
@@ -85,17 +84,14 @@ export function IntegrationSettings() {
   const [integrations, setIntegrations] = useState(realIntegrations);
 
   const toggleIntegration = (id: number) => {
-    setIntegrations(prev =>
-      prev.map(integration => {
+    setIntegrations((prev) =>
+      prev.map((integration) => {
         if (integration.id === id) {
           // Only allow toggling if the integration is available
           if (integration.available) {
             return {
               ...integration,
-              status:
-                integration.status === 'Connected'
-                  ? 'Not Connected'
-                  : 'Connected',
+              status: integration.status === 'Connected' ? 'Not Connected' : 'Connected',
               lastSync:
                 integration.status === 'Not Connected'
                   ? new Date().toLocaleString()
@@ -104,7 +100,7 @@ export function IntegrationSettings() {
           }
         }
         return integration;
-      })
+      }),
     );
   };
 
@@ -114,9 +110,7 @@ export function IntegrationSettings() {
         return (
           <div className="flex items-center">
             <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-              Connected
-            </Badge>
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Connected</Badge>
           </div>
         );
       case 'Not Connected':
@@ -134,7 +128,7 @@ export function IntegrationSettings() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
-        {integrations.map(integration => (
+        {integrations.map((integration) => (
           <Card
             key={integration.id}
             className={!integration.available ? 'opacity-75 grayscale' : ''}
@@ -176,9 +170,7 @@ export function IntegrationSettings() {
               </div>
               <div className="mt-2 flex justify-between text-sm">
                 <span>Last Sync:</span>
-                <span className="text-muted-foreground">
-                  {integration.lastSync}
-                </span>
+                <span className="text-muted-foreground">{integration.lastSync}</span>
               </div>
             </CardContent>
             <CardFooter>
@@ -204,12 +196,10 @@ export function IntegrationSettings() {
       </div>
 
       <div className="rounded-lg border border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
-        <h3 className="mb-2 text-lg font-medium text-blue-800">
-          Integration Roadmap
-        </h3>
+        <h3 className="mb-2 text-lg font-medium text-blue-800">Integration Roadmap</h3>
         <p className="mb-3 text-blue-700">
-          We're constantly expanding our integration capabilities. Have a
-          specific integration request?
+          We're constantly expanding our integration capabilities. Have a specific integration
+          request?
         </p>
         <Button variant="outline" className="bg-white hover:bg-blue-50">
           Request Integration

@@ -3,11 +3,11 @@
 import db, { handleDatabaseError } from '@/lib/database/db';
 import type { OnboardingStatus } from '@/types/onboarding';
 
-import { SystemRole } from './../../types/abac';
+import type { SystemRole } from './../../types/abac';
 
 export async function getOnboardingStatus(
   userId: string,
-  orgId?: string
+  orgId?: string,
 ): Promise<OnboardingStatus | null> {
   try {
     const dbUser = await db.user.findUnique({

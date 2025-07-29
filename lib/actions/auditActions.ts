@@ -29,7 +29,7 @@ export async function logAuditEvent(
   resourceId?: string,
   metadata: MetadataRecord = {},
   ipAddress?: string,
-  userAgent?: string
+  userAgent?: string,
 ) {
   try {
     const { userId, orgId } = await auth();
@@ -56,7 +56,7 @@ export async function getAuditLogs(
   pagination: {
     page?: number;
     limit?: number;
-  } = {}
+  } = {},
 ) {
   try {
     const { userId, orgId } = await auth();
@@ -132,7 +132,7 @@ export async function logDriverAction(
   entityId: any,
   id: string,
   details: any,
-  p2: { driverName: string; cdlNumber: string | null; email: string | null }
+  p2: { driverName: string; cdlNumber: string | null; email: string | null },
 ) {
   return logAuditEvent(action, 'driver', driverId, metadata);
 }
@@ -143,7 +143,7 @@ export async function logDriverAction(
 export async function logVehicleAction(
   action: string,
   vehicleId: string,
-  metadata: MetadataRecord = {}
+  metadata: MetadataRecord = {},
 ) {
   return logAuditEvent(action, 'vehicle', vehicleId, metadata);
 }
@@ -154,7 +154,7 @@ export async function logVehicleAction(
 export async function logDispatchAction(
   action: string,
   loadId: string,
-  metadata: MetadataRecord = {}
+  metadata: MetadataRecord = {},
 ) {
   return logAuditEvent(action, 'dispatch', loadId, metadata);
 }
@@ -165,7 +165,7 @@ export async function logDispatchAction(
 export async function logComplianceAction(
   action: string,
   resourceId: string,
-  metadata: MetadataRecord = {}
+  metadata: MetadataRecord = {},
 ) {
   return logAuditEvent(action, 'compliance', resourceId, metadata);
 }
@@ -176,7 +176,7 @@ export async function logComplianceAction(
 export async function logIftaAction(
   action: string,
   reportId: string,
-  metadata: MetadataRecord = {}
+  metadata: MetadataRecord = {},
 ) {
   return logAuditEvent(action, 'ifta', reportId, metadata);
 }
@@ -223,7 +223,7 @@ export async function exportAuditLogs(
     action?: string;
     startDate?: Date;
     endDate?: Date;
-  } = {}
+  } = {},
 ) {
   try {
     const { userId, orgId } = await auth();

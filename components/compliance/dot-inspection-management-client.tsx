@@ -14,16 +14,10 @@ import {
   MoreHorizontal,
   AlertTriangle,
 } from 'lucide-react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -67,11 +61,7 @@ const columns: ColumnDef<DOTInspection>[] = [
     header: 'Type',
     cell: ({ row }) => {
       const type = row.getValue('inspectionType') as string;
-      return (
-        <Badge variant="outline">
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-        </Badge>
-      );
+      return <Badge variant="outline">{type.charAt(0).toUpperCase() + type.slice(1)}</Badge>;
     },
   },
   {
@@ -85,7 +75,7 @@ const columns: ColumnDef<DOTInspection>[] = [
         overdue: 'bg-red-100 text-red-800 hover:bg-red-100',
         failed: 'bg-orange-100 text-orange-800 hover:bg-orange-100',
       };
-      
+
       return (
         <Badge className={variants[status as keyof typeof variants]}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -123,8 +113,9 @@ const columns: ColumnDef<DOTInspection>[] = [
     cell: ({ row }) => {
       const score = row.getValue('score') as number | undefined;
       if (!score) return <span className="text-muted-foreground">-</span>;
-      
-      const color = score >= 90 ? 'text-green-600' : score >= 70 ? 'text-yellow-600' : 'text-red-600';
+
+      const color =
+        score >= 90 ? 'text-green-600' : score >= 70 ? 'text-yellow-600' : 'text-red-600';
       return <span className={color}>{score}%</span>;
     },
   },
@@ -132,7 +123,7 @@ const columns: ColumnDef<DOTInspection>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const inspection = row.original;
-      
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -163,28 +154,31 @@ const columns: ColumnDef<DOTInspection>[] = [
   },
 ];
 
-export function DOTInspectionManagementClient({ orgId, initialInspections }: DOTInspectionManagementClientProps) {
+export function DOTInspectionManagementClient({
+  orgId,
+  initialInspections,
+}: DOTInspectionManagementClientProps) {
   const [inspections] = useState<DOTInspection[]>(initialInspections);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const filteredInspections = inspections.filter((inspection) => {
-    const matchesSearch = 
+    const matchesSearch =
       inspection.vehicleUnit.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inspection.inspector.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inspection.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || inspection.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
   const stats = {
     total: inspections.length,
-    completed: inspections.filter(i => i.status === 'completed').length,
-    scheduled: inspections.filter(i => i.status === 'scheduled').length,
-    overdue: inspections.filter(i => i.status === 'overdue').length,
-    failed: inspections.filter(i => i.status === 'failed').length,
+    completed: inspections.filter((i) => i.status === 'completed').length,
+    scheduled: inspections.filter((i) => i.status === 'scheduled').length,
+    overdue: inspections.filter((i) => i.status === 'overdue').length,
+    failed: inspections.filter((i) => i.status === 'failed').length,
   };
 
   return (
@@ -206,9 +200,7 @@ export function DOTInspectionManagementClient({ orgId, initialInspections }: DOT
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Schedule New Inspection</DialogTitle>
-              <DialogDescription>
-                Schedule a new DOT inspection for a vehicle.
-              </DialogDescription>
+              <DialogDescription>Schedule a new DOT inspection for a vehicle.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -339,15 +331,11 @@ export function DOTInspectionManagementClient({ orgId, initialInspections }: DOT
       <Card>
         <CardHeader>
           <CardTitle>Inspection Records</CardTitle>
-          <CardDescription>
-            View and manage all vehicle inspections
-          </CardDescription>
+          <CardDescription>View and manage all vehicle inspections</CardDescription>
         </CardHeader>
         <CardContent>
           {filteredInspections.length === 0 ? (
-            <p className="py-12 text-center text-muted-foreground">
-              No inspection records found.
-            </p>
+            <p className="py-12 text-center text-muted-foreground">No inspection records found.</p>
           ) : (
             <DataTable columns={columns} data={filteredInspections} />
           )}

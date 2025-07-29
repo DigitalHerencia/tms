@@ -2,11 +2,8 @@
 
 import React, { useRef, useState } from 'react';
 import { put } from '@vercel/blob/client';
-import type { ComplianceDocument } from "@/types/compliance";
-import {
-  saveUploadedDocument,
-  getSignedUploadToken,
-} from '@/lib/actions/fileUploadActions';
+import type { ComplianceDocument } from '@/types/compliance';
+import { saveUploadedDocument, getSignedUploadToken } from '@/lib/actions/fileUploadActions';
 
 type EntityType = 'driver' | 'vehicle' | 'trailer' | 'company';
 
@@ -46,9 +43,7 @@ export function DocumentUploadForm({
       const tokenRes = await getSignedUploadToken(file.name);
       if (!tokenRes.success || !('token' in tokenRes) || !tokenRes.token) {
         const errMsg =
-          'error' in tokenRes && tokenRes.error
-            ? tokenRes.error
-            : 'Failed to get upload token';
+          'error' in tokenRes && tokenRes.error ? tokenRes.error : 'Failed to get upload token';
         setError(errMsg);
         return;
       }
@@ -70,7 +65,7 @@ export function DocumentUploadForm({
         documentType,
         tags: tags
           .split(',')
-          .map(t => t.trim())
+          .map((t) => t.trim())
           .filter(Boolean),
       });
       if (result.success && 'data' in result) {
@@ -88,7 +83,7 @@ export function DocumentUploadForm({
   }
 
   return (
-    <form className="flex flex-col gap-2" onSubmit={e => e.preventDefault()}>
+    <form className="flex flex-col gap-2" onSubmit={(e) => e.preventDefault()}>
       <input
         ref={fileInputRef}
         type="file"
@@ -100,7 +95,7 @@ export function DocumentUploadForm({
         type="text"
         placeholder="Tags (comma separated)"
         value={tags}
-        onChange={e => setTags(e.target.value)}
+        onChange={(e) => setTags(e.target.value)}
         className="rounded-md border p-2 text-black"
       />
       {uploading && <span>Uploading...</span>}

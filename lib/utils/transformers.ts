@@ -26,7 +26,7 @@ export function transformDriver(raw: any): Driver {
     isActive: raw.isActive ?? true,
     createdBy: raw.createdBy || '',
     createdAt: raw.createdAt || new Date(),
-    updatedAt: raw.updatedAt || new Date()
+    updatedAt: raw.updatedAt || new Date(),
   };
 }
 
@@ -43,7 +43,7 @@ export function transformVehicle(raw: any): Vehicle {
     lastMaintenanceDate: raw.lastMaintenanceDate || null,
     lastMaintenanceMileage: raw.lastMaintenanceMileage || null,
     createdAt: raw.createdAt || new Date(),
-    updatedAt: raw.updatedAt || new Date()
+    updatedAt: raw.updatedAt || new Date(),
   };
 }
 
@@ -80,10 +80,8 @@ export function transformLoad(raw: any): Load | null {
     customer: raw.customer,
     origin,
     destination,
-    pickupDate:
-      raw.scheduledPickupDate ?? raw.actualPickupDate ?? new Date(),
-    deliveryDate:
-      raw.scheduledDeliveryDate ?? raw.actualDeliveryDate ?? new Date(),
+    pickupDate: raw.scheduledPickupDate ?? raw.actualPickupDate ?? new Date(),
+    deliveryDate: raw.scheduledDeliveryDate ?? raw.actualDeliveryDate ?? new Date(),
     equipment: raw.equipment || {},
     driver: raw.drivers ?? raw.driver ?? null,
     driverId: raw.driver_id ?? raw.driverId ?? null,
@@ -95,6 +93,6 @@ export function transformLoad(raw: any): Load | null {
     tags: raw.tags || [],
     createdAt: raw.createdAt || new Date(),
     updatedAt: raw.updatedAt || new Date(),
-    createdById: raw.createdById || ''
+    createdById: raw.createdById || '',
   };
 }

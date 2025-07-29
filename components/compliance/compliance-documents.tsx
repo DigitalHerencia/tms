@@ -1,7 +1,7 @@
 'use client';
 
 import { FileText, Download, Eye, MoreHorizontal } from 'lucide-react';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,11 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { ComplianceDocument } from '@/types/compliance';
-import {
-  DocumentUpload,
-  DocumentListEmpty,
-} from '@/components/shared/DocumentUpload';
+import type { ComplianceDocument } from '@/types/compliance';
+import { DocumentUpload, DocumentListEmpty } from '@/components/shared/DocumentUpload';
 
 // Define the Document type
 interface Document {
@@ -46,20 +43,14 @@ export const columns: ColumnDef<ComplianceDocument>[] = [
     header: 'Type',
     cell: ({ row }) => {
       const type = row.getValue('type') as string;
-      return (
-        <Badge variant={type === 'Required' ? 'default' : 'outline'}>
-          {type}
-        </Badge>
-      );
+      return <Badge variant={type === 'Required' ? 'default' : 'outline'}>{type}</Badge>;
     },
   },
   {
     accessorKey: 'lastUpdated',
     header: 'Last Updated',
     cell: ({ row }) => {
-      return (
-        <div>{new Date(row.getValue('lastUpdated')).toLocaleDateString()}</div>
-      );
+      return <div>{new Date(row.getValue('lastUpdated')).toLocaleDateString()}</div>;
     },
   },
   {
@@ -119,15 +110,11 @@ interface ComplianceDocumentsProps {
 
 // Update the component to accept documents as a prop
 export function ComplianceDocuments({ orgId, documents = [] }: ComplianceDocumentsProps) {
-  
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Compliance Documents</h2>
-        <DocumentUpload
-          label="Upload Document"
-          description="Add compliance documents"
-        />
+        <DocumentUpload label="Upload Document" description="Add compliance documents" />
       </div>
 
       {/* Document list would go here */}
@@ -135,23 +122,17 @@ export function ComplianceDocuments({ orgId, documents = [] }: ComplianceDocumen
         {documents.length === 0 ? (
           <div className="space-y-2">
             <DocumentListEmpty />
-            <div className="text-sm text-muted-foreground">
-              Organization: {orgId}
-            </div>
+            <div className="text-sm text-muted-foreground">Organization: {orgId}</div>
           </div>
         ) : (
-          documents.map(doc => (
-            <div
-              key={doc.id}
-              className="flex items-center justify-between rounded-md border p-4"
-            >
+          documents.map((doc) => (
+            <div key={doc.id} className="flex items-center justify-between rounded-md border p-4">
               <div className="flex items-center gap-2">
                 <FileText className="text-muted-foreground h-5 w-5" />
                 <div>
                   <h3 className="font-medium">{doc.name}</h3>
                   <p className="text-muted-foreground text-sm">
-                    Last updated:{' '}
-                    {new Date(doc.lastUpdated).toLocaleDateString()}
+                    Last updated: {new Date(doc.lastUpdated).toLocaleDateString()}
                   </p>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -40,7 +40,15 @@ type DriverFormProps = {
   onCancel?: () => void;
 };
 
-export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create', serverError, onUploadDocument, onCancel }: DriverFormProps) {
+export function DriverForm({
+  initialValues,
+  onSubmit,
+  submitting,
+  mode = 'create',
+  serverError,
+  onUploadDocument,
+  onCancel,
+}: DriverFormProps) {
   const { register, handleSubmit, setValue, watch, reset } = useForm<SimpleDriverFormData>({
     defaultValues: initialValues || {},
   });
@@ -48,7 +56,13 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
 
   // Helper for comma-separated fields
   const handleCommaInput = (field: keyof SimpleDriverFormData, value: string) => {
-    setValue(field, value.split(',').map(s => s.trim()).filter(Boolean));
+    setValue(
+      field,
+      value
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    );
   };
 
   // Handle clear form
@@ -75,10 +89,9 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
             {mode === 'edit' ? 'Edit Driver' : 'Add New Driver'}
           </h1>
           <p className="text-white/70">
-            {mode === 'edit' 
-              ? 'Update driver information and credentials' 
-              : 'Enter driver information and credentials to add them to your fleet'
-            }
+            {mode === 'edit'
+              ? 'Update driver information and credentials'
+              : 'Enter driver information and credentials to add them to your fleet'}
           </p>
         </div>
         <Button
@@ -116,7 +129,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                   className="bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-400 focus:border-blue-400"
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
                   <Label htmlFor="address-city" className="text-white mb-2 block">
@@ -156,7 +169,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="address-country" className="text-white mb-2 block">
                   Country
@@ -190,7 +203,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                 <Input
                   id="endorsements"
                   value={(values.endorsements || []).join(', ')}
-                  onChange={e => handleCommaInput('endorsements', e.target.value)}
+                  onChange={(e) => handleCommaInput('endorsements', e.target.value)}
                   disabled={submitting}
                   placeholder="e.g., H, N, P, S, T, X"
                   className="bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-400 focus:border-blue-400"
@@ -206,7 +219,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                 <Input
                   id="restrictions"
                   value={(values.restrictions || []).join(', ')}
-                  onChange={e => handleCommaInput('restrictions', e.target.value)}
+                  onChange={(e) => handleCommaInput('restrictions', e.target.value)}
                   disabled={submitting}
                   placeholder="e.g., B, E, K, L, M, N, O, V, Z"
                   className="bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-400 focus:border-blue-400"
@@ -310,7 +323,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
               <Input
                 id="tags"
                 value={(values.tags || []).join(', ')}
-                onChange={e => handleCommaInput('tags', e.target.value)}
+                onChange={(e) => handleCommaInput('tags', e.target.value)}
                 disabled={submitting}
                 placeholder="e.g., experienced, night-shift, hazmat, local"
                 className="bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-400 focus:border-blue-400"
@@ -352,14 +365,14 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                 <p className="text-sm font-medium text-red-400">{serverError}</p>
               </div>
             )}
-            
+
             {/* Main Action Buttons */}
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Button 
-                    type="submit" 
-                    disabled={submitting} 
+                  <Button
+                    type="submit"
+                    disabled={submitting}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 font-semibold flex items-center gap-2"
                   >
                     {submitting ? (
@@ -374,7 +387,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                       </>
                     )}
                   </Button>
-                  
+
                   <Button
                     type="button"
                     variant="outline"
@@ -399,7 +412,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                       Upload Document
                     </Button>
                   )}
-                  
+
                   <Button
                     type="button"
                     variant="ghost"
@@ -411,12 +424,14 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
                   </Button>
                 </div>
               </div>
-              
+
               {/* Help Text */}
               <div className="text-xs text-neutral-400 pt-2 border-t border-neutral-700">
                 <p>• Use "Clear Form" to reset all fields</p>
                 <p>• Changes are automatically validated before submission</p>
-                {mode === 'create' && <p>• Driver will be added to your active fleet upon submission</p>}
+                {mode === 'create' && (
+                  <p>• Driver will be added to your active fleet upon submission</p>
+                )}
               </div>
             </div>
           </CardContent>

@@ -6,29 +6,29 @@ Welcome to the FleetFusion user documentation. This collection of guides will he
 with FleetFusion and understand how to use its features effectively. The documentation is organized
 into the following sections:
 
- -   **Quickstart:** Start here for a basic setup and usage walkthrough – see
-    [Quickstart](.wiki/Getting-Started.md#quick-start).
--   **Role Guides:** Detailed guides for specific user roles:
+- **Quickstart:** Start here for a basic setup and usage walkthrough – see
+  [Quickstart](.wiki/Getting-Started.md#quick-start).
+- **Role Guides:** Detailed guides for specific user roles:
 
-    -   [Admin Guide](.wiki/ROLE_GUIDES/Admin.md)
-    -   [Dispatcher Guide](.wiki/ROLE_GUIDES/Dispatcher.md)
-    -   [Driver Guide](.wiki/ROLE_GUIDES/Driver.md)
-    -   [Compliance Officer Guide](.wiki/ROLE_GUIDES/ComplianceOfficer.md)
+  - [Admin Guide](.wiki/ROLE_GUIDES/Admin.md)
+  - [Dispatcher Guide](.wiki/ROLE_GUIDES/Dispatcher.md)
+  - [Driver Guide](.wiki/ROLE_GUIDES/Driver.md)
+  - [Compliance Officer Guide](.wiki/ROLE_GUIDES/ComplianceOfficer.md)
 
--   **Module Guides:** Learn about each major module and feature:
+- **Module Guides:** Learn about each major module and feature:
 
-    -   [Dispatch Management Guide](.wiki/MODULE_GUIDES/dispatch.md)
-    -   [Vehicle Management Guide](.wiki/MODULE_GUIDES/vehicles.md)
-    -   [Driver Management Guide](.wiki/MODULE_GUIDES/drivers.md)
-    -   [Compliance Management Guide](.wiki/MODULE_GUIDES/compliance.md)
-    -   [IFTA Reporting Guide](.wiki/MODULE_GUIDES/ifta.md)
-    -   [Analytics Guide](.wiki/MODULE_GUIDES/analytics.md)
-    -   [Settings Guide](.wiki/MODULE_GUIDES/settings.md)
+  - [Dispatch Management Guide](.wiki/MODULE_GUIDES/dispatch.md)
+  - [Vehicle Management Guide](.wiki/MODULE_GUIDES/vehicles.md)
+  - [Driver Management Guide](.wiki/MODULE_GUIDES/drivers.md)
+  - [Compliance Management Guide](.wiki/MODULE_GUIDES/compliance.md)
+  - [IFTA Reporting Guide](.wiki/MODULE_GUIDES/ifta.md)
+  - [Analytics Guide](.wiki/MODULE_GUIDES/analytics.md)
+  - [Settings Guide](.wiki/MODULE_GUIDES/settings.md)
 
--   **Additional Resources:**
+- **Additional Resources:**
 
-    -   [FAQ](.wiki/FAQ.md) – Frequently Asked Questions about FleetFusion.
-    -   [Troubleshooting](.wiki/TROUBLESHOOTING.md) – Solutions to common issues and errors.
+  - [FAQ](.wiki/FAQ.md) – Frequently Asked Questions about FleetFusion.
+  - [Troubleshooting](.wiki/TROUBLESHOOTING.md) – Solutions to common issues and errors.
 
 # FleetFusion Quickstart Guide
 
@@ -39,56 +39,56 @@ basic tasks to get your fleet management up and running.
    sign-up, you'll provide your email and set a password. Once registered, you will be prompted to
    **onboard** your company:
 
-    - Enter your company details (name, address, DOT/MC number if applicable, etc.).
-    - The platform will create your organization space. As the first user, you will be assigned the
-      **Admin** role for your company.
+   - Enter your company details (name, address, DOT/MC number if applicable, etc.).
+   - The platform will create your organization space. As the first user, you will be assigned the
+     **Admin** role for your company.
 
 2. **Invite Team Members:** After onboarding, invite other users to join your organization:
 
-    - Go to **Settings** > **Users & Roles** and click **Invite User**.
-    - Send invitations to dispatchers, drivers, compliance officers, or other admins by entering
-      their emails and assigning roles.
-    - Invited users will receive an email with a link to join your company on FleetFusion.
+   - Go to **Settings** > **Users & Roles** and click **Invite User**.
+   - Send invitations to dispatchers, drivers, compliance officers, or other admins by entering
+     their emails and assigning roles.
+   - Invited users will receive an email with a link to join your company on FleetFusion.
 
 3. **Add Vehicles:** Populate your fleet data by adding vehicles:
 
-    - Navigate to the **Vehicles** module and click **Add Vehicle**.
-    - Enter the vehicle details (make, model, year, VIN, license plate, etc.).
-    - Save the vehicle. Repeat for all vehicles in your fleet.
+   - Navigate to the **Vehicles** module and click **Add Vehicle**.
+   - Enter the vehicle details (make, model, year, VIN, license plate, etc.).
+   - Save the vehicle. Repeat for all vehicles in your fleet.
 
 4. **Add Drivers:** Add your drivers into the system:
 
-    - Go to the **Drivers** module and click **Add Driver**.
-    - Fill in the driver's information (name, contact details, license info, etc.).
-    - Save the profile. The driver will now appear in the Drivers list.
+   - Go to the **Drivers** module and click **Add Driver**.
+   - Fill in the driver's information (name, contact details, license info, etc.).
+   - Save the profile. The driver will now appear in the Drivers list.
 
 5. **Create Your First Load (Dispatch):** With vehicles and drivers in place, you can schedule the
    first delivery:
 
-    - Open the **Dispatch** module and click **New Load**.
-    - Enter the shipment details (pickup location, drop-off location, cargo description, schedule
-      times).
-    - Assign a driver and a vehicle from the dropdown lists of those you added.
-    - Save the load. It will now be visible on the dispatch board for tracking.
+   - Open the **Dispatch** module and click **New Load**.
+   - Enter the shipment details (pickup location, drop-off location, cargo description, schedule
+     times).
+   - Assign a driver and a vehicle from the dropdown lists of those you added.
+   - Save the load. It will now be visible on the dispatch board for tracking.
 
 6. **Track and Manage Operations:**
 
-    - As drivers pick up and deliver loads, they (or you, depending on workflow) should update the
-      load status in the Dispatch module to reflect progress.
-    - Navigate to the **Analytics** module to view any available dashboards and get an overview of
-      operational metrics (once you have some data in the system).
-    - Check the **Compliance** module to ensure all necessary documents for drivers and vehicles are
-      uploaded (licenses, inspection reports, insurance, etc.). Upload any missing documents via
-      **Compliance** > **Upload Document**.
+   - As drivers pick up and deliver loads, they (or you, depending on workflow) should update the
+     load status in the Dispatch module to reflect progress.
+   - Navigate to the **Analytics** module to view any available dashboards and get an overview of
+     operational metrics (once you have some data in the system).
+   - Check the **Compliance** module to ensure all necessary documents for drivers and vehicles are
+     uploaded (licenses, inspection reports, insurance, etc.). Upload any missing documents via
+     **Compliance** > **Upload Document**.
 
 7. **Explore Further:** Familiarize yourself with other modules and settings:
 
-    - Visit the **IFTA Reporting** module if you need to track fuel usage and mileage by
-      state/province for tax purposes.
-    - Check out **Settings** for additional configurations like company preferences or to manage
-      roles and company profile information.
-    - Refer to the [Admin Guide](.wiki/ROLE_GUIDES/Admin.md) and other role-specific guides for
-      specialized tasks and best practices as you start using FleetFusion.
+   - Visit the **IFTA Reporting** module if you need to track fuel usage and mileage by
+     state/province for tax purposes.
+   - Check out **Settings** for additional configurations like company preferences or to manage
+     roles and company profile information.
+   - Refer to the [Admin Guide](.wiki/ROLE_GUIDES/Admin.md) and other role-specific guides for
+     specialized tasks and best practices as you start using FleetFusion.
 
 Now you have the basics covered. Your FleetFusion environment is set up with core data, and you're
 ready to manage your fleet operations. For more detailed instructions on specific features, refer to
@@ -131,11 +131,11 @@ Compliance dashboard.
 
 ### What do the document status labels mean?
 
--   **Active:** The document is valid and up to date.
--   **Expiring Soon:** The document will expire in the near future (e.g., within 30 days). It should
-    be renewed soon.
--   **Expired:** The document has passed its expiration date and is no longer valid. A new, valid
-    document must be uploaded to remain compliant.
+- **Active:** The document is valid and up to date.
+- **Expiring Soon:** The document will expire in the near future (e.g., within 30 days). It should
+  be renewed soon.
+- **Expired:** The document has passed its expiration date and is no longer valid. A new, valid
+  document must be uploaded to remain compliant.
 
 # Troubleshooting Guide
 
@@ -143,24 +143,24 @@ This guide addresses some common issues and their resolutions in FleetFusion.
 
 ### Cannot upload a document?
 
--   **Check file requirements:** Ensure the file type is allowed (e.g., PDF, JPG) and that the file
-    size does not exceed the system limit.
--   **Complete all fields:** Verify that all required information (document type, expiration date,
-    etc.) is provided in the upload form.
--   **Contact support:** If the issue persists after checking the above, there may be a system issue.
-    Reach out to your system administrator or FleetFusion support for assistance.
+- **Check file requirements:** Ensure the file type is allowed (e.g., PDF, JPG) and that the file
+  size does not exceed the system limit.
+- **Complete all fields:** Verify that all required information (document type, expiration date,
+  etc.) is provided in the upload form.
+- **Contact support:** If the issue persists after checking the above, there may be a system issue.
+  Reach out to your system administrator or FleetFusion support for assistance.
 
 ---
 
 ### Not receiving email invitations or password reset emails?
 
--   **Inspect spam/junk folder:** The email might have been filtered by your email provider. Check
-    your spam or junk folder for the invitation or reset email.
--   **Verify the email address:** Confirm that the email was entered correctly (typos in the address
-    can cause delivery failures).
--   **Resend or contact support:** If the email is still not found, try resending the invitation or
-    password reset. If it still does not arrive, contact support as there may be an email delivery
-    issue.
+- **Inspect spam/junk folder:** The email might have been filtered by your email provider. Check
+  your spam or junk folder for the invitation or reset email.
+- **Verify the email address:** Confirm that the email was entered correctly (typos in the address
+  can cause delivery failures).
+- **Resend or contact support:** If the email is still not found, try resending the invitation or
+  password reset. If it still does not arrive, contact support as there may be an email delivery
+  issue.
 
 # Admin Guide
 
@@ -172,14 +172,14 @@ and roles, and configuring company-wide settings.
 
 ## Key Responsibilities
 
--   **User Management:** Invite new users, assign roles (Dispatcher, Driver, Compliance Officer), and
-    remove or update users as needed.
--   **Company Settings:** Update company profile information and preferences (such as company details,
-    branding, or default settings).
--   **Access & Permissions:** Ensure each team member has appropriate access; only Admins can grant
-    roles or change other users’ roles.
--   **Oversight:** View system audit logs and activities to monitor usage and security. Admins may
-    also handle high-level tasks like managing billing or subscriptions if applicable.
+- **User Management:** Invite new users, assign roles (Dispatcher, Driver, Compliance Officer), and
+  remove or update users as needed.
+- **Company Settings:** Update company profile information and preferences (such as company details,
+  branding, or default settings).
+- **Access & Permissions:** Ensure each team member has appropriate access; only Admins can grant
+  roles or change other users’ roles.
+- **Oversight:** View system audit logs and activities to monitor usage and security. Admins may
+  also handle high-level tasks like managing billing or subscriptions if applicable.
 
 ## Guide
 
@@ -201,28 +201,28 @@ and roles, and configuring company-wide settings.
 
 **Reviewing Audit Logs (if available):**
 
--   If FleetFusion provides an **Audit Logs** or **Activity** section (usually under **Settings** or
-    an Admin dashboard), navigate there to review recent actions in the system (e.g., user logins,
-    data changes).
--   Use audit logs to troubleshoot or ensure compliance with internal policies by seeing who did what
-    and when.
+- If FleetFusion provides an **Audit Logs** or **Activity** section (usually under **Settings** or
+  an Admin dashboard), navigate there to review recent actions in the system (e.g., user logins,
+  data changes).
+- Use audit logs to troubleshoot or ensure compliance with internal policies by seeing who did what
+  and when.
 
 **Billing Management:**
 
--   If your organization’s plan or billing info is managed through FleetFusion, an Admin can access
-    the **Billing** section (often under **Settings**).
--   Review subscription details, update payment information, or download invoices as needed. _(If
-    billing is not handled in-app, this section may direct you to a separate billing portal or require
-    contacting FleetFusion support.)_
+- If your organization’s plan or billing info is managed through FleetFusion, an Admin can access
+  the **Billing** section (often under **Settings**).
+- Review subscription details, update payment information, or download invoices as needed. _(If
+  billing is not handled in-app, this section may direct you to a separate billing portal or require
+  contacting FleetFusion support.)_
 
 ## Tips
 
--   Only assign the **Admin** role to trusted users who require full access. Admins can make
-    system-wide changes.
--   Regularly review the list of users and their roles in **Settings** to ensure permissions are
-    up-to-date with any staffing changes.
--   Use the [Settings Guide](../MODULE_GUIDES/settings.md) for detailed information on configuration
-    options and managing users and roles.
+- Only assign the **Admin** role to trusted users who require full access. Admins can make
+  system-wide changes.
+- Regularly review the list of users and their roles in **Settings** to ensure permissions are
+  up-to-date with any staffing changes.
+- Use the [Settings Guide](../MODULE_GUIDES/settings.md) for detailed information on configuration
+  options and managing users and roles.
 
 # Dispatcher Guide
 
@@ -234,13 +234,13 @@ delivery statuses in real-time.
 
 ## Key Responsibilities
 
--   **Load Planning:** Create new loads/orders that need to be transported.
--   **Driver & Vehicle Assignment:** Assign available drivers and appropriate vehicles to each load.
--   **Schedule Management:** Set pickup and delivery times and adjust schedules as necessary.
--   **Status Monitoring:** Track the progress of active loads and update statuses or reassign
-    resources if issues arise.
--   **Communication:** Relay information to drivers regarding their assignments (via internal notes or
-    external communication, as needed).
+- **Load Planning:** Create new loads/orders that need to be transported.
+- **Driver & Vehicle Assignment:** Assign available drivers and appropriate vehicles to each load.
+- **Schedule Management:** Set pickup and delivery times and adjust schedules as necessary.
+- **Status Monitoring:** Track the progress of active loads and update statuses or reassign
+  resources if issues arise.
+- **Communication:** Relay information to drivers regarding their assignments (via internal notes or
+  external communication, as needed).
 
 ## Guide
 
@@ -256,34 +256,34 @@ delivery statuses in real-time.
 
 **Managing Active Loads:**
 
--   Monitor the Dispatch dashboard for status updates (e.g., when a driver marks a load as picked up
-    or delivered).
--   If a driver is unable to complete a load or if schedule changes occur, use the dispatch interface
-    to edit the load:
+- Monitor the Dispatch dashboard for status updates (e.g., when a driver marks a load as picked up
+  or delivered).
+- If a driver is unable to complete a load or if schedule changes occur, use the dispatch interface
+  to edit the load:
 
-    -   Update the load’s details or timing.
-    -   Reassign the load to a different driver or vehicle if necessary (Tip: in some views you can drag
-        and drop a load to a new assignment or use an **Edit** dialog to change the driver/vehicle).
+  - Update the load’s details or timing.
+  - Reassign the load to a different driver or vehicle if necessary (Tip: in some views you can drag
+    and drop a load to a new assignment or use an **Edit** dialog to change the driver/vehicle).
 
 **Adjusting Schedules:**
 
--   For any delays or early completions, update the load's record:
+- For any delays or early completions, update the load's record:
 
-    -   Change the delivery or pickup times as needed.
-    -   Add notes to the load (if the system allows) to inform others of changes or special
-        instructions.
+  - Change the delivery or pickup times as needed.
+  - Add notes to the load (if the system allows) to inform others of changes or special
+    instructions.
 
--   Ensure that drivers are informed of any schedule changes (the system might send notifications, but
-    a direct call or message can be used for urgent changes).
+- Ensure that drivers are informed of any schedule changes (the system might send notifications, but
+  a direct call or message can be used for urgent changes).
 
 ## Tips
 
--   Use filtering options in the Dispatch module to quickly find loads by status, driver, date, or
-    destination, especially as the number of loads grows.
--   Pay attention to color-coding or status labels on the dispatch board (for example, overdue loads
-    might be highlighted).
--   Refer to the [Dispatch Management Guide](../MODULE_GUIDES/dispatch.md) for detailed instructions
-    on using the dispatch interface and features.
+- Use filtering options in the Dispatch module to quickly find loads by status, driver, date, or
+  destination, especially as the number of loads grows.
+- Pay attention to color-coding or status labels on the dispatch board (for example, overdue loads
+  might be highlighted).
+- Refer to the [Dispatch Management Guide](../MODULE_GUIDES/dispatch.md) for detailed instructions
+  on using the dispatch interface and features.
 
 # Driver Guide
 
@@ -295,14 +295,14 @@ own compliance tasks like hours-of-service logs or document uploads.
 
 ## Key Responsibilities
 
--   **View Assignments:** Check upcoming and current loads assigned to them, including details like
-    addresses, schedules, and instructions.
--   **Status Updates:** Mark loads as in-progress (e.g., picked up) or completed (delivered) as they
-    carry out deliveries.
--   **Document Uploads:** Upload necessary documents such as Proof of Delivery (POD) receipts, fuel
-    receipts, or inspection reports related to their trips.
--   **Hours of Service (HOS) Logging:** Record driving hours and breaks if the platform supports HOS
-    tracking, to comply with regulations.
+- **View Assignments:** Check upcoming and current loads assigned to them, including details like
+  addresses, schedules, and instructions.
+- **Status Updates:** Mark loads as in-progress (e.g., picked up) or completed (delivered) as they
+  carry out deliveries.
+- **Document Uploads:** Upload necessary documents such as Proof of Delivery (POD) receipts, fuel
+  receipts, or inspection reports related to their trips.
+- **Hours of Service (HOS) Logging:** Record driving hours and breaks if the platform supports HOS
+  tracking, to comply with regulations.
 
 ## Guide
 
@@ -313,9 +313,9 @@ own compliance tasks like hours-of-service logs or document uploads.
    or special instructions.
 3. Update the load status as you progress:
 
-    - When you depart for pickup, mark the load as **In Transit** or similar.
-    - Upon delivery, mark the load as **Delivered** or **Completed**.
-    - These updates inform dispatchers and the system of real-time progress.
+   - When you depart for pickup, mark the load as **In Transit** or similar.
+   - Upon delivery, mark the load as **Delivered** or **Completed**.
+   - These updates inform dispatchers and the system of real-time progress.
 
 **Uploading Documents (e.g., Proof of Delivery):**
 
@@ -329,21 +329,21 @@ own compliance tasks like hours-of-service logs or document uploads.
 
 **Logging Hours (if applicable):**
 
--   If FleetFusion provides an HOS logging feature, access it via the **Compliance** or **Logs**
-    section in your dashboard.
--   Record your duty status changes (e.g., Driving, On Duty, Off Duty) with start and stop times as
-    required by HOS rules.
--   Always keep these logs up to date. If the system is connected to an ELD device, some logs might
-    auto-populate, but you may need to certify or adjust them.
+- If FleetFusion provides an HOS logging feature, access it via the **Compliance** or **Logs**
+  section in your dashboard.
+- Record your duty status changes (e.g., Driving, On Duty, Off Duty) with start and stop times as
+  required by HOS rules.
+- Always keep these logs up to date. If the system is connected to an ELD device, some logs might
+  auto-populate, but you may need to certify or adjust them.
 
 ## Tips
 
--   Keep your assigned load information up to date. Timely status updates help dispatchers respond
-    quickly to any delays or issues.
--   If using a mobile device, take advantage of FleetFusion’s mobile-friendly interface (if available)
-    to update statuses and upload documents on the go.
--   If you encounter any issues with your assignment details or the app (e.g., you can’t update a
-    status), contact your dispatcher or Admin for assistance.
+- Keep your assigned load information up to date. Timely status updates help dispatchers respond
+  quickly to any delays or issues.
+- If using a mobile device, take advantage of FleetFusion’s mobile-friendly interface (if available)
+  to update statuses and upload documents on the go.
+- If you encounter any issues with your assignment details or the app (e.g., you can’t update a
+  status), contact your dispatcher or Admin for assistance.
 
 # Compliance Officer Guide
 
@@ -355,16 +355,16 @@ documents and records, keeping the company ready for inspections or audits at an
 
 ## Key Responsibilities
 
--   **Document Management:** Ensure that all required documents (driver licenses, medical
-    certificates, vehicle inspection reports, insurance policies, etc.) are stored in the system and
-    kept up to date.
--   **Monitoring Expirations:** Regularly review document statuses and receive alerts for any that are
-    expiring soon or have expired.
--   **Regulatory Reporting:** Prepare for audits by retrieving necessary records and, if available,
-    generate compliance reports for authorities (e.g., a list of expired items, IFTA reports).
--   **Policy Enforcement:** Oversee that drivers and other staff are following safety and compliance
-    protocols (for example, drivers logging hours properly or vehicles undergoing scheduled
-    inspections).
+- **Document Management:** Ensure that all required documents (driver licenses, medical
+  certificates, vehicle inspection reports, insurance policies, etc.) are stored in the system and
+  kept up to date.
+- **Monitoring Expirations:** Regularly review document statuses and receive alerts for any that are
+  expiring soon or have expired.
+- **Regulatory Reporting:** Prepare for audits by retrieving necessary records and, if available,
+  generate compliance reports for authorities (e.g., a list of expired items, IFTA reports).
+- **Policy Enforcement:** Oversee that drivers and other staff are following safety and compliance
+  protocols (for example, drivers logging hours properly or vehicles undergoing scheduled
+  inspections).
 
 ## Guide
 
@@ -383,38 +383,38 @@ documents and records, keeping the company ready for inspections or audits at an
 
 **Reviewing Compliance Status:**
 
--   On the main Compliance dashboard, check for any items marked **Expiring Soon** or **Expired**
-    (these are usually highlighted or filtered to grab your attention).
--   Click on those items to view details and determine what action is needed:
+- On the main Compliance dashboard, check for any items marked **Expiring Soon** or **Expired**
+  (these are usually highlighted or filtered to grab your attention).
+- Click on those items to view details and determine what action is needed:
 
-    -   If a driver’s license is expiring, reach out to that driver to get an updated license and upload
-        it.
-    -   If a vehicle inspection is expired, schedule an inspection and update the record once completed.
+  - If a driver’s license is expiring, reach out to that driver to get an updated license and upload
+    it.
+  - If a vehicle inspection is expired, schedule an inspection and update the record once completed.
 
--   You can use filters or search in the Compliance module to find specific documents by type (e.g.,
-    show all insurance policies) or by personnel/vehicle.
+- You can use filters or search in the Compliance module to find specific documents by type (e.g.,
+  show all insurance policies) or by personnel/vehicle.
 
 **Preparing for Audits:**
 
--   If an audit or inspection is upcoming, use FleetFusion to retrieve all necessary documentation:
+- If an audit or inspection is upcoming, use FleetFusion to retrieve all necessary documentation:
 
-    -   Ensure all driver qualification files are present (licenses, medical cards).
-    -   Ensure all vehicle records are in order (recent inspections, maintenance logs).
-    -   Export or print documents if needed. (If FleetFusion offers a report or export feature, use it
-        to generate a bundle of compliance documents or a report of compliance status).
+  - Ensure all driver qualification files are present (licenses, medical cards).
+  - Ensure all vehicle records are in order (recent inspections, maintenance logs).
+  - Export or print documents if needed. (If FleetFusion offers a report or export feature, use it
+    to generate a bundle of compliance documents or a report of compliance status).
 
--   Review the **Audit Log** (if provided in the system) to see a history of compliance-related
-    actions (e.g., document uploads, edits) in case an auditor inquires about changes or updates.
+- Review the **Audit Log** (if provided in the system) to see a history of compliance-related
+  actions (e.g., document uploads, edits) in case an auditor inquires about changes or updates.
 
 ## Tips
 
--   Schedule a periodic review (e.g., weekly or monthly) of the Compliance module to catch upcoming
-    expirations well in advance.
--   Communicate with drivers and the fleet manager proactively when documents need renewal.
-    FleetFusion’s **Expiring Soon** status is a helpful alert, but direct communication ensures
-    everyone is aware.
--   Refer to the [Compliance Management Guide](../MODULE_GUIDES/compliance.md) for detailed features
-    of the Compliance module and instructions on using its tools effectively.
+- Schedule a periodic review (e.g., weekly or monthly) of the Compliance module to catch upcoming
+  expirations well in advance.
+- Communicate with drivers and the fleet manager proactively when documents need renewal.
+  FleetFusion’s **Expiring Soon** status is a helpful alert, but direct communication ensures
+  everyone is aware.
+- Refer to the [Compliance Management Guide](../MODULE_GUIDES/compliance.md) for detailed features
+  of the Compliance module and instructions on using its tools effectively.
 
 # Dispatch Management Guide
 
@@ -424,8 +424,8 @@ Manage loads, assignments, and real-time status tracking in the Dispatch module.
 
 ## Key Features
 
--   Create and assign loads
--   Track load status in real time
+- Create and assign loads
+- Track load status in real time
 
 ## How to Use
 
@@ -436,8 +436,8 @@ Manage loads, assignments, and real-time status tracking in the Dispatch module.
 
 ## Tips
 
--   Use filters to quickly find specific loads by driver, date, or status.
--   Drag and drop loads (if supported) to reassign or reschedule them easily.
+- Use filters to quickly find specific loads by driver, date, or status.
+- Drag and drop loads (if supported) to reassign or reschedule them easily.
 
 # Vehicle Management Guide
 
@@ -447,9 +447,9 @@ Manage vehicle info, maintenance records, inspections, and assignments.
 
 ## Key Features
 
--   Add or edit vehicle profiles (with details like VIN, license plate, etc.)
--   Log maintenance and inspection events for each vehicle
--   Assign vehicles to drivers or loads and track availability
+- Add or edit vehicle profiles (with details like VIN, license plate, etc.)
+- Log maintenance and inspection events for each vehicle
+- Assign vehicles to drivers or loads and track availability
 
 ## How to Use
 
@@ -462,10 +462,10 @@ Manage vehicle info, maintenance records, inspections, and assignments.
 
 ## Tips
 
--   Keep vehicle records up to date with the latest maintenance and inspection info to ensure
-    compliance and optimal operation.
--   Before assigning a vehicle to a new load, check its status (e.g., not under maintenance) to avoid
-    scheduling conflicts.
+- Keep vehicle records up to date with the latest maintenance and inspection info to ensure
+  compliance and optimal operation.
+- Before assigning a vehicle to a new load, check its status (e.g., not under maintenance) to avoid
+  scheduling conflicts.
 
 # Driver Management Guide
 
@@ -476,9 +476,9 @@ module.
 
 ## Key Features
 
--   Add and edit driver profiles (personal info, license details, etc.)
--   Track license and document status for each driver
--   Monitor HOS compliance and alerts for expiring certifications
+- Add and edit driver profiles (personal info, license details, etc.)
+- Track license and document status for each driver
+- Monitor HOS compliance and alerts for expiring certifications
 
 ## How to Use
 
@@ -491,10 +491,10 @@ module.
 
 ## Tips
 
--   Use the alerts or status indicators in the Drivers module to stay ahead of expiring licenses or
-    certifications. FleetFusion may highlight drivers in need of updated documents.
--   Encourage drivers to keep their own information updated and to inform you of any changes (address,
-    license renewal) so you can update the system accordingly.
+- Use the alerts or status indicators in the Drivers module to stay ahead of expiring licenses or
+  certifications. FleetFusion may highlight drivers in need of updated documents.
+- Encourage drivers to keep their own information updated and to inform you of any changes (address,
+  license renewal) so you can update the system accordingly.
 
 # Compliance Management Guide
 
@@ -505,9 +505,9 @@ audits.
 
 ## Key Features
 
--   Upload and store compliance documents (licenses, permits, inspection reports, etc.)
--   Track document statuses and expiration dates with automatic alerts
--   View audit logs of compliance activities and generate compliance reports (if available)
+- Upload and store compliance documents (licenses, permits, inspection reports, etc.)
+- Track document statuses and expiration dates with automatic alerts
+- View audit logs of compliance activities and generate compliance reports (if available)
 
 ## How to Use
 
@@ -517,9 +517,9 @@ audits.
    driver/vehicle and expiration date), attach the file, and submit.
 3. The compliance dashboard will list all uploaded documents along with their status:
 
-    - **Active:** Currently valid.
-    - **Expiring Soon:** Close to expiring (highlighted to draw attention).
-    - **Expired:** Past expiration and needs update.
+   - **Active:** Currently valid.
+   - **Expiring Soon:** Close to expiring (highlighted to draw attention).
+   - **Expired:** Past expiration and needs update.
 
 4. Use filters or search within the Compliance module to find specific documents by type or by the
    person/vehicle they are associated with.
@@ -528,13 +528,13 @@ audits.
 
 ## Tips
 
--   Regularly check the Compliance dashboard for any **Expiring Soon** items and address them before
-    they expire (schedule renewals, inform drivers, etc.).
--   Keep digital copies of all critical documents in FleetFusion so that you can easily retrieve them
-    during a compliance audit.
--   The Compliance module works hand-in-hand with the Drivers and Vehicles modules. Ensure that when
-    adding a driver or vehicle, you also input their key compliance info (license expiration, last
-    inspection date) so the system can start tracking those right away.
+- Regularly check the Compliance dashboard for any **Expiring Soon** items and address them before
+  they expire (schedule renewals, inform drivers, etc.).
+- Keep digital copies of all critical documents in FleetFusion so that you can easily retrieve them
+  during a compliance audit.
+- The Compliance module works hand-in-hand with the Drivers and Vehicles modules. Ensure that when
+  adding a driver or vehicle, you also input their key compliance info (license expiration, last
+  inspection date) so the system can start tracking those right away.
 
 # IFTA Reporting Guide
 
@@ -544,16 +544,16 @@ Automate mileage and fuel tracking for IFTA (International Fuel Tax Agreement) r
 
 ## Key Features
 
--   Track miles driven and fuel purchased by jurisdiction
--   Generate IFTA reports for tax filing periods
+- Track miles driven and fuel purchased by jurisdiction
+- Generate IFTA reports for tax filing periods
 
 ## How to Use
 
 1. Go to the **IFTA** module from the dashboard.
 2. Enter trip data and fuel purchase information as required:
 
-    - Record trips with distance traveled in each state/province.
-    - Log fuel purchases with quantity and location (state/province).
+   - Record trips with distance traveled in each state/province.
+   - Log fuel purchases with quantity and location (state/province).
 
 3. After inputting data for the period, use the module’s report function to **Generate IFTA Report**
    (if available).
@@ -562,10 +562,10 @@ Automate mileage and fuel tracking for IFTA (International Fuel Tax Agreement) r
 
 ## Tips
 
--   Input trip and fuel data regularly (e.g., weekly) rather than waiting until the end of the
-    quarter. This ensures the information is accurate and up-to-date.
--   Double-check the report against your fuel receipts and mileage logs for accuracy before filing.
--   Keep records of generated reports and underlying data in case of audits or discrepancies.
+- Input trip and fuel data regularly (e.g., weekly) rather than waiting until the end of the
+  quarter. This ensures the information is accurate and up-to-date.
+- Double-check the report against your fuel receipts and mileage logs for accuracy before filing.
+- Keep records of generated reports and underlying data in case of audits or discrepancies.
 
 # Analytics Guide
 
@@ -575,8 +575,8 @@ Use real-time dashboards for performance and financial metrics in the Analytics 
 
 ## Key Features
 
--   View fleet utilization, on-time performance, fuel efficiency, and other operational charts
--   Filter data by date range, specific vehicle, or driver to drill down
+- View fleet utilization, on-time performance, fuel efficiency, and other operational charts
+- Filter data by date range, specific vehicle, or driver to drill down
 
 ## How to Use
 
@@ -592,13 +592,13 @@ Use real-time dashboards for performance and financial metrics in the Analytics 
 
 ## Tips
 
--   Regularly review the Analytics dashboard to identify trends (like improving or worsening delivery
-    times or fuel costs) and make informed decisions.
--   Utilize the filters to compare performance – for example, how one driver’s on-time delivery rate
-    compares to another’s, or fuel economy differences between vehicles.
--   If a particular metric is outside of expected ranges, investigate by looking at the underlying
-    data (FleetFusion might allow you to click through to see the related records, or you may use the
-    Dispatch/IFTA modules for deeper analysis).
+- Regularly review the Analytics dashboard to identify trends (like improving or worsening delivery
+  times or fuel costs) and make informed decisions.
+- Utilize the filters to compare performance – for example, how one driver’s on-time delivery rate
+  compares to another’s, or fuel economy differences between vehicles.
+- If a particular metric is outside of expected ranges, investigate by looking at the underlying
+  data (FleetFusion might allow you to click through to see the related records, or you may use the
+  Dispatch/IFTA modules for deeper analysis).
 
 # Settings Guide
 
@@ -608,9 +608,9 @@ Manage company information, system preferences, and user roles in the Settings m
 
 ## Key Features
 
--   Update company profile details (name, address, contact info)
--   Set preferences like time zone, units of measurement, or notification settings
--   Manage users and roles (invite users, assign roles, deactivate accounts)
+- Update company profile details (name, address, contact info)
+- Set preferences like time zone, units of measurement, or notification settings
+- Manage users and roles (invite users, assign roles, deactivate accounts)
 
 ## How to Use
 
@@ -620,39 +620,41 @@ Manage company information, system preferences, and user roles in the Settings m
    address, phone number, logo (if applicable), then save changes.
 3. **Users & Roles:** Manage your team’s access:
 
-    - View the list of all users in your organization and their roles.
-    - To invite a new user, click **Invite User** and follow the steps (enter email, assign role).
-    - To change a user’s role or deactivate a user, select the user from the list and use the edit
-      options (role dropdown, active/inactive toggle).
+   - View the list of all users in your organization and their roles.
+   - To invite a new user, click **Invite User** and follow the steps (enter email, assign role).
+   - To change a user’s role or deactivate a user, select the user from the list and use the edit
+     options (role dropdown, active/inactive toggle).
 
 4. **Preferences/Settings:** Adjust system-wide settings:
 
-    - Set your time zone and regional settings so that dates/times and units (miles vs. kilometers,
-      gallons vs. liters) are tailored to your region.
-    - Configure notification preferences (for example, which email notifications or alerts are
-      enabled for load assignments, document expirations, etc.).
-    - If available, adjust branding settings like uploading a company logo or choosing a theme color
-      for the interface.
+   - Set your time zone and regional settings so that dates/times and units (miles vs. kilometers,
+     gallons vs. liters) are tailored to your region.
+   - Configure notification preferences (for example, which email notifications or alerts are
+     enabled for load assignments, document expirations, etc.).
+   - If available, adjust branding settings like uploading a company logo or choosing a theme color
+     for the interface.
 
 ## Tips
 
--   Only Admins can access and change Settings. If you are not an Admin and need a change, contact
-    your Admin.
--   Keep the company profile updated, as this information might appear on reports or notifications
-    (for instance, the company name and address on IFTA reports).
--   When inviting users, double-check the email address and role. New users will only have access to
-    what their role permits, so assign roles carefully based on job function. (See the Admin Guide for
-    more about roles and permissions.)
+- Only Admins can access and change Settings. If you are not an Admin and need a change, contact
+  your Admin.
+- Keep the company profile updated, as this information might appear on reports or notifications
+  (for instance, the company name and address on IFTA reports).
+- When inviting users, double-check the email address and role. New users will only have access to
+  what their role permits, so assign roles carefully based on job function. (See the Admin Guide for
+  more about roles and permissions.)
 
 # Dispatch Domain: Quick Reference
 
 - **Dispatchers:**
+
   - Use the Dispatch module to create, assign, and manage loads.
   - Assign drivers and vehicles from dropdowns; update statuses as loads progress.
   - Use filters and color-coding to track load status and priorities.
   - All actions are permission-controlled; only dispatchers/admins can assign or edit loads.
 
 - **Admins:**
+
   - Oversee all dispatch operations and user assignments.
   - Review audit logs for dispatch activity.
   - Ensure all users have correct roles and permissions.
@@ -667,10 +669,12 @@ See `docs/dispatch-domain-audit-report.md` for a full summary of the audit and i
 # Auth Domain Audit & Refactor (2025-07)
 
 ## Feature Changes
+
 - Authentication flows (login, registration, session, RBAC) now have dedicated business logic stubs.
 - All user-facing forms and flows validated with documented Zod schemas.
 - Permission and role logic confirmed for all user types.
 
 ## Updated Guides
+
 - See new developer documentation for technical details and API changes.
 - User onboarding, login, and role assignment flows are unchanged for end users.

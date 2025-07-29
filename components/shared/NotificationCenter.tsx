@@ -5,7 +5,11 @@ import { Bell } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { fetchNotifications, readNotification } from '@/lib/actions/notificationActions';
 import type { Notification } from '@/types/notifications';
 import { useOrganizationContext } from '@/components/auth/context';
@@ -30,7 +34,7 @@ export function NotificationCenter() {
       if (!org) return;
       const result = await readNotification(id, org.id);
       if (result.success) {
-        setNotifications(n => n.filter(notif => notif.id !== id));
+        setNotifications((n) => n.filter((notif) => notif.id !== id));
       }
     });
   };
@@ -43,7 +47,10 @@ export function NotificationCenter() {
         <Button variant="default" size="sm" className="relative h-7 w-7 p-0">
           <Bell className="h-4 w-4 text-zinc-300" />
           {count > 0 && (
-            <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center">
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
+            >
               {count}
             </Badge>
           )}
@@ -53,7 +60,7 @@ export function NotificationCenter() {
         {notifications.length === 0 && (
           <div className="px-2 py-1 text-sm text-zinc-400">No new notifications</div>
         )}
-        {notifications.map(n => (
+        {notifications.map((n) => (
           <button
             key={n.id}
             onClick={() => handleRead(n.id)}

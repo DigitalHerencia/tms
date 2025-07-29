@@ -1,9 +1,9 @@
-import db from "@/lib/database/db";
-import { serializePrismaDataServer } from "@/lib/utils/prisma-serializer";
-import { transformDriver, transformVehicle, transformLoad } from "@/lib/utils/transformers";
-import type { Load } from "@/types/dispatch";
-import type { Driver } from "@/types/drivers";
-import type { Vehicle } from "@/types/vehicles";
+import db from '@/lib/database/db';
+import { serializePrismaDataServer } from '@/lib/utils/prisma-serializer';
+import { transformDriver, transformVehicle, transformLoad } from '@/lib/utils/transformers';
+import type { Load } from '@/types/dispatch';
+import type { Driver } from '@/types/drivers';
+import type { Vehicle } from '@/types/vehicles';
 
 // Fetch all loads for an organization, including related data
 export async function getLoadsByOrg(orgId: string): Promise<Load[]> {
@@ -14,15 +14,15 @@ export async function getLoadsByOrg(orgId: string): Promise<Load[]> {
       drivers: true,
       vehicle: true,
       trailer: true,
-      statusEvents: { orderBy: { timestamp: "asc" } },
+      statusEvents: { orderBy: { timestamp: 'asc' } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 
-    return serializePrismaDataServer(
-      loads.map(load => transformLoad(load)).filter((l): l is Load => l !== null)
-    );
-  }
+  return serializePrismaDataServer(
+    loads.map((load) => transformLoad(load)).filter((l): l is Load => l !== null),
+  );
+}
 
 // Fetch a single load by ID (and org) for editing
 export async function getLoadById(orgId: string, loadId: string): Promise<Load | null> {
@@ -33,7 +33,7 @@ export async function getLoadById(orgId: string, loadId: string): Promise<Load |
       drivers: true,
       vehicle: true,
       trailer: true,
-      statusEvents: { orderBy: { timestamp: "asc" } },
+      statusEvents: { orderBy: { timestamp: 'asc' } },
     },
   });
 
@@ -52,43 +52,47 @@ export async function getDriversByOrg(orgId: string): Promise<Driver[]> {
         take: 1,
         orderBy: { createdAt: 'desc' },
         include: {
-          vehicle: true
-        }
-      }
+          vehicle: true,
+        },
+      },
     },
-    orderBy: { firstName: "asc" },
+    orderBy: { firstName: 'asc' },
   });
 
-  return serializePrismaDataServer(drivers.map(driver => transformDriver(driver)));
+  return serializePrismaDataServer(drivers.map((driver) => transformDriver(driver)));
 }
 
 // Fetch all vehicles for an organization
 export async function getVehiclesByOrg(orgId: string): Promise<Vehicle[]> {
   const [vehicleRecords, trailerRecords] = await Promise.all([
-    db.vehicle.findMany({ 
+    db.vehicle.findMany({
       where: { organizationId: orgId },
       include: {
-        organization: true
-      }
+        organization: true,
+      },
     }),
-    db.trailer.findMany({ 
+    db.trailer.findMany({
       where: { organizationId: orgId },
       include: {
-        organization: true
-      }
+        organization: true,
+      },
     }),
   ]);
-  
-  const vehicles = vehicleRecords.map(v => transformVehicle({
-    ...v,
-    type: "tractor"
-  }));
-  
-  const trailers = trailerRecords.map(t => transformVehicle({
-    ...t,
-    type: t.type || "trailer"
-  }));
-  
+
+  const vehicles = vehicleRecords.map((v) =>
+    transformVehicle({
+      ...v,
+      type: 'tractor',
+    }),
+  );
+
+  const trailers = trailerRecords.map((t) =>
+    transformVehicle({
+      ...t,
+      type: t.type || 'trailer',
+    }),
+  );
+
   return serializePrismaDataServer([...vehicles, ...trailers]);
 }
 
@@ -105,8 +109,8 @@ export async function getLoadSummaryStats(orgId: string): Promise<{
       by: ['status'],
       where: { organizationId: orgId },
       _count: {
-        _all: true
-      }
+        _all: true,
+      },
     });
 
     const stats = {
@@ -114,19 +118,21 @@ export async function getLoadSummaryStats(orgId: string): Promise<{
       pendingLoads: 0,
       assignedLoads: 0,
       inTransitLoads: 0,
-      completedLoads: 0
+      completedLoads: 0,
     };
 
     // Calculate total loads
     stats.totalLoads = loads.reduce((acc, curr) => acc + curr._count._all, 0);
 
     // Map specific statuses to our summary categories
-    loads.forEach(({status, _count}) => {
+    loads.forEach(({ status, _count }) => {
       if (status === 'pending') {
         stats.pendingLoads += _count._all;
       } else if (status === 'assigned') {
         stats.assignedLoads += _count._all;
-      } else if (['in_transit', 'at_pickup', 'picked_up', 'en_route', 'at_delivery'].includes(status)) {
+      } else if (
+        ['in_transit', 'at_pickup', 'picked_up', 'en_route', 'at_delivery'].includes(status)
+      ) {
         stats.inTransitLoads += _count._all;
       } else if (['delivered', 'completed', 'invoiced', 'paid'].includes(status)) {
         stats.completedLoads += _count._all;
@@ -141,7 +147,7 @@ export async function getLoadSummaryStats(orgId: string): Promise<{
       pendingLoads: 0,
       assignedLoads: 0,
       inTransitLoads: 0,
-      completedLoads: 0
+      completedLoads: 0,
     };
   }
 }
@@ -150,11 +156,11 @@ export async function getLoadSummaryStats(orgId: string): Promise<{
 export async function getRecentDispatchActivity(orgId: string, limit = 5) {
   const activities = await db.dispatchActivity.findMany({
     where: { organizationId: orgId },
-    orderBy: { timestamp: "desc" },
+    orderBy: { timestamp: 'desc' },
     take: limit,
   });
 
-  const unique = Array.from(new Map(activities.map(a => [a.id, a])).values());
+  const unique = Array.from(new Map(activities.map((a) => [a.id, a])).values());
 
   return { success: true, data: unique };
 }

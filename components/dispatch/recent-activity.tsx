@@ -1,13 +1,7 @@
-import { Activity as ActivityIcon, Clock } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Activity as ActivityIcon, Clock } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface ActivityItem {
   id: string | number;
@@ -30,11 +24,7 @@ interface RecentActivityProps {
   activities: ActivityItem[];
 }
 
-export function RecentActivityRow({
-  params,
-  stats,
-  activities,
-}: RecentActivityProps) {
+export function RecentActivityRow({ params, stats, activities }: RecentActivityProps) {
   const formatLabel = (item: ActivityItem) =>
     `${item.userName} ${item.action.toLowerCase()} ${item.entityType.toLowerCase()} ${item.entityId}`;
 
@@ -54,20 +44,16 @@ export function RecentActivityRow({
               Dispatch activities for today
             </CardDescription>
 
-          {/* 2) Stats on top, first activity item right below it */}
-          <div className="flex flex-col gap-2 text-sm text-green-500">
-            <span className="space-x-2">
-              {stats.totalLoads} loads total   |  {stats.pendingLoads} pending | {"   "}
-              {stats.assignedLoads} assigned  |  {stats.inTransitLoads} in transit | {"   "}
-              {stats.completedLoads}  completed
-            </span>
-            {first && (
-              <span className="text-white">
-                {formatLabel(first)}
+            {/* 2) Stats on top, first activity item right below it */}
+            <div className="flex flex-col gap-2 text-sm text-green-500">
+              <span className="space-x-2">
+                {stats.totalLoads} loads total | {stats.pendingLoads} pending | {'   '}
+                {stats.assignedLoads} assigned | {stats.inTransitLoads} in transit | {'   '}
+                {stats.completedLoads} completed
               </span>
-            )}
-          </div>
+              {first && <span className="text-white">{formatLabel(first)}</span>}
             </div>
+          </div>
 
           {/* 3) Buttons in a vertical column */}
           <div className="flex flex-col gap-4">
@@ -95,16 +81,13 @@ export function RecentActivityRow({
         <CardContent className="pt-0">
           <ul className="space-y-3 text-gray-200 text-sm">
             {rest.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between"
-              >
+              <li key={item.id} className="flex items-center justify-between">
                 <span>{formatLabel(item)}</span>
                 <span className="flex items-center gap-1 text-xs text-gray-400">
                   <Clock className="h-3 w-3" />
                   {new Date(item.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    hour: '2-digit',
+                    minute: '2-digit',
                   })}
                 </span>
               </li>

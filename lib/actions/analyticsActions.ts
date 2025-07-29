@@ -7,10 +7,7 @@ import prisma from '@/lib/database/db';
 import { hasPermission } from '@/lib/auth/permissions';
 import { handleError } from '@/lib/errors/handleError';
 import type { AnalyticsActionResult } from '@/types/actions';
-import {
-  saveFilterPreset,
-  getFilterPresets,
-} from '@/lib/fetchers/analyticsFetchers';
+import { saveFilterPreset, getFilterPresets } from '@/lib/fetchers/analyticsFetchers';
 import type { FilterPreset } from '@/types/analytics';
 
 interface FleetMetrics {
@@ -40,7 +37,7 @@ interface ComplianceAnalytics {
  * Get fleet performance metrics
  */
 export async function getFleetMetricsAction(
-  orgId: string
+  orgId: string,
 ): Promise<AnalyticsActionResult<FleetMetrics>> {
   try {
     const { userId } = await auth();
@@ -53,40 +50,32 @@ export async function getFleetMetricsAction(
       return { success: false };
     }
 
-    const hasAccess = hasPermission(
-      user,
-      'org:sys_memberships:read'
-    );
+    const hasAccess = hasPermission(user, 'org:sys_memberships:read');
     if (!hasAccess) {
       return { success: false };
     }
 
     // Get fleet performance data
-    const [
-      vehicleCount,
-      activeVehicleCount,
-      maintenanceVehicleCount,
-      totalMiles,
-    ] = await Promise.all([
-      prisma.vehicle.count({ where: { organizationId: orgId } }),
-      prisma.vehicle.count({
-        where: { organizationId: orgId, status: 'active' },
-      }),
-      prisma.vehicle.count({
-        where: { organizationId: orgId, status: 'maintenance' },
-      }),
-      prisma.vehicle.aggregate({
-        where: { organizationId: orgId },
-        _sum: { currentOdometer: true },
-      }),
-    ]);
+    const [vehicleCount, activeVehicleCount, maintenanceVehicleCount, totalMiles] =
+      await Promise.all([
+        prisma.vehicle.count({ where: { organizationId: orgId } }),
+        prisma.vehicle.count({
+          where: { organizationId: orgId, status: 'active' },
+        }),
+        prisma.vehicle.count({
+          where: { organizationId: orgId, status: 'maintenance' },
+        }),
+        prisma.vehicle.aggregate({
+          where: { organizationId: orgId },
+          _sum: { currentOdometer: true },
+        }),
+      ]);
 
     const metrics = {
       vehicleCount,
       activeVehicleCount,
       maintenanceVehicleCount,
-      fleetUtilization:
-        vehicleCount > 0 ? (activeVehicleCount / vehicleCount) * 100 : 0,
+      fleetUtilization: vehicleCount > 0 ? (activeVehicleCount / vehicleCount) * 100 : 0,
       totalMiles: totalMiles._sum.currentOdometer || 0,
     };
 
@@ -100,7 +89,7 @@ export async function getFleetMetricsAction(
  * Get load analytics
  */
 export async function getLoadAnalyticsAction(
-  orgId: string
+  orgId: string,
 ): Promise<AnalyticsActionResult<LoadAnalytics>> {
   try {
     const { userId } = await auth();
@@ -113,32 +102,27 @@ export async function getLoadAnalyticsAction(
       return { success: false };
     }
 
-    const hasAccess = hasPermission(
-      user,
-      'org:sys_memberships:read'
-    );
+    const hasAccess = hasPermission(user, 'org:sys_memberships:read');
     if (!hasAccess) {
       return { success: false };
     }
 
     // Get load statistics
-    const [totalLoads, deliveredLoads, inTransitLoads, pendingLoads] =
-      await Promise.all([
-        prisma.load.count({ where: { organizationId: orgId } }),
-        prisma.load.count({
-          where: { organizationId: orgId, status: 'delivered' },
-        }),
-        prisma.load.count({
-          where: { organizationId: orgId, status: 'in_transit' },
-        }),
-        prisma.load.count({
-          where: { organizationId: orgId, status: 'pending' },
-        }),
-      ]);
+    const [totalLoads, deliveredLoads, inTransitLoads, pendingLoads] = await Promise.all([
+      prisma.load.count({ where: { organizationId: orgId } }),
+      prisma.load.count({
+        where: { organizationId: orgId, status: 'delivered' },
+      }),
+      prisma.load.count({
+        where: { organizationId: orgId, status: 'in_transit' },
+      }),
+      prisma.load.count({
+        where: { organizationId: orgId, status: 'pending' },
+      }),
+    ]);
 
     // Calculate completion rate
-    const completionRate =
-      totalLoads > 0 ? (deliveredLoads / totalLoads) * 100 : 0;
+    const completionRate = totalLoads > 0 ? (deliveredLoads / totalLoads) * 100 : 0;
 
     const analytics = {
       totalLoads,
@@ -162,7 +146,7 @@ export async function getLoadAnalyticsAction(
  * Get financial metrics
  */
 export async function getFinancialMetricsAction(
-  orgId: string
+  orgId: string,
 ): Promise<AnalyticsActionResult<void>> {
   try {
     const { userId } = await auth();
@@ -175,16 +159,16 @@ export async function getFinancialMetricsAction(
       return { success: false };
     }
 
-    const hasAccess = hasPermission(
-      user,
-      'org:sys_memberships:read'
-    );
+    const hasAccess = hasPermission(user, 'org:sys_memberships:read');
     if (!hasAccess) {
       return { success: false };
     }
 
     // Get revenue from completed loads
-    const { _sum: { rate }, _count } = await prisma.load.aggregate({
+    const {
+      _sum: { rate },
+      _count,
+    } = await prisma.load.aggregate({
       where: {
         organizationId: orgId,
         status: 'delivered',
@@ -204,7 +188,7 @@ export async function getFinancialMetricsAction(
  * Get compliance analytics
  */
 export async function getComplianceAnalyticsAction(
-  orgId: string
+  orgId: string,
 ): Promise<AnalyticsActionResult<ComplianceAnalytics>> {
   try {
     const { userId } = await auth();
@@ -217,30 +201,24 @@ export async function getComplianceAnalyticsAction(
       return { success: false };
     }
 
-    const hasAccess = hasPermission(
-      user,
-      'org:sys_memberships:read'
-    );
+    const hasAccess = hasPermission(user, 'org:sys_memberships:read');
     if (!hasAccess) {
       return { success: false };
     }
 
     // Get compliance document statistics
-    const [totalDocuments, expiredDocuments, expiringDocuments] =
-      await Promise.all([
-        prisma.complianceDocument.count({ where: { organizationId: orgId } }),
-        prisma.complianceDocument.count({}),
-        prisma.complianceDocument.count({
-          where: {
-            organizationId: orgId,
-          },
-        }),
-      ]);
+    const [totalDocuments, expiredDocuments, expiringDocuments] = await Promise.all([
+      prisma.complianceDocument.count({ where: { organizationId: orgId } }),
+      prisma.complianceDocument.count({}),
+      prisma.complianceDocument.count({
+        where: {
+          organizationId: orgId,
+        },
+      }),
+    ]);
 
     const complianceRate =
-      totalDocuments > 0
-        ? ((totalDocuments - expiredDocuments) / totalDocuments) * 100
-        : 100;
+      totalDocuments > 0 ? ((totalDocuments - expiredDocuments) / totalDocuments) * 100 : 100;
 
     const analytics = {
       totalDocuments,

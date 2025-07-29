@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Common schemas for embedded fields
 export const locationSchema = z.object({
-  name: z.string().min(1, "Location name is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zipCode: z.string().min(1, "ZIP code is required"),
+  name: z.string().min(1, 'Location name is required'),
+  address: z.string().min(1, 'Address is required'),
+  city: z.string().min(1, 'City is required'),
+  state: z.string().min(1, 'State is required'),
+  zipCode: z.string().min(1, 'ZIP code is required'),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   contactName: z.string().optional(),
@@ -15,9 +15,9 @@ export const locationSchema = z.object({
 });
 export const customerSchema = z.object({
   id: z.string().optional(),
-  name: z.string().min(1, "Customer name is required"),
+  name: z.string().min(1, 'Customer name is required'),
   contactName: z.string().optional(),
-  email: z.string().email("Invalid email").optional(),
+  email: z.string().email('Invalid email').optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -30,7 +30,16 @@ export const customerSchema = z.object({
   notes: z.string().optional(),
 });
 export const equipmentRequirementSchema = z.object({
-  type: z.enum(["dry_van", "reefer", "flatbed", "step_deck", "lowboy", "tanker", "container", "other"]),
+  type: z.enum([
+    'dry_van',
+    'reefer',
+    'flatbed',
+    'step_deck',
+    'lowboy',
+    'tanker',
+    'container',
+    'other',
+  ]),
   length: z.number().optional(),
   temperatureMin: z.number().optional(),
   temperatureMax: z.number().optional(),
@@ -41,35 +50,41 @@ export const equipmentRequirementSchema = z.object({
   notes: z.string().optional(),
 });
 export const cargoDetailsSchema = z.object({
-  description: z.string().min(1, "Description is required"),
+  description: z.string().min(1, 'Description is required'),
   commodity: z.string().optional(),
-  weight: z.number().min(0, "Weight must be positive"),
+  weight: z.number().min(0, 'Weight must be positive'),
   pieces: z.number().int().min(0).optional(),
   pallets: z.number().int().min(0).optional(),
-  dimensions: z.object({
-    length: z.number().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
-  }).optional(),
+  dimensions: z
+    .object({
+      length: z.number().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+    })
+    .optional(),
   value: z.number().min(0).optional(),
-  hazmat: z.object({
-    class: z.string(),
-    unNumber: z.string(),
-    properShippingName: z.string(),
-    placard: z.string().optional(),
-  }).optional(),
-  temperature: z.object({
-    min: z.number(),
-    max: z.number(),
-    unit: z.enum(["F", "C"]),
-  }).optional(),
+  hazmat: z
+    .object({
+      class: z.string(),
+      unNumber: z.string(),
+      properShippingName: z.string(),
+      placard: z.string().optional(),
+    })
+    .optional(),
+  temperature: z
+    .object({
+      min: z.number(),
+      max: z.number(),
+      unit: z.enum(['F', 'C']),
+    })
+    .optional(),
   specialHandling: z.array(z.string()).optional(),
 });
 export const rateSchema = z.object({
-  total: z.number().min(0, "Total rate must be non-negative"),
-  currency: z.string().default("USD"),
-  type: z.enum(["flat", "per_mile", "percentage"]).default("flat"),
-  lineHaul: z.number().min(0, "Line haul must be non-negative"),
+  total: z.number().min(0, 'Total rate must be non-negative'),
+  currency: z.string().default('USD'),
+  type: z.enum(['flat', 'per_mile', 'percentage']).default('flat'),
+  lineHaul: z.number().min(0, 'Line haul must be non-negative'),
   fuelSurcharge: z.number().min(0).optional(),
   detention: z.number().min(0).optional(),
   layover: z.number().min(0).optional(),
@@ -85,21 +100,21 @@ export const rateSchema = z.object({
   brokerageRate: z.number().min(0).optional(),
   commissionRate: z.number().min(0).optional(),
   driverPay: z.number().min(0).optional(),
-  driverPayType: z.enum(["percentage", "flat", "per_mile"]).optional(),
+  driverPayType: z.enum(['percentage', 'flat', 'per_mile']).optional(),
   notes: z.string().optional(),
 });
 
 // Simplified form schema for load create/update actions
 export const loadInputSchema = z.object({
-  load_number: z.string().min(1, "Load number is required"),
-  origin_address: z.string().min(1, "Origin address is required"),
-  origin_city: z.string().min(1, "Origin city is required"),
-  origin_state: z.string().min(1, "Origin state is required"),
-  origin_zip: z.string().min(1, "Origin ZIP is required"),
-  destination_address: z.string().min(1, "Destination address is required"),
-  destination_city: z.string().min(1, "Destination city is required"),
-  destination_state: z.string().min(1, "Destination state is required"),
-  destination_zip: z.string().min(1, "Destination ZIP is required"),
+  load_number: z.string().min(1, 'Load number is required'),
+  origin_address: z.string().min(1, 'Origin address is required'),
+  origin_city: z.string().min(1, 'Origin city is required'),
+  origin_state: z.string().min(1, 'Origin state is required'),
+  origin_zip: z.string().min(1, 'Origin ZIP is required'),
+  destination_address: z.string().min(1, 'Destination address is required'),
+  destination_city: z.string().min(1, 'Destination city is required'),
+  destination_state: z.string().min(1, 'Destination state is required'),
+  destination_zip: z.string().min(1, 'Destination ZIP is required'),
   customer_id: z.string().optional(),
   driver_id: z.string().optional(),
   vehicle_id: z.string().optional(),
@@ -112,13 +127,13 @@ export const loadInputSchema = z.object({
 
 // Schema for creating a new load
 export const createLoadSchema = z.object({
-  referenceNumber: z.string().min(1, "Reference number is required"),
-  priority: z.enum(["low", "medium", "high", "urgent"]).default("medium"),
+  referenceNumber: z.string().min(1, 'Reference number is required'),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
   customer: customerSchema,
   origin: locationSchema,
   destination: locationSchema,
-  pickupDate: z.string().min(1, "Pickup date is required"),
-  deliveryDate: z.string().min(1, "Delivery date is required"),
+  pickupDate: z.string().min(1, 'Pickup date is required'),
+  deliveryDate: z.string().min(1, 'Delivery date is required'),
   estimatedPickupTime: z.string().optional(),
   estimatedDeliveryTime: z.string().optional(),
   equipment: equipmentRequirementSchema.optional(),
@@ -139,13 +154,30 @@ export const createLoadSchema = z.object({
 export const updateLoadSchema = z.object({
   id: z.string(),
   referenceNumber: z.string().min(1).optional(),
-  priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
-  status: z.enum([
-    "draft", "pending", "posted", "booked", "confirmed", "assigned",
-    "dispatched", "in_transit", "at_pickup", "picked_up", "en_route",
-    "at_delivery", "delivered", "pod_required", "completed", "invoiced",
-    "paid", "cancelled", "problem",
-  ]).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+  status: z
+    .enum([
+      'draft',
+      'pending',
+      'posted',
+      'booked',
+      'confirmed',
+      'assigned',
+      'dispatched',
+      'in_transit',
+      'at_pickup',
+      'picked_up',
+      'en_route',
+      'at_delivery',
+      'delivered',
+      'pod_required',
+      'completed',
+      'invoiced',
+      'paid',
+      'cancelled',
+      'problem',
+    ])
+    .optional(),
   customer: customerSchema.optional(),
   origin: locationSchema.optional(),
   destination: locationSchema.optional(),
@@ -181,10 +213,25 @@ export const loadAssignmentSchema = z.object({
 export const loadStatusUpdateSchema = z.object({
   loadId: z.string().min(1),
   status: z.enum([
-    "draft", "pending", "posted", "booked", "confirmed", "assigned",
-    "dispatched", "in_transit", "at_pickup", "picked_up", "en_route",
-    "at_delivery", "delivered", "pod_required", "completed", "invoiced",
-    "paid", "cancelled", "problem",
+    'draft',
+    'pending',
+    'posted',
+    'booked',
+    'confirmed',
+    'assigned',
+    'dispatched',
+    'in_transit',
+    'at_pickup',
+    'picked_up',
+    'en_route',
+    'at_delivery',
+    'delivered',
+    'pod_required',
+    'completed',
+    'invoiced',
+    'paid',
+    'cancelled',
+    'problem',
   ]),
   location: z.any().optional(),
 });

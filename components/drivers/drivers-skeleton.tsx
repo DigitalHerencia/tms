@@ -46,7 +46,6 @@ export function DriversSkeleton() {
           </Card>
         ))}
       </div>
-
     </div>
   );
 }

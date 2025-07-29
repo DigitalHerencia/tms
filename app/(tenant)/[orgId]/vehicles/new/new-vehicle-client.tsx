@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { VehicleForm } from '@/components/vehicles/vehicle-form';
-import { VehicleFormData } from '@/types/vehicles';
+import type { VehicleFormData } from '@/types/vehicles';
 import { createVehicleAction } from '@/lib/actions/vehicleActions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,7 +29,7 @@ export default function NewVehicleClient({ orgId }: NewVehicleClientProps) {
       formData.append('orgId', orgId);
 
       const result = await createVehicleAction(null, formData);
-      
+
       if (result.success) {
         toast({
           title: 'Success',
@@ -57,11 +57,7 @@ export default function NewVehicleClient({ orgId }: NewVehicleClientProps) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <VehicleForm
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-        submitLabel="Create Vehicle"
-      />
+      <VehicleForm onSubmit={handleSubmit} isLoading={isLoading} submitLabel="Create Vehicle" />
     </div>
   );
 }

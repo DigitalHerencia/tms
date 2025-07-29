@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Button } from '../ui/button';
@@ -8,21 +8,21 @@ export default function DriversListHeader() {
   const params = useParams();
   const orgId = Array.isArray(params?.orgId) ? params.orgId[0] : params?.orgId;
 
-  let lastUpdated: string | null = null
-  
-      try {
-          const summary = JSON.parse(localStorage.getItem('fleetSummary') || '{}');
-          lastUpdated = summary?.lastUpdated
-              ? new Date(summary.lastUpdated).toLocaleString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-              })
-              : null
-      } catch {
-          lastUpdated = null
-      }
+  let lastUpdated: string | null = null;
+
+  try {
+    const summary = JSON.parse(localStorage.getItem('fleetSummary') || '{}');
+    lastUpdated = summary?.lastUpdated
+      ? new Date(summary.lastUpdated).toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : null;
+  } catch {
+    lastUpdated = null;
+  }
 
   return (
     <div className="mb-6">
@@ -36,11 +36,13 @@ export default function DriversListHeader() {
               <span className="text-green-400 text-sm font-medium">Live</span>
             </div>
           </div>
-          <h2 className="text-sm text-white/90 mb-2">Manage your fleet drivers with compliance tracking and performance monitoring</h2>
-        <div className="flex items-center space-x-2 text-sm text-white/70">
+          <h2 className="text-sm text-white/90 mb-2">
+            Manage your fleet drivers with compliance tracking and performance monitoring
+          </h2>
+          <div className="flex items-center space-x-2 text-sm text-white/70">
             <RefreshCw className="h-3 w-3" />
-            <span>Last updated: {lastUpdated || "2 minutes ago"}</span>
-        </div>
+            <span>Last updated: {lastUpdated || '2 minutes ago'}</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button

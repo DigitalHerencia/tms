@@ -8,7 +8,7 @@ async function generateExcelExport(data: any, metrics?: string[]) {
   const mainData = prepareDataForExport(data.current || [], metrics);
   const mainSheet = workbook.addWorksheet('Analytics Data');
   if (mainData.length) {
-    mainSheet.columns = Object.keys(mainData[0]).map(key => ({ header: key, key }));
+    mainSheet.columns = Object.keys(mainData[0]).map((key) => ({ header: key, key }));
     mainSheet.addRows(mainData);
   }
 
@@ -17,7 +17,7 @@ async function generateExcelExport(data: any, metrics?: string[]) {
     const comparisonData = prepareDataForExport(data.previous, metrics);
     const comparisonSheet = workbook.addWorksheet('Previous Period');
     if (comparisonData.length) {
-      comparisonSheet.columns = Object.keys(comparisonData[0]).map(key => ({ header: key, key }));
+      comparisonSheet.columns = Object.keys(comparisonData[0]).map((key) => ({ header: key, key }));
       comparisonSheet.addRows(comparisonData);
     }
   }
@@ -32,7 +32,7 @@ async function generateExcelExport(data: any, metrics?: string[]) {
     const summarySheet = workbook.addWorksheet('Summary');
     summarySheet.columns = [
       { header: 'Metric', key: 'metric' },
-      { header: 'Value', key: 'value' }
+      { header: 'Value', key: 'value' },
     ];
     summarySheet.addRows(summaryData);
   }
@@ -53,7 +53,7 @@ function prepareDataForExport(data: any[], metrics?: string[]) {
     return [];
   }
 
-  return data.map(item => {
+  return data.map((item) => {
     // Start with basic properties
     const exportItem: any = {
       date: item.date || item.period || 'N/A',
@@ -64,7 +64,7 @@ function prepareDataForExport(data: any[], metrics?: string[]) {
     };
 
     // Add any additional properties from the original item
-    Object.keys(item).forEach(key => {
+    Object.keys(item).forEach((key) => {
       if (!exportItem.hasOwnProperty(key)) {
         exportItem[key] = item[key];
       }
@@ -73,7 +73,7 @@ function prepareDataForExport(data: any[], metrics?: string[]) {
     // Filter by specific metrics if provided
     if (metrics && metrics.length > 0) {
       const filteredItem: any = {};
-      metrics.forEach(metric => {
+      metrics.forEach((metric) => {
         if (exportItem.hasOwnProperty(metric)) {
           filteredItem[metric] = exportItem[metric];
         }
@@ -88,4 +88,3 @@ function prepareDataForExport(data: any[], metrics?: string[]) {
     return exportItem;
   });
 }
-

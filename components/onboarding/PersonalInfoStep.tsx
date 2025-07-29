@@ -28,9 +28,7 @@ export function PersonalInfoStep({ formData, updateFormData, onNext }: PersonalI
         <div className="mx-auto w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center mb-4">
           <User className="h-6 w-6 text-blue-500" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Let's start with the basics
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Let's start with the basics</h2>
         <p className="text-gray-400">
           Tell us a bit about yourself so we can personalize your experience.
         </p>
@@ -39,7 +37,9 @@ export function PersonalInfoStep({ formData, updateFormData, onNext }: PersonalI
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-sm font-medium text-gray-200">First Name</Label>
+            <Label htmlFor="firstName" className="text-sm font-medium text-gray-200">
+              First Name
+            </Label>
             <Input
               id="firstName"
               type="text"
@@ -51,7 +51,9 @@ export function PersonalInfoStep({ formData, updateFormData, onNext }: PersonalI
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-sm font-medium text-gray-200">Last Name</Label>
+            <Label htmlFor="lastName" className="text-sm font-medium text-gray-200">
+              Last Name
+            </Label>
             <Input
               id="lastName"
               type="text"
@@ -65,7 +67,9 @@ export function PersonalInfoStep({ formData, updateFormData, onNext }: PersonalI
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium text-gray-200">Email Address</Label>
+          <Label htmlFor="email" className="text-sm font-medium text-gray-200">
+            Email Address
+          </Label>
           <Input
             id="email"
             type="email"
@@ -82,8 +86,8 @@ export function PersonalInfoStep({ formData, updateFormData, onNext }: PersonalI
         </div>
 
         <div className="pt-4">
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             disabled={!isValid}
           >

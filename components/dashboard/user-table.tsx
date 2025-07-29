@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import type { UserWithRole } from '@/types/dashboard';
@@ -47,19 +47,18 @@ export function UserTable({ orgId }: UserTableProps) {
     setLoading(false);
   };
 
-
   return (
     <div className="mt-2">
       <Card className="border border-gray-200 bg-black">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          <SquareUser className="h-5 w-5" />
-          User Table
-        </CardTitle>
-        <CardDescription className="text-gray-400">
-          View and manage users in your organization
-        </CardDescription>
-      </CardHeader>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-white">
+            <SquareUser className="h-5 w-5" />
+            User Table
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            View and manage users in your organization
+          </CardDescription>
+        </CardHeader>
         <CardContent className="mt-2">
           {loading ? (
             <div className="p-6 text-center text-gray-400">Loading users...</div>
@@ -91,9 +90,9 @@ export function UserTable({ orgId }: UserTableProps) {
                         <RoleAssignmentModal
                           userId={User.id}
                           currentRole={User.role}
-                          onChange={role => handleRoleChange(User.id, role)}
+                          onChange={(role) => handleRoleChange(User.id, role)}
                           open={true}
-                          onOpenChange={open => {
+                          onOpenChange={(open) => {
                             if (!open) setModalUser(null);
                           }}
                         />
@@ -109,5 +108,3 @@ export function UserTable({ orgId }: UserTableProps) {
     </div>
   );
 }
-
-

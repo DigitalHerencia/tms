@@ -25,14 +25,11 @@ interface DriverComplianceTableProps {
   orgId: string;
 }
 
-export async function DriverComplianceTable({
-  orgId,
-}: DriverComplianceTableProps) {
+export async function DriverComplianceTable({ orgId }: DriverComplianceTableProps) {
   if (!orgId) {
     return <p className="text-red-500">Organization not found.</p>;
   }
-  const drivers: DriverComplianceRow[] =
-    await getDriverComplianceStatuses(orgId);
+  const drivers: DriverComplianceRow[] = await getDriverComplianceStatuses(orgId);
 
   return (
     <div className="overflow-x-auto rounded-md border">
@@ -51,43 +48,30 @@ export async function DriverComplianceTable({
         <TableBody>
           {drivers.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={6}
-                className="text-muted-foreground py-8 text-center"
-              >
+              <TableCell colSpan={6} className="text-muted-foreground py-8 text-center">
                 No drivers found
               </TableCell>
             </TableRow>
           ) : (
-            drivers.map(d => (
+            drivers.map((d) => (
               <TableRow key={d.id}>
                 <TableCell className="font-medium">{d.name}</TableCell>
                 <TableCell>
-                  <Badge 
-                    variant="outline"
-                    className="border-green-200 bg-green-50 text-green-700"
-                  >
+                  <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
                     {d.cdlStatus}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge 
-                    variant="outline"
-                    className="border-green-200 bg-green-50 text-green-700"
-                  >
+                  <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
                     {d.medicalStatus}
                   </Badge>
                 </TableCell>
                 <TableCell>{d.violationStatus}</TableCell>
                 <TableCell>
-                  {d.lastViolation
-                    ? new Date(d.lastViolation).toLocaleDateString()
-                    : 'None'}
+                  {d.lastViolation ? new Date(d.lastViolation).toLocaleDateString() : 'None'}
                 </TableCell>
                 <TableCell>
-                  {d.lastInspection
-                    ? new Date(d.lastInspection).toLocaleDateString()
-                    : 'N/A'}
+                  {d.lastInspection ? new Date(d.lastInspection).toLocaleDateString() : 'N/A'}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -97,7 +81,7 @@ export async function DriverComplianceTable({
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className='bg-neutral-900'>
+                    <DropdownMenuContent align="end" className="bg-neutral-900">
                       <DropdownMenuItem>View Details</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

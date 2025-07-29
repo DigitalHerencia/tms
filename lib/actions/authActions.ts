@@ -1,12 +1,13 @@
-'use server'
+'use server';
 
-import { clerkClient } from '@clerk/nextjs/server'
-import { signInSchema, signUpSchema, systemRoleSchema } from '@/schemas/auth'
-import db from '@/lib/database/db'
-import { sessionCache, buildSecureUserContext } from '@/lib/auth/secure-session-management'
-import { getPermissionsForRole, SystemRole } from '@/types/abac'
-import { handleError } from '@/lib/errors/handleError'
-import type { ActionResult } from '@/types/actions'
+import { clerkClient } from '@clerk/nextjs/server';
+import { signInSchema, signUpSchema, systemRoleSchema } from '@/schemas/auth';
+import db from '@/lib/database/db';
+import { sessionCache, buildSecureUserContext } from '@/lib/auth/secure-session-management';
+import type { SystemRole } from '@/types/abac';
+import { getPermissionsForRole } from '@/types/abac';
+import { handleError } from '@/lib/errors/handleError';
+import type { ActionResult } from '@/types/actions';
 
 /**
  * Authenticate a user using Clerk and update the local session cache.
@@ -20,17 +21,20 @@ export async function loginUser(
   password: string,
 ): Promise<ActionResult<{ sessionId: string }>> {
   try {
-    const { email: validatedEmail, password: validatedPassword } = signInSchema.parse({ email, password })
-    const client = await clerkClient()
+    const { email: validatedEmail, password: validatedPassword } = signInSchema.parse({
+      email,
+      password,
+    });
+    const client = await clerkClient();
     const signIn = await (client as any).authenticateUser({
       identifier: validatedEmail,
       password: validatedPassword,
-    })
+    });
     if (!signIn.sessionId || !signIn.userId) {
-      return { success: false, error: 'Invalid credentials' }
+      return { success: false, error: 'Invalid credentials' };
     }
-    const session = await (client as any).sessions.getSession(signIn.sessionId)
-    const user = await client.users.getUser(signIn.userId)
+    const session = await (client as any).sessions.getSession(signIn.sessionId);
+    const user = await client.users.getUser(signIn.userId);
 
     await db.user.upsert({
       where: { id: user.id },
@@ -43,18 +47,18 @@ export async function loginUser(
         profileImage: user.imageUrl,
         onboardingComplete: true,
       },
-    })
+    });
 
     const userContext = buildSecureUserContext(
       user.id,
       session as unknown as Record<string, unknown>,
-      (user.privateMetadata as any)?.organizationId || ''
-    )
-    sessionCache.set(`${user.id}-${userContext.organizationId}`, userContext)
+      (user.privateMetadata as any)?.organizationId || '',
+    );
+    sessionCache.set(`${user.id}-${userContext.organizationId}`, userContext);
 
-    return { success: true, data: { sessionId: signIn.sessionId } }
+    return { success: true, data: { sessionId: signIn.sessionId } };
   } catch (error) {
-    return handleError(error, 'Login User')
+    return handleError(error, 'Login User');
   }
 }
 
@@ -64,9 +68,12 @@ export async function loginUser(
  * @param data - Registration form values
  * @returns Result object indicating success or failure
  */
-export async function registerUser(
-  data: { email: string; password: string; name: string; companyName: string },
-): Promise<ActionResult<void>> {
+export async function registerUser(data: {
+  email: string;
+  password: string;
+  name: string;
+  companyName: string;
+}): Promise<ActionResult<void>> {
   try {
     const validated = signUpSchema.parse({
       email: data.email,
@@ -75,16 +82,21 @@ export async function registerUser(
       name: data.name,
       companyName: data.companyName,
       agreeToTerms: true,
-    })
+    });
 
-    const client = await clerkClient()
+    const client = await clerkClient();
     const user = await client.users.createUser({
       emailAddress: [validated.email],
       password: validated.password,
       firstName: validated.name,
-    })
+    });
 
-    const organization = await db.organization.create({ data: { name: validated.companyName, slug: validated.companyName.replace(/\s+/g, '-').toLowerCase() } })
+    const organization = await db.organization.create({
+      data: {
+        name: validated.companyName,
+        slug: validated.companyName.replace(/\s+/g, '-').toLowerCase(),
+      },
+    });
 
     await db.user.create({
       data: {
@@ -95,18 +107,22 @@ export async function registerUser(
         role: 'admin',
         onboardingComplete: true,
       },
-    })
+    });
 
     await client.users.updateUserMetadata(user.id, {
       privateMetadata: { organizationId: organization.id, onboardingComplete: true },
-      publicMetadata: { organizationId: organization.id, role: 'admin', permissions: getPermissionsForRole('admin' as SystemRole) },
-    })
+      publicMetadata: {
+        organizationId: organization.id,
+        role: 'admin',
+        permissions: getPermissionsForRole('admin' as SystemRole),
+      },
+    });
 
-    await updateSession(user.id)
+    await updateSession(user.id);
 
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    return handleError(error, 'Register User')
+    return handleError(error, 'Register User');
   }
 }
 
@@ -118,22 +134,22 @@ export async function registerUser(
  */
 export async function updateSession(userId: string): Promise<ActionResult<void>> {
   try {
-    const client = await clerkClient()
-    const user = await (client as any).users.getUser(userId)
-    const sessions = await (client as any).users.getUserSessions(userId)
-    const session = sessions[0]
+    const client = await clerkClient();
+    const user = await (client as any).users.getUser(userId);
+    const sessions = await (client as any).users.getUserSessions(userId);
+    const session = sessions[0];
     if (!session) {
-      return { success: false, error: 'No active session' }
+      return { success: false, error: 'No active session' };
     }
     const context = buildSecureUserContext(
       user.id,
       session as unknown as Record<string, unknown>,
-      (user.privateMetadata as any)?.organizationId || ''
-    )
-    sessionCache.set(`${user.id}-${context.organizationId}`, context)
-    return { success: true }
+      (user.privateMetadata as any)?.organizationId || '',
+    );
+    sessionCache.set(`${user.id}-${context.organizationId}`, context);
+    return { success: true };
   } catch (error) {
-    return handleError(error, 'Update Session')
+    return handleError(error, 'Update Session');
   }
 }
 
@@ -144,22 +160,19 @@ export async function updateSession(userId: string): Promise<ActionResult<void>>
  * @param role - New system role
  * @returns Result object indicating success or failure
  */
-export async function updateRBAC(
-  userId: string,
-  role: string,
-): Promise<ActionResult<void>> {
+export async function updateRBAC(userId: string, role: string): Promise<ActionResult<void>> {
   try {
-    const parsed = systemRoleSchema.parse(role) as SystemRole
-    const client = await clerkClient()
-    const permissions = getPermissionsForRole(parsed)
+    const parsed = systemRoleSchema.parse(role) as SystemRole;
+    const client = await clerkClient();
+    const permissions = getPermissionsForRole(parsed);
     await client.users.updateUserMetadata(userId, {
       publicMetadata: { role: parsed, permissions },
-    })
-    await db.user.update({ where: { id: userId }, data: { role: parsed as any } })
-    sessionCache.invalidateUser(userId)
-    await updateSession(userId)
-    return { success: true }
+    });
+    await db.user.update({ where: { id: userId }, data: { role: parsed as any } });
+    sessionCache.invalidateUser(userId);
+    await updateSession(userId);
+    return { success: true };
   } catch (error) {
-    return handleError(error, 'Update RBAC')
+    return handleError(error, 'Update RBAC');
   }
 }

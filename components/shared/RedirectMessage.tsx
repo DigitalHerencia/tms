@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -18,7 +18,9 @@ export function RedirectingMessage() {
   }, []);
 
   return (
-    <div className={`fixed inset-0 z-50 h-full w-full overflow-hidden bg-black transition-opacity duration-700 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+    <div
+      className={`fixed inset-0 z-50 h-full w-full overflow-hidden bg-black transition-opacity duration-700 ${visible ? 'opacity-100' : 'opacity-0'}`}
+    >
       <Image
         src="/sunset_loading.png"
         alt="Loading Background"
@@ -31,8 +33,8 @@ export function RedirectingMessage() {
           {/* Logo and brand moved up */}
           <div className="flex flex-col items-center space-y-6 mb-10">
             <div className="flex items-center space-x-3">
-              <MapPinned className='mr-1 h-12 w-12 text-blue-500 drop-shadow-lg' />
-              <h1 className='text-6xl font-extrabold text-white dark:text-white drop-shadow-lg'>
+              <MapPinned className="mr-1 h-12 w-12 text-blue-500 drop-shadow-lg" />
+              <h1 className="text-6xl font-extrabold text-white dark:text-white drop-shadow-lg">
                 FleetFusion
               </h1>
             </div>

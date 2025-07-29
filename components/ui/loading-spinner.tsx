@@ -1,4 +1,3 @@
-
 // components/ui/loading-spinner.tsx
 export default function LoadingSpinner({ className }: { className?: string }) {
   return (

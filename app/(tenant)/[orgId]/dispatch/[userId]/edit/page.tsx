@@ -1,11 +1,7 @@
-"use server";
+'use server';
 
-import {
-  getDriversByOrg,
-  getVehiclesByOrg,
-  getLoadById,
-} from "@/lib/fetchers/dispatchFetchers";
-import { EditLoadFeature } from "@/features/dispatch/EditLoadFeature";
+import { getDriversByOrg, getVehiclesByOrg, getLoadById } from '@/lib/fetchers/dispatchFetchers';
+import { EditLoadFeature } from '@/features/dispatch/EditLoadFeature';
 
 interface EditLoadPageProps {
   params: { orgId: string; userId: string };

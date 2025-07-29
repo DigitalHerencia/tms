@@ -2,21 +2,9 @@
 
 import { useState } from 'react';
 import { format } from 'date-fns';
-import {
-  CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Filter,
-} from 'lucide-react';
+import { CalendarIcon, ChevronLeft, ChevronRight, Download, Filter } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,11 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export function HosLogViewer() {
   const [date, setDate] = useState<Date>(new Date());
@@ -41,12 +25,8 @@ export function HosLogViewer() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Hours of Service Logs
-          </h2>
-          <p className="text-muted-foreground">
-            View and manage driver hours of service records
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">Hours of Service Logs</h2>
+          <p className="text-muted-foreground">View and manage driver hours of service records</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
@@ -64,9 +44,7 @@ export function HosLogViewer() {
         <Card className="md:w-1/3">
           <CardHeader>
             <CardTitle>Log Selection</CardTitle>
-            <CardDescription>
-              Select driver and date to view logs
-            </CardDescription>
+            <CardDescription>Select driver and date to view logs</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -90,19 +68,13 @@ export function HosLogViewer() {
               <label className="text-sm font-medium">Date</label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
+                  <Button variant="outline" className="w-full justify-start text-left font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {format(date, 'PPP')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    selected={date}
-                    onSelect={date => date && setDate(date)}
-                  />
+                  <Calendar selected={date} onSelect={(date) => date && setDate(date)} />
                 </PopoverContent>
               </Popover>
             </div>
@@ -124,9 +96,7 @@ export function HosLogViewer() {
           <CardHeader>
             <CardTitle>Driver's Daily Log</CardTitle>
             <CardDescription>
-              {driver === 'all'
-                ? 'All Drivers'
-                : driver.charAt(0).toUpperCase() + driver.slice(1)}{' '}
+              {driver === 'all' ? 'All Drivers' : driver.charAt(0).toUpperCase() + driver.slice(1)}{' '}
               - {format(date, 'MMMM d, yyyy')}
             </CardDescription>
           </CardHeader>
@@ -154,18 +124,10 @@ export function HosLogViewer() {
                   <table className="w-full">
                     <thead>
                       <tr className="bg-muted/50 border-b">
-                        <th className="p-2 text-left text-sm font-medium">
-                          Time
-                        </th>
-                        <th className="p-2 text-left text-sm font-medium">
-                          Status
-                        </th>
-                        <th className="p-2 text-left text-sm font-medium">
-                          Location
-                        </th>
-                        <th className="p-2 text-left text-sm font-medium">
-                          Remarks
-                        </th>
+                        <th className="p-2 text-left text-sm font-medium">Time</th>
+                        <th className="p-2 text-left text-sm font-medium">Status</th>
+                        <th className="p-2 text-left text-sm font-medium">Location</th>
+                        <th className="p-2 text-left text-sm font-medium">Remarks</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -210,16 +172,12 @@ export function HosLogViewer() {
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Driving Time</p>
                       <p className="text-2xl font-bold">5:30</p>
-                      <p className="text-muted-foreground text-xs">
-                        Available: 5:30
-                      </p>
+                      <p className="text-muted-foreground text-xs">Available: 5:30</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm font-medium">On Duty Time</p>
                       <p className="text-2xl font-bold">8:00</p>
-                      <p className="text-muted-foreground text-xs">
-                        Available: 6:00
-                      </p>
+                      <p className="text-muted-foreground text-xs">Available: 6:00</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Off Duty Time</p>
@@ -233,9 +191,7 @@ export function HosLogViewer() {
 
                   <div className="rounded-md border p-3">
                     <p className="text-sm font-medium">Cycle Summary</p>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      70-hour/8-day rule
-                    </p>
+                    <p className="text-muted-foreground mt-1 text-xs">70-hour/8-day rule</p>
                     <div className="mt-2 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Hours used in last 8 days:</span>

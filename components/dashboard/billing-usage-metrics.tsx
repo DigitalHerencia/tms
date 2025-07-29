@@ -73,15 +73,14 @@ export function BillingManagementClient({ billingInfo }: BillingManagementClient
       status === 'active'
         ? 'bg-green-600'
         : status === 'trial'
-        ? 'bg-blue-600'
-        : status === 'cancelled'
-        ? 'bg-red-600'
-        : 'bg-gray-600';
+          ? 'bg-blue-600'
+          : status === 'cancelled'
+            ? 'bg-red-600'
+            : 'bg-gray-600';
     return (
       <span
         className={
-          'inline-flex items-center px-2 py-0.5 rounded text-white text-xs font-medium ' +
-          bgClass
+          'inline-flex items-center px-2 py-0.5 rounded text-white text-xs font-medium ' + bgClass
         }
       >
         {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -136,8 +135,8 @@ export function BillingManagementClient({ billingInfo }: BillingManagementClient
                   remainingUsers <= 0
                     ? 'text-red-600'
                     : userPct > 75
-                    ? 'text-yellow-600'
-                    : 'text-green-600'
+                      ? 'text-yellow-600'
+                      : 'text-green-600'
                 }
               >
                 {remainingUsers} {remainingUsers === 1 ? 'seat' : 'seats'} remaining

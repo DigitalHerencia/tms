@@ -45,9 +45,7 @@ const ForgotPasswordPage: NextPage = () => {
       setStep('reset');
       setStatusMessage('Reset code sent! Check your email.');
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to send reset code.'
-      );
+      setError(err instanceof Error ? err.message : 'Failed to send reset code.');
     } finally {
       setLoading(false);
     }
@@ -69,9 +67,7 @@ const ForgotPasswordPage: NextPage = () => {
         // Wait for Clerk to update user context, then redirect
         setTimeout(() => {
           // Try to get orgId from user.publicMetadata
-          const orgId = user?.publicMetadata?.organizationId as
-            | string
-            | undefined;
+          const orgId = user?.publicMetadata?.organizationId as string | undefined;
           const userId = user?.id;
           if (orgId && userId) {
             router.replace(`/${orgId}/dashboard/${userId}`);
@@ -80,9 +76,7 @@ const ForgotPasswordPage: NextPage = () => {
           }
         }, 1200);
       } else if (result?.status === 'needs_second_factor') {
-        setError(
-          '2FA is required. Please complete second factor authentication.'
-        );
+        setError('2FA is required. Please complete second factor authentication.');
       } else {
         setError('Password reset failed. Try again.');
       }
@@ -97,9 +91,7 @@ const ForgotPasswordPage: NextPage = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-black px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="mt-2 text-3xl font-extrabold text-white">
-            Reset your password
-          </h1>
+          <h1 className="mt-2 text-3xl font-extrabold text-white">Reset your password</h1>
           <p className="mt-2 text-sm text-gray-400">
             Enter your email to receive a password reset code.
           </p>
@@ -110,10 +102,7 @@ const ForgotPasswordPage: NextPage = () => {
         >
           {step === 'request' ? (
             <>
-              <label
-                className="text-sm font-medium text-gray-200"
-                htmlFor="email"
-              >
+              <label className="text-sm font-medium text-gray-200" htmlFor="email">
                 Email
               </label>
               <input
@@ -123,7 +112,7 @@ const ForgotPasswordPage: NextPage = () => {
                 required
                 className="rounded-md border border-neutral-700 bg-black px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <button
                 type="submit"
@@ -135,10 +124,7 @@ const ForgotPasswordPage: NextPage = () => {
             </>
           ) : (
             <>
-              <label
-                className="text-sm font-medium text-gray-200"
-                htmlFor="password"
-              >
+              <label className="text-sm font-medium text-gray-200" htmlFor="password">
                 New Password
               </label>
               <input
@@ -148,12 +134,9 @@ const ForgotPasswordPage: NextPage = () => {
                 required
                 className="rounded-md border border-neutral-700 bg-black px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
-              <label
-                className="text-sm font-medium text-gray-200"
-                htmlFor="code"
-              >
+              <label className="text-sm font-medium text-gray-200" htmlFor="code">
                 Reset Code
               </label>
               <input
@@ -162,7 +145,7 @@ const ForgotPasswordPage: NextPage = () => {
                 required
                 className="rounded-md border border-neutral-700 bg-black px-3 py-2 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={code}
-                onChange={e => setCode(e.target.value)}
+                onChange={(e) => setCode(e.target.value)}
               />
               <button
                 type="submit"
@@ -174,23 +157,15 @@ const ForgotPasswordPage: NextPage = () => {
             </>
           )}
           <div className="flex justify-between">
-            <a
-              href="/sign-in"
-              className="text-xs text-blue-400 hover:underline"
-            >
+            <a href="/sign-in" className="text-xs text-blue-400 hover:underline">
               Back to sign in
             </a>
-            <a
-              href="/sign-up"
-              className="text-xs text-blue-400 hover:underline"
-            >
+            <a href="/sign-up" className="text-xs text-blue-400 hover:underline">
               Create account
             </a>
           </div>
           {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-          {statusMessage && (
-            <p className="mt-2 text-sm text-green-500">{statusMessage}</p>
-          )}
+          {statusMessage && <p className="mt-2 text-sm text-green-500">{statusMessage}</p>}
         </form>
       </div>
     </div>

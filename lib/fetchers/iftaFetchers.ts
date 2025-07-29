@@ -168,28 +168,27 @@ export async function getIftaDataForPeriod(
         jurisdictionSummary[jurisdiction].taxableGallons =
           (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
 
-        
-    // Aggregate totals using Prisma
-    const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
-      db.iftaTrip.aggregate({
-        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
-        _sum: { distance: true },
-      }),
-      db.iftaFuelPurchase.aggregate({
-        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
-        _sum: { gallons: true, amount: true },
-      }),
-      db.iftaTrip.groupBy({
-        by: ['jurisdiction'],
-        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
-        _sum: { distance: true },
-      }),
-      db.iftaFuelPurchase.groupBy({
-        by: ['jurisdiction'],
-        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
-        _sum: { gallons: true },
-      }),
-    ]);
+        // Aggregate totals using Prisma
+        const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
+          db.iftaTrip.aggregate({
+            where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+            _sum: { distance: true },
+          }),
+          db.iftaFuelPurchase.aggregate({
+            where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+            _sum: { gallons: true, amount: true },
+          }),
+          db.iftaTrip.groupBy({
+            by: ['jurisdiction'],
+            where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+            _sum: { distance: true },
+          }),
+          db.iftaFuelPurchase.groupBy({
+            by: ['jurisdiction'],
+            where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+            _sum: { gallons: true },
+          }),
+        ]);
       }
     });
 
@@ -205,7 +204,7 @@ export async function getIftaDataForPeriod(
 
     // Look up driver and location information for each trip
     const detailedTrips = await Promise.all(
-      trips.map(async trip => {
+      trips.map(async (trip) => {
         const load = await db.load.findFirst({
           where: {
             organizationId: orgId,
@@ -234,7 +233,9 @@ export async function getIftaDataForPeriod(
           },
         });
 
-        const driverName = load?.drivers ? `${load.drivers.firstName} ${load.drivers.lastName}` : null;
+        const driverName = load?.drivers
+          ? `${load.drivers.firstName} ${load.drivers.lastName}`
+          : null;
         const startLocation = load ? `${load.originCity}, ${load.originState}` : null;
         const endLocation = load ? `${load.destinationCity}, ${load.destinationState}` : null;
 
@@ -259,7 +260,7 @@ export async function getIftaDataForPeriod(
           gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
           state: trip.jurisdiction,
         };
-      })
+      }),
     );
 
     const result: IftaPeriodData = {

@@ -15,7 +15,9 @@ export async function RecentActivityCard({ driverId, orgId }: { driverId: string
       <Card className="bg-black/40 border-gray-800/50">
         <CardHeader>
           <CardTitle className="text-lg text-white">Recent Activity</CardTitle>
-          <CardDescription className="text-gray-400">Latest driver actions and updates</CardDescription>
+          <CardDescription className="text-gray-400">
+            Latest driver actions and updates
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {driverActivities.length > 0 ? (
@@ -25,7 +27,9 @@ export async function RecentActivityCard({ driverId, orgId }: { driverId: string
                   <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-white">{activity.action || 'Activity'}</div>
-                    <div className="text-xs text-gray-400">{activity.timestamp ? new Date(activity.timestamp).toLocaleString() : ''}</div>
+                    <div className="text-xs text-gray-400">
+                      {activity.timestamp ? new Date(activity.timestamp).toLocaleString() : ''}
+                    </div>
                     {activity.details && (
                       <div className="text-xs text-gray-300 mt-1">{activity.details}</div>
                     )}
@@ -36,7 +40,9 @@ export async function RecentActivityCard({ driverId, orgId }: { driverId: string
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-400 mb-4">No recent activity found</p>
-              <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">View Full History</Button>
+              <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">
+                View Full History
+              </Button>
             </div>
           )}
         </CardContent>
@@ -48,12 +54,16 @@ export async function RecentActivityCard({ driverId, orgId }: { driverId: string
       <Card className="bg-black/40 border-gray-800/50">
         <CardHeader>
           <CardTitle className="text-lg text-white">Recent Activity</CardTitle>
-          <CardDescription className="text-gray-400">Latest driver actions and updates</CardDescription>
+          <CardDescription className="text-gray-400">
+            Latest driver actions and updates
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <p className="text-gray-400 mb-4">Unable to load recent activity</p>
-            <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">Refresh</Button>
+            <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">
+              Refresh
+            </Button>
           </div>
         </CardContent>
       </Card>

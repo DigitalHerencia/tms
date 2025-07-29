@@ -5,7 +5,6 @@
 
 import { z } from 'zod';
 
-
 // Compliance document validation schemas
 export const createComplianceDocumentSchema = z.object({
   entityType: z.enum(['driver', 'vehicle', 'trailer', 'company']),
@@ -74,9 +73,7 @@ export const updateComplianceDocumentSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Name is required').optional(),
   description: z.string().optional(),
-  status: z
-    .enum(['valid', 'expiring', 'expired', 'pending', 'rejected'])
-    .optional(),
+  status: z.enum(['valid', 'expiring', 'expired', 'pending', 'rejected']).optional(),
   expirationDate: z.string().optional(),
   documentNumber: z.string().optional(),
   issuingAuthority: z.string().optional(),
@@ -91,20 +88,14 @@ export const updateComplianceDocumentSchema = z.object({
 });
 
 export const complianceDocumentFilterSchema = z.object({
-  entityType: z
-    .array(z.enum(['driver', 'vehicle', 'trailer', 'company']))
-    .optional(),
+  entityType: z.array(z.enum(['driver', 'vehicle', 'trailer', 'company'])).optional(),
   entityId: z.string().optional(),
   type: z.array(z.string()).optional(),
-  status: z
-    .array(z.enum(['valid', 'expiring', 'expired', 'pending', 'rejected']))
-    .optional(),
+  status: z.array(z.enum(['valid', 'expiring', 'expired', 'pending', 'rejected'])).optional(),
   expiringIn: z.number().min(1).optional(), // days
   tags: z.array(z.string()).optional(),
   search: z.string().optional(),
-  sortBy: z
-    .enum(['name', 'type', 'expirationDate', 'status', 'createdAt'])
-    .optional(),
+  sortBy: z.enum(['name', 'type', 'expirationDate', 'status', 'createdAt']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.number().int().min(1).optional(),
   limit: z.number().int().min(1).max(100).optional(),
@@ -190,9 +181,7 @@ export const hosFilterSchema = z.object({
   driverId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  status: z
-    .array(z.enum(['compliant', 'violation', 'pending_review']))
-    .optional(),
+  status: z.array(z.enum(['compliant', 'violation', 'pending_review'])).optional(),
   hasViolations: z.boolean().optional(),
   sortBy: z.enum(['date', 'status', 'totalDriveTime', 'violations']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
@@ -257,9 +246,7 @@ export const createDvirSchema = z.object({
 
 export const updateDvirSchema = z.object({
   id: z.string(),
-  status: z
-    .enum(['pending', 'approved', 'requires_attention', 'out_of_service'])
-    .optional(),
+  status: z.enum(['pending', 'approved', 'requires_attention', 'out_of_service']).optional(),
   defects: z.array(dvirDefectSchema).optional(),
   safeToOperate: z.boolean().optional(),
   defectsFound: z.boolean().optional(),
@@ -280,9 +267,7 @@ export const dvirFilterSchema = z.object({
   endDate: z.string().optional(),
   type: z.array(z.enum(['pre_trip', 'post_trip', 'en_route'])).optional(),
   status: z
-    .array(
-      z.enum(['pending', 'approved', 'requires_attention', 'out_of_service'])
-    )
+    .array(z.enum(['pending', 'approved', 'requires_attention', 'out_of_service']))
     .optional(),
   safeToOperate: z.boolean().optional(),
   defectsFound: z.boolean().optional(),
@@ -327,13 +312,7 @@ export const maintenanceVendorSchema = z.object({
 
 export const createMaintenanceSchema = z.object({
   vehicleId: z.string().min(1, 'Vehicle ID is required'),
-  type: z.enum([
-    'preventive',
-    'corrective',
-    'inspection',
-    'recall',
-    'warranty',
-  ]),
+  type: z.enum(['preventive', 'corrective', 'inspection', 'recall', 'warranty']),
   category: z.enum([
     'engine',
     'transmission',
@@ -361,9 +340,7 @@ export const createMaintenanceSchema = z.object({
 export const updateMaintenanceSchema = z.object({
   id: z.string(),
   completedDate: z.string().optional(),
-  status: z
-    .enum(['scheduled', 'overdue', 'in_progress', 'completed', 'cancelled'])
-    .optional(),
+  status: z.enum(['scheduled', 'overdue', 'in_progress', 'completed', 'cancelled']).optional(),
   technician: z.string().optional(),
   laborHours: z.number().min(0).optional(),
   laborCost: z.number().min(0).optional(),
@@ -378,14 +355,10 @@ export const updateMaintenanceSchema = z.object({
 export const maintenanceFilterSchema = z.object({
   vehicleId: z.string().optional(),
   type: z
-    .array(
-      z.enum(['preventive', 'corrective', 'inspection', 'recall', 'warranty'])
-    )
+    .array(z.enum(['preventive', 'corrective', 'inspection', 'recall', 'warranty']))
     .optional(),
   status: z
-    .array(
-      z.enum(['scheduled', 'overdue', 'in_progress', 'completed', 'cancelled'])
-    )
+    .array(z.enum(['scheduled', 'overdue', 'in_progress', 'completed', 'cancelled']))
     .optional(),
   priority: z.array(z.enum(['low', 'medium', 'high', 'urgent'])).optional(),
   startDate: z.string().optional(),
@@ -394,14 +367,7 @@ export const maintenanceFilterSchema = z.object({
   dueSoon: z.number().min(1).optional(), // days
   overdue: z.boolean().optional(),
   sortBy: z
-    .enum([
-      'scheduledDate',
-      'dueDate',
-      'completedDate',
-      'priority',
-      'cost',
-      'vehicle',
-    ])
+    .enum(['scheduledDate', 'dueDate', 'completedDate', 'priority', 'cost', 'vehicle'])
     .optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.number().int().min(1).optional(),
@@ -437,21 +403,12 @@ export const correctiveActionSchema = z.object({
   assignedTo: z.string().min(1, 'Assigned to is required'),
   dueDate: z.string().min(1, 'Due date is required'),
   completedDate: z.string().optional(),
-  status: z
-    .enum(['pending', 'in_progress', 'completed', 'overdue'])
-    .default('pending'),
+  status: z.enum(['pending', 'in_progress', 'completed', 'overdue']).default('pending'),
   notes: z.string().optional(),
 });
 
 export const createSafetyEventSchema = z.object({
-  type: z.enum([
-    'accident',
-    'violation',
-    'inspection',
-    'complaint',
-    'incident',
-    'citation',
-  ]),
+  type: z.enum(['accident', 'violation', 'inspection', 'complaint', 'incident', 'citation']),
   severity: z.enum(['minor', 'major', 'serious', 'critical']),
   date: z.string().min(1, 'Date is required'),
   location: z.string().min(1, 'Location is required'),
@@ -489,32 +446,17 @@ export const updateSafetyEventSchema = z.object({
 
 export const safetyEventFilterSchema = z.object({
   type: z
-    .array(
-      z.enum([
-        'accident',
-        'violation',
-        'inspection',
-        'complaint',
-        'incident',
-        'citation',
-      ])
-    )
+    .array(z.enum(['accident', 'violation', 'inspection', 'complaint', 'incident', 'citation']))
     .optional(),
-  severity: z
-    .array(z.enum(['minor', 'major', 'serious', 'critical']))
-    .optional(),
-  status: z
-    .array(z.enum(['open', 'under_review', 'closed', 'disputed']))
-    .optional(),
+  severity: z.array(z.enum(['minor', 'major', 'serious', 'critical'])).optional(),
+  status: z.array(z.enum(['open', 'under_review', 'closed', 'disputed'])).optional(),
   driverId: z.string().optional(),
   vehicleId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   injuriesReported: z.boolean().optional(),
   propertyDamage: z.boolean().optional(),
-  sortBy: z
-    .enum(['date', 'type', 'severity', 'status', 'driver', 'vehicle'])
-    .optional(),
+  sortBy: z.enum(['date', 'type', 'severity', 'status', 'driver', 'vehicle']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   page: z.number().int().min(1).optional(),
   limit: z.number().int().min(1).max(100).optional(),
@@ -555,13 +497,11 @@ export const complianceAlertFilterSchema = z.object({
         'inspection_due',
         'safety_event',
         'audit_finding',
-      ])
+      ]),
     )
     .optional(),
   severity: z.array(z.enum(['low', 'medium', 'high', 'critical'])).optional(),
-  entityType: z
-    .array(z.enum(['driver', 'vehicle', 'trailer', 'company', 'load']))
-    .optional(),
+  entityType: z.array(z.enum(['driver', 'vehicle', 'trailer', 'company', 'load'])).optional(),
   entityId: z.string().optional(),
   acknowledged: z.boolean().optional(),
   resolved: z.boolean().optional(),
@@ -599,15 +539,9 @@ export const complianceReportSchema = z.object({
 });
 
 // Export types from schemas
-export type CreateComplianceDocumentInput = z.infer<
-  typeof createComplianceDocumentSchema
->;
-export type UpdateComplianceDocumentInput = z.infer<
-  typeof updateComplianceDocumentSchema
->;
-export type ComplianceDocumentFilterInput = z.infer<
-  typeof complianceDocumentFilterSchema
->;
+export type CreateComplianceDocumentInput = z.infer<typeof createComplianceDocumentSchema>;
+export type UpdateComplianceDocumentInput = z.infer<typeof updateComplianceDocumentSchema>;
+export type ComplianceDocumentFilterInput = z.infer<typeof complianceDocumentFilterSchema>;
 export type CreateHosLogInput = z.infer<typeof createHosLogSchema>;
 export type UpdateHosLogInput = z.infer<typeof updateHosLogSchema>;
 export type HosViolationInput = z.infer<typeof hosViolationSchema>;
@@ -622,15 +556,9 @@ export type CreateSafetyEventInput = z.infer<typeof createSafetyEventSchema>;
 export type UpdateSafetyEventInput = z.infer<typeof updateSafetyEventSchema>;
 export type SafetyEventFilterInput = z.infer<typeof safetyEventFilterSchema>;
 export type ComplianceAlertInput = z.infer<typeof complianceAlertSchema>;
-export type UpdateComplianceAlertInput = z.infer<
-  typeof updateComplianceAlertSchema
->;
-export type ComplianceAlertFilterInput = z.infer<
-  typeof complianceAlertFilterSchema
->;
-export type BulkComplianceOperationInput = z.infer<
-  typeof bulkComplianceOperationSchema
->;
+export type UpdateComplianceAlertInput = z.infer<typeof updateComplianceAlertSchema>;
+export type ComplianceAlertFilterInput = z.infer<typeof complianceAlertFilterSchema>;
+export type BulkComplianceOperationInput = z.infer<typeof bulkComplianceOperationSchema>;
 export const complianceExportSchema = z.object({
   driverIds: z.array(z.string()).optional(),
   vehicleIds: z.array(z.string()).optional(),
@@ -638,12 +566,7 @@ export const complianceExportSchema = z.object({
 });
 
 export const complianceAlertConfigSchema = z.object({
-  alertType: z.enum([
-    'hos_violation',
-    'medical_expiry',
-    'license_expiry',
-    'vehicle_inspection',
-  ]),
+  alertType: z.enum(['hos_violation', 'medical_expiry', 'license_expiry', 'vehicle_inspection']),
   isEnabled: z.boolean(),
   reminderDays: z.number().min(1).max(365),
   notificationMethods: z.array(z.enum(['email', 'dashboard', 'sms'])),

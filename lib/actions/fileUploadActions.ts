@@ -20,9 +20,7 @@ export const fileUploadSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
-export async function saveUploadedDocument(
-  data: z.infer<typeof fileUploadSchema>
-) {
+export async function saveUploadedDocument(data: z.infer<typeof fileUploadSchema>) {
   try {
     const user = await getCurrentUser();
     const userId = user?.userId;
@@ -33,10 +31,8 @@ export async function saveUploadedDocument(
     await db.complianceDocument.updateMany({
       where: {
         organizationId: orgId,
-        driver_id:
-          validated.entityType === 'driver' ? validated.entityId : undefined,
-        vehicleId:
-          validated.entityType === 'vehicle' ? validated.entityId : undefined,
+        driver_id: validated.entityType === 'driver' ? validated.entityId : undefined,
+        vehicleId: validated.entityType === 'vehicle' ? validated.entityId : undefined,
         type: validated.documentType,
         status: 'active',
       },
@@ -46,10 +42,8 @@ export async function saveUploadedDocument(
     const doc = await db.complianceDocument.create({
       data: {
         organizationId: orgId,
-        driver_id:
-          validated.entityType === 'driver' ? validated.entityId : undefined,
-        vehicleId:
-          validated.entityType === 'vehicle' ? validated.entityId : undefined,
+        driver_id: validated.entityType === 'driver' ? validated.entityId : undefined,
+        vehicleId: validated.entityType === 'vehicle' ? validated.entityId : undefined,
         type: validated.documentType,
         title: validated.fileName,
         fileUrl: validated.url,

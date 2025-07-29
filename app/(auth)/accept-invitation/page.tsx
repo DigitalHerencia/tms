@@ -8,13 +8,7 @@ import { Loader2, MapPinned } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { SystemRoles, type SystemRole } from '@/types/abac';
 
@@ -62,13 +56,11 @@ export default function AcceptInvitationPage() {
       // This would typically happen if they clicked the invite link while already logged in
       toast({
         title: 'Already Signed In',
-        description:
-          'You are already signed in. Redirecting to your dashboard.',
+        description: 'You are already signed in. Redirecting to your dashboard.',
       });
 
       // Get user's role and redirect to appropriate dashboard
-      const userRole =
-        (user.publicMetadata?.role as SystemRole) || SystemRoles.MEMBER;
+      const userRole = (user.publicMetadata?.role as SystemRole) || SystemRoles.MEMBER;
       const orgId = user.publicMetadata?.organizationId as string;
 
       if (orgId) {
@@ -80,11 +72,7 @@ export default function AcceptInvitationPage() {
     }
   }, [userLoaded, user, router, invitationToken]);
 
-  const getRoleDashboardPath = (
-    role: SystemRole,
-    orgId: string,
-    userId: string
-  ): string => {
+  const getRoleDashboardPath = (role: SystemRole, orgId: string, userId: string): string => {
     switch (role) {
       case SystemRoles.ADMIN:
         return `/${orgId}/dashboard/${userId}`;
@@ -153,11 +141,7 @@ export default function AcceptInvitationPage() {
           });
 
           // Redirect to role-specific dashboard
-          const dashboardPath = getRoleDashboardPath(
-            role,
-            orgId,
-            result.createdUserId!
-          );
+          const dashboardPath = getRoleDashboardPath(role, orgId, result.createdUserId!);
           router.push(dashboardPath);
         } else {
           // Fallback to regular onboarding
@@ -173,9 +157,7 @@ export default function AcceptInvitationPage() {
       console.error('Error accepting invitation:', error);
       toast({
         title: 'Error',
-        description:
-          error.errors?.[0]?.message ||
-          'Failed to accept invitation. Please try again.',
+        description: error.errors?.[0]?.message || 'Failed to accept invitation. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -206,8 +188,7 @@ export default function AcceptInvitationPage() {
           </div>
           <CardTitle className="text-2xl font-bold">Join FleetFusion</CardTitle>
           <CardDescription>
-            You've been invited to join an organization. Complete your profile
-            to get started.
+            You've been invited to join an organization. Complete your profile to get started.
           </CardDescription>
         </CardHeader>
 
@@ -219,9 +200,7 @@ export default function AcceptInvitationPage() {
                 id="firstName"
                 type="text"
                 value={userInfo.firstName}
-                onChange={e =>
-                  setUserInfo(prev => ({ ...prev, firstName: e.target.value }))
-                }
+                onChange={(e) => setUserInfo((prev) => ({ ...prev, firstName: e.target.value }))}
                 required
                 disabled={loading}
               />
@@ -233,9 +212,7 @@ export default function AcceptInvitationPage() {
                 id="lastName"
                 type="text"
                 value={userInfo.lastName}
-                onChange={e =>
-                  setUserInfo(prev => ({ ...prev, lastName: e.target.value }))
-                }
+                onChange={(e) => setUserInfo((prev) => ({ ...prev, lastName: e.target.value }))}
                 required
                 disabled={loading}
               />
@@ -247,9 +224,7 @@ export default function AcceptInvitationPage() {
                 id="password"
                 type="password"
                 value={userInfo.password}
-                onChange={e =>
-                  setUserInfo(prev => ({ ...prev, password: e.target.value }))
-                }
+                onChange={(e) => setUserInfo((prev) => ({ ...prev, password: e.target.value }))}
                 required
                 disabled={loading}
                 minLength={8}

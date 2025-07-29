@@ -1,11 +1,19 @@
-import { Users, Truck, UserCheck, Package, Calendar, Activity, AlertTriangle, TrendingUp } from 'lucide-react';
+import {
+  Users,
+  Truck,
+  UserCheck,
+  Package,
+  Calendar,
+  Activity,
+  AlertTriangle,
+  TrendingUp,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDashboardMetrics, getOrganizationStats } from '@/lib/fetchers/dashboardFetchers';
 import { Button } from '@/components/ui/button';
 
 export async function OrganizationStats({ orgId, userId }: { orgId: string; userId?: string }) {
-  
   // Fetch metrics and stats in parallel
   const [metrics, stats] = await Promise.all([
     getDashboardMetrics(orgId, userId ?? ''), // Ensure userId is a string
@@ -13,9 +21,12 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
   ]);
 
   // Calculate fleet utilization
-  const fleetUtilization = metrics.totalVehicles > 0
-    ? Math.round(((metrics.totalVehicles - metrics.availableVehicles) / metrics.totalVehicles) * 100)
-    : 0;
+  const fleetUtilization =
+    metrics.totalVehicles > 0
+      ? Math.round(
+          ((metrics.totalVehicles - metrics.availableVehicles) / metrics.totalVehicles) * 100,
+        )
+      : 0;
 
   // Only real data, no growth calculation
   const statsData = [
@@ -51,7 +62,6 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
 
   return (
     <div className="space-y-6">
-      
       {/* Recent Activity Summary */}
       <Card className="border border-gray-200 bg-black">
         <CardHeader>
@@ -83,7 +93,7 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
           </div>
         </CardContent>
       </Card>
-    
+
       {/* Organization Statistics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statsData.map((stat, index) => {
@@ -127,7 +137,7 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Quick Action Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border border-gray-200 bg-black">
@@ -168,7 +178,10 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
             <div className="text-2xl font-bold text-white">{fleetUtilization}%</div>
             <p className="text-xs text-yellow-500">Fleet utilization</p>
             <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
-              <div className="bg-yellow-500 h-2 rounded-full" style={{ width: `${fleetUtilization}%` }}></div>
+              <div
+                className="bg-yellow-500 h-2 rounded-full"
+                style={{ width: `${fleetUtilization}%` }}
+              ></div>
             </div>
           </CardContent>
         </Card>
@@ -190,4 +203,3 @@ export async function OrganizationStats({ orgId, userId }: { orgId: string; user
     </div>
   );
 }
-  

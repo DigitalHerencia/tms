@@ -6,13 +6,18 @@
 
 import { billingInfoSchema } from '@/schemas/dashboard';
 import type { BillingInfo } from '@/types/dashboard';
-import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
-import db from "@/lib/database/db";
-import { handleError } from "@/lib/errors/handleError";
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import db from '@/lib/database/db';
+import { handleError } from '@/lib/errors/handleError';
 import { objectsToCsv, generateSimplePdf, uploadExport } from '@/lib/services/exportService';
-import { getOrganizationKPIs } from "@/lib/fetchers/dashboardFetchers";
-import type { OrganizationKPIs, DashboardActionResult, DashboardAlert, DashboardScheduleItem } from "@/types/dashboard";
+import { getOrganizationKPIs } from '@/lib/fetchers/dashboardFetchers';
+import type {
+  OrganizationKPIs,
+  DashboardActionResult,
+  DashboardAlert,
+  DashboardScheduleItem,
+} from '@/types/dashboard';
 import { Readable } from 'node:stream';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { put } from '@vercel/blob';
@@ -113,7 +118,7 @@ export async function activateUsersAction(
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
     const userIdsRaw = formData.get('userIds') as string | null;
-    let activated: string[] = [];
+    const activated: string[] = [];
     if (userIdsRaw && userIdsRaw.trim()) {
       const userIds = userIdsRaw
         .split(',')
@@ -170,12 +175,12 @@ export async function exportOrganizationDataAction(
 ): Promise<DashboardActionResult<{ downloadUrl: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
-    const exportType = (formData.get("exportType") as string) || "users";
-    const format = (formData.get("format") as string) || "csv";
+    const exportType = (formData.get('exportType') as string) || 'users';
+    const format = (formData.get('format') as string) || 'csv';
 
-    let rows: Record<string, any>[] = [];
+    const rows: Record<string, any>[] = [];
 
     if (exportType === 'users' || exportType === 'full') {
       const users = await db.user.findMany({
@@ -219,7 +224,7 @@ export async function exportOrganizationDataAction(
     }
 
     let buffer: Buffer;
-    let ext = format === 'pdf' ? 'pdf' : 'csv';
+    const ext = format === 'pdf' ? 'pdf' : 'csv';
 
     if (format === 'pdf') {
       const doc = await PDFDocument.create();
@@ -264,7 +269,7 @@ export async function exportOrganizationDataAction(
 
     return { success: true, data: { downloadUrl } };
   } catch (error) {
-    return handleError(error, "Export Organization Data");
+    return handleError(error, 'Export Organization Data');
   }
 }
 

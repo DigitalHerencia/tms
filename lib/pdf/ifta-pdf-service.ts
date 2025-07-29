@@ -2,13 +2,13 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import type { 
-  IFTAReportData, 
-  PDFOptions, 
-  PDFGenerationResult, 
+import type {
+  IFTAReportData,
+  PDFOptions,
+  PDFGenerationResult,
   CustomReportOptions,
   DigitalSignature,
-  JurisdictionSummary 
+  JurisdictionSummary,
 } from '@/types/ifta';
 
 export class IFTAPDFService {
@@ -20,7 +20,7 @@ export class IFTAPDFService {
    */
   private static async ensureDirectories(): Promise<void> {
     const dirs = [this.STORAGE_PATH, this.TEMP_PATH];
-    
+
     for (const dir of dirs) {
       if (!existsSync(dir)) {
         await mkdir(dir, { recursive: true });
@@ -36,8 +36,8 @@ export class IFTAPDFService {
     options: PDFOptions = {
       format: 'A4',
       orientation: 'portrait',
-      includeSignature: false
-    }
+      includeSignature: false,
+    },
   ): Promise<PDFGenerationResult> {
     try {
       await this.ensureDirectories();
@@ -49,19 +49,19 @@ export class IFTAPDFService {
 
       // Header
       this.drawHeader(page, font, boldFont, reportData);
-      
+
       // Company Information
       this.drawCompanyInfo(page, font, boldFont, reportData, 680);
-      
+
       // Report Period
       this.drawReportPeriod(page, font, boldFont, reportData, 620);
-      
+
       // Jurisdiction Summary Table
       this.drawJurisdictionTable(page, font, boldFont, reportData, 550);
-      
+
       // Tax Summary
       this.drawTaxSummary(page, font, boldFont, reportData, 200);
-      
+
       // Footer
       this.drawFooter(page, font, reportData, 50);
 
@@ -80,12 +80,12 @@ export class IFTAPDFService {
         success: true,
         filePath,
         fileName,
-        fileSize: pdfBytes.length
+        fileSize: pdfBytes.length,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -99,8 +99,8 @@ export class IFTAPDFService {
     options: PDFOptions = {
       format: 'A4',
       orientation: 'portrait',
-      includeSignature: false
-    }
+      includeSignature: false,
+    },
   ): Promise<PDFGenerationResult> {
     try {
       await this.ensureDirectories();
@@ -108,11 +108,11 @@ export class IFTAPDFService {
       const pdfDoc = await PDFDocument.create();
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-      
+
       let currentY = 750;
       const pageHeight = 792;
       const marginBottom = 50;
-      
+
       let page = pdfDoc.addPage([612, pageHeight]);
 
       // Header
@@ -121,7 +121,7 @@ export class IFTAPDFService {
         y: currentY,
         size: 18,
         font: boldFont,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
       currentY -= 40;
 
@@ -137,7 +137,7 @@ export class IFTAPDFService {
           x: 50,
           y: currentY,
           size: 12,
-          font: boldFont
+          font: boldFont,
         });
         currentY -= 20;
 
@@ -149,7 +149,7 @@ export class IFTAPDFService {
           `Starting Location: ${trip.startLocation}`,
           `Ending Location: ${trip.endLocation}`,
           `Total Miles: ${trip.totalMiles}`,
-          `Fuel Consumed: ${trip.fuelConsumed} gallons`
+          `Fuel Consumed: ${trip.fuelConsumed} gallons`,
         ];
 
         for (const detail of details) {
@@ -157,7 +157,7 @@ export class IFTAPDFService {
             x: 70,
             y: currentY,
             size: 10,
-            font
+            font,
           });
           currentY -= 15;
         }
@@ -168,7 +168,7 @@ export class IFTAPDFService {
             x: 70,
             y: currentY,
             size: 10,
-            font: boldFont
+            font: boldFont,
           });
           currentY -= 15;
 
@@ -177,7 +177,7 @@ export class IFTAPDFService {
               x: 90,
               y: currentY,
               size: 9,
-              font
+              font,
             });
             currentY -= 12;
           }
@@ -196,12 +196,12 @@ export class IFTAPDFService {
         success: true,
         filePath,
         fileName,
-        fileSize: pdfBytes.length
+        fileSize: pdfBytes.length,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -216,8 +216,8 @@ export class IFTAPDFService {
     options: PDFOptions = {
       format: 'A4',
       orientation: 'portrait',
-      includeSignature: false
-    }
+      includeSignature: false,
+    },
   ): Promise<PDFGenerationResult> {
     try {
       await this.ensureDirectories();
@@ -234,30 +234,42 @@ export class IFTAPDFService {
         x: 50,
         y: currentY,
         size: 18,
-        font: boldFont
+        font: boldFont,
       });
       currentY -= 30;
 
       // Date range
-      page.drawText(`Period: ${dateRange.start.toLocaleDateString()} - ${dateRange.end.toLocaleDateString()}`, {
-        x: 50,
-        y: currentY,
-        size: 12,
-        font
-      });
+      page.drawText(
+        `Period: ${dateRange.start.toLocaleDateString()} - ${dateRange.end.toLocaleDateString()}`,
+        {
+          x: 50,
+          y: currentY,
+          size: 12,
+          font,
+        },
+      );
       currentY -= 40;
 
       // Table headers
-      const headers = ['Date', 'Location', 'Jurisdiction', 'Gallons', 'Price/Gal', 'Total', 'Vehicle'];
+      const headers = [
+        'Date',
+        'Location',
+        'Jurisdiction',
+        'Gallons',
+        'Price/Gal',
+        'Total',
+        'Vehicle',
+      ];
       const columnWidths = [70, 120, 80, 60, 60, 70, 80];
-      let startX = 50;      for (let i = 0; i < headers.length; i++) {
+      let startX = 50;
+      for (let i = 0; i < headers.length; i++) {
         const header = headers[i];
         if (header) {
           page.drawText(header, {
             x: startX,
             y: currentY,
             size: 10,
-            font: boldFont
+            font: boldFont,
           });
         }
         startX += columnWidths[i] ?? 0;
@@ -269,7 +281,7 @@ export class IFTAPDFService {
         start: { x: 50, y: currentY },
         end: { x: 590, y: currentY },
         thickness: 1,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
       currentY -= 15;
 
@@ -288,14 +300,15 @@ export class IFTAPDFService {
           purchase.gallons.toFixed(2),
           `$${purchase.pricePerGallon.toFixed(3)}`,
           `$${purchase.totalAmount.toFixed(2)}`,
-          purchase.vehicleId
+          purchase.vehicleId,
         ];
 
-        for (let i = 0; i < rowData.length; i++) {          page.drawText(rowData[i], {
+        for (let i = 0; i < rowData.length; i++) {
+          page.drawText(rowData[i], {
             x: startX,
             y: currentY,
             size: 9,
-            font
+            font,
           });
           startX += columnWidths[i] ?? 0;
         }
@@ -311,7 +324,7 @@ export class IFTAPDFService {
         x: 50,
         y: currentY,
         size: 12,
-        font: boldFont
+        font: boldFont,
       });
       currentY -= 20;
 
@@ -319,7 +332,7 @@ export class IFTAPDFService {
         x: 50,
         y: currentY,
         size: 12,
-        font: boldFont
+        font: boldFont,
       });
 
       const pdfBytes = await pdfDoc.save();
@@ -332,12 +345,12 @@ export class IFTAPDFService {
         success: true,
         filePath,
         fileName,
-        fileSize: pdfBytes.length
+        fileSize: pdfBytes.length,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -348,7 +361,7 @@ export class IFTAPDFService {
   static async generateCustomReport(
     data: any,
     organizationId: string,
-    options: CustomReportOptions
+    options: CustomReportOptions,
   ): Promise<PDFGenerationResult> {
     try {
       await this.ensureDirectories();
@@ -365,7 +378,7 @@ export class IFTAPDFService {
         x: 50,
         y: currentY,
         size: 18,
-        font: boldFont
+        font: boldFont,
       });
       currentY -= 40;
 
@@ -375,7 +388,7 @@ export class IFTAPDFService {
           x: 50,
           y: currentY,
           size: 14,
-          font: boldFont
+          font: boldFont,
         });
         currentY -= 25;
 
@@ -383,7 +396,7 @@ export class IFTAPDFService {
           x: 70,
           y: currentY,
           size: 12,
-          font
+          font,
         });
         currentY -= 20;
       }
@@ -393,16 +406,19 @@ export class IFTAPDFService {
           x: 50,
           y: currentY,
           size: 14,
-          font: boldFont
+          font: boldFont,
         });
         currentY -= 25;
 
-        const totalGallons = data.fuelPurchases.reduce((sum: number, purchase: any) => sum + purchase.gallons, 0);
+        const totalGallons = data.fuelPurchases.reduce(
+          (sum: number, purchase: any) => sum + purchase.gallons,
+          0,
+        );
         page.drawText(`Total Fuel Purchased: ${totalGallons.toFixed(2)} gallons`, {
           x: 70,
           y: currentY,
           size: 12,
-          font
+          font,
         });
         currentY -= 20;
       }
@@ -412,7 +428,7 @@ export class IFTAPDFService {
           x: 50,
           y: currentY,
           size: 14,
-          font: boldFont
+          font: boldFont,
         });
         currentY -= 25;
 
@@ -421,7 +437,7 @@ export class IFTAPDFService {
             x: 70,
             y: currentY,
             size: 12,
-            font
+            font,
           });
           currentY -= 18;
         }
@@ -437,12 +453,12 @@ export class IFTAPDFService {
         success: true,
         filePath,
         fileName,
-        fileSize: pdfBytes.length
+        fileSize: pdfBytes.length,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -454,7 +470,7 @@ export class IFTAPDFService {
       y: 750,
       size: 16,
       font: boldFont,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
 
     page.drawText('QUARTERLY FUEL TAX REPORT', {
@@ -462,22 +478,28 @@ export class IFTAPDFService {
       y: 730,
       size: 14,
       font: boldFont,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
   }
 
-  private static drawCompanyInfo(page: any, font: any, boldFont: any, reportData: IFTAReportData, startY: number): void {
+  private static drawCompanyInfo(
+    page: any,
+    font: any,
+    boldFont: any,
+    reportData: IFTAReportData,
+    startY: number,
+  ): void {
     page.drawText('Company Information:', {
       x: 50,
       y: startY,
       size: 12,
-      font: boldFont
+      font: boldFont,
     });
 
     const companyInfo = [
       `Organization ID: ${reportData.organizationId}`,
       `Report Period: Q${reportData.quarter} ${reportData.year}`,
-      `Generated: ${new Date().toLocaleDateString()}`
+      `Generated: ${new Date().toLocaleDateString()}`,
     ];
 
     let currentY = startY - 20;
@@ -486,41 +508,54 @@ export class IFTAPDFService {
         x: 70,
         y: currentY,
         size: 10,
-        font
+        font,
       });
       currentY -= 15;
     }
   }
 
-  private static drawReportPeriod(page: any, font: any, boldFont: any, reportData: IFTAReportData, startY: number): void {
+  private static drawReportPeriod(
+    page: any,
+    font: any,
+    boldFont: any,
+    reportData: IFTAReportData,
+    startY: number,
+  ): void {
     page.drawText(`Reporting Period: Quarter ${reportData.quarter}, ${reportData.year}`, {
       x: 50,
       y: startY,
       size: 12,
-      font: boldFont
+      font: boldFont,
     });
   }
 
-  private static drawJurisdictionTable(page: any, font: any, boldFont: any, reportData: IFTAReportData, startY: number): void {
+  private static drawJurisdictionTable(
+    page: any,
+    font: any,
+    boldFont: any,
+    reportData: IFTAReportData,
+    startY: number,
+  ): void {
     page.drawText('Jurisdiction Summary:', {
       x: 50,
       y: startY,
       size: 12,
-      font: boldFont
+      font: boldFont,
     });
 
     // Table headers
     const headers = ['Jurisdiction', 'Miles', 'Fuel Purchased', 'Tax Rate', 'Tax Due'];
     const columnWidths = [100, 80, 100, 80, 80];
-    let headerY = startY - 25;
-    let startX = 50;    for (let i = 0; i < headers.length; i++) {
+    const headerY = startY - 25;
+    let startX = 50;
+    for (let i = 0; i < headers.length; i++) {
       const header = headers[i];
       if (header) {
         page.drawText(header, {
           x: startX,
           y: headerY,
           size: 10,
-          font: boldFont
+          font: boldFont,
         });
       }
       startX += columnWidths[i] ?? 0;
@@ -531,13 +566,13 @@ export class IFTAPDFService {
       start: { x: 50, y: headerY - 5 },
       end: { x: 490, y: headerY - 5 },
       thickness: 1,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
 
     // Table data
     if (reportData.reportSummary?.jurisdictionBreakdown) {
       let dataY = headerY - 20;
-      
+
       for (const jurisdiction of reportData.reportSummary.jurisdictionBreakdown) {
         startX = 50;
         const rowData = [
@@ -545,14 +580,15 @@ export class IFTAPDFService {
           jurisdiction.miles.toString(),
           `${jurisdiction.fuelPurchased.toFixed(2)} gal`,
           `$${jurisdiction.taxRate.toFixed(3)}`,
-          `$${jurisdiction.taxDue.toFixed(2)}`
+          `$${jurisdiction.taxDue.toFixed(2)}`,
         ];
 
         for (let i = 0; i < rowData.length; i++) {
           page.drawText(rowData[i], {
-            x: startX,            y: dataY,
+            x: startX,
+            y: dataY,
             size: 9,
-            font
+            font,
           });
           startX += columnWidths[i] ?? 0;
         }
@@ -561,12 +597,18 @@ export class IFTAPDFService {
     }
   }
 
-  private static drawTaxSummary(page: any, font: any, boldFont: any, reportData: IFTAReportData, startY: number): void {
+  private static drawTaxSummary(
+    page: any,
+    font: any,
+    boldFont: any,
+    reportData: IFTAReportData,
+    startY: number,
+  ): void {
     page.drawText('Tax Summary:', {
       x: 50,
       y: startY,
       size: 12,
-      font: boldFont
+      font: boldFont,
     });
 
     if (reportData.reportSummary) {
@@ -575,7 +617,7 @@ export class IFTAPDFService {
         `Total Miles: ${summary.totalMiles.toLocaleString()}`,
         `Total Fuel Purchased: ${summary.totalFuelPurchased.toFixed(2)} gallons`,
         `Total Fuel Consumed: ${summary.totalFuelConsumed.toFixed(2)} gallons`,
-        `Total Tax Due: $${summary.totalTaxDue.toFixed(2)}`
+        `Total Tax Due: $${summary.totalTaxDue.toFixed(2)}`,
       ];
 
       let currentY = startY - 20;
@@ -584,21 +626,29 @@ export class IFTAPDFService {
           x: 70,
           y: currentY,
           size: 11,
-          font
+          font,
         });
         currentY -= 18;
       }
     }
   }
 
-  private static drawFooter(page: any, font: any, reportData: IFTAReportData, startY: number): void {
-    page.drawText(`Generated on ${new Date().toLocaleDateString()} | FleetFusion IFTA Management System`, {
-      x: 50,
-      y: startY,
-      size: 8,
-      font,
-      color: rgb(0.5, 0.5, 0.5)
-    });
+  private static drawFooter(
+    page: any,
+    font: any,
+    reportData: IFTAReportData,
+    startY: number,
+  ): void {
+    page.drawText(
+      `Generated on ${new Date().toLocaleDateString()} | FleetFusion IFTA Management System`,
+      {
+        x: 50,
+        y: startY,
+        size: 8,
+        font,
+        color: rgb(0.5, 0.5, 0.5),
+      },
+    );
   }
 
   private static addWatermark(page: any, font: any, watermarkText: string): void {
@@ -608,7 +658,7 @@ export class IFTAPDFService {
       size: 48,
       font,
       color: rgb(0.9, 0.9, 0.9),
-      rotate: { type: 'degrees', angle: 45 }
+      rotate: { type: 'degrees', angle: 45 },
     });
   }
 }

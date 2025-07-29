@@ -7,18 +7,15 @@ import { PageLayout } from '@/components/shared/PageLayout';
 
 // Next.js 15 async params pattern
 interface PageProps {
-  params: Promise<{ orgId: string }>
+  params: Promise<{ orgId: string }>;
   initialValues: DriverFormData;
 }
-
 
 export default async function NewDriversPage({ params }: PageProps) {
   const { orgId } = await params;
 
   return (
     <PageLayout>
-    
-
       {/* Driver Form Container */}
       <div className="max-w-4xl mx-auto w-full">
         <Suspense fallback={<DriversSkeleton />}>
@@ -28,6 +25,3 @@ export default async function NewDriversPage({ params }: PageProps) {
     </PageLayout>
   );
 }
-
-
-

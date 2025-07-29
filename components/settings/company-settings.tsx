@@ -34,7 +34,7 @@ export function CompanySettings() {
   });
 
   const handleChange = (field: string, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
+    setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -64,7 +64,7 @@ export function CompanySettings() {
           <Input
             id="companyName"
             value={formState.companyName}
-            onChange={e => handleChange('companyName', e.target.value)}
+            onChange={(e) => handleChange('companyName', e.target.value)}
           />
         </div>
 
@@ -73,7 +73,7 @@ export function CompanySettings() {
           <Input
             id="dotNumber"
             value={formState.dotNumber}
-            onChange={e => handleChange('dotNumber', e.target.value)}
+            onChange={(e) => handleChange('dotNumber', e.target.value)}
           />
         </div>
 
@@ -82,7 +82,7 @@ export function CompanySettings() {
           <Input
             id="mcNumber"
             value={formState.mcNumber}
-            onChange={e => handleChange('mcNumber', e.target.value)}
+            onChange={(e) => handleChange('mcNumber', e.target.value)}
           />
         </div>
 
@@ -91,7 +91,7 @@ export function CompanySettings() {
           <Input
             id="taxId"
             value={formState.taxId}
-            onChange={e => handleChange('taxId', e.target.value)}
+            onChange={(e) => handleChange('taxId', e.target.value)}
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ export function CompanySettings() {
             <Input
               id="address"
               value={formState.address}
-              onChange={e => handleChange('address', e.target.value)}
+              onChange={(e) => handleChange('address', e.target.value)}
             />
           </div>
 
@@ -115,16 +115,13 @@ export function CompanySettings() {
             <Input
               id="city"
               value={formState.city}
-              onChange={e => handleChange('city', e.target.value)}
+              onChange={(e) => handleChange('city', e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="state">State</Label>
-            <Select
-              value={formState.state}
-              onValueChange={value => handleChange('state', value)}
-            >
+            <Select value={formState.state} onValueChange={(value) => handleChange('state', value)}>
               <SelectTrigger id="state">
                 <SelectValue placeholder="Select state" />
               </SelectTrigger>
@@ -143,7 +140,7 @@ export function CompanySettings() {
             <Input
               id="zipCode"
               value={formState.zipCode}
-              onChange={e => handleChange('zipCode', e.target.value)}
+              onChange={(e) => handleChange('zipCode', e.target.value)}
             />
           </div>
 
@@ -152,7 +149,7 @@ export function CompanySettings() {
             <Input
               id="phone"
               value={formState.phone}
-              onChange={e => handleChange('phone', e.target.value)}
+              onChange={(e) => handleChange('phone', e.target.value)}
             />
           </div>
 
@@ -162,7 +159,7 @@ export function CompanySettings() {
               id="email"
               type="email"
               value={formState.email}
-              onChange={e => handleChange('email', e.target.value)}
+              onChange={(e) => handleChange('email', e.target.value)}
             />
           </div>
 
@@ -171,7 +168,7 @@ export function CompanySettings() {
             <Input
               id="website"
               value={formState.website}
-              onChange={e => handleChange('website', e.target.value)}
+              onChange={(e) => handleChange('website', e.target.value)}
             />
           </div>
         </div>
@@ -186,34 +183,23 @@ export function CompanySettings() {
             <Label htmlFor="timezone">Timezone</Label>
             <Select
               value={formState.timezone}
-              onValueChange={value => handleChange('timezone', value)}
+              onValueChange={(value) => handleChange('timezone', value)}
             >
               <SelectTrigger id="timezone">
                 <SelectValue placeholder="Select timezone" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="America/New_York">
-                  Eastern Time (ET)
-                </SelectItem>
-                <SelectItem value="America/Chicago">
-                  Central Time (CT)
-                </SelectItem>
-                <SelectItem value="America/Denver">
-                  Mountain Time (MT)
-                </SelectItem>
-                <SelectItem value="America/Los_Angeles">
-                  Pacific Time (PT)
-                </SelectItem>
+                <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
+                <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
+                <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="units">Distance Units</Label>
-            <Select
-              value={formState.units}
-              onValueChange={value => handleChange('units', value)}
-            >
+            <Select value={formState.units} onValueChange={(value) => handleChange('units', value)}>
               <SelectTrigger id="units">
                 <SelectValue placeholder="Select units" />
               </SelectTrigger>
@@ -228,7 +214,7 @@ export function CompanySettings() {
             <Label htmlFor="currency">Currency</Label>
             <Select
               value={formState.currency}
-              onValueChange={value => handleChange('currency', value)}
+              onValueChange={(value) => handleChange('currency', value)}
             >
               <SelectTrigger id="currency">
                 <SelectValue placeholder="Select currency" />

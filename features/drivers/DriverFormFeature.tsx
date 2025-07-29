@@ -1,5 +1,4 @@
-
-"use client";
+'use client';
 
 import { DriverForm } from '@/features/drivers/DriverForm';
 import { createDriverAction, updateDriverAction } from '@/lib/actions/driverActions';
@@ -12,7 +11,12 @@ type DriverFormFeatureProps = {
   onSuccess?: () => void;
 };
 
-export function DriverFormFeature({ mode = 'create', userId, orgId, onSuccess }: DriverFormFeatureProps) {
+export function DriverFormFeature({
+  mode = 'create',
+  userId,
+  orgId,
+  onSuccess,
+}: DriverFormFeatureProps) {
   const handleSubmit = async (data: DriverFormData | DriverUpdateData) => {
     if (mode === 'edit' && userId) {
       await updateDriverAction(userId, data);
@@ -22,8 +26,5 @@ export function DriverFormFeature({ mode = 'create', userId, orgId, onSuccess }:
     if (onSuccess) onSuccess();
   };
 
-  return (
-    <DriverForm onSubmit={handleSubmit} mode={mode} />
-  );
+  return <DriverForm onSubmit={handleSubmit} mode={mode} />;
 }
-        

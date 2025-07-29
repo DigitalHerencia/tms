@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Card, CardContent } from "@/components/ui/card";
-import { useDispatchRealtime } from "@/hooks/use-dispatch-realtime";
-import { Activity, RadioTower, RefreshCw, WifiOff } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { useDispatchRealtime } from '@/hooks/use-dispatch-realtime';
+import { Activity, RadioTower, RefreshCw, WifiOff } from 'lucide-react';
 
 interface DispatchHeaderProps {
   orgId: string;
@@ -19,25 +19,20 @@ export default function DispatchHeader({ orgId }: DispatchHeaderProps) {
     );
   }
 
-  const {
-    isConnected,
-    connectionStatus,
-    updateCount,
-    lastUpdate,
-  } = useDispatchRealtime({
+  const { isConnected, connectionStatus, updateCount, lastUpdate } = useDispatchRealtime({
     orgId,
     pollingInterval: 300000,
     enableSSE: true,
   });
 
   const formattedLastUpdate = lastUpdate
-    ? lastUpdate.toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+    ? lastUpdate.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       })
-    : "Recently";
+    : 'Recently';
 
   return (
     <div className="flex flex-row items-baseline justify-between mb-6">
@@ -50,11 +45,11 @@ export default function DispatchHeader({ orgId }: DispatchHeaderProps) {
               <>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="text-green-400 text-sm font-medium">
-                  {connectionStatus === "connected"
-                    ? "Live"
-                    : connectionStatus === "connecting"
-                    ? "Connecting..."
-                    : "Reconnecting"}
+                  {connectionStatus === 'connected'
+                    ? 'Live'
+                    : connectionStatus === 'connecting'
+                      ? 'Connecting...'
+                      : 'Reconnecting'}
                 </span>
               </>
             ) : (

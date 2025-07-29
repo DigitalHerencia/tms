@@ -1,23 +1,23 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
-import { SystemRoles } from "@/types/abac"
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { SystemRoles } from '@/types/abac';
 
 // Public routes (no auth/RBAC required)
 const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/forgot-password(.*)",
-  "/api/clerk/webhook-handler",
-  "/about",
-  "/contact",
-  "/pricing",
-  "/features",
-  "/services",
-  "/privacy",
-  "/terms",
-  "/refund",
-])
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/forgot-password(.*)',
+  '/api/clerk/webhook-handler',
+  '/about',
+  '/contact',
+  '/pricing',
+  '/features',
+  '/services',
+  '/privacy',
+  '/terms',
+  '/refund',
+]);
 
 /**
  * Middleware to protect routes and enforce authentication
@@ -29,16 +29,16 @@ export default clerkMiddleware(
   async (auth, req) => {
     // Protect all routes except public ones
     if (!isPublicRoute(req)) {
-      await auth.protect()
+      await auth.protect();
     }
 
     // No role-based restriction for /settings route
     // All authenticated users can access settings
     // ...existing code...
-  }
+  },
   // Remove CSP configuration to allow Clerk to work properly
   // We'll implement security headers in next.config.ts if needed
-)
+);
 
 export const config = {
   matcher: [
@@ -47,4 +47,4 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-}
+};

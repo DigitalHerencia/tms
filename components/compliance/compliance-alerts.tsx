@@ -8,6 +8,6 @@ interface Props {
 
 export async function ComplianceAlerts({ orgId }: Props) {
   const result = await getComplianceAlerts(orgId, { limit: 50 });
-  const alerts = (result as any).success ? (result as any).data.alerts as ComplianceAlert[] : [];
+  const alerts = (result as any).success ? ((result as any).data.alerts as ComplianceAlert[]) : [];
   return <ComplianceAlertsClient orgId={orgId} initialAlerts={alerts} />;
 }

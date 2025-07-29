@@ -44,7 +44,7 @@ export const createTripReportSchema = z.object({
       z.object({
         jurisdiction: z.string().min(1, 'Jurisdiction is required'),
         miles: z.number().min(0, 'Miles must be a positive number'),
-      })
+      }),
     )
     .min(1, 'At least one jurisdiction is required'),
   notes: z.string().optional(),
@@ -61,7 +61,5 @@ export const tripReportFilterSchema = z.object({
 export const iftaReportFilterSchema = z.object({
   year: z.number().optional(),
   quarter: z.number().min(1).max(4).optional(),
-  status: z
-    .enum(['all', 'draft', 'submitted', 'accepted', 'rejected'])
-    .optional(),
+  status: z.enum(['all', 'draft', 'submitted', 'accepted', 'rejected']).optional(),
 });

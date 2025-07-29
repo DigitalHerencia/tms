@@ -19,7 +19,7 @@ export interface RegulatorySummary {
 export async function getRegulatoryComplianceSummary(
   organizationId: string,
   quarter: string,
-  year: number
+  year: number,
 ): Promise<RegulatorySummary> {
   const ifta = await calculateQuarterlyTaxes(organizationId, quarter, year.toString());
   const hos = await getHOSViolations(organizationId, { limit: 1 });

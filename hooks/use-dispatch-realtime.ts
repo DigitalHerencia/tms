@@ -11,7 +11,14 @@ interface UseDispatchRealtimeOptions {
 }
 
 interface DispatchUpdate {
-  type: 'load_update' | 'status_change' | 'assignment_change' | 'new_load' | 'load_deleted' | 'connected' | 'error';
+  type:
+    | 'load_update'
+    | 'status_change'
+    | 'assignment_change'
+    | 'new_load'
+    | 'load_deleted'
+    | 'connected'
+    | 'error';
   data?: {
     loadId: string;
     load?: Partial<Load>;
@@ -40,50 +47,55 @@ export function useDispatchRealtime({
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [updateCount, setUpdateCount] = useState(0);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-  
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'disconnected'
+  >('disconnected');
+
   const eventSourceRef = useRef<EventSource | null>(null);
   const pollingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSeenLoadTimestamp = useRef<string | null>(null);
 
   // Handle dispatch updates
-  const handleDispatchUpdate = useCallback((update: DispatchUpdate) => {
-    // Skip non-actionable updates
-    if (update.type === 'connected' || update.type === 'error') {
-      return;
-    }
-    
-    setLastUpdate(new Date());
-    setUpdateCount(prev => prev + 1);
-    
-    // Refresh the router to get updated data
-    // In a more sophisticated implementation, we could update local state directly
-    router.refresh();
-    
-    // Optional: Show toast notifications for critical updates
-    if (update.type === 'status_change' || update.type === 'assignment_change') {
-      // Could trigger toast notifications here
-      console.log('Dispatch update:', update);
-    }
-  }, [router]);
+  const handleDispatchUpdate = useCallback(
+    (update: DispatchUpdate) => {
+      // Skip non-actionable updates
+      if (update.type === 'connected' || update.type === 'error') {
+        return;
+      }
+
+      setLastUpdate(new Date());
+      setUpdateCount((prev) => prev + 1);
+
+      // Refresh the router to get updated data
+      // In a more sophisticated implementation, we could update local state directly
+      router.refresh();
+
+      // Optional: Show toast notifications for critical updates
+      if (update.type === 'status_change' || update.type === 'assignment_change') {
+        // Could trigger toast notifications here
+        console.log('Dispatch update:', update);
+      }
+    },
+    [router],
+  );
 
   // Connect to SSE stream
   const connectToSSE = useCallback(() => {
     if (!enableSSE) return;
-    
+
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
 
     setConnectionStatus('connecting');
-    
+
     try {
       const params = new URLSearchParams();
       if (lastSeenLoadTimestamp.current) {
         params.set('since', lastSeenLoadTimestamp.current);
       }
-      
+
       const eventSource = new EventSource(`/api/dispatch/${orgId}/stream?${params.toString()}`);
       eventSourceRef.current = eventSource;
 
@@ -99,18 +111,18 @@ export function useDispatchRealtime({
       eventSource.onmessage = (event) => {
         try {
           const update: DispatchUpdate = JSON.parse(event.data);
-          
+
           // Handle different message types
           if (update.type === 'connected') {
             console.log('Connected to dispatch stream');
             return;
           }
-          
+
           if (update.type === 'error') {
             console.error('Dispatch stream error:', update.message);
             return;
           }
-          
+
           // For actual dispatch updates, extract timestamp and handle update
           if (update.data?.timestamp) {
             lastSeenLoadTimestamp.current = update.data.timestamp;
@@ -129,7 +141,7 @@ export function useDispatchRealtime({
         setConnectionStatus('disconnected');
         setIsConnected(false);
         eventSource.close();
-        
+
         // Attempt to reconnect after 5 seconds
         reconnectTimeoutRef.current = setTimeout(() => {
           console.log('Attempting to reconnect to dispatch stream...');
@@ -152,12 +164,15 @@ export function useDispatchRealtime({
     const poll = async () => {
       try {
         // Simple polling by checking for updates
-        const response = await fetch(`/api/dispatch/${orgId}/updates${lastSeenLoadTimestamp.current ? `?since=${lastSeenLoadTimestamp.current}` : ''}`, {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache',
+        const response = await fetch(
+          `/api/dispatch/${orgId}/updates${lastSeenLoadTimestamp.current ? `?since=${lastSeenLoadTimestamp.current}` : ''}`,
+          {
+            method: 'GET',
+            headers: {
+              'Cache-Control': 'no-cache',
+            },
           },
-        });
+        );
 
         if (response.ok) {
           const data = await response.json();

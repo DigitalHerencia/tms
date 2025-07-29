@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { VehicleForm } from '@/components/vehicles/vehicle-form';
-import { Vehicle, VehicleFormData } from '@/types/vehicles';
+import type { Vehicle, VehicleFormData } from '@/types/vehicles';
 import { updateVehicleAction } from '@/lib/actions/vehicleActions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -71,7 +71,7 @@ export default function EditVehicleClient({ orgId, vehicle }: EditVehicleClientP
       formData.append('orgId', orgId);
 
       const result = await updateVehicleAction(null, formData);
-      
+
       if (result.success) {
         toast({
           title: 'Success',

@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { Download, Filter } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
@@ -69,8 +63,7 @@ export function AnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">$128,450</div>
             <p className="text-muted-foreground flex items-center text-xs">
-              <span className="mr-1 text-green-500">↑ 12%</span> vs previous
-              period
+              <span className="mr-1 text-green-500">↑ 12%</span> vs previous period
             </p>
           </CardContent>
         </Card>
@@ -82,8 +75,7 @@ export function AnalyticsDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">42,587</div>
             <p className="text-muted-foreground flex items-center text-xs">
-              <span className="mr-1 text-green-500">↑ 8%</span> vs previous
-              period
+              <span className="mr-1 text-green-500">↑ 8%</span> vs previous period
             </p>
           </CardContent>
         </Card>
@@ -102,15 +94,12 @@ export function AnalyticsDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              On-Time Delivery
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">On-Time Delivery</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">94.2%</div>
             <p className="text-muted-foreground flex items-center text-xs">
-              <span className="mr-1 text-green-500">↑ 2%</span> vs previous
-              period
+              <span className="mr-1 text-green-500">↑ 2%</span> vs previous period
             </p>
           </CardContent>
         </Card>
@@ -128,9 +117,7 @@ export function AnalyticsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Performance Metrics</CardTitle>
-              <CardDescription>
-                Key operational performance indicators
-              </CardDescription>
+              <CardDescription>Key operational performance indicators</CardDescription>
             </CardHeader>
             <CardContent>
               <PerformanceMetrics timeRange={''} performanceData={[]} />
@@ -142,16 +129,10 @@ export function AnalyticsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Financial Metrics</CardTitle>
-              <CardDescription>
-                Revenue, costs, and profitability analysis
-              </CardDescription>
+              <CardDescription>Revenue, costs, and profitability analysis</CardDescription>
             </CardHeader>
             <CardContent>
-              <FinancialMetrics
-                timeRange={timeRange}
-                financialData={[]}
-                expenseBreakdown={[]}
-              />
+              <FinancialMetrics timeRange={timeRange} financialData={[]} expenseBreakdown={[]} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -160,15 +141,10 @@ export function AnalyticsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Driver Performance</CardTitle>
-              <CardDescription>
-                Driver productivity and safety metrics
-              </CardDescription>
+              <CardDescription>Driver productivity and safety metrics</CardDescription>
             </CardHeader>
             <CardContent>
-              <DriverPerformance
-                timeRange={timeRange}
-                driverPerformanceMetrics={[]}
-              />
+              <DriverPerformance timeRange={timeRange} driverPerformanceMetrics={[]} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -177,9 +153,7 @@ export function AnalyticsDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Vehicle Utilization</CardTitle>
-              <CardDescription>
-                Vehicle usage and maintenance metrics
-              </CardDescription>
+              <CardDescription>Vehicle usage and maintenance metrics</CardDescription>
             </CardHeader>
             <CardContent>
               <VehicleUtilization timeRange={timeRange} vehicleData={[]} />

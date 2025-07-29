@@ -8,11 +8,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
 import { DatabaseQueries } from '@/lib/database/db';
-import {
-  ClerkUserMetadata,
-  ClerkOrganizationMetadata,
-  UserContext,
-} from '@/types/auth';
+import type { ClerkUserMetadata, ClerkOrganizationMetadata, UserContext } from '@/types/auth';
 
 // Default/fallback ClerkOrganizationMetadata for type safety
 const defaultClerkOrganizationMetadata: ClerkOrganizationMetadata = {
@@ -30,7 +26,6 @@ const defaultClerkOrganizationMetadata: ClerkOrganizationMetadata = {
     fuelUnit: 'gallons',
   },
 };
-
 
 // Get the current authenticated user with ABAC/Clerk context
 export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | null> {
@@ -50,7 +45,7 @@ export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | 
     return {
       name: user.firstName
         ? `${user.firstName} ${user.lastName ?? ''}`.trim()
-        : (user.username ?? user.emailAddresses[0]?.emailAddress ?? undefined),
+        : user.username ?? user.emailAddresses[0]?.emailAddress ?? undefined,
       userId,
       organizationId: orgId,
       role: userMeta.role,
@@ -61,7 +56,7 @@ export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | 
       profileImage: user.imageUrl,
       isActive: userMeta.isActive,
       onboardingComplete: userMeta.onboardingComplete,
-      organizationMetadata: await getCurrentCompany() ?? defaultClerkOrganizationMetadata,
+      organizationMetadata: (await getCurrentCompany()) ?? defaultClerkOrganizationMetadata,
     };
   }
   // If no org and not allowed, user is not fully onboarded

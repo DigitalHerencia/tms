@@ -17,9 +17,7 @@ export default async function MobileLayout({ children, params }: MobileLayoutPro
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-900">
-        <main className="w-full p-4">
-          {children}
-        </main>
+        <main className="w-full p-4">{children}</main>
       </div>
     </ProtectedRoute>
   );

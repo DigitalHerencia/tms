@@ -49,28 +49,28 @@ export function NotificationSettings() {
   });
 
   const toggleEmailSetting = (setting: string) => {
-    setEmailSettings(prev => ({
+    setEmailSettings((prev) => ({
       ...prev,
       [setting]: !prev[setting as keyof typeof prev],
     }));
   };
 
   const toggleSmsSetting = (setting: string) => {
-    setSmsSettings(prev => ({
+    setSmsSettings((prev) => ({
       ...prev,
       [setting]: !prev[setting as keyof typeof prev],
     }));
   };
 
   const toggleAppSetting = (setting: string) => {
-    setAppSettings(prev => ({
+    setAppSettings((prev) => ({
       ...prev,
       [setting]: !prev[setting as keyof typeof prev],
     }));
   };
 
   const handleContactInfoChange = (field: string, value: string) => {
-    setContactInfo(prev => ({
+    setContactInfo((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -161,9 +161,7 @@ export function NotificationSettings() {
               <Switch
                 id="email-compliance"
                 checked={emailSettings.complianceReminders}
-                onCheckedChange={() =>
-                  toggleEmailSetting('complianceReminders')
-                }
+                onCheckedChange={() => toggleEmailSetting('complianceReminders')}
               />
             </div>
 
@@ -222,7 +220,7 @@ export function NotificationSettings() {
               id="email-address"
               type="email"
               value={contactInfo.email}
-              onChange={e => handleContactInfoChange('email', e.target.value)}
+              onChange={(e) => handleContactInfoChange('email', e.target.value)}
             />
             <p className="text-muted-foreground text-xs">
               This is the email address where you'll receive notifications.
@@ -236,8 +234,7 @@ export function NotificationSettings() {
               <div className="space-y-0.5">
                 <Label htmlFor="sms-dispatch">Dispatch Updates</Label>
                 <p className="text-muted-foreground text-sm">
-                  Receive SMS notifications about changes to dispatch
-                  assignments
+                  Receive SMS notifications about changes to dispatch assignments
                 </p>
               </div>
               <Switch
@@ -302,7 +299,7 @@ export function NotificationSettings() {
               id="phone-number"
               type="tel"
               value={contactInfo.phone}
-              onChange={e => handleContactInfoChange('phone', e.target.value)}
+              onChange={(e) => handleContactInfoChange('phone', e.target.value)}
             />
             <p className="text-muted-foreground text-xs">
               This is the phone number where you'll receive SMS notifications.
@@ -316,8 +313,7 @@ export function NotificationSettings() {
               <div className="space-y-0.5">
                 <Label htmlFor="app-dispatch">Dispatch Updates</Label>
                 <p className="text-muted-foreground text-sm">
-                  Receive in-app notifications about changes to dispatch
-                  assignments
+                  Receive in-app notifications about changes to dispatch assignments
                 </p>
               </div>
               <Switch
@@ -333,8 +329,7 @@ export function NotificationSettings() {
               <div className="space-y-0.5">
                 <Label htmlFor="app-driver">Driver Assignments</Label>
                 <p className="text-muted-foreground text-sm">
-                  Receive in-app notifications when drivers are assigned to
-                  loads
+                  Receive in-app notifications when drivers are assigned to loads
                 </p>
               </div>
               <Switch
@@ -398,8 +393,7 @@ export function NotificationSettings() {
               <div className="space-y-0.5">
                 <Label htmlFor="app-system">System Updates</Label>
                 <p className="text-muted-foreground text-sm">
-                  Receive in-app notifications about system updates and
-                  maintenance
+                  Receive in-app notifications about system updates and maintenance
                 </p>
               </div>
               <Switch

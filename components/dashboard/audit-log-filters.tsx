@@ -1,7 +1,13 @@
 import { Search, Calendar, Filter, Download, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface AuditLogFiltersProps {
   searchTerm: string;
@@ -55,8 +61,10 @@ export function AuditLogFilters({
           </SelectTrigger>
           <SelectContent className="bg-black text-white border-gray-600">
             <SelectItem value="all">All Actions</SelectItem>
-            {uniqueActions.map(action => (
-              <SelectItem key={action} value={action}>{action}</SelectItem>
+            {uniqueActions.map((action) => (
+              <SelectItem key={action} value={action}>
+                {action}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

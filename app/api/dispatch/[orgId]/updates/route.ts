@@ -1,13 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import db from '@/lib/database/db';
 
-export async function GET(
-{
-    params,
-}: {
-    params: Promise<{ orgId: string }>
-}) {
-    const { orgId } = await params
+export async function GET({ params }: { params: Promise<{ orgId: string }> }) {
+  const { orgId } = await params;
   const { userId } = await auth();
   if (!userId) {
     return { error: 'Unauthorized' };

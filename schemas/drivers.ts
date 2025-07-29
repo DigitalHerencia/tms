@@ -56,12 +56,7 @@ export const driverAvailabilityStatusSchema = z.enum([
 ]);
 
 export const cdlClassSchema = z.enum(['A', 'B', 'C']);
-export const payTypeSchema = z.enum([
-  'hourly',
-  'mileage',
-  'salary',
-  'percentage',
-]);
+export const payTypeSchema = z.enum(['hourly', 'mileage', 'salary', 'percentage']);
 
 // ================== Core Driver Schemas ==================
 
@@ -88,10 +83,7 @@ export const driverFormSchema = z.object({
   address: driverAddressSchema.optional(),
 
   // Employment Information
-  employeeId: z
-    .string()
-    .max(20, 'Employee ID must be less than 20 characters')
-    .optional(),
+  employeeId: z.string().max(20, 'Employee ID must be less than 20 characters').optional(),
   hireDate: z.string().min(1, 'Hire date is required'),
   payRate: z.number().min(0, 'Pay rate must be positive').optional(),
   payType: payTypeSchema.optional(),
@@ -102,10 +94,7 @@ export const driverFormSchema = z.object({
     .string()
     .min(1, 'CDL number is required')
     .max(30, 'CDL number must be less than 30 characters'),
-  cdlState: z
-    .string()
-    .min(2, 'CDL state is required')
-    .max(2, 'CDL state must be 2 characters'),
+  cdlState: z.string().min(2, 'CDL state is required').max(2, 'CDL state must be 2 characters'),
   cdlClass: cdlClassSchema,
   cdlExpiration: z.string().min(1, 'CDL expiration date is required'),
   endorsements: z.array(z.string()).optional(),
@@ -116,18 +105,13 @@ export const driverFormSchema = z.object({
     .string()
     .max(30, 'Medical card number must be less than 30 characters')
     .optional(),
-  medicalCardExpiration: z
-    .string()
-    .min(1, 'Medical card expiration date is required'),
+  medicalCardExpiration: z.string().min(1, 'Medical card expiration date is required'),
 
   // Emergency Contact
   emergencyContact: driverEmergencyContactSchema.optional(),
 
   // Additional Information
-  notes: z
-    .string()
-    .max(1000, 'Notes must be less than 1000 characters')
-    .optional(),
+  notes: z.string().max(1000, 'Notes must be less than 1000 characters').optional(),
   tags: z.array(z.string()).optional(),
 });
 
@@ -160,10 +144,7 @@ export const driverUpdateSchema = z.object({
   emergencyContact: driverEmergencyContactSchema.optional(),
 
   // Additional Information Updates
-  notes: z
-    .string()
-    .max(1000, 'Notes must be less than 1000 characters')
-    .optional(),
+  notes: z.string().max(1000, 'Notes must be less than 1000 characters').optional(),
   tags: z.array(z.string()).optional(),
 });
 
@@ -171,10 +152,7 @@ export const driverStatusUpdateSchema = z.object({
   status: driverStatusSchema,
   availabilityStatus: driverAvailabilityStatusSchema.optional(),
   location: driverLocationSchema.optional(),
-  notes: z
-    .string()
-    .max(500, 'Notes must be less than 500 characters')
-    .optional(),
+  notes: z.string().max(500, 'Notes must be less than 500 characters').optional(),
 });
 
 // ================== Document Management Schemas ==================
@@ -197,10 +175,7 @@ export const driverDocumentTypeSchema = z.enum([
 export const driverDocumentSchema = z.object({
   type: driverDocumentTypeSchema,
   name: z.string().min(1, 'Document name is required'),
-  description: z
-    .string()
-    .max(500, 'Description must be less than 500 characters')
-    .optional(),
+  description: z.string().max(500, 'Description must be less than 500 characters').optional(),
 
   // Document specifics
   issueDate: z.string().optional(),
@@ -209,10 +184,7 @@ export const driverDocumentSchema = z.object({
     .string()
     .max(100, 'Issuing authority must be less than 100 characters')
     .optional(),
-  documentNumber: z
-    .string()
-    .max(50, 'Document number must be less than 50 characters')
-    .optional(),
+  documentNumber: z.string().max(50, 'Document number must be less than 50 characters').optional(),
 
   // File information (handled separately for uploads)
   fileSize: z
@@ -249,19 +221,10 @@ export const hosEntrySchema = z.object({
   vehicleId: z.string().optional(),
   odometer: z.number().min(0, 'Odometer must be positive').optional(),
   engineHours: z.number().min(0, 'Engine hours must be positive').optional(),
-  trailer: z
-    .string()
-    .max(20, 'Trailer must be less than 20 characters')
-    .optional(),
-  shipping: z
-    .string()
-    .max(100, 'Shipping must be less than 100 characters')
-    .optional(),
+  trailer: z.string().max(20, 'Trailer must be less than 20 characters').optional(),
+  shipping: z.string().max(100, 'Shipping must be less than 100 characters').optional(),
 
-  remark: z
-    .string()
-    .max(500, 'Remark must be less than 500 characters')
-    .optional(),
+  remark: z.string().max(500, 'Remark must be less than 500 characters').optional(),
   isPersonalTime: z.boolean().default(false),
   isDriving: z.boolean().default(false),
 });
@@ -278,20 +241,14 @@ export const driverAssignmentSchema = z.object({
   scheduledStart: z.string().min(1, 'Scheduled start time is required'),
   scheduledEnd: z.string().optional(),
 
-  instructions: z
-    .string()
-    .max(1000, 'Instructions must be less than 1000 characters')
-    .optional(),
+  instructions: z.string().max(1000, 'Instructions must be less than 1000 characters').optional(),
   priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
 });
 
 // ================== Filter Schemas ==================
 
 export const driverFiltersSchema = z.object({
-  search: z
-    .string()
-    .max(100, 'Search term must be less than 100 characters')
-    .optional(),
+  search: z.string().max(100, 'Search term must be less than 100 characters').optional(),
   status: z.array(driverStatusSchema).optional(),
   availabilityStatus: z.array(driverAvailabilityStatusSchema).optional(),
   homeTerminal: z.array(z.string()).optional(),
@@ -331,9 +288,7 @@ export const driverBulkUpdateSchema = z.object({
 
 export const driverPerformanceFiltersSchema = z.object({
   driverId: z.string().optional(),
-  period: z
-    .enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly'])
-    .default('monthly'),
+  period: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly']).default('monthly'),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   includeInactive: z.boolean().default(false),
@@ -349,9 +304,7 @@ export type HOSEntryData = z.infer<typeof hosEntrySchema>;
 export type DriverAssignmentData = z.infer<typeof driverAssignmentSchema>;
 export type DriverFilters = z.infer<typeof driverFiltersSchema>;
 export type DriverBulkUpdate = z.infer<typeof driverBulkUpdateSchema>;
-export type DriverPerformanceFilters = z.infer<
-  typeof driverPerformanceFiltersSchema
->;
+export type DriverPerformanceFilters = z.infer<typeof driverPerformanceFiltersSchema>;
 
 export const hosLogEntrySchema = z.object({
   status: z.enum(['driving', 'on_duty', 'off_duty', 'sleeper_berth']),

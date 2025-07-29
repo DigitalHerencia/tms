@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 import {
   Dialog,
@@ -11,10 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  assignDriverAction,
-  unassignDriverAction,
-} from '@/lib/actions/driverActions';
+import { assignDriverAction, unassignDriverAction } from '@/lib/actions/driverActions';
 import { toast } from '@/hooks/use-toast';
 import { driverAssignmentSchema } from '@/schemas/drivers';
 
@@ -40,9 +37,7 @@ export function DriverAssignmentDialog({
   currentAssignment,
   onAssigned,
 }: DriverAssignmentDialogProps) {
-  type AssignmentType = z.infer<
-    typeof driverAssignmentSchema
-  >['assignmentType'];
+  type AssignmentType = z.infer<typeof driverAssignmentSchema>['assignmentType'];
 
   const [form, setForm] = useState<{
     loadId: string;
@@ -55,8 +50,7 @@ export function DriverAssignmentDialog({
   }>({
     loadId: currentAssignment?.loadId || '',
     vehicleId: currentAssignment?.vehicleId || '',
-    assignmentType:
-      (currentAssignment?.assignmentType as AssignmentType) || 'load',
+    assignmentType: (currentAssignment?.assignmentType as AssignmentType) || 'load',
     scheduledStart: currentAssignment?.scheduledStart || '',
     scheduledEnd: currentAssignment?.scheduledEnd || '',
     submitting: false,
@@ -64,7 +58,7 @@ export function DriverAssignmentDialog({
   });
 
   async function handleAssign() {
-    setForm(f => ({ ...f, submitting: true, error: '' }));
+    setForm((f) => ({ ...f, submitting: true, error: '' }));
     try {
       const assignment = driverAssignmentSchema.parse({
         driverId,
@@ -80,18 +74,18 @@ export function DriverAssignmentDialog({
         onAssigned?.();
         onClose();
       } else {
-        setForm(f => ({ ...f, error: result.error || 'Failed to assign' }));
+        setForm((f) => ({ ...f, error: result.error || 'Failed to assign' }));
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Validation error';
-      setForm(f => ({ ...f, error: message }));
+      setForm((f) => ({ ...f, error: message }));
     } finally {
-      setForm(f => ({ ...f, submitting: false }));
+      setForm((f) => ({ ...f, submitting: false }));
     }
   }
 
   async function handleUnassign() {
-    setForm(f => ({ ...f, submitting: true, error: '' }));
+    setForm((f) => ({ ...f, submitting: true, error: '' }));
     try {
       const result = await unassignDriverAction(driverId);
       if (result.success) {
@@ -102,18 +96,18 @@ export function DriverAssignmentDialog({
         onAssigned?.();
         onClose();
       } else {
-        setForm(f => ({ ...f, error: result.error || 'Failed to unassign' }));
+        setForm((f) => ({ ...f, error: result.error || 'Failed to unassign' }));
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error';
-      setForm(f => ({ ...f, error: message }));
+      setForm((f) => ({ ...f, error: message }));
     } finally {
-      setForm(f => ({ ...f, submitting: false }));
+      setForm((f) => ({ ...f, submitting: false }));
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="bg-black border-neutral-700 text-white">
         <DialogHeader>
           <DialogTitle className="text-white">Assign Driver</DialogTitle>
@@ -122,22 +116,22 @@ export function DriverAssignmentDialog({
           <Input
             placeholder="Load ID (optional)"
             value={form.loadId}
-            onChange={e => setForm(f => ({ ...f, loadId: e.target.value }))}
+            onChange={(e) => setForm((f) => ({ ...f, loadId: e.target.value }))}
             disabled={form.submitting}
             className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Vehicle ID (optional)"
             value={form.vehicleId}
-            onChange={e => setForm(f => ({ ...f, vehicleId: e.target.value }))}
+            onChange={(e) => setForm((f) => ({ ...f, vehicleId: e.target.value }))}
             disabled={form.submitting}
             className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
           <Input
             placeholder="Assignment Type (e.g. load, maintenance)"
             value={form.assignmentType}
-            onChange={e =>
-              setForm(f => ({
+            onChange={(e) =>
+              setForm((f) => ({
                 ...f,
                 assignmentType: e.target.value as AssignmentType,
               }))
@@ -148,9 +142,7 @@ export function DriverAssignmentDialog({
           <Input
             placeholder="Scheduled Start (YYYY-MM-DDTHH:mm)"
             value={form.scheduledStart}
-            onChange={e =>
-              setForm(f => ({ ...f, scheduledStart: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, scheduledStart: e.target.value }))}
             disabled={form.submitting}
             type="datetime-local"
             className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
@@ -158,16 +150,12 @@ export function DriverAssignmentDialog({
           <Input
             placeholder="Scheduled End (optional)"
             value={form.scheduledEnd}
-            onChange={e =>
-              setForm(f => ({ ...f, scheduledEnd: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, scheduledEnd: e.target.value }))}
             disabled={form.submitting}
             type="datetime-local"
             className="bg-neutral-800 border-neutral-600 text-white placeholder:text-neutral-400"
           />
-          {form.error && (
-            <div className="text-sm text-red-400">{form.error}</div>
-          )}
+          {form.error && <div className="text-sm text-red-400">{form.error}</div>}
         </div>
         <DialogFooter className="flex gap-2">
           <Button
@@ -187,9 +175,9 @@ export function DriverAssignmentDialog({
           >
             Unassign
           </Button>
-          <Button 
-            onClick={onClose} 
-            type="button" 
+          <Button
+            onClick={onClose}
+            type="button"
             variant="ghost"
             className="text-neutral-400 hover:text-white hover:bg-neutral-700"
           >

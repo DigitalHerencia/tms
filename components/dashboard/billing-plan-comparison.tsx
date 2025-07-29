@@ -4,7 +4,7 @@ import * as React from 'react';
 import { PricingTable } from '@clerk/nextjs';
 
 export interface BillingPlanComparisonProps {
-  /** true  = sidebar is collapsed (20 px)  
+  /** true  = sidebar is collapsed (20 px)
    *  false = sidebar is open      (64 px) */
   sidebarCollapsed: boolean;
 }

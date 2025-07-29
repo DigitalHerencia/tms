@@ -30,20 +30,15 @@ export const signUpSchema = z
       .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
       .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
       .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Password must contain at least one special character'
-      ),
+      .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
     confirmPassword: z.string(),
     name: z.string().min(2, 'Name must be at least 2 characters'),
-    companyName: z
-      .string()
-      .min(2, 'Company name must be at least 2 characters'),
-    agreeToTerms: z.boolean().refine(val => val === true, {
+    companyName: z.string().min(2, 'Company name must be at least 2 characters'),
+    agreeToTerms: z.boolean().refine((val) => val === true, {
       message: 'You must agree to the terms and conditions',
     }),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
@@ -66,13 +61,10 @@ export const resetPasswordSchema = z
       .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
       .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
       .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(
-        /[^A-Za-z0-9]/,
-        'Password must contain at least one special character'
-      ),
+      .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
     confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
@@ -88,23 +80,10 @@ export const onboardingSchema = z.object({
     dotNumber: z.string().optional(),
     mcNumber: z.string().optional(),
   }),
-  businessType: z.enum([
-    'sole_proprietor',
-    'partnership',
-    'llc',
-    'corporation',
-  ]),
+  businessType: z.enum(['sole_proprietor', 'partnership', 'llc', 'corporation']),
   fleetSize: z.enum(['1_5', '6_15', '16_50', '51_100', '100_plus']),
   services: z.array(
-    z.enum([
-      'truckload',
-      'ltl',
-      'intermodal',
-      'specialized',
-      'refrigerated',
-      'flatbed',
-      'other',
-    ])
+    z.enum(['truckload', 'ltl', 'intermodal', 'specialized', 'refrigerated', 'flatbed', 'other']),
   ),
   referralSource: z
     .enum(['search', 'social_media', 'referral', 'advertisement', 'other'])
@@ -136,19 +115,13 @@ export const createOrganizationSchema = z.object({
     .string()
     .min(2, 'Organization name must be at least 2 characters')
     .max(100, 'Organization name must be less than 100 characters')
-    .regex(
-      /^[a-zA-Z0-9\s-.&.,()]+$/,
-      'Organization name contains invalid characters'
-    ),
+    .regex(/^[a-zA-Z0-9\s-.&.,()]+$/, 'Organization name contains invalid characters'),
 
   slug: z
     .string()
     .min(2, 'Slug must be at least 2 characters')
     .max(50, 'Slug must be less than 50 characters')
-    .regex(
-      /^[a-z0-9\\-]+$/,
-      'Slug can only contain lowercase letters, numbers, and hyphens'
-    )
+    .regex(/^[a-z0-9\\-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens')
     .optional(),
 
   createdBy: z.string().optional(),
@@ -183,20 +156,14 @@ export const updateOrganizationSchema = z.object({
     .string()
     .min(2, 'Organization name must be at least 2 characters')
     .max(100, 'Organization name must be less than 100 characters')
-    .regex(
-      /^[a-zA-Z0-9\s\-&.,()]+$/,
-      'Organization name contains invalid characters'
-    )
+    .regex(/^[a-zA-Z0-9\s\-&.,()]+$/, 'Organization name contains invalid characters')
     .optional(),
 
   slug: z
     .string()
     .min(2, 'Slug must be at least 2 characters')
     .max(50, 'Slug must be less than 50 characters')
-    .regex(
-      /^[a-z0-9\\-]+$/,
-      'Slug can only contain lowercase letters, numbers, and hyphens'
-    )
+    .regex(/^[a-z0-9\\-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens')
     .optional(),
 
   dotNumber: z
@@ -219,7 +186,6 @@ export const updateOrganizationSchema = z.object({
     .regex(/^\+?[\d\s\-\\(\\)]{10,15}$/, 'Invalid phone number format')
     .optional(),
   email: z.string().email('Invalid email address').optional(),
-
 });
 
 // Webhook payload validation schemas
@@ -234,7 +200,7 @@ export const webhookUserDataSchema = z.object({
           status: z.string(),
         })
         .optional(),
-    })
+    }),
   ),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
@@ -249,7 +215,7 @@ export const webhookUserDataSchema = z.object({
           slug: z.string(),
         }),
         role: z.string(),
-      })
+      }),
     )
     .optional(),
   created_at: z.number(),

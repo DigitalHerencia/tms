@@ -1,4 +1,4 @@
-"use server";
+'use server';
 
 import { Decimal } from '@prisma/client/runtime/library';
 
@@ -20,7 +20,7 @@ export async function serializePrismaDataServer<T>(data: T): Promise<T> {
   }
 
   if (Array.isArray(data)) {
-    return data.map(item => serializePrismaDataServer(item)) as T;
+    return data.map((item) => serializePrismaDataServer(item)) as T;
   }
 
   if (typeof data === 'object') {
@@ -39,20 +39,20 @@ export async function serializePrismaDataServer<T>(data: T): Promise<T> {
  */
 export async function serializeDecimalFields<T extends Record<string, any>>(
   obj: T,
-  decimalFields: (keyof T)[]
+  decimalFields: (keyof T)[],
 ): Promise<T> {
   const result = { ...obj };
-  
+
   for (const field of decimalFields) {
     // Use duck typing to check for Decimal (has toNumber function)
     if (
       result[field] &&
-      typeof result[field] === "object" &&
-      typeof result[field].toNumber === "function"
+      typeof result[field] === 'object' &&
+      typeof result[field].toNumber === 'function'
     ) {
       result[field] = result[field].toNumber() as T[keyof T];
     }
   }
-  
+
   return result;
 }

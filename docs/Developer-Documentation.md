@@ -132,6 +132,7 @@ support these product requirements._
   tokens and a utility-first approach ensure consistent styling. The app supports dark mode (via a
   CSS class strategy).
 - **Project Structure:** The codebase is organized for clarity and scalability:
+
   - `app/` – Next.js routes, including pages and layouts (organized by feature or section of the
     app).
   - `components/` – Reusable presentational (dumb) components that are not tied to a single domain.
@@ -216,6 +217,7 @@ support these product requirements._
   the Next.js app. Commits to the main branch trigger Vercel to build and deploy the latest version.
   Vercel handles scaling, SSL (HTTPS), and CDN distribution automatically.
 - **CI/CD Pipeline:** A GitHub Actions workflow is set up to automate testing and deployment:
+
   - On push or merge to `main`, the workflow runs the test suite and build process.
   - If tests pass, it uses Vercel's CLI or API (with stored credentials) to initiate a deployment of
     the new build.
@@ -318,6 +320,7 @@ component:
 - The webhook handler verifies each incoming event using the `CLERK_WEBHOOK_SECRET` to ensure
   authenticity.
 - On receiving events, the handler performs the corresponding database updates:
+
   - For example, when an organization is created via Clerk (during onboarding), the handler will
     create a new entry in the `companies` table with the Clerk org ID and company name.
   - When a user joins an organization, a new `company_users` record is inserted, linking that user
@@ -428,12 +431,14 @@ FleetFusion uses PostgreSQL with the Prisma ORM to define and manage the databas
 aspects of the schema include:
 
 - **Companies & Users:**
+
   - **companies** – Stores each tenant company's information (name, address, etc.) along with a
     unique identifier (Clerk org ID) linking it to the auth layer.
   - **company_users** – Maps users to companies with their roles. Each entry links a Clerk user ID
     to a company ID and includes role metadata (e.g., admin, dispatcher).
 
 - **Core Fleet Entities:**
+
   - **drivers** – Contains driver profiles (name, license info, etc.) and is linked to a companyId.
   - **vehicles** – Contains vehicle records (make, model, VIN, etc.) and is linked to a companyId.
   - **loads** – Represents a dispatch load/shipment, including fields for origin, destination, cargo
@@ -441,6 +446,7 @@ aspects of the schema include:
     companyId.
 
 - **Compliance & Documents:**
+
   - **documents** – A general table for uploaded documents (could be used for storing file meta like
     URL, upload date).
   - **compliance_documents** – (If distinct from documents) Stores specific compliance record
@@ -453,6 +459,7 @@ aspects of the schema include:
     service, notes), linked to vehicleId and companyId.
 
 - **Common Fields & Conventions:**
+
   - All primary keys are UUIDs (universally unique identifiers). This ensures uniqueness across
     distributed systems and avoids sequential ID predictability.
   - Timestamps (`createdAt`, `updatedAt`) are included in most tables to track when records are
@@ -495,6 +502,7 @@ practices:
   deploy the new version. This provides a seamless deployment process, where code merges result in
   live updates to the app.
 - **Continuous Integration (CI):** GitHub Actions handle testing and integration steps:
+
   - A typical workflow might run on every pull request and push to `main`. It will install
     dependencies, run `eslint` for linting, run `tsc` for type checks, and execute all tests.
   - Only if these steps succeed can code be merged or deployed. This prevents broken builds or
@@ -505,6 +513,7 @@ practices:
   and `VERCEL_PROJECT_ID` are stored in GitHub and used by the action to authenticate with Vercel’s
   API. This way, the CI can programmatically trigger deployments after tests pass.
 - **Post-Deployment Verification:** After deploying, it’s recommended to perform a quick smoke test:
+
   - Visit the production site and ensure pages are loading.
   - Test login and a few key user flows (e.g., create a load, sign out, etc.) to confirm that the
     production environment (with its environment variables) is configured correctly (especially
@@ -516,43 +525,43 @@ practices:
   critical issue, the team can use Vercel's "Rollback" feature to instantly revert to the last good
   deployment. Additionally, maintaining good version control practices (like tagging releases) helps
   in quickly identifying a stable commit to redeploy if needed.
--   **Hosting:** The production environment is hosted on Vercel, which provides a convenient platform
-    for Next.js applications. The default production domain is `fleet-fusion.vercel.app` (a custom
-    domain can be configured as needed).
--   **Environment Management:** Sensitive configuration is provided via environment variables. During
-    deployment, these are set in Vercel's dashboard (for production) and via `.env.local` files for
-    local development. It’s crucial to set production Clerk keys, the Neon database URL, and any
-    third-party API keys in the Vercel environment before deploying. The
-    database connection also relies on `DIRECT_URL`, `DATABASE_MAX_CONNECTIONS`,
-    and `DATABASE_CONNECTION_TIMEOUT`.
--   **Manual Deployment:** Initially, one can deploy FleetFusion by connecting the GitHub repo to
-    Vercel and using the Vercel UI to trigger a deployment. In this flow, Vercel will install
-    dependencies and run `next build` to compile the app. Ensure the project settings on Vercel (build
-    command, output directory, etc.) are properly configured (Next.js defaults are usually
-    auto-detected).
--   **Continuous Deployment (CD):** The project is configured for automatic deployments. Whenever
-    changes are pushed to the `main` branch (after passing tests), Vercel will automatically build and
-    deploy the new version. This provides a seamless deployment process, where code merges result in
-    live updates to the app.
--   **Continuous Integration (CI):** GitHub Actions (see `.github/workflows/ci.yml`) handle testing and integration steps:
+- **Hosting:** The production environment is hosted on Vercel, which provides a convenient platform
+  for Next.js applications. The default production domain is `fleet-fusion.vercel.app` (a custom
+  domain can be configured as needed).
+- **Environment Management:** Sensitive configuration is provided via environment variables. During
+  deployment, these are set in Vercel's dashboard (for production) and via `.env.local` files for
+  local development. It’s crucial to set production Clerk keys, the Neon database URL, and any
+  third-party API keys in the Vercel environment before deploying. The
+  database connection also relies on `DIRECT_URL`, `DATABASE_MAX_CONNECTIONS`,
+  and `DATABASE_CONNECTION_TIMEOUT`.
+- **Manual Deployment:** Initially, one can deploy FleetFusion by connecting the GitHub repo to
+  Vercel and using the Vercel UI to trigger a deployment. In this flow, Vercel will install
+  dependencies and run `next build` to compile the app. Ensure the project settings on Vercel (build
+  command, output directory, etc.) are properly configured (Next.js defaults are usually
+  auto-detected).
+- **Continuous Deployment (CD):** The project is configured for automatic deployments. Whenever
+  changes are pushed to the `main` branch (after passing tests), Vercel will automatically build and
+  deploy the new version. This provides a seamless deployment process, where code merges result in
+  live updates to the app.
+- **Continuous Integration (CI):** GitHub Actions (see `.github/workflows/ci.yml`) handle testing and integration steps:
 
-    -   A typical workflow might run on every pull request and push to `main`. It will install
-        dependencies, run `eslint` for linting, run `tsc` for type checks, and execute all tests.
-    -   Only if these steps succeed can code be merged or deployed. This prevents broken builds or
-        obvious bugs from reaching production.
+  - A typical workflow might run on every pull request and push to `main`. It will install
+    dependencies, run `eslint` for linting, run `tsc` for type checks, and execute all tests.
+  - Only if these steps succeed can code be merged or deployed. This prevents broken builds or
+    obvious bugs from reaching production.
 
--   **Vercel Integration via CI:** In addition to Vercel’s own git integration, the CI workflow can
-    deploy to Vercel by using Vercel’s API tokens. Secrets such as `VERCEL_TOKEN`, `VERCEL_ORG_ID`,
-    and `VERCEL_PROJECT_ID` are stored in GitHub and used by the action to authenticate with Vercel’s
-    API. This way, the CI can programmatically trigger deployments after tests pass.
--   **Post-Deployment Verification:** After deploying, it’s recommended to perform a quick smoke test:
+- **Vercel Integration via CI:** In addition to Vercel’s own git integration, the CI workflow can
+  deploy to Vercel by using Vercel’s API tokens. Secrets such as `VERCEL_TOKEN`, `VERCEL_ORG_ID`,
+  and `VERCEL_PROJECT_ID` are stored in GitHub and used by the action to authenticate with Vercel’s
+  API. This way, the CI can programmatically trigger deployments after tests pass.
+- **Post-Deployment Verification:** After deploying, it’s recommended to perform a quick smoke test:
 
-    -   Visit the production site and ensure pages are loading.
-    -   Test login and a few key user flows (e.g., create a load, sign out, etc.) to confirm that the
-        production environment (with its environment variables) is configured correctly (especially
-        Clerk, since incorrect domains or keys would affect auth).
-    -   Check Vercel's function logs or monitoring tools for any runtime errors that might not have
-        appeared in testing.
+  - Visit the production site and ensure pages are loading.
+  - Test login and a few key user flows (e.g., create a load, sign out, etc.) to confirm that the
+    production environment (with its environment variables) is configured correctly (especially
+    Clerk, since incorrect domains or keys would affect auth).
+  - Check Vercel's function logs or monitoring tools for any runtime errors that might not have
+    appeared in testing.
 
 By adhering to these DevOps practices, FleetFusion achieves a robust deployment pipeline with
 minimal downtime, quick iteration cycles for developers, and confidence that each release has been

@@ -15,10 +15,10 @@ export function AssignmentDialogButton({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button 
-        type="button" 
+      <Button
+        type="button"
         size="lg"
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 text-lg" 
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 text-lg"
         onClick={() => setOpen(true)}
       >
         {currentAssignment ? 'Reassign Driver' : 'Assign Driver'}
@@ -27,9 +27,7 @@ export function AssignmentDialogButton({
         driverId={driverId}
         open={open}
         onClose={() => setOpen(false)}
-        currentAssignment={
-          typeof currentAssignment === 'object' ? currentAssignment : undefined
-        }
+        currentAssignment={typeof currentAssignment === 'object' ? currentAssignment : undefined}
         onAssigned={() => setOpen(false)}
       />
     </>

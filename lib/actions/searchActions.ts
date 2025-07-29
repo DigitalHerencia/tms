@@ -12,7 +12,7 @@ const searchSchema = z.object({
 });
 
 export async function globalSearchAction(
-  data: z.infer<typeof searchSchema>
+  data: z.infer<typeof searchSchema>,
 ): Promise<GlobalSearchResultItem[]> {
   try {
     const { orgId, query } = searchSchema.parse(data);

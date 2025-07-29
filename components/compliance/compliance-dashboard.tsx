@@ -1,21 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  TrendingUp,
-} from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, FileText, TrendingUp } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,20 +37,18 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Compliance</h2>
           <p className="text-muted-foreground">
-            Monitor and manage compliance for drivers, vehicles, and
-            documentation
+            Monitor and manage compliance for drivers, vehicles, and documentation
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
-          >
+          <Button className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800">
             Export Report
           </Button>
-          <Button 
-            onClick={handleAudit} disabled={isPending}
+          <Button
+            onClick={handleAudit}
+            disabled={isPending}
             className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
-          > 
+          >
             {isPending ? 'Running...' : 'Run Compliance Check'}
           </Button>
         </div>
@@ -85,41 +71,31 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Driver Compliance
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Driver Compliance</CardTitle>
                 <CheckCircle className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">92%</div>
-                <p className="text-muted-foreground text-xs">
-                  2 drivers need attention
-                </p>
+                <p className="text-muted-foreground text-xs">2 drivers need attention</p>
                 <Progress value={92} className="mt-2" />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Vehicle Compliance
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Vehicle Compliance</CardTitle>
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">85%</div>
-                <p className="text-muted-foreground text-xs">
-                  4 vehicles need attention
-                </p>
+                <p className="text-muted-foreground text-xs">4 vehicles need attention</p>
                 <Progress value={85} className="mt-2" />
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  HOS Violations
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">HOS Violations</CardTitle>
                 <Clock className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
@@ -131,16 +107,12 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Document Status
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Document Status</CardTitle>
                 <FileText className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">96%</div>
-                <p className="text-muted-foreground text-xs">
-                  1 document expiring soon
-                </p>
+                <p className="text-muted-foreground text-xs">1 document expiring soon</p>
                 <Progress value={96} className="mt-2" />
               </CardContent>
             </Card>
@@ -158,12 +130,8 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">
-                        Driver Medical Card - John Smith
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Expires in 12 days
-                      </p>
+                      <p className="text-sm font-medium">Driver Medical Card - John Smith</p>
+                      <p className="text-muted-foreground text-xs">Expires in 12 days</p>
                     </div>
                     <Badge
                       variant="outline"
@@ -174,12 +142,8 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">
-                        Vehicle #T-103 Annual Inspection
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Due in 15 days
-                      </p>
+                      <p className="text-sm font-medium">Vehicle #T-103 Annual Inspection</p>
+                      <p className="text-muted-foreground text-xs">Due in 15 days</p>
                     </div>
                     <Badge
                       variant="outline"
@@ -191,30 +155,18 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="text-sm font-medium">IFTA Q2 Filing</p>
-                      <p className="text-muted-foreground text-xs">
-                        Due in 22 days
-                      </p>
+                      <p className="text-muted-foreground text-xs">Due in 22 days</p>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="border-blue-200 bg-blue-50 text-blue-700"
-                    >
+                    <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">
                       Upcoming
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">
-                        Driver CDL - Maria Garcia
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Expires in 28 days
-                      </p>
+                      <p className="text-sm font-medium">Driver CDL - Maria Garcia</p>
+                      <p className="text-muted-foreground text-xs">Expires in 28 days</p>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="border-blue-200 bg-blue-50 text-blue-700"
-                    >
+                    <Badge variant="outline" className="border-blue-200 bg-blue-50 text-blue-700">
                       Upcoming
                     </Badge>
                   </div>
@@ -233,7 +185,7 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
                   <p className="text-center text-sm">
                     Overall compliance score improved by 4% in the last 30 days
                   </p>
-                  <Button 
+                  <Button
                     variant="default"
                     size="sm"
                     className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
@@ -269,7 +221,7 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <VehicleComplianceTable orgId={ '' } />
+              <VehicleComplianceTable orgId={''} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -278,12 +230,10 @@ export function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
           <Card>
             <CardHeader>
               <CardTitle>Compliance Documents</CardTitle>
-              <CardDescription>
-                Manage and track required documentation
-              </CardDescription>
+              <CardDescription>Manage and track required documentation</CardDescription>
             </CardHeader>
             <CardContent>
-              <ComplianceDocuments documents={ [] } orgId={ '' } />
+              <ComplianceDocuments documents={[]} orgId={''} />
             </CardContent>
           </Card>
         </TabsContent>

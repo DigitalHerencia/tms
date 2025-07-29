@@ -1,22 +1,22 @@
-"use server";
+'use server';
 
-import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
-import db from "@/lib/database/db";
-import { handleError } from "@/lib/errors/handleError";
-import { loadInputSchema } from "@/schemas/dispatch";
-import type { DashboardActionResult } from "@/types/dashboard";
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import db from '@/lib/database/db';
+import { handleError } from '@/lib/errors/handleError';
+import { loadInputSchema } from '@/schemas/dispatch';
+import type { DashboardActionResult } from '@/types/dashboard';
 
 /**
  * Create a load
  */
 export async function createLoadAction(
   orgId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     // Validate input data
     const parsed = loadInputSchema.parse(Object.fromEntries(formData));
@@ -62,7 +62,7 @@ export async function createLoadAction(
         scheduledPickupDate,
         scheduledDeliveryDate,
         notes,
-        status: "pending",
+        status: 'pending',
         createdBy: userId,
       },
     });
@@ -70,7 +70,7 @@ export async function createLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: { id: load.id } };
   } catch (error) {
-    return handleError(error, "Create Load");
+    return handleError(error, 'Create Load');
   }
 }
 
@@ -80,15 +80,13 @@ export async function createLoadAction(
 export async function updateLoadAction(
   orgId: string,
   loadId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
-    const parsed = loadInputSchema
-      .partial()
-      .parse(Object.fromEntries(formData));
+    const parsed = loadInputSchema.partial().parse(Object.fromEntries(formData));
 
     const data: Record<string, any> = {};
 
@@ -96,8 +94,7 @@ export async function updateLoadAction(
     if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
     if (parsed.vehicle_id !== undefined) data.vehicle_id = parsed.vehicle_id;
     if (parsed.trailer_id !== undefined) data.trailer_id = parsed.trailer_id;
-    if (parsed.origin_address !== undefined)
-      data.origin_address = parsed.origin_address;
+    if (parsed.origin_address !== undefined) data.origin_address = parsed.origin_address;
     if (parsed.destination_address !== undefined)
       data.destination_address = parsed.destination_address;
     if (parsed.scheduled_pickup_date !== undefined)
@@ -111,8 +108,8 @@ export async function updateLoadAction(
     if (parsed.notes !== undefined) data.notes = parsed.notes;
     if (parsed.status !== undefined) data.status = parsed.status;
 
-    data["lastModifiedBy"] = userId;
-    data["updatedAt"] = new Date();
+    data['lastModifiedBy'] = userId;
+    data['updatedAt'] = new Date();
 
     const load = await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -122,7 +119,7 @@ export async function updateLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Update Load");
+    return handleError(error, 'Update Load');
   }
 }
 
@@ -131,11 +128,11 @@ export async function updateLoadAction(
  */
 export async function deleteLoadAction(
   orgId: string,
-  loadId: string
+  loadId: string,
 ): Promise<DashboardActionResult<null>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     await db.load.delete({
       where: { id: loadId, organizationId: orgId },
@@ -144,7 +141,7 @@ export async function deleteLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: null };
   } catch (error) {
-    return handleError(error, "Delete Load");
+    return handleError(error, 'Delete Load');
   }
 }
 
@@ -154,11 +151,11 @@ export async function deleteLoadAction(
 export async function assignVehicleToLoadAction(
   orgId: string,
   loadId: string,
-  vehicleId: string
+  vehicleId: string,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     const load = await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -172,7 +169,7 @@ export async function assignVehicleToLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Assign Vehicle to Load");
+    return handleError(error, 'Assign Vehicle to Load');
   }
 }
 
@@ -182,11 +179,11 @@ export async function assignVehicleToLoadAction(
 export async function assignTrailerToLoadAction(
   orgId: string,
   loadId: string,
-  trailerId: string
+  trailerId: string,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     const load = await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -200,6 +197,6 @@ export async function assignTrailerToLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Assign Trailer to Load");
+    return handleError(error, 'Assign Trailer to Load');
   }
 }

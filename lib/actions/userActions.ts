@@ -1,13 +1,12 @@
-"use server";
+'use server';
 /**
  * User management server actions.
  */
-import db from "@/lib/database/db";
-import { handleError } from "@/lib/errors/handleError";
-import { sendInvitationEmail } from "@/lib/email/mailer";
-import crypto from "crypto";
-import type { UserInvitationResult } from "@/types/users";
-
+import db from '@/lib/database/db';
+import { handleError } from '@/lib/errors/handleError';
+import { sendInvitationEmail } from '@/lib/email/mailer';
+import crypto from 'crypto';
+import type { UserInvitationResult } from '@/types/users';
 
 // Invite user: create pending membership and send invite (implementation stub)
 export async function inviteUserAction(
@@ -46,26 +45,22 @@ export async function inviteUserAction(
         email,
         role,
         token,
-        status: "pending",
+        status: 'pending',
       },
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
     const link = `${baseUrl}/accept-invitation?token=${token}`;
     await sendInvitationEmail(email, link);
 
     return { success: true, userId: user.id, invitationToken: token };
   } catch (error) {
-    return handleError(error, "Invite User Action");
+    return handleError(error, 'Invite User Action');
   }
 }
 
 // Update user role in custom orgs using Prisma
-export async function updateUserRoleAction(
-  orgId: string,
-  userId: string,
-  newRole: string,
-) {
+export async function updateUserRoleAction(orgId: string, userId: string, newRole: string) {
   try {
     // Update membership role
     await db.organizationMembership.update({
@@ -74,6 +69,6 @@ export async function updateUserRoleAction(
     });
     return { success: true };
   } catch (error) {
-    return handleError(error, "Update User Role");
+    return handleError(error, 'Update User Role');
   }
 }

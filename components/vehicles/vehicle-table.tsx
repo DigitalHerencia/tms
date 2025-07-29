@@ -1,31 +1,37 @@
 'use client';
 
 import { useState } from 'react';
-import { Vehicle, VehicleStatus } from '@/types/vehicles';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import type { Vehicle, VehicleStatus } from '@/types/vehicles';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Search, 
-  Eye, 
-  Edit, 
-  Truck, 
-  Calendar, 
-  MapPin, 
+import {
+  Search,
+  Eye,
+  Edit,
+  Truck,
+  Calendar,
+  MapPin,
   Gauge,
   FileText,
   Download,
-  Filter
+  Filter,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -36,11 +42,11 @@ interface VehicleTableProps {
   showActions?: boolean;
 }
 
-export function VehicleTable({ 
+export function VehicleTable({
   vehicles, // <-- add vehicles here
-  orgId, 
+  orgId,
   onVehicleSelect,
-  showActions = true 
+  showActions = true,
 }: VehicleTableProps) {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all');
@@ -83,16 +89,14 @@ export function VehicleTable({
     return new Intl.NumberFormat('en-US').format(mileage) + ' mi';
   };
 
-  const filteredVehicles = vehicles.filter(vehicle => {
+  const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesSearch = [
       vehicle.unitNumber,
       vehicle.make,
       vehicle.model,
       vehicle.vin,
       vehicle.licensePlate,
-    ].some(field => 
-      field?.toLowerCase().includes(search.toLowerCase())
-    );
+    ].some((field) => field?.toLowerCase().includes(search.toLowerCase()));
 
     const matchesStatus = statusFilter === 'all' || vehicle.status === statusFilter;
     const matchesType = typeFilter === 'all' || vehicle.type === typeFilter;
@@ -100,7 +104,7 @@ export function VehicleTable({
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const uniqueTypes = Array.from(new Set(vehicles.map(v => v.type))).filter(Boolean);
+  const uniqueTypes = Array.from(new Set(vehicles.map((v) => v.type))).filter(Boolean);
 
   return (
     <div className="space-y-6">
@@ -126,10 +130,13 @@ export function VehicleTable({
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium text-white">Status</label>
-              <Select value={statusFilter} onValueChange={(value: VehicleStatus | 'all') => setStatusFilter(value)}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value: VehicleStatus | 'all') => setStatusFilter(value)}
+              >
                 <SelectTrigger className="bg-neutral-900 border-muted text-white">
                   <SelectValue />
                 </SelectTrigger>
@@ -151,11 +158,13 @@ export function VehicleTable({
                 </SelectTrigger>
                 <SelectContent className="bg-black border-muted">
                   <SelectItem value="all">All Types</SelectItem>
-                  {uniqueTypes.map(type => (
+                  {uniqueTypes.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {type.replace('_', ' ').split(' ').map(word => 
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                      ).join(' ')}
+                      {type
+                        .replace('_', ' ')
+                        .split(' ')
+                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -204,19 +213,19 @@ export function VehicleTable({
             <TableBody>
               {filteredVehicles.length === 0 ? (
                 <TableRow>
-                  <TableCell 
-                    colSpan={showActions ? 8 : 7} 
+                  <TableCell
+                    colSpan={showActions ? 8 : 7}
                     className="text-center text-white/70 py-8"
                   >
-                    {search || statusFilter !== 'all' || typeFilter !== 'all' 
-                      ? 'No vehicles found matching your filters.' 
+                    {search || statusFilter !== 'all' || typeFilter !== 'all'
+                      ? 'No vehicles found matching your filters.'
                       : 'No vehicles found.'}
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredVehicles.map((vehicle) => (
-                  <TableRow 
-                    key={vehicle.id} 
+                  <TableRow
+                    key={vehicle.id}
                     className="border-muted hover:bg-neutral-900/50 cursor-pointer"
                     onClick={() => onVehicleSelect?.(vehicle)}
                   >
@@ -224,17 +233,13 @@ export function VehicleTable({
                     <TableCell className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Truck className="h-4 w-4 text-blue-400" />
-                        <span className="font-medium text-white">
-                          {vehicle.unitNumber}
-                        </span>
+                        <span className="font-medium text-white">{vehicle.unitNumber}</span>
                       </div>
                       <div className="text-sm text-white/70">
                         {vehicle.make} {vehicle.model} {vehicle.year}
                       </div>
                       {vehicle.vin && (
-                        <div className="text-xs text-white/60 font-mono">
-                          VIN: {vehicle.vin}
-                        </div>
+                        <div className="text-xs text-white/60 font-mono">VIN: {vehicle.vin}</div>
                       )}
                     </TableCell>
 
@@ -251,9 +256,7 @@ export function VehicleTable({
                         Type: {vehicle.type.replace('_', ' ')}
                       </div>
                       {vehicle.fuelType && (
-                        <div className="text-xs text-white/70">
-                          Fuel: {vehicle.fuelType}
-                        </div>
+                        <div className="text-xs text-white/70">Fuel: {vehicle.fuelType}</div>
                       )}
                       {vehicle.grossVehicleWeight && (
                         <div className="text-xs text-white/70">

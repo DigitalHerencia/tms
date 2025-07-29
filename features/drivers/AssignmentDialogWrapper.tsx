@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { AssignmentDialogButton } from '@/features/drivers/AssignmentDialogButton';
 import type { DriverAssignment } from '@/types/drivers';
@@ -8,13 +8,13 @@ interface AssignmentDialogWrapperProps {
   currentAssignment: Partial<DriverAssignment>;
 }
 
-export function AssignmentDialogWrapper({ driverId, currentAssignment }: AssignmentDialogWrapperProps) {
+export function AssignmentDialogWrapper({
+  driverId,
+  currentAssignment,
+}: AssignmentDialogWrapperProps) {
   return (
     <div className="flex items-center justify-center w-full py-4">
-      <AssignmentDialogButton 
-        driverId={driverId} 
-        currentAssignment={currentAssignment}
-      />
+      <AssignmentDialogButton driverId={driverId} currentAssignment={currentAssignment} />
     </div>
   );
 }

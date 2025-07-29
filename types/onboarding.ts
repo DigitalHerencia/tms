@@ -55,10 +55,7 @@ export interface OnboardingPreferences {
   [key: string]: string | number | boolean;
 }
 
-export type OnboardingStepData =
-  | ProfileSetupData
-  | CompanySetupData
-  | PreferencesData;
+export type OnboardingStepData = ProfileSetupData | CompanySetupData | PreferencesData;
 
 export interface OnboardingStepProps {
   onNext: (data: OnboardingStepData) => void;

@@ -7,14 +7,20 @@ import { Button } from '@/components/ui/button';
 export async function DocumentStatusCard({ driverId, orgId }: { driverId: string; orgId: string }) {
   const { getComplianceDocuments } = await import('@/lib/fetchers/complianceFetchers');
   try {
-    const documentsResponse = await getComplianceDocuments({ entityType: ['driver'], entityId: driverId });
-    const documents = (documentsResponse.success && 'data' in documentsResponse)
-      ? documentsResponse.data.documents
-      : [];
+    const documentsResponse = await getComplianceDocuments({
+      entityType: ['driver'],
+      entityId: driverId,
+    });
+    const documents =
+      documentsResponse.success && 'data' in documentsResponse
+        ? documentsResponse.data.documents
+        : [];
     const now = new Date();
     const expiringSoon = documents.filter((doc: any) => {
       const expiryDate = new Date(doc.expiryDate);
-      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const daysUntilExpiry = Math.ceil(
+        (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+      );
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
     });
     const expired = documents.filter((doc: any) => {
@@ -23,7 +29,9 @@ export async function DocumentStatusCard({ driverId, orgId }: { driverId: string
     });
     const valid = documents.filter((doc: any) => {
       const expiryDate = new Date(doc.expiryDate);
-      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const daysUntilExpiry = Math.ceil(
+        (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+      );
       return daysUntilExpiry > 30;
     });
     return (
@@ -51,20 +59,32 @@ export async function DocumentStatusCard({ driverId, orgId }: { driverId: string
             <div className="space-y-3">
               {documents.slice(0, 4).map((doc: any) => {
                 const expiryDate = new Date(doc.expiryDate);
-                const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                const daysUntilExpiry = Math.ceil(
+                  (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+                );
                 const isExpired = expiryDate < now;
                 const isExpiringSoon = daysUntilExpiry <= 30 && daysUntilExpiry > 0;
                 return (
-                  <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-700 rounded-lg">
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-3 border border-gray-700 rounded-lg"
+                  >
                     <div>
                       <p className="font-semibold text-white">{doc.documentType || doc.name}</p>
-                      <p className="text-sm text-gray-400">Expires: {expiryDate.toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-400">
+                        Expires: {expiryDate.toLocaleDateString()}
+                      </p>
                     </div>
-                    <Badge variant="outline" className={
-                      isExpired ? 'border-red-200 bg-red-50 text-red-700' :
-                      isExpiringSoon ? 'border-yellow-200 bg-yellow-50 text-yellow-700' :
-                      'border-green-200 bg-green-50 text-green-700'
-                    }>
+                    <Badge
+                      variant="outline"
+                      className={
+                        isExpired
+                          ? 'border-red-200 bg-red-50 text-red-700'
+                          : isExpiringSoon
+                            ? 'border-yellow-200 bg-yellow-50 text-yellow-700'
+                            : 'border-green-200 bg-green-50 text-green-700'
+                      }
+                    >
                       {isExpired ? 'Expired' : isExpiringSoon ? 'Expiring Soon' : 'Valid'}
                     </Badge>
                   </div>
@@ -72,14 +92,21 @@ export async function DocumentStatusCard({ driverId, orgId }: { driverId: string
               })}
               {documents.length > 4 && (
                 <div className="text-center pt-2">
-                  <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">View All Documents ({documents.length})</Button>
+                  <Button
+                    variant="outline"
+                    className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                  >
+                    View All Documents ({documents.length})
+                  </Button>
                 </div>
               )}
             </div>
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-400 mb-4">No compliance documents found</p>
-              <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">Upload Documents</Button>
+              <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">
+                Upload Documents
+              </Button>
             </div>
           )}
         </CardContent>
@@ -96,7 +123,9 @@ export async function DocumentStatusCard({ driverId, orgId }: { driverId: string
         <CardContent>
           <div className="text-center py-8">
             <p className="text-gray-400 mb-4">Unable to load document status</p>
-            <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">Refresh</Button>
+            <Button variant="default" className="bg-blue-600 hover:bg-blue-700 text-white">
+              Refresh
+            </Button>
           </div>
         </CardContent>
       </Card>

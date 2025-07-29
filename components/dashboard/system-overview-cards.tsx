@@ -13,10 +13,14 @@ interface SystemOverviewCardsProps {
   getStatusBadge: (status: string) => React.JSX.Element;
 }
 
-export function SystemOverviewCards({ healthData, formatUptime, getStatusBadge }: SystemOverviewCardsProps) {
+export function SystemOverviewCards({
+  healthData,
+  formatUptime,
+  getStatusBadge,
+}: SystemOverviewCardsProps) {
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <Clock className="w-4 h-4" />
@@ -28,13 +32,11 @@ export function SystemOverviewCards({ healthData, formatUptime, getStatusBadge }
             <div className="text-2xl font-bold text-green-600">
               {formatUptime(healthData.uptime)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Running smoothly
-            </p>
+            <p className="text-xs text-muted-foreground">Running smoothly</p>
           </div>
         </CardContent>
       </Card>
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <Database className="w-4 h-4" />
@@ -44,13 +46,11 @@ export function SystemOverviewCards({ healthData, formatUptime, getStatusBadge }
         <CardContent>
           <div className="space-y-2">
             {getStatusBadge(healthData.databaseStatus)}
-            <p className="text-xs text-muted-foreground">
-              Connection active
-            </p>
+            <p className="text-xs text-muted-foreground">Connection active</p>
           </div>
         </CardContent>
       </Card>
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <Server className="w-4 h-4" />
@@ -60,13 +60,11 @@ export function SystemOverviewCards({ healthData, formatUptime, getStatusBadge }
         <CardContent>
           <div className="space-y-2">
             {getStatusBadge(healthData.queueStatus)}
-            <p className="text-xs text-muted-foreground">
-              Processing jobs
-            </p>
+            <p className="text-xs text-muted-foreground">Processing jobs</p>
           </div>
         </CardContent>
       </Card>
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <Activity className="w-4 h-4" />
@@ -79,9 +77,7 @@ export function SystemOverviewCards({ healthData, formatUptime, getStatusBadge }
               <CheckCircle className="w-3 h-3 mr-1" />
               Operational
             </Badge>
-            <p className="text-xs text-muted-foreground">
-              All systems go
-            </p>
+            <p className="text-xs text-muted-foreground">All systems go</p>
           </div>
         </CardContent>
       </Card>

@@ -10,12 +10,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
-import { RevenueMetrics } from '@/types/analytics';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import type { RevenueMetrics } from '@/types/analytics';
 
 interface PerformanceMetricsProps {
   timeRange: string;
@@ -35,14 +31,12 @@ interface PerformanceMetricsProps {
  * Visualize performance metrics such as loads delivered and miles driven.
  *
  * Charts resize automatically using ResponsiveContainer to maintain clarity on
- * any screen size. 
+ * any screen size.
  *
  * @param performanceData - Array of revenue and load metrics
  */
 
-export function PerformanceMetrics({
-  performanceData,
-}: PerformanceMetricsProps) {
+export function PerformanceMetrics({ performanceData }: PerformanceMetricsProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -58,21 +52,13 @@ export function PerformanceMetrics({
             className="h-[300px]"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={performanceData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
+              <LineChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="loads"
-                  stroke="--color-chart-1"
-                  name="Loads"
-                />
+                <Line type="monotone" dataKey="loads" stroke="--color-chart-1" name="Loads" />
               </LineChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -90,30 +76,20 @@ export function PerformanceMetrics({
             className="h-[300px]"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={performanceData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
+              <LineChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="miles"
-                  stroke="--color-chart-2"
-                  name="Miles"
-                />
+                <Line type="monotone" dataKey="miles" stroke="--color-chart-2" name="Miles" />
               </LineChart>
             </ResponsiveContainer>
           </ChartContainer>
         </div>
 
         <div className="rounded-md border border-border bg-card p-4">
-          <h3 className="mb-4 text-lg font-bold text-card-foreground">
-            On-Time Delivery (%)
-          </h3>
+          <h3 className="mb-4 text-lg font-bold text-card-foreground">On-Time Delivery (%)</h3>
           <ChartContainer
             config={{
               onTimeDelivery: {
@@ -124,10 +100,7 @@ export function PerformanceMetrics({
             className="h-[300px]"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={performanceData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
+              <LineChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis domain={[80, 100]} />
@@ -145,9 +118,7 @@ export function PerformanceMetrics({
         </div>
 
         <div className="rounded-md border border-border bg-card p-4">
-          <h3 className="mb-4 text-lg font-bold text-card-foreground">
-            Fleet Utilization (%)
-          </h3>
+          <h3 className="mb-4 text-lg font-bold text-card-foreground">Fleet Utilization (%)</h3>
           <ChartContainer
             config={{
               utilization: {
@@ -158,10 +129,7 @@ export function PerformanceMetrics({
             className="h-[300px]"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={performanceData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
+              <LineChart data={performanceData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis domain={[80, 100]} />
@@ -184,12 +152,8 @@ export function PerformanceMetrics({
           <thead>
             <tr className="border-b border-border bg-muted/50">
               <th className="p-2 text-left text-sm font-medium">Metric</th>
-              <th className="p-2 text-right text-sm font-medium">
-                Current Period
-              </th>
-              <th className="p-2 text-right text-sm font-medium">
-                Previous Period
-              </th>
+              <th className="p-2 text-right text-sm font-medium">Current Period</th>
+              <th className="p-2 text-right text-sm font-medium">Previous Period</th>
               <th className="p-2 text-right text-sm font-medium">Change</th>
             </tr>
           </thead>

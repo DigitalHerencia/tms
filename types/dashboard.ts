@@ -1,24 +1,24 @@
 export interface DashboardActionResult<T = unknown> {
-    success: boolean
-    error?: string
-    data?: T
+  success: boolean;
+  error?: string;
+  data?: T;
 }
 
 export type DashboardAlert = {
-    id: string
-    message: string
-    severity: "high" | "medium" | "low"
-    timestamp: string
-    type: string
-}
+  id: string;
+  message: string;
+  severity: 'high' | 'medium' | 'low';
+  timestamp: string;
+  type: string;
+};
 
 export type DashboardScheduleItem = {
-    id: string
-    description: string
-    timePeriod: string
-    count: number
-    type: string
-}
+  id: string;
+  description: string;
+  timePeriod: string;
+  count: number;
+  type: string;
+};
 // Consolidated dashboard types and interfaces
 export interface DashboardMetrics {
   activeLoads: number;
@@ -198,7 +198,9 @@ export interface AuditLogTableProps {
   logs: AuditLogEntry[];
   selectedLog: AuditLogEntry | null;
   setSelectedLog: (log: AuditLogEntry | null) => void;
-  getActionBadgeVariant: (action: string) => "default" | "secondary" | "destructive" | "outline" | null | undefined;
+  getActionBadgeVariant: (
+    action: string,
+  ) => 'default' | 'secondary' | 'destructive' | 'outline' | null | undefined;
 }
 
 export interface AuditLogFiltersProps {

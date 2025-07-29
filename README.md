@@ -1,5 +1,3 @@
-
-
 <!-- FleetFusion SaaS Platform -->
 
 <p align="center">
@@ -30,28 +28,28 @@
 
 ## ✨ Features
 
--   **🚦 Dispatch Board:** Drag-and-drop load assignment, real-time status, and notifications
--   **🚚 Vehicle Management:** Maintenance, inspections, compliance docs, and analytics
--   **🧑‍✈️ Driver Management:** Licensing, HOS, performance, and alerts
--   **🛡️ Compliance:** Central dashboard, document uploads, and automated reminders
--   **⛽ IFTA Reporting:** Automated miles/fuel, tax calculation, and export
--   **📊 Analytics:** Real-time dashboards for performance, utilization, and finance
--   **🔐 Role-Based Access:** Admin, Dispatcher, Driver, Compliance, Account Manager
--   **🏢 Multi-Tenancy:** Company-level data isolation and org-based access
--   **🌗 Modern UI:** Responsive, accessible, dark/light mode, mobile-friendly
+- **🚦 Dispatch Board:** Drag-and-drop load assignment, real-time status, and notifications
+- **🚚 Vehicle Management:** Maintenance, inspections, compliance docs, and analytics
+- **🧑‍✈️ Driver Management:** Licensing, HOS, performance, and alerts
+- **🛡️ Compliance:** Central dashboard, document uploads, and automated reminders
+- **⛽ IFTA Reporting:** Automated miles/fuel, tax calculation, and export
+- **📊 Analytics:** Real-time dashboards for performance, utilization, and finance
+- **🔐 Role-Based Access:** Admin, Dispatcher, Driver, Compliance, Account Manager
+- **🏢 Multi-Tenancy:** Company-level data isolation and org-based access
+- **🌗 Modern UI:** Responsive, accessible, dark/light mode, mobile-friendly
 
 ---
 
 ## 🛠️ Tech Stack
 
--   **Frontend:** Next.js 15 (App Router), React 19 (Server Components), Tailwind CSS 4
--   **Backend:** Node.js/Edge, React Server Actions, Next.js API Routes
--   **Database:** PostgreSQL (Neon), Prisma ORM
--   **Auth:** Clerk (org-based, RBAC)
--   **Storage:** Vercel Blob Storage
--   **Monitoring:** Vercel Analytics
--   **Testing:** Vitest, React Testing Library, Playwright
--   **Coverage:** Codecov reports via GitHub Actions
+- **Frontend:** Next.js 15 (App Router), React 19 (Server Components), Tailwind CSS 4
+- **Backend:** Node.js/Edge, React Server Actions, Next.js API Routes
+- **Database:** PostgreSQL (Neon), Prisma ORM
+- **Auth:** Clerk (org-based, RBAC)
+- **Storage:** Vercel Blob Storage
+- **Monitoring:** Vercel Analytics
+- **Testing:** Vitest, React Testing Library, Playwright
+- **Coverage:** Codecov reports via GitHub Actions
 
 ---
 
@@ -59,10 +57,10 @@
 
 ### Prerequisites
 
--   Node.js 18+
--   npm 9+
--   Neon.tech Postgres or compatible
--   Clerk account
+- Node.js 18+
+- npm 9+
+- Neon.tech Postgres or compatible
+- Clerk account
 
 ### Quickstart
 
@@ -94,26 +92,27 @@ For S3, also define `S3_BUCKET`, `S3_REGION`, `S3_PUBLIC_URL`,
 Local storage writes to the path defined in `config/pdf.ts`.
 
 ## Feature Flags
+
 FleetFusion supports runtime toggles via environment variables. See [docs/feature-flags.md](./docs/feature-flags.md) for details.
 
 ---
 
 ## 🆘 Help & Support
 
--   **Docs:** See the `/docs` folder for user guides and technical docs
--   [FleetFusion Docs](./docs/Developer-Documentation.md)
+- **Docs:** See the `/docs` folder for user guides and technical docs
+- [FleetFusion Docs](./docs/Developer-Documentation.md)
 
 ---
 
 ## Development Workflow
 
--   **Branch Names**: `feature/xyz`, `fix/abc`, `docs/doc-change`
--   **PR Titles**: `[type]: short description` (e.g., `feat: add driver dashboard`)
--   **Project Board**: All issues/PRs are tracked on the
-    [Project Board](https://github.com/users/DigitalHerencia/projects/4).
--   **Milestones**: Features are grouped by release milestones (e.g., Q3 2025).
-  -   **Merge Conflicts**: See our [Merge Conflict Resolution Guide](./docs/merge-conflict-resolution.md) for step-by-step help.
-  -   **CI Pipeline**: Automated via GitHub Actions in [`ci.yml`](.github/workflows/ci.yml) to lint, type-check, test, and deploy to Vercel.
+- **Branch Names**: `feature/xyz`, `fix/abc`, `docs/doc-change`
+- **PR Titles**: `[type]: short description` (e.g., `feat: add driver dashboard`)
+- **Project Board**: All issues/PRs are tracked on the
+  [Project Board](https://github.com/users/DigitalHerencia/projects/4).
+- **Milestones**: Features are grouped by release milestones (e.g., Q3 2025).
+- **Merge Conflicts**: See our [Merge Conflict Resolution Guide](./docs/merge-conflict-resolution.md) for step-by-step help.
+- **CI Pipeline**: Automated via GitHub Actions in [`ci.yml`](.github/workflows/ci.yml) to lint, type-check, test, and deploy to Vercel.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
 

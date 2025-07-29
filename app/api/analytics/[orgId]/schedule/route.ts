@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/database/db';
 
@@ -13,7 +14,7 @@ interface ScheduleReportRequest {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ orgId: string }> }
+  { params }: { params: Promise<{ orgId: string }> },
 ) {
   try {
     const { userId, orgId: currentOrgId } = await auth();
@@ -58,16 +59,13 @@ export async function POST(
     });
   } catch (error) {
     console.error('Schedule report error:', error);
-    return NextResponse.json(
-      { error: 'Failed to schedule report' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to schedule report' }, { status: 500 });
   }
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ orgId: string }> }
+  { params }: { params: Promise<{ orgId: string }> },
 ) {
   try {
     const { userId, orgId: currentOrgId } = await auth();
@@ -104,16 +102,13 @@ export async function GET(
     return NextResponse.json({ reports: scheduledReports });
   } catch (error) {
     console.error('Get scheduled reports error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch scheduled reports' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch scheduled reports' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ orgId: string }> }
+  { params }: { params: Promise<{ orgId: string }> },
 ) {
   try {
     const { userId, orgId: currentOrgId } = await auth();
@@ -126,10 +121,7 @@ export async function DELETE(
     const reportId = searchParams.get('reportId');
 
     if (!reportId) {
-      return NextResponse.json(
-        { error: 'Report ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Report ID is required' }, { status: 400 });
     }
 
     // Mock deletion
@@ -141,16 +133,13 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete scheduled report error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete scheduled report' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete scheduled report' }, { status: 500 });
   }
 }
 
 function calculateNextSendDate(frequency: string): Date {
   const now = new Date();
-  
+
   switch (frequency) {
     case 'daily':
       return new Date(now.getTime() + 24 * 60 * 60 * 1000);

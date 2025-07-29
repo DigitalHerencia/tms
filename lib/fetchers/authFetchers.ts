@@ -1,4 +1,4 @@
-"use server";
+'use server';
 
 /**
  * Auth domain data retrieval helpers.
@@ -7,13 +7,10 @@
  * Clerk and the database as described in docs/PRD.md §1 (Auth).
  */
 
-import { clerkClient } from "@clerk/nextjs/server";
-import { DatabaseQueries } from "@/lib/database/db";
-import type {
-  DatabaseUser,
-  DatabaseOrganization,
-} from "@/types/auth";
-import type { User, Session } from "@clerk/nextjs/server";
+import { clerkClient } from '@clerk/nextjs/server';
+import { DatabaseQueries } from '@/lib/database/db';
+import type { DatabaseUser, DatabaseOrganization } from '@/types/auth';
+import type { User, Session } from '@clerk/nextjs/server';
 
 export interface FetchedUser {
   clerk: User;
@@ -67,9 +64,7 @@ export async function fetchSession(userId: string): Promise<Session | null> {
  * @returns Promise resolving with organization metadata
  */
 
-export async function fetchOrganization(
-  orgId: string,
-): Promise<DatabaseOrganization | null> {
+export async function fetchOrganization(orgId: string): Promise<DatabaseOrganization | null> {
   try {
     const organization = await DatabaseQueries.getOrganizationById(orgId);
     return organization;

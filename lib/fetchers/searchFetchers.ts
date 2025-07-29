@@ -6,7 +6,7 @@ import type { GlobalSearchResultItem } from '@/types/search';
 
 export async function globalSearch(
   orgId: string,
-  query: string
+  query: string,
 ): Promise<GlobalSearchResultItem[]> {
   const { userId } = await auth();
   if (!userId || !orgId || !query.trim()) return [];
@@ -42,13 +42,13 @@ export async function globalSearch(
   ]);
 
   const results: GlobalSearchResultItem[] = [
-    ...vehicles.map(v => ({
+    ...vehicles.map((v) => ({
       id: v.id,
       type: 'vehicle' as const,
       label: v.unitNumber || v.vin || 'Vehicle',
       url: `/${orgId}/vehicles/${v.id}`,
     })),
-    ...drivers.map(d => ({
+    ...drivers.map((d) => ({
       id: d.id,
       type: 'driver' as const,
       label: `${d.firstName} ${d.lastName}`.trim(),

@@ -1,5 +1,4 @@
-"use client";
-
+'use client';
 
 /**
  * Enhanced Auth Context with ABAC Support and Performance Optimizations
@@ -9,27 +8,18 @@
  * caching and memoization strategies
  */
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { useUser, useOrganization } from '@clerk/nextjs';
 
 import type {
   ClerkUserMetadata,
   ClerkOrganizationMetadata,
-} from '@/types/auth';
-import {
   AuthState,
   UserContext,
   UserRole,
   Permission,
-  ROLE_PERMISSIONS,
 } from '@/types/auth';
+import { ROLE_PERMISSIONS } from '@/types/auth';
 import { SystemRoles } from '@/types/abac';
 import { authCache } from '@/lib/cache/auth-cache';
 
@@ -76,10 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Periodic cleanup of stale cache entries
   useEffect(() => {
-    const interval = setInterval(
-      cleanupAuthStateCache,
-      AUTH_STATE_CACHE_TTL
-    );
+    const interval = setInterval(cleanupAuthStateCache, AUTH_STATE_CACHE_TTL);
     return () => clearInterval(interval);
   }, []);
 
@@ -92,11 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clerkUser: any,
       organization: any,
       userMetadata: ClerkUserMetadata,
-      orgMetadata: ClerkOrganizationMetadata
+      orgMetadata: ClerkOrganizationMetadata,
     ): UserContext => {
       const role: UserRole = userMetadata?.role || SystemRoles.MEMBER;
-      const permissions: Permission[] =
-        userMetadata?.permissions || ROLE_PERMISSIONS[role] || [];
+      const permissions: Permission[] = userMetadata?.permissions || ROLE_PERMISSIONS[role] || [];
 
       return {
         userId: clerkUser.id,
@@ -129,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       };
     },
-    []
+    [],
   );
 
   // Memoized cache key generation
@@ -145,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Main effect: sync Clerk user/org to auth state
     // Wait for both user and organization data to load
     if (!userLoaded || !orgLoaded) {
-      setAuthState(prev => ({ ...prev, isLoaded: false, isLoading: true }));
+      setAuthState((prev) => ({ ...prev, isLoaded: false, isLoading: true }));
       return;
     }
 
@@ -176,10 +162,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Extract user metadata from Clerk
-      const userMetadata =
-        clerkUser.publicMetadata as unknown as ClerkUserMetadata;
-      const orgMetadata =
-        organization?.publicMetadata as unknown as ClerkOrganizationMetadata;
+      const userMetadata = clerkUser.publicMetadata as unknown as ClerkUserMetadata;
+      const orgMetadata = organization?.publicMetadata as unknown as ClerkOrganizationMetadata;
 
       // Debug logging for user metadata
       if (process.env.NODE_ENV === 'development') {
@@ -189,17 +173,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           userMetadata,
           extractedRole: userMetadata?.role,
           orgMetadata,
-          organizationId: organization?.id
+          organizationId: organization?.id,
         });
       }
 
       // Build the user context with memoized function
-      const userContext = buildUserContext(
-        clerkUser,
-        organization,
-        userMetadata,
-        orgMetadata
-      );
+      const userContext = buildUserContext(clerkUser, organization, userMetadata, orgMetadata);
 
       // Build organization context
       const orgContext = organization
@@ -253,15 +232,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         company: null,
       });
     }
-  }, [
-    clerkUser,
-    organization,
-    userLoaded,
-    orgLoaded,
-    isSignedIn,
-    cacheKey,
-    buildUserContext,
-  ]);
+  }, [clerkUser, organization, userLoaded, orgLoaded, isSignedIn, cacheKey, buildUserContext]);
 
   // Memoize the context value to prevent unnecessary re-renders
   /**
@@ -269,9 +240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    */
   const contextValue = useMemo(() => authState, [authState]);
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 /**
@@ -356,7 +325,7 @@ export function useRole(role: UserRole): boolean {
 export function useAnyPermission(permissions: Permission[]): boolean {
   const user = useUserContext();
   if (!user?.permissions) return false;
-  return permissions.some(permission => user.permissions.includes(permission));
+  return permissions.some((permission) => user.permissions.includes(permission));
 }
 
 /**
@@ -366,7 +335,7 @@ export function useAnyPermission(permissions: Permission[]): boolean {
 export function useAllPermissions(permissions: Permission[]): boolean {
   const user = useUserContext();
   if (!user?.permissions) return false;
-  return permissions.every(permission => user.permissions.includes(permission));
+  return permissions.every((permission) => user.permissions.includes(permission));
 }
 
 /**

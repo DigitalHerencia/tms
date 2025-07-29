@@ -6,9 +6,7 @@ import { handleError } from '@/lib/errors/handleError';
 import { auth } from '@clerk/nextjs/server';
 import db from '../database/db';
 
-export async function fetchNotifications(
-  orgId: string
-): Promise<NotificationActionResult> {
+export async function fetchNotifications(orgId: string): Promise<NotificationActionResult> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -33,7 +31,7 @@ export async function fetchNotifications(
 
 export async function readNotification(
   orgId: string,
-  id: string
+  id: string,
 ): Promise<NotificationActionResult> {
   try {
     const { userId } = await auth();
@@ -56,4 +54,3 @@ export async function readNotification(
     return handleError(error, 'Read Notification');
   }
 }
-

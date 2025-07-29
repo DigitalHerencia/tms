@@ -1,42 +1,46 @@
-"use server";
+'use server';
 
-import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
-import db from "@/lib/database/db";
-import { handleError } from "@/lib/errors/handleError";
-import type { DashboardActionResult } from "@/types/dashboard";
-import type { LoadStatus } from "@/types/dispatch";
+import { auth } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
+import db from '@/lib/database/db';
+import { handleError } from '@/lib/errors/handleError';
+import type { DashboardActionResult } from '@/types/dashboard';
+import type { LoadStatus } from '@/types/dispatch';
 
 /**
  * Create a new load (dispatch)
  */
 export async function createDispatchLoadAction(
   orgId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     // Required fields (schema-accurate)
-    const loadNumber = formData.get("load_number") as string;
-    const originAddress = formData.get("origin_address") as string;
-    const originCity = formData.get("origin_city") as string;
-    const originState = formData.get("origin_state") as string;
-    const originZip = formData.get("origin_zip") as string;
-    const destinationAddress = formData.get("destination_address") as string;
-    const destinationCity = formData.get("destination_city") as string;
-    const destinationState = formData.get("destination_state") as string;
-    const destinationZip = formData.get("destination_zip") as string;
+    const loadNumber = formData.get('load_number') as string;
+    const originAddress = formData.get('origin_address') as string;
+    const originCity = formData.get('origin_city') as string;
+    const originState = formData.get('origin_state') as string;
+    const originZip = formData.get('origin_zip') as string;
+    const destinationAddress = formData.get('destination_address') as string;
+    const destinationCity = formData.get('destination_city') as string;
+    const destinationState = formData.get('destination_state') as string;
+    const destinationZip = formData.get('destination_zip') as string;
 
     // Optionals/nullable
-    const customerId = formData.get("customer_id") as string | null;
-    const driverId = formData.get("driver_id") as string;
-    const vehicleId = formData.get("vehicle_id") as string | null;
-    const trailerId = formData.get("trailer_id") as string | null;
-    const scheduledPickupDate = formData.get("scheduled_pickup_date") ? new Date(formData.get("scheduled_pickup_date") as string) : null;
-    const scheduledDeliveryDate = formData.get("scheduled_delivery_date") ? new Date(formData.get("scheduled_delivery_date") as string) : null;
-    const notes = formData.get("notes") as string | null;
+    const customerId = formData.get('customer_id') as string | null;
+    const driverId = formData.get('driver_id') as string;
+    const vehicleId = formData.get('vehicle_id') as string | null;
+    const trailerId = formData.get('trailer_id') as string | null;
+    const scheduledPickupDate = formData.get('scheduled_pickup_date')
+      ? new Date(formData.get('scheduled_pickup_date') as string)
+      : null;
+    const scheduledDeliveryDate = formData.get('scheduled_delivery_date')
+      ? new Date(formData.get('scheduled_delivery_date') as string)
+      : null;
+    const notes = formData.get('notes') as string | null;
 
     const load = await db.load.create({
       data: {
@@ -51,13 +55,13 @@ export async function createDispatchLoadAction(
         destinationState,
         destinationZip,
         customerId: customerId || null,
-        driver_id: driverId, 
+        driver_id: driverId,
         vehicleId: vehicleId || null,
         trailerId: trailerId || null,
         scheduledPickupDate,
         scheduledDeliveryDate,
         notes,
-        status: "pending",
+        status: 'pending',
         createdBy: userId,
       },
     });
@@ -65,7 +69,7 @@ export async function createDispatchLoadAction(
     revalidatePath(`/${orgId}/loads`);
     return { success: true, data: { id: load.id } };
   } catch (error) {
-    return handleError(error, "Create Load");
+    return handleError(error, 'Create Load');
   }
 }
 
@@ -75,64 +79,84 @@ export async function createDispatchLoadAction(
 export async function updateDispatchLoadAction(
   orgId: string,
   loadId: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     // Only update fields present in the schema
     const data: Record<string, any> = {};
 
     [
-      "customer_id",
-      "driver_id",
-      "vehicle_id",
-      "trailer_id",
-      "origin_address",
-      "origin_city",
-      "origin_state",
-      "origin_zip",
-      "destination_address",
-      "destination_city",
-      "destination_state",
-      "destination_zip",
-      "scheduled_pickup_date",
-      "scheduled_delivery_date",
-      "notes",
-      "status"
+      'customer_id',
+      'driver_id',
+      'vehicle_id',
+      'trailer_id',
+      'origin_address',
+      'origin_city',
+      'origin_state',
+      'origin_zip',
+      'destination_address',
+      'destination_city',
+      'destination_state',
+      'destination_zip',
+      'scheduled_pickup_date',
+      'scheduled_delivery_date',
+      'notes',
+      'status',
     ].forEach((key) => {
       const val = formData.get(key);
       if (val !== null && val !== undefined) {
         // Handle dates
-        if (["scheduled_pickup_date", "scheduled_delivery_date"].includes(key)) {
-          const schemaKey = key === "scheduled_pickup_date" ? "scheduledPickupDate" : "scheduledDeliveryDate";
+        if (['scheduled_pickup_date', 'scheduled_delivery_date'].includes(key)) {
+          const schemaKey =
+            key === 'scheduled_pickup_date' ? 'scheduledPickupDate' : 'scheduledDeliveryDate';
           data[schemaKey] = val ? new Date(val as string) : null;
-        } else if (key.endsWith("_id")) {
+        } else if (key.endsWith('_id')) {
           // Map field to schema field
           const schemaKey =
-            key === "customer_id" ? "customerId" :
-            key === "driver_id"   ? "driver_id" :
-            key === "vehicle_id"  ? "vehicleId" :
-            key === "trailer_id"  ? "trailerId" : key;
+            key === 'customer_id'
+              ? 'customerId'
+              : key === 'driver_id'
+                ? 'driver_id'
+                : key === 'vehicle_id'
+                  ? 'vehicleId'
+                  : key === 'trailer_id'
+                    ? 'trailerId'
+                    : key;
           data[schemaKey] = val;
         } else if (
           [
-            "origin_address", "origin_city", "origin_state", "origin_zip",
-            "destination_address", "destination_city", "destination_state", "destination_zip"
+            'origin_address',
+            'origin_city',
+            'origin_state',
+            'origin_zip',
+            'destination_address',
+            'destination_city',
+            'destination_state',
+            'destination_zip',
           ].includes(key)
         ) {
           // Map form keys to schema fields
           const schemaKey =
-            key === "origin_address"        ? "originAddress" :
-            key === "origin_city"           ? "originCity" :
-            key === "origin_state"          ? "originState" :
-            key === "origin_zip"            ? "originZip" :
-            key === "destination_address"   ? "destinationAddress" :
-            key === "destination_city"      ? "destinationCity" :
-            key === "destination_state"     ? "destinationState" :
-            key === "destination_zip"       ? "destinationZip" :
-            key;
+            key === 'origin_address'
+              ? 'originAddress'
+              : key === 'origin_city'
+                ? 'originCity'
+                : key === 'origin_state'
+                  ? 'originState'
+                  : key === 'origin_zip'
+                    ? 'originZip'
+                    : key === 'destination_address'
+                      ? 'destinationAddress'
+                      : key === 'destination_city'
+                        ? 'destinationCity'
+                        : key === 'destination_state'
+                          ? 'destinationState'
+                          : key === 'destination_zip'
+                            ? 'destinationZip'
+                            : key;
           data[schemaKey] = val;
         } else {
           data[key] = val;
@@ -140,8 +164,8 @@ export async function updateDispatchLoadAction(
       }
     });
 
-    data["lastModifiedBy"] = userId;
-    data["updatedAt"] = new Date();
+    data['lastModifiedBy'] = userId;
+    data['updatedAt'] = new Date();
 
     const load = await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -151,8 +175,8 @@ export async function updateDispatchLoadAction(
     await db.dispatchActivity.create({
       data: {
         organizationId: orgId,
-        entityType: "load",
-        action: "update",
+        entityType: 'load',
+        action: 'update',
         entityId: loadId,
         userName: userId,
         timestamp: new Date(),
@@ -162,7 +186,7 @@ export async function updateDispatchLoadAction(
     revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Update Dispatch Load");
+    return handleError(error, 'Update Dispatch Load');
   }
 }
 
@@ -171,11 +195,11 @@ export async function updateDispatchLoadAction(
  */
 export async function deleteDispatchLoadAction(
   orgId: string,
-  loadId: string
+  loadId: string,
 ): Promise<DashboardActionResult<null>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     await db.load.delete({
       where: { id: loadId, organizationId: orgId },
@@ -184,8 +208,8 @@ export async function deleteDispatchLoadAction(
     await db.dispatchActivity.create({
       data: {
         organizationId: orgId,
-        entityType: "load",
-        action: "delete",
+        entityType: 'load',
+        action: 'delete',
         entityId: loadId,
         userName: userId,
         timestamp: new Date(),
@@ -195,7 +219,7 @@ export async function deleteDispatchLoadAction(
     revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: null };
   } catch (error) {
-    return handleError(error, "Delete Dispatch Load");
+    return handleError(error, 'Delete Dispatch Load');
   }
 }
 
@@ -205,17 +229,17 @@ export async function deleteDispatchLoadAction(
 export async function assignDriverToLoadAction(
   orgId: string,
   loadId: string,
-  driverId: string
+  driverId: string,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     const load = await db.load.update({
       where: { id: loadId, organizationId: orgId },
       data: {
         driver_id: driverId,
-        status: "assigned",
+        status: 'assigned',
         lastModifiedBy: userId,
         updatedAt: new Date(),
       },
@@ -224,8 +248,8 @@ export async function assignDriverToLoadAction(
     await db.dispatchActivity.create({
       data: {
         organizationId: orgId,
-        entityType: "load",
-        action: "assign_driver",
+        entityType: 'load',
+        action: 'assign_driver',
         entityId: loadId,
         userName: userId,
         timestamp: new Date(),
@@ -235,7 +259,7 @@ export async function assignDriverToLoadAction(
     revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Assign Driver to Load");
+    return handleError(error, 'Assign Driver to Load');
   }
 }
 
@@ -245,11 +269,11 @@ export async function assignDriverToLoadAction(
 export async function updateLoadStatusAction(
   orgId: string,
   loadId: string,
-  newStatus: LoadStatus
+  newStatus: LoadStatus,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: "Unauthorized" };
+    if (!userId) return { success: false, error: 'Unauthorized' };
 
     await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -266,7 +290,7 @@ export async function updateLoadStatusAction(
         status: newStatus,
         timestamp: new Date(),
         automaticUpdate: false,
-        source: "dispatcher",
+        source: 'dispatcher',
         createdBy: userId,
       },
     });
@@ -274,8 +298,8 @@ export async function updateLoadStatusAction(
     await db.dispatchActivity.create({
       data: {
         organizationId: orgId,
-        entityType: "load",
-        action: "status_change",
+        entityType: 'load',
+        action: 'status_change',
         entityId: loadId,
         userName: userId,
         timestamp: new Date(),
@@ -285,6 +309,6 @@ export async function updateLoadStatusAction(
     revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, "Update Load Status");
+    return handleError(error, 'Update Load Status');
   }
 }

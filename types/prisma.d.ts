@@ -234,35 +234,16 @@ export type OrganizationAnalytics = {
 };
 
 // Compliance status enums
-export type ComplianceStatus =
-  | 'COMPLIANT'
-  | 'NON_COMPLIANT'
-  | 'PENDING'
-  | 'EXPIRED';
+export type ComplianceStatus = 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING' | 'EXPIRED';
 export type HOSStatus = 'ON_DUTY' | 'OFF_DUTY' | 'DRIVING' | 'SLEEPER_BERTH';
-export type LoadStatus =
-  | 'PENDING'
-  | 'ASSIGNED'
-  | 'IN_TRANSIT'
-  | 'DELIVERED'
-  | 'CANCELLED';
-export type VehicleStatus =
-  | 'ACTIVE'
-  | 'INACTIVE'
-  | 'MAINTENANCE'
-  | 'OUT_OF_SERVICE';
+export type LoadStatus = 'PENDING' | 'ASSIGNED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED';
+export type VehicleStatus = 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE' | 'OUT_OF_SERVICE';
 
 // Form validation types
-export type DriverFormData = Omit<
-  Prisma.DriverCreateInput,
-  'organization' | 'user'
->;
+export type DriverFormData = Omit<Prisma.DriverCreateInput, 'organization' | 'user'>;
 export type VehicleFormData = Omit<Prisma.VehicleCreateInput, 'organization'>;
 export type LoadFormData = Omit<Prisma.LoadCreateInput, 'organization'>;
-export type ComplianceFormData = Omit<
-  Prisma.ComplianceRecordCreateInput,
-  'organization'
->;
+export type ComplianceFormData = Omit<Prisma.ComplianceRecordCreateInput, 'organization'>;
 
 // API response types
 export type ApiResponse<T> = {

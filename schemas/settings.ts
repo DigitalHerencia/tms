@@ -29,11 +29,8 @@ export const NotificationSettingsSchema = z.object({
   email: z.boolean(),
   sms: z.boolean(),
   inApp: z.boolean(),
-  schedules: z
-    .object({ quietHoursStart: z.string(), quietHoursEnd: z.string() })
-    .optional(),
+  schedules: z.object({ quietHoursStart: z.string(), quietHoursEnd: z.string() }).optional(),
 });
-
 
 export const BillingSettingsSchema = z.object({
   orgId: z.string(),
@@ -41,4 +38,3 @@ export const BillingSettingsSchema = z.object({
   subscriptionStatus: z.enum(['active', 'inactive', 'trial', 'cancelled']),
   billingEmail: z.string().email(),
 });
-

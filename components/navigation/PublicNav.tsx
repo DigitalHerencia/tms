@@ -13,9 +13,7 @@ export function PublicNav() {
           href="/"
         >
           <MapPinned className="mr-1 h-6 w-6 text-blue-500" />
-          <span className="text-2xl font-extrabold text-white dark:text-white">
-            FleetFusion
-          </span>
+          <span className="text-2xl font-extrabold text-white dark:text-white">FleetFusion</span>
         </Link>
       </div>
       <nav className="flex items-center gap-6 text-white">
@@ -37,10 +35,7 @@ export function PublicNav() {
         >
           About
         </Link>
-        <Button
-          asChild
-          className="bg-blue-500 text-sm font-medium text-white hover:bg-blue-800"
-        >
+        <Button asChild className="bg-blue-500 text-sm font-medium text-white hover:bg-blue-800">
           <Link href="/sign-in">Sign In</Link>
         </Button>
       </nav>

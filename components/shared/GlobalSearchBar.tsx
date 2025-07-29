@@ -29,7 +29,7 @@ export function GlobalSearchBar() {
       <form onSubmit={handleSubmit} className="flex items-center gap-1">
         <Input
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Search..."
           className="h-7 w-32 md:w-48"
         />
@@ -43,7 +43,7 @@ export function GlobalSearchBar() {
       </form>
       {results.length > 0 && (
         <div className="absolute left-0 right-0 z-20 mt-1 space-y-1 rounded-md border border-gray-700 bg-black p-2 shadow-lg">
-          {results.map(r => (
+          {results.map((r) => (
             <Link
               key={`${r.type}-${r.id}`}
               href={r.url}

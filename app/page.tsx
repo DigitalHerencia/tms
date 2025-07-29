@@ -1,12 +1,4 @@
-import {
-  ArrowRight,
-  Truck,
-  Shield,
-  BarChart3,
-  FileText,
-  MapPin,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, Truck, Shield, BarChart3, FileText, MapPin, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -43,9 +35,8 @@ export default function Home() {
                   Run Your Fleet Like a Fortune 500 Even if You You Park at Mom & Pop's
                 </h1>
                 <p className="lg:text-muted-foreground font-bold max-w-[600px] text-white/90 md:text-xl">
-                  FleetFusion unifies dispatch, compliance, and real-time
-                  analytics so you can get freight out the door faster, safer, and
-                  smarter.
+                  FleetFusion unifies dispatch, compliance, and real-time analytics so you can get
+                  freight out the door faster, safer, and smarter.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button
@@ -53,8 +44,7 @@ export default function Home() {
                     className="w-full rounded-md bg-blue-500 py-2 font-bold text-white transition-colors hover:bg-blue-800"
                   >
                     <Link href="/sign-up">
-                      Start Free 30-Day Trial{' '}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      Start Free 30-Day Trial <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </div>
@@ -118,7 +108,8 @@ export default function Home() {
                 <MapPin className="mb-2 h-10 w-10 text-red-500" />
                 <h3 className="text-lg sm:text-xl font-bold">IFTA Management</h3>
                 <p className="text-sm sm:text-base text-muted-foreground text-center">
-                  Automate IFTA reporting and fuel tax calculations to ensure compliance and save time.
+                  Automate IFTA reporting and fuel tax calculations to ensure compliance and save
+                  time.
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-2 rounded-lg border p-4 bg-white/80 dark:bg-black/40 shadow-sm">

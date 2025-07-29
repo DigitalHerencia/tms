@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { handleError } from "@/lib/errors/handleError";
-import { invitationSchema } from "@/schemas/dashboard";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import db from "@/lib/database/db";
-import { sendInvitationEmail } from "@/lib/email/mailer";
-import crypto from "crypto";
+import { handleError } from '@/lib/errors/handleError';
+import { invitationSchema } from '@/schemas/dashboard';
+import { auth, clerkClient } from '@clerk/nextjs/server';
+import db from '@/lib/database/db';
+import { sendInvitationEmail } from '@/lib/email/mailer';
+import crypto from 'crypto';
 
 const INVITATION_VALIDITY_DAYS = 7;
 
@@ -22,7 +22,7 @@ export async function createOrganizationInvitation(data: InvitationData) {
     const { orgId } = await auth();
 
     if (!orgId) {
-      return { success: false, error: "Unauthorized" };
+      return { success: false, error: 'Unauthorized' };
     }
 
     const validated = invitationSchema.parse(data);
@@ -37,17 +37,17 @@ export async function createOrganizationInvitation(data: InvitationData) {
         role: validated.role,
         token,
         expiresAt,
-        status: "pending",
+        status: 'pending',
       },
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
     const link = `${baseUrl}/accept-invitation?token=${token}`;
     await sendInvitationEmail(validated.emailAddress, link);
 
     return { success: true };
   } catch (error) {
-    return handleError(error, "Create Organization Invitation");
+    return handleError(error, 'Create Organization Invitation');
   }
 }
 
@@ -57,17 +57,17 @@ export async function getOrganizationInvitations(organizationId?: string) {
     const targetOrgId = organizationId || orgId;
 
     if (!targetOrgId) {
-      return { success: false, error: "Unauthorized" };
+      return { success: false, error: 'Unauthorized' };
     }
 
     const invitations = await db.organizationInvitation.findMany({
       where: { organizationId: targetOrgId },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     return { success: true, data: invitations };
   } catch (error) {
-    return handleError(error, "Get Organization Invitations");
+    return handleError(error, 'Get Organization Invitations');
   }
 }
 
@@ -75,27 +75,24 @@ export async function revokeOrganizationInvitation(id: string) {
   try {
     await db.organizationInvitation.update({
       where: { id },
-      data: { status: "revoked", updatedAt: new Date() },
+      data: { status: 'revoked', updatedAt: new Date() },
     });
     return { success: true };
   } catch (error) {
-    return handleError(error, "Revoke Organization Invitation");
+    return handleError(error, 'Revoke Organization Invitation');
   }
 }
 
-export async function getOrganizationInvitationById(
-    organizationId: string,
-    invitationId: string,
-) {
-    try {
-        const client = await clerkClient()
-        const invitation = await client.organizations.getOrganizationInvitation({
-            organizationId,
-            invitationId,
-        })
+export async function getOrganizationInvitationById(organizationId: string, invitationId: string) {
+  try {
+    const client = await clerkClient();
+    const invitation = await client.organizations.getOrganizationInvitation({
+      organizationId,
+      invitationId,
+    });
 
-        return { success: true, data: invitation }
-    } catch (error) {
-        return handleError(error, "Get Organization Invitation")
-    }
+    return { success: true, data: invitation };
+  } catch (error) {
+    return handleError(error, 'Get Organization Invitation');
+  }
 }

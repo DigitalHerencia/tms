@@ -64,13 +64,7 @@ export interface CreateLoadRequest {
 
 export interface UpdateLoadRequest {
   id: string;
-  status?:
-    | 'pending'
-    | 'assigned'
-    | 'in_transit'
-    | 'delivered'
-    | 'completed'
-    | 'cancelled';
+  status?: 'pending' | 'assigned' | 'in_transit' | 'delivered' | 'completed' | 'cancelled';
   driver?: {
     id: string;
   };
@@ -174,8 +168,7 @@ export interface GetComplianceDocumentsRequest {
   status?: string;
 }
 
-export type GetComplianceDocumentsResponse =
-  PaginatedResponse<ComplianceDocument>;
+export type GetComplianceDocumentsResponse = PaginatedResponse<ComplianceDocument>;
 
 export interface GetHosLogsRequest {
   driverId: string;

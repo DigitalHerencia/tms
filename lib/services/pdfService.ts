@@ -7,11 +7,10 @@
  *
  * PDF files are uploaded to a configurable storage provider rather than
  * written to the local filesystem.
-*/
-import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib'
-import type { StorageProvider } from './storageProvider'
-import { getStorageProvider } from './storageProvider'
-
+ */
+import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib';
+import type { StorageProvider } from './storageProvider';
+import { getStorageProvider } from './storageProvider';
 
 export interface PDFOptions {
   format: 'Letter' | 'A4';
@@ -61,10 +60,10 @@ export interface CustomReportOptions extends PDFOptions {
 }
 
 class PDFService {
-  private storage: StorageProvider
+  private storage: StorageProvider;
 
   constructor(storage: StorageProvider = getStorageProvider()) {
-    this.storage = storage
+    this.storage = storage;
   }
 
   /**
@@ -81,19 +80,17 @@ class PDFService {
     quarter: string,
     year: number,
     options: PDFOptions,
-    attachments: PDFAttachment[] = []
+    attachments: PDFAttachment[] = [],
   ): Promise<PDFGenerationResult> {
     try {
-      const size: [number, number] = options.format === 'A4'
-        ? [595.28, 841.89]
-        : [612, 792]
+      const size: [number, number] = options.format === 'A4' ? [595.28, 841.89] : [612, 792];
       const pageSize: [number, number] =
-        options.orientation === 'landscape' ? [size[1], size[0]] : size
+        options.orientation === 'landscape' ? [size[1], size[0]] : size;
 
-      const pdfDoc = await PDFDocument.create()
-      const [pageWidth, pageHeight] = pageSize as [number, number]
-      const page = pdfDoc.addPage([pageWidth, pageHeight])
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      const pdfDoc = await PDFDocument.create();
+      const [pageWidth, pageHeight] = pageSize as [number, number];
+      const page = pdfDoc.addPage([pageWidth, pageHeight]);
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
       page.drawText(`Quarterly IFTA Report - Q${quarter} ${year}`, {
         x: 50,
@@ -101,10 +98,10 @@ class PDFService {
         size: 16,
         font,
         color: rgb(0, 0, 0),
-      })
+      });
 
       if (options.watermark && options.watermark !== 'none') {
-        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
         page.drawText(options.watermark.toUpperCase(), {
           x: pageSize[0] / 2 - 100,
           y: pageSize[1] / 2,
@@ -112,7 +109,7 @@ class PDFService {
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
           rotate: degrees(45),
-        })
+        });
       }
 
       if (options.includeAttachments) {
@@ -120,17 +117,17 @@ class PDFService {
           await pdfDoc.attach(att.data, att.name, {
             mimeType: att.mimeType ?? 'application/octet-stream',
             description: att.description ?? att.name,
-          })
+          });
         }
       }
 
-      const pdfBytes = await pdfDoc.save()
-      const fileName = `ifta-quarterly-${quarter}-${year}.pdf`
+      const pdfBytes = await pdfDoc.save();
+      const fileName = `ifta-quarterly-${quarter}-${year}.pdf`;
       const downloadUrl = await this.storage.upload(
         `${orgId}/${fileName}`,
         pdfBytes,
-        'application/pdf'
-      )
+        'application/pdf',
+      );
 
       return {
         success: true,
@@ -143,7 +140,7 @@ class PDFService {
           generatedAt: new Date(),
           reportType: 'QUARTERLY',
         },
-      }
+      };
     } catch (error) {
       return {
         success: false,
@@ -162,19 +159,17 @@ class PDFService {
   async generateTripLogReport(
     orgId: string,
     options: CustomReportOptions,
-    attachments: PDFAttachment[] = []
+    attachments: PDFAttachment[] = [],
   ): Promise<PDFGenerationResult> {
     try {
-      const size: [number, number] = options.format === 'A4'
-        ? [595.28, 841.89]
-        : [612, 792]
+      const size: [number, number] = options.format === 'A4' ? [595.28, 841.89] : [612, 792];
       const pageSize: [number, number] =
-        options.orientation === 'landscape' ? [size[1], size[0]] : size
+        options.orientation === 'landscape' ? [size[1], size[0]] : size;
 
-      const pdfDoc = await PDFDocument.create()
-      const [pageWidth2, pageHeight2] = pageSize as [number, number]
-      const page = pdfDoc.addPage([pageWidth2, pageHeight2])
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      const pdfDoc = await PDFDocument.create();
+      const [pageWidth2, pageHeight2] = pageSize as [number, number];
+      const page = pdfDoc.addPage([pageWidth2, pageHeight2]);
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
       page.drawText('IFTA Trip Log', {
         x: 50,
@@ -182,10 +177,10 @@ class PDFService {
         size: 16,
         font,
         color: rgb(0, 0, 0),
-      })
+      });
 
       if (options.watermark && options.watermark !== 'none') {
-        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
         page.drawText(options.watermark.toUpperCase(), {
           x: pageWidth2 / 2 - 100,
           y: pageHeight2 / 2,
@@ -193,7 +188,7 @@ class PDFService {
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
           rotate: degrees(45),
-        })
+        });
       }
 
       if (options.includeAttachments) {
@@ -201,17 +196,17 @@ class PDFService {
           await pdfDoc.attach(att.data, att.name, {
             mimeType: att.mimeType ?? 'application/octet-stream',
             description: att.description ?? att.name,
-          })
+          });
         }
       }
 
-      const pdfBytes = await pdfDoc.save()
-      const fileName = `ifta-trip-log-${Date.now()}.pdf`
+      const pdfBytes = await pdfDoc.save();
+      const fileName = `ifta-trip-log-${Date.now()}.pdf`;
       const downloadUrl = await this.storage.upload(
         `${orgId}/${fileName}`,
         pdfBytes,
-        'application/pdf'
-      )
+        'application/pdf',
+      );
 
       return {
         success: true,
@@ -224,7 +219,7 @@ class PDFService {
           generatedAt: new Date(),
           reportType: 'TRIP_LOG',
         },
-      }
+      };
     } catch (error) {
       return {
         success: false,
@@ -243,19 +238,17 @@ class PDFService {
   async generateFuelSummaryReport(
     orgId: string,
     options: CustomReportOptions,
-    attachments: PDFAttachment[] = []
+    attachments: PDFAttachment[] = [],
   ): Promise<PDFGenerationResult> {
     try {
-      const size: [number, number] = options.format === 'A4'
-        ? [595.28, 841.89]
-        : [612, 792]
+      const size: [number, number] = options.format === 'A4' ? [595.28, 841.89] : [612, 792];
       const pageSize: [number, number] =
-        options.orientation === 'landscape' ? [size[1], size[0]] : size
+        options.orientation === 'landscape' ? [size[1], size[0]] : size;
 
-      const pdfDoc = await PDFDocument.create()
-      const [pageWidth3, pageHeight3] = pageSize as [number, number]
-      const page = pdfDoc.addPage([pageWidth3, pageHeight3])
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      const pdfDoc = await PDFDocument.create();
+      const [pageWidth3, pageHeight3] = pageSize as [number, number];
+      const page = pdfDoc.addPage([pageWidth3, pageHeight3]);
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
       page.drawText('IFTA Fuel Summary', {
         x: 50,
@@ -263,10 +256,10 @@ class PDFService {
         size: 16,
         font,
         color: rgb(0, 0, 0),
-      })
+      });
 
       if (options.watermark && options.watermark !== 'none') {
-        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
         page.drawText(options.watermark.toUpperCase(), {
           x: pageWidth3 / 2 - 100,
           y: pageHeight3 / 2,
@@ -274,7 +267,7 @@ class PDFService {
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
           rotate: degrees(45),
-        })
+        });
       }
 
       if (options.includeAttachments) {
@@ -282,17 +275,17 @@ class PDFService {
           await pdfDoc.attach(att.data, att.name, {
             mimeType: att.mimeType ?? 'application/octet-stream',
             description: att.description ?? att.name,
-          })
+          });
         }
       }
 
-      const pdfBytes = await pdfDoc.save()
-      const fileName = `ifta-fuel-summary-${Date.now()}.pdf`
+      const pdfBytes = await pdfDoc.save();
+      const fileName = `ifta-fuel-summary-${Date.now()}.pdf`;
       const downloadUrl = await this.storage.upload(
         `${orgId}/${fileName}`,
         pdfBytes,
-        'application/pdf'
-      )
+        'application/pdf',
+      );
 
       return {
         success: true,
@@ -305,7 +298,7 @@ class PDFService {
           generatedAt: new Date(),
           reportType: 'FUEL_SUMMARY',
         },
-      }
+      };
     } catch (error) {
       return {
         success: false,

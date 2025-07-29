@@ -6,8 +6,8 @@ import { PageLayout } from '@/components/shared/PageLayout';
 
 // Next.js 15 async params pattern
 interface PageProps {
-  params: Promise<{ orgId: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  params: Promise<{ orgId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function DriverListPage({ params, searchParams }: PageProps) {
@@ -27,5 +27,3 @@ export default async function DriverListPage({ params, searchParams }: PageProps
     </PageLayout>
   );
 }
-
-

@@ -7,16 +7,25 @@ vi.mock('../lib/database/db', () => ({
   default: {
     vehicle: {
       findFirst: vi.fn().mockResolvedValue(null),
-      create: vi.fn().mockResolvedValue({ id: 'v1', organizationId: 'org1', type: 'tractor', status: 'active' })
-    }
-  }
+      create: vi
+        .fn()
+        .mockResolvedValue({ id: 'v1', organizationId: 'org1', type: 'tractor', status: 'active' }),
+    },
+  },
 }));
 vi.mock('@/lib/errors/handleError', () => ({ handleError: vi.fn() }));
 vi.mock('@/lib/auth/permissions', () => ({ hasPermission: () => true }));
 vi.mock('@/schemas/vehicles', () => ({
-  VehicleFormSchema: { safeParse: () => ({ success: true, data: { vin: '1', type: 'tractor', make: 'Make', model: 'Model', year: 2024 } }) }
+  VehicleFormSchema: {
+    safeParse: () => ({
+      success: true,
+      data: { vin: '1', type: 'tractor', make: 'Make', model: 'Model', year: 2024 },
+    }),
+  },
 }));
-vi.mock('@clerk/nextjs/server', () => ({ auth: () => Promise.resolve({ userId: '1', orgId: 'org1' }) }));
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: () => Promise.resolve({ userId: '1', orgId: 'org1' }),
+}));
 
 describe('vehicle actions', () => {
   beforeEach(() => {

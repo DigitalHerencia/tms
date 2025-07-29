@@ -5,14 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { 
-  Menu, 
-  Activity, 
-  TrendingUp, 
-  Clock, 
+import {
+  Menu,
+  Activity,
+  TrendingUp,
+  Clock,
   AlertTriangle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { DashboardData, QuickAction } from '@/types/dashboard';
@@ -29,11 +29,11 @@ interface MobileDashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export function MobileDashboardLayout({ 
-  user, 
-  dashboardData, 
+export function MobileDashboardLayout({
+  user,
+  dashboardData,
   roleBasedData,
-  children 
+  children,
 }: MobileDashboardLayoutProps) {
   const isMobile = useIsMobile();
   const [isQuickActionsExpanded, setIsQuickActionsExpanded] = useState(false);
@@ -80,28 +80,28 @@ export function MobileDashboardLayout({
     );
   };
 
-  const priorityActions = roleBasedData.quickActions.filter(
-    action => action.priority === 'high'
-  ).slice(0, 3);
+  const priorityActions = roleBasedData.quickActions
+    .filter((action) => action.priority === 'high')
+    .slice(0, 3);
 
   const keyStats = [
     {
       label: 'Active Loads',
       value: dashboardData.metrics.activeLoads,
       color: 'text-blue-600',
-      icon: <TrendingUp className="h-4 w-4" />
+      icon: <TrendingUp className="h-4 w-4" />,
     },
     {
       label: 'Available Vehicles',
       value: dashboardData.metrics.availableVehicles,
       color: 'text-green-600',
-      icon: <Activity className="h-4 w-4" />
+      icon: <Activity className="h-4 w-4" />,
     },
     {
       label: 'Active Drivers',
       value: dashboardData.metrics.activeDrivers,
       color: 'text-purple-600',
-      icon: <Activity className="h-4 w-4" />
+      icon: <Activity className="h-4 w-4" />,
     },
   ];
 
@@ -114,11 +114,9 @@ export function MobileDashboardLayout({
             Dashboard
             {getStatusIndicator()}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {getRoleGreeting()}
-          </p>
+          <p className="text-sm text-muted-foreground">{getRoleGreeting()}</p>
         </div>
-        
+
         {/* Menu Sheet for Navigation */}
         <Sheet>
           <SheetTrigger asChild>
@@ -130,12 +128,7 @@ export function MobileDashboardLayout({
             <div className="space-y-4 py-4">
               <h3 className="font-semibold">Quick Actions</h3>
               {roleBasedData.quickActions.slice(0, 6).map((action, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className="w-full justify-start"
-                  asChild
-                >
+                <Button key={index} variant="ghost" className="w-full justify-start" asChild>
                   <a href={action.href}>
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded ${action.color} text-white`}>
@@ -143,9 +136,7 @@ export function MobileDashboardLayout({
                       </div>
                       <div className="text-left">
                         <div className="font-medium text-sm">{action.title}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {action.description}
-                        </div>
+                        <div className="text-xs text-muted-foreground">{action.description}</div>
                       </div>
                     </div>
                   </a>
@@ -158,7 +149,7 @@ export function MobileDashboardLayout({
 
       {/* Key Stats - Collapsible */}
       <Card>
-        <CardHeader 
+        <CardHeader
           className="pb-2 cursor-pointer"
           onClick={() => setIsStatsExpanded(!isStatsExpanded)}
         >
@@ -176,15 +167,9 @@ export function MobileDashboardLayout({
             <div className="grid grid-cols-3 gap-2">
               {keyStats.map((stat, index) => (
                 <div key={index} className="text-center p-2">
-                  <div className="flex justify-center mb-1">
-                    {stat.icon}
-                  </div>
-                  <div className={`font-bold text-sm ${stat.color}`}>
-                    {stat.value}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.label}
-                  </div>
+                  <div className="flex justify-center mb-1">{stat.icon}</div>
+                  <div className={`font-bold text-sm ${stat.color}`}>{stat.value}</div>
+                  <div className="text-xs text-muted-foreground">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -214,9 +199,7 @@ export function MobileDashboardLayout({
                       </div>
                       <div className="text-left flex-1">
                         <div className="font-medium text-sm">{action.title}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {action.description}
-                        </div>
+                        <div className="text-xs text-muted-foreground">{action.description}</div>
                       </div>
                       {action.badge && (
                         <Badge variant={action.badge.variant} className="text-xs">
@@ -234,7 +217,7 @@ export function MobileDashboardLayout({
 
       {/* All Actions - Collapsible */}
       <Card>
-        <CardHeader 
+        <CardHeader
           className="pb-2 cursor-pointer"
           onClick={() => setIsQuickActionsExpanded(!isQuickActionsExpanded)}
         >
@@ -295,9 +278,7 @@ export function MobileDashboardLayout({
       </Card>
 
       {/* Desktop Content (hidden on mobile) */}
-      <div className="hidden">
-        {children}
-      </div>
+      <div className="hidden">{children}</div>
     </div>
   );
 }

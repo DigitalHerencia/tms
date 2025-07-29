@@ -41,7 +41,7 @@ export function IftaTripTable({ trips }: IftaTripTableProps) {
               type="search"
               placeholder="Search trips..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -71,11 +71,13 @@ export function IftaTripTable({ trips }: IftaTripTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {trips.map(trip => (
+            {trips.map((trip) => (
               <TableRow key={trip.id} className="border-b">
                 <TableCell className="p-2 text-sm">{trip.userId}</TableCell>
                 <TableCell className="p-2 text-sm">{trip.vehicleId}</TableCell>
-                <TableCell className="p-2 text-sm">{trip.jurisdictions.map(j => j.jurisdiction).join(', ')}</TableCell>
+                <TableCell className="p-2 text-sm">
+                  {trip.jurisdictions.map((j) => j.jurisdiction).join(', ')}
+                </TableCell>
                 <TableCell className="p-2 text-right text-sm">{trip.totalMiles}</TableCell>
                 <TableCell className="p-2 text-sm">
                   <div className="flex gap-2">

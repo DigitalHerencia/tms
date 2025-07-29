@@ -15,19 +15,21 @@ interface TaxRateManagerClientProps {
 
 export function TaxRateManagerClient({ initialRates }: TaxRateManagerClientProps) {
   const [rates, setRates] = useState<RateRow[]>(
-    Object.entries(initialRates).map(([j, r]) => ({ jurisdiction: j, rate: r }))
+    Object.entries(initialRates).map(([j, r]) => ({ jurisdiction: j, rate: r })),
   );
   const [edited, setEdited] = useState<Record<string, number>>({});
 
   const handleChange = (j: string, val: string) => {
-    setEdited(prev => ({ ...prev, [j]: parseFloat(val) || 0 }));
+    setEdited((prev) => ({ ...prev, [j]: parseFloat(val) || 0 }));
   };
 
   const applyChanges = () => {
-    setRates(rates.map(r => ({
-      ...r,
-      rate: edited[r.jurisdiction] ?? r.rate,
-    })));
+    setRates(
+      rates.map((r) => ({
+        ...r,
+        rate: edited[r.jurisdiction] ?? r.rate,
+      })),
+    );
     setEdited({});
   };
 
@@ -42,14 +44,14 @@ export function TaxRateManagerClient({ initialRates }: TaxRateManagerClientProps
           </tr>
         </thead>
         <tbody>
-          {rates.map(row => (
+          {rates.map((row) => (
             <tr key={row.jurisdiction} className="border-b">
               <td className="p-2">{row.jurisdiction}</td>
               <td className="p-2 text-right">
                 <Input
                   className="w-24 text-right"
                   defaultValue={row.rate}
-                  onChange={e => handleChange(row.jurisdiction, e.target.value)}
+                  onChange={(e) => handleChange(row.jurisdiction, e.target.value)}
                 />
               </td>
             </tr>

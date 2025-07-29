@@ -10,10 +10,14 @@ interface ResourceUsageCardsProps {
   getUsageColor: (percentage: number) => string;
 }
 
-export function ResourceUsageCards({ memoryUsage, cpuUsage, getUsageColor }: ResourceUsageCardsProps) {
+export function ResourceUsageCards({
+  memoryUsage,
+  cpuUsage,
+  getUsageColor,
+}: ResourceUsageCardsProps) {
   return (
     <div className="grid md:grid-cols-2 gap-6">
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <MemoryStick className="w-5 h-5" />
@@ -28,9 +32,7 @@ export function ResourceUsageCards({ memoryUsage, cpuUsage, getUsageColor }: Res
             </span>
           </div>
           <Progress value={memoryUsage} className="h-2" />
-          <div className="text-xs text-muted-foreground">
-            Memory consumption by the application
-          </div>
+          <div className="text-xs text-muted-foreground">Memory consumption by the application</div>
           {memoryUsage > 85 && (
             <Alert>
               <AlertTriangle className="text-red-500 h-4 w-4" />
@@ -41,7 +43,7 @@ export function ResourceUsageCards({ memoryUsage, cpuUsage, getUsageColor }: Res
           )}
         </CardContent>
       </Card>
-      <Card className='bg-black border border-gray-200'>
+      <Card className="bg-black border border-gray-200">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Cpu className="w-5 h-5" />
@@ -56,13 +58,11 @@ export function ResourceUsageCards({ memoryUsage, cpuUsage, getUsageColor }: Res
             </span>
           </div>
           <Progress value={cpuUsage} className="h-2" />
-          <div className="text-xs text-muted-foreground">
-            Current CPU utilization
-          </div>
+          <div className="text-xs text-muted-foreground">Current CPU utilization</div>
           {cpuUsage > 80 && (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription className="text-red-500"> 
+              <AlertDescription className="text-red-500">
                 High CPU usage detected. Monitor for performance impacts.
               </AlertDescription>
             </Alert>

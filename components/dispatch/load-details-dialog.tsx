@@ -1,37 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Calendar, MapPin, Route, Truck, User } from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Calendar, MapPin, Route, Truck, User } from 'lucide-react';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { updateDispatchLoadAction } from "@/lib/actions/dispatchActions";
-import type { Driver } from "@/types/drivers";
-import type { Load } from "@/types/dispatch";
-import type { Vehicle } from "@/types/vehicles";
-import { Button } from "../ui/button";
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
+import type { Driver } from '@/types/drivers';
+import type { Load } from '@/types/dispatch';
+import type { Vehicle } from '@/types/vehicles';
+import { Button } from '../ui/button';
 
 interface LoadDetailsDialogProps {
   orgid: string;
@@ -50,9 +45,9 @@ export function LoadDetailsDialog({
   onClose,
 }: LoadDetailsDialogProps) {
   const router = useRouter();
-  const [selectedDriverId, setSelectedDriverId] = useState("");
-  const [selectedVehicleId, setSelectedVehicleId] = useState("");
-  const [selectedTrailerId, setSelectedTrailerId] = useState("");
+  const [selectedDriverId, setSelectedDriverId] = useState('');
+  const [selectedVehicleId, setSelectedVehicleId] = useState('');
+  const [selectedTrailerId, setSelectedTrailerId] = useState('');
   const [isAssigning, setIsAssigning] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
@@ -61,37 +56,37 @@ export function LoadDetailsDialog({
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "assigned":
-        return "bg-blue-100 text-blue-800";
-      case "in_transit":
-        return "bg-indigo-100 text-indigo-800";
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'assigned':
+        return 'bg-blue-100 text-blue-800';
+      case 'in_transit':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const activeTractors = vehicles.filter((v) => v.type === "tractor");
-  const activeTrailers = vehicles.filter((v) => v.type === "trailer");
-  const activeDrivers = drivers.filter((d) => d.status !== "inactive");
+  const activeTractors = vehicles.filter((v) => v.type === 'tractor');
+  const activeTrailers = vehicles.filter((v) => v.type === 'trailer');
+  const activeDrivers = drivers.filter((d) => d.status !== 'inactive');
 
   const handleAssign = async () => {
     setIsAssigning(true);
     try {
       const formData = new FormData();
-      formData.set("driver_id", selectedDriverId || "");
-      formData.set("vehicle_id", selectedVehicleId || "");
-      formData.set("trailer_id", selectedTrailerId || "");
+      formData.set('driver_id', selectedDriverId || '');
+      formData.set('vehicle_id', selectedVehicleId || '');
+      formData.set('trailer_id', selectedTrailerId || '');
       await updateDispatchLoadAction(orgId, loadId, formData);
       router.refresh();
       onClose();
     } catch (error) {
-      console.error("Error assigning driver/vehicle:", error);
+      console.error('Error assigning driver/vehicle:', error);
     } finally {
       setIsAssigning(false);
     }
@@ -101,12 +96,12 @@ export function LoadDetailsDialog({
     setIsUpdatingStatus(true);
     try {
       const formData = new FormData();
-      formData.set("status", newStatus);
+      formData.set('status', newStatus);
       await updateDispatchLoadAction(orgId, loadId, formData);
       router.refresh();
       onClose();
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error('Error updating status:', error);
     } finally {
       setIsUpdatingStatus(false);
     }
@@ -117,11 +112,9 @@ export function LoadDetailsDialog({
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto border border-gray-700 bg-neutral-900 text-white">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl">
-              Load {load.id || load.referenceNumber}
-            </DialogTitle>
+            <DialogTitle className="text-xl">Load {load.id || load.referenceNumber}</DialogTitle>
             <Badge className={getStatusBadgeColor(load.status)}>
-              {load.status?.replace("_", " ") ?? ""}
+              {load.status?.replace('_', ' ') ?? ''}
             </Badge>
           </div>
         </DialogHeader>
@@ -136,11 +129,13 @@ export function LoadDetailsDialog({
           <TabsContent value="details" className="mt-4 space-y-4">
             <Card className="bg-neutral-900 border border-gray-700">
               <CardHeader>
-                <CardTitle className="text-sm font-medium text-white">General Information</CardTitle>
+                <CardTitle className="text-sm font-medium text-white">
+                  General Information
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <p>
-                  <span className="font-medium">Customer:</span> {load.customer?.name || ""}
+                  <span className="font-medium">Customer:</span> {load.customer?.name || ''}
                 </p>
                 <p>
                   <span className="font-medium">Priority:</span> {load.priority}
@@ -182,7 +177,9 @@ export function LoadDetailsDialog({
             {(load.driver || load.vehicle) && (
               <Card className="bg-neutral-900 border border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-white">Current Assignment</CardTitle>
+                  <CardTitle className="text-sm font-medium text-white">
+                    Current Assignment
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   {load.driver && (
@@ -254,7 +251,7 @@ export function LoadDetailsDialog({
             </div>
             <div className="mt-4 flex justify-end gap-2">
               <Button onClick={handleAssign} disabled={isAssigning}>
-                {isAssigning ? "Assigning..." : "Assign"}
+                {isAssigning ? 'Assigning...' : 'Assign'}
               </Button>
             </div>
           </TabsContent>
@@ -265,8 +262,13 @@ export function LoadDetailsDialog({
               <ul className="list-disc pl-6 text-sm">
                 {load.documents.map((doc) => (
                   <li key={doc.id}>
-                    {doc.type?.toUpperCase()}:{" "}
-                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="underline">
+                    {doc.type?.toUpperCase()}:{' '}
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
                       {doc.name}
                     </a>
                   </li>
@@ -283,9 +285,9 @@ export function LoadDetailsDialog({
               <ul className="space-y-1">
                 {load.statusEvents.map((event) => (
                   <li key={event.id}>
-                    <span className="font-medium">{event.status.replace("_", " ")}</span> –{" "}
+                    <span className="font-medium">{event.status.replace('_', ' ')}</span> –{' '}
                     {new Date(event.timestamp).toLocaleString()}
-                    {event.notes ? ` (${event.notes})` : ""}
+                    {event.notes ? ` (${event.notes})` : ''}
                   </li>
                 ))}
               </ul>
@@ -298,31 +300,31 @@ export function LoadDetailsDialog({
         {/* Actions Footer */}
         <DialogFooter className="mt-4 flex justify-between">
           <div className="flex gap-2">
-            {load.status !== "completed" && load.status !== "cancelled" && (
+            {load.status !== 'completed' && load.status !== 'cancelled' && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleStatusUpdate("cancelled")}
+                onClick={() => handleStatusUpdate('cancelled')}
                 disabled={isUpdatingStatus}
               >
                 Cancel Load
               </Button>
             )}
-            {load.status === "assigned" && (
+            {load.status === 'assigned' && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleStatusUpdate("in_transit")}
+                onClick={() => handleStatusUpdate('in_transit')}
                 disabled={isUpdatingStatus}
               >
                 Mark In-Transit
               </Button>
             )}
-            {load.status === "in_transit" && (
+            {load.status === 'in_transit' && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleStatusUpdate("completed")}
+                onClick={() => handleStatusUpdate('completed')}
                 disabled={isUpdatingStatus}
               >
                 Mark Completed

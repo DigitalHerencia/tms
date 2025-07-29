@@ -1,4 +1,3 @@
-
 import { DriverFormFeature } from '@/features/drivers/DriverFormFeature';
 import { DriversSkeleton } from '@/components/drivers/drivers-skeleton';
 import { Suspense } from 'react';
@@ -32,6 +31,3 @@ export default async function EditDriversPage({ params }: PageProps) {
     </PageLayout>
   );
 }
-
-
-

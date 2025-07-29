@@ -24,8 +24,7 @@ import { SystemRoles, type SystemRole } from '@/types/abac';
 
 // ── 1) Context + hook for collapse state ───────────────────────────
 const SidebarCollapsedContext = React.createContext<boolean>(false);
-export const useSidebarCollapsed = () =>
-  React.useContext(SidebarCollapsedContext);
+export const useSidebarCollapsed = () => React.useContext(SidebarCollapsedContext);
 
 // ── 2) Props interface ──────────────────────────────────────────────
 export interface MainNavProps {
@@ -37,13 +36,7 @@ export interface MainNavProps {
 }
 
 // ── 3) MainNav component ────────────────────────────────────────────
-export function MainNav({
-  className,
-  collapsed,
-  setCollapsed,
-  orgId,
-  userId,
-}: MainNavProps) {
+export function MainNav({ className, collapsed, setCollapsed, orgId, userId }: MainNavProps) {
   const { signOut } = useClerk();
   const user = useUserContext();
   const userRole: SystemRole = user?.role || SystemRoles.MEMBER;
@@ -154,9 +147,7 @@ export function MainNav({
     },
   ];
 
-  const visibleLinks = navLinks.filter(
-    (link) => !link.roles || link.roles.includes(userRole)
-  );
+  const visibleLinks = navLinks.filter((link) => !link.roles || link.roles.includes(userRole));
 
   return (
     // ── wrap in our provider so child components can call useSidebarCollapsed()
@@ -165,7 +156,7 @@ export function MainNav({
         className={cn(
           'fixed top-16 bottom-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-blue-500/60 transition-all duration-300 ease-in-out',
           collapsed ? 'w-20' : 'w-64',
-          className
+          className,
         )}
         data-collapsed={collapsed}
       >
@@ -184,15 +175,10 @@ export function MainNav({
                   {link.label}
                 </SidebarLink>
               ) : (
-                <SidebarLink
-                  key={link.key}
-                  href={link.href}
-                  icon={link.icon}
-                  collapsed={collapsed}
-                >
+                <SidebarLink key={link.key} href={link.href} icon={link.icon} collapsed={collapsed}>
                   {link.label}
                 </SidebarLink>
-              )
+              ),
             )}
           </nav>
 
@@ -236,28 +222,18 @@ function SidebarLink({
 
   if (onClick && href === '#') {
     return (
-      <Button
-        onClick={onClick}
-        className={`${baseClasses} ${activeClasses}`}
-      >
+      <Button onClick={onClick} className={`${baseClasses} ${activeClasses}`}>
         <span className="h-5 w-5 flex-shrink-0">{icon}</span>
-        {!collapsed && (
-          <span className="ml-3 truncate text-base">{children}</span>
-        )}
+        {!collapsed && <span className="ml-3 truncate text-base">{children}</span>}
       </Button>
     );
   }
 
   return (
-    <Button
-      asChild
-      className={`${baseClasses} ${activeClasses}`}
-    >
+    <Button asChild className={`${baseClasses} ${activeClasses}`}>
       <Link href={href}>
         <span className="h-5 w-5 flex-shrink-0">{icon}</span>
-        {!collapsed && (
-          <span className="ml-3 pr-6 truncate text-base">{children}</span>
-        )}
+        {!collapsed && <span className="ml-3 pr-6 truncate text-base">{children}</span>}
       </Link>
     </Button>
   );

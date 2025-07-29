@@ -1,5 +1,5 @@
-import { MoreHorizontal, AlertCircle, CheckCircle, Clock } from 'lucide-react'
-import type { JSX } from 'react'
+import { MoreHorizontal, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import type { JSX } from 'react';
 import {
   Table,
   TableBody,
@@ -7,40 +7,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import {
   getVehicleComplianceRecords,
   type VehicleComplianceRow,
-} from '@/lib/fetchers/complianceFetchers'
-
+} from '@/lib/fetchers/complianceFetchers';
 
 import {
   getVehicleComplianceRecords,
   type VehicleComplianceRecord,
-} from '@/lib/fetchers/complianceFetchers'
+} from '@/lib/fetchers/complianceFetchers';
 
 export interface VehicleComplianceRow extends VehicleComplianceRecord {}
 interface VehicleComplianceTableProps {
-  orgId: string
+  orgId: string;
 }
 
-export async function VehicleComplianceTable({
-  orgId,
-}: VehicleComplianceTableProps) {
+export async function VehicleComplianceTable({ orgId }: VehicleComplianceTableProps) {
   if (!orgId) {
-    return <p className="text-red-500">Organization not found.</p>
+    return <p className="text-red-500">Organization not found.</p>;
   }
-  const vehicles: VehicleComplianceRow[] =
-    await getVehicleComplianceRecords(orgId)
+  const vehicles: VehicleComplianceRow[] = await getVehicleComplianceRecords(orgId);
 
   return (
     <div className="overflow-x-auto rounded-md border">
@@ -60,15 +56,12 @@ export async function VehicleComplianceTable({
         <TableBody>
           {vehicles.length === 0 ? (
             <TableRow>
-              <TableCell
-                colSpan={7}
-                className="py-8 text-center text-muted-foreground"
-              >
-               No vehicles found
+              <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
+                No vehicles found
               </TableCell>
             </TableRow>
           ) : (
-            vehicles.map(v => (
+            vehicles.map((v) => (
               <TableRow key={v.id}>
                 <TableCell className="font-medium">{v.unit}</TableCell>
                 <TableCell>{v.type}</TableCell>
@@ -79,22 +72,18 @@ export async function VehicleComplianceTable({
                       v.status === 'Compliant'
                         ? 'border-green-200 bg-green-50 text-green-700'
                         : v.status === 'Warning'
-                        ? 'border-amber-200 bg-amber-50 text-amber-700'
-                        : 'border-red-200 bg-red-50 text-red-700'
+                          ? 'border-amber-200 bg-amber-50 text-amber-700'
+                          : 'border-red-200 bg-red-50 text-red-700'
                     }
                   >
                     {v.status}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {v.lastInspection
-                    ? new Date(v.lastInspection).toLocaleDateString()
-                    : 'N/A'}
+                  {v.lastInspection ? new Date(v.lastInspection).toLocaleDateString() : 'N/A'}
                 </TableCell>
                 <TableCell>
-                  {v.nextInspection
-                    ? new Date(v.nextInspection).toLocaleDateString()
-                    : 'N/A'}
+                  {v.nextInspection ? new Date(v.nextInspection).toLocaleDateString() : 'N/A'}
                 </TableCell>
                 <TableCell>
                   {v.defects === 'None' ? (
@@ -130,5 +119,5 @@ export async function VehicleComplianceTable({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

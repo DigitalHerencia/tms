@@ -1,10 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { VehicleFormData, VehicleType } from '@/types/vehicles';
+import type { VehicleFormData, VehicleType } from '@/types/vehicles';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -48,11 +54,11 @@ const initialFormState: VehicleFormData = {
   notes: '',
 };
 
-export function VehicleForm({ 
-  initialData, 
-  onSubmit, 
-  isLoading = false, 
-  submitLabel = 'Save Vehicle' 
+export function VehicleForm({
+  initialData,
+  onSubmit,
+  isLoading = false,
+  submitLabel = 'Save Vehicle',
 }: VehicleFormProps) {
   const [formData, setFormData] = useState<VehicleFormData>({
     ...initialFormState,
@@ -60,7 +66,7 @@ export function VehicleForm({
   });
 
   const handleChange = (field: keyof VehicleFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,31 +78,31 @@ export function VehicleForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       <Tabs defaultValue="basic" className="w-full">
         <TabsList className="bg-black border-muted">
-          <TabsTrigger 
+          <TabsTrigger
             value="basic"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Basic Information
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="specifications"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Specifications
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="registration"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Registration & Insurance
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="operational"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Operational
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="financial"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
@@ -112,7 +118,9 @@ export function VehicleForm({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="unitNumber" className="text-white">Unit Number *</Label>
+                  <Label htmlFor="unitNumber" className="text-white">
+                    Unit Number *
+                  </Label>
                   <Input
                     id="unitNumber"
                     value={formData.unitNumber}
@@ -123,8 +131,13 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="type" className="text-white">Vehicle Type *</Label>
-                  <Select value={formData.type} onValueChange={(value: VehicleType) => handleChange('type', value)}>
+                  <Label htmlFor="type" className="text-white">
+                    Vehicle Type *
+                  </Label>
+                  <Select
+                    value={formData.type}
+                    onValueChange={(value: VehicleType) => handleChange('type', value)}
+                  >
                     <SelectTrigger className="bg-neutral-900 border-muted text-white">
                       <SelectValue placeholder="Select vehicle type" />
                     </SelectTrigger>
@@ -140,7 +153,9 @@ export function VehicleForm({
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="make" className="text-white">Make</Label>
+                  <Label htmlFor="make" className="text-white">
+                    Make
+                  </Label>
                   <Input
                     id="make"
                     value={formData.make || ''}
@@ -150,7 +165,9 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="model" className="text-white">Model</Label>
+                  <Label htmlFor="model" className="text-white">
+                    Model
+                  </Label>
                   <Input
                     id="model"
                     value={formData.model || ''}
@@ -160,7 +177,9 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="year" className="text-white">Year</Label>
+                  <Label htmlFor="year" className="text-white">
+                    Year
+                  </Label>
                   <Input
                     id="year"
                     type="number"
@@ -176,7 +195,9 @@ export function VehicleForm({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="vin" className="text-white">VIN</Label>
+                  <Label htmlFor="vin" className="text-white">
+                    VIN
+                  </Label>
                   <Input
                     id="vin"
                     value={formData.vin || ''}
@@ -188,7 +209,9 @@ export function VehicleForm({
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-2">
-                    <Label htmlFor="licensePlate" className="text-white">License Plate</Label>
+                    <Label htmlFor="licensePlate" className="text-white">
+                      License Plate
+                    </Label>
                     <Input
                       id="licensePlate"
                       value={formData.licensePlate || ''}
@@ -198,11 +221,15 @@ export function VehicleForm({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="licensePlateState" className="text-white">State</Label>
+                    <Label htmlFor="licensePlateState" className="text-white">
+                      State
+                    </Label>
                     <Input
                       id="licensePlateState"
                       value={formData.licensePlateState || ''}
-                      onChange={(e) => handleChange('licensePlateState', e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        handleChange('licensePlateState', e.target.value.toUpperCase())
+                      }
                       className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                       placeholder="CO"
                       maxLength={2}
@@ -222,23 +249,31 @@ export function VehicleForm({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="grossVehicleWeight" className="text-white">Gross Vehicle Weight (lbs)</Label>
+                  <Label htmlFor="grossVehicleWeight" className="text-white">
+                    Gross Vehicle Weight (lbs)
+                  </Label>
                   <Input
                     id="grossVehicleWeight"
                     type="number"
                     value={formData.grossVehicleWeight || ''}
-                    onChange={(e) => handleChange('grossVehicleWeight', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('grossVehicleWeight', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="80000"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="maxPayload" className="text-white">Max Payload (lbs)</Label>
+                  <Label htmlFor="maxPayload" className="text-white">
+                    Max Payload (lbs)
+                  </Label>
                   <Input
                     id="maxPayload"
                     type="number"
                     value={formData.maxPayload || ''}
-                    onChange={(e) => handleChange('maxPayload', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('maxPayload', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="34000"
                   />
@@ -247,8 +282,13 @@ export function VehicleForm({
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fuelType" className="text-white">Fuel Type</Label>
-                  <Select value={formData.fuelType || ''} onValueChange={(value) => handleChange('fuelType', value)}>
+                  <Label htmlFor="fuelType" className="text-white">
+                    Fuel Type
+                  </Label>
+                  <Select
+                    value={formData.fuelType || ''}
+                    onValueChange={(value) => handleChange('fuelType', value)}
+                  >
                     <SelectTrigger className="bg-neutral-900 border-muted text-white">
                       <SelectValue placeholder="Select fuel type" />
                     </SelectTrigger>
@@ -263,7 +303,9 @@ export function VehicleForm({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="engineType" className="text-white">Engine Type</Label>
+                  <Label htmlFor="engineType" className="text-white">
+                    Engine Type
+                  </Label>
                   <Input
                     id="engineType"
                     value={formData.engineType || ''}
@@ -273,12 +315,16 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="fuelCapacity" className="text-white">Fuel Capacity (gallons)</Label>
+                  <Label htmlFor="fuelCapacity" className="text-white">
+                    Fuel Capacity (gallons)
+                  </Label>
                   <Input
                     id="fuelCapacity"
                     type="number"
                     value={formData.fuelCapacity || ''}
-                    onChange={(e) => handleChange('fuelCapacity', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('fuelCapacity', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="300"
                   />
@@ -297,7 +343,9 @@ export function VehicleForm({
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="registrationNumber" className="text-white">Registration Number</Label>
+                    <Label htmlFor="registrationNumber" className="text-white">
+                      Registration Number
+                    </Label>
                     <Input
                       id="registrationNumber"
                       value={formData.registrationNumber || ''}
@@ -307,7 +355,9 @@ export function VehicleForm({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="registrationExpiration" className="text-white">Registration Expiration</Label>
+                    <Label htmlFor="registrationExpiration" className="text-white">
+                      Registration Expiration
+                    </Label>
                     <Input
                       id="registrationExpiration"
                       type="date"
@@ -320,7 +370,9 @@ export function VehicleForm({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="insuranceProvider" className="text-white">Insurance Provider</Label>
+                    <Label htmlFor="insuranceProvider" className="text-white">
+                      Insurance Provider
+                    </Label>
                     <Input
                       id="insuranceProvider"
                       value={formData.insuranceProvider || ''}
@@ -330,7 +382,9 @@ export function VehicleForm({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="insurancePolicyNumber" className="text-white">Policy Number</Label>
+                    <Label htmlFor="insurancePolicyNumber" className="text-white">
+                      Policy Number
+                    </Label>
                     <Input
                       id="insurancePolicyNumber"
                       value={formData.insurancePolicyNumber || ''}
@@ -342,7 +396,9 @@ export function VehicleForm({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="insuranceExpiration" className="text-white">Insurance Expiration</Label>
+                  <Label htmlFor="insuranceExpiration" className="text-white">
+                    Insurance Expiration
+                  </Label>
                   <Input
                     id="insuranceExpiration"
                     type="date"
@@ -364,7 +420,9 @@ export function VehicleForm({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="currentLocation" className="text-white">Current Location</Label>
+                  <Label htmlFor="currentLocation" className="text-white">
+                    Current Location
+                  </Label>
                   <Input
                     id="currentLocation"
                     value={formData.currentLocation || ''}
@@ -374,12 +432,16 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="totalMileage" className="text-white">Total Mileage</Label>
+                  <Label htmlFor="totalMileage" className="text-white">
+                    Total Mileage
+                  </Label>
                   <Input
                     id="totalMileage"
                     type="number"
                     value={formData.totalMileage || ''}
-                    onChange={(e) => handleChange('totalMileage', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('totalMileage', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="Miles"
                   />
@@ -388,23 +450,31 @@ export function VehicleForm({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="currentOdometer" className="text-white">Current Odometer</Label>
+                  <Label htmlFor="currentOdometer" className="text-white">
+                    Current Odometer
+                  </Label>
                   <Input
                     id="currentOdometer"
                     type="number"
                     value={formData.currentOdometer || ''}
-                    onChange={(e) => handleChange('currentOdometer', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('currentOdometer', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="Current odometer reading"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="nextMaintenanceMileage" className="text-white">Next Maintenance Mileage</Label>
+                  <Label htmlFor="nextMaintenanceMileage" className="text-white">
+                    Next Maintenance Mileage
+                  </Label>
                   <Input
                     id="nextMaintenanceMileage"
                     type="number"
                     value={formData.nextMaintenanceMileage || ''}
-                    onChange={(e) => handleChange('nextMaintenanceMileage', parseInt(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('nextMaintenanceMileage', parseInt(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="Mileage for next service"
                   />
@@ -413,7 +483,9 @@ export function VehicleForm({
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nextMaintenanceDate" className="text-white">Next Maintenance Date</Label>
+                  <Label htmlFor="nextMaintenanceDate" className="text-white">
+                    Next Maintenance Date
+                  </Label>
                   <Input
                     id="nextMaintenanceDate"
                     type="date"
@@ -423,7 +495,9 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastInspectionDate" className="text-white">Last Inspection Date</Label>
+                  <Label htmlFor="lastInspectionDate" className="text-white">
+                    Last Inspection Date
+                  </Label>
                   <Input
                     id="lastInspectionDate"
                     type="date"
@@ -433,7 +507,9 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="nextInspectionDue" className="text-white">Next Inspection Due</Label>
+                  <Label htmlFor="nextInspectionDue" className="text-white">
+                    Next Inspection Due
+                  </Label>
                   <Input
                     id="nextInspectionDue"
                     type="date"
@@ -455,7 +531,9 @@ export function VehicleForm({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="purchaseDate" className="text-white">Purchase Date</Label>
+                  <Label htmlFor="purchaseDate" className="text-white">
+                    Purchase Date
+                  </Label>
                   <Input
                     id="purchaseDate"
                     type="date"
@@ -465,25 +543,33 @@ export function VehicleForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="purchasePrice" className="text-white">Purchase Price ($)</Label>
+                  <Label htmlFor="purchasePrice" className="text-white">
+                    Purchase Price ($)
+                  </Label>
                   <Input
                     id="purchasePrice"
                     type="number"
                     step="0.01"
                     value={formData.purchasePrice || ''}
-                    onChange={(e) => handleChange('purchasePrice', parseFloat(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('purchasePrice', parseFloat(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="150000.00"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="currentValue" className="text-white">Current Value ($)</Label>
+                  <Label htmlFor="currentValue" className="text-white">
+                    Current Value ($)
+                  </Label>
                   <Input
                     id="currentValue"
                     type="number"
                     step="0.01"
                     value={formData.currentValue || ''}
-                    onChange={(e) => handleChange('currentValue', parseFloat(e.target.value) || undefined)}
+                    onChange={(e) =>
+                      handleChange('currentValue', parseFloat(e.target.value) || undefined)
+                    }
                     className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
                     placeholder="125000.00"
                   />
@@ -491,7 +577,9 @@ export function VehicleForm({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes" className="text-white">Notes</Label>
+                <Label htmlFor="notes" className="text-white">
+                  Notes
+                </Label>
                 <Textarea
                   id="notes"
                   value={formData.notes || ''}

@@ -12,7 +12,7 @@
  */
 export const SystemRoles = {
   ADMIN: 'admin',
-  DISPATCHER: 'dispatcher', 
+  DISPATCHER: 'dispatcher',
   DRIVER: 'driver',
   COMPLIANCE: 'compliance',
   MEMBER: 'member',
@@ -27,7 +27,7 @@ export type SystemRole = (typeof SystemRoles)[keyof typeof SystemRoles];
 export const Permissions = {
   // System permissions
   'org:sys_domains:read': 'org:sys_domains:read',
-  'org:sys_domains:manage': 'org:sys_domains:manage', 
+  'org:sys_domains:manage': 'org:sys_domains:manage',
   'org:sys_profile:manage': 'org:sys_profile:manage',
   'org:sys_profile:delete': 'org:sys_profile:delete',
   'org:sys_memberships:read': 'org:sys_memberships:read',
@@ -50,7 +50,7 @@ export const Permissions = {
 
   // Dispatcher permissions
   'org:dispatcher:create_edit_loads': 'org:dispatcher:create_edit_loads',
-  'org:dispatcher:assign_drivers': 'org:dispatcher:assign_drivers', 
+  'org:dispatcher:assign_drivers': 'org:dispatcher:assign_drivers',
   'org:dispatcher:view_driver_vehicle_status': 'org:dispatcher:view_driver_vehicle_status',
   'org:dispatcher:access_dispatch_dashboard': 'org:dispatcher:access_dispatch_dashboard',
 
@@ -131,10 +131,7 @@ export interface UserSessionAttributes {
 /**
  * Check if a user has a specific permission
  */
-export function hasPermission(
-  userPermissions: Permission[],
-  permission: Permission
-): boolean {
+export function hasPermission(userPermissions: Permission[], permission: Permission): boolean {
   return userPermissions.includes(permission);
 }
 
@@ -156,8 +153,10 @@ export function isAdmin(role: SystemRole): boolean {
  * Check if user can access compliance features
  */
 export function canAccessCompliance(userPermissions: Permission[]): boolean {
-  return hasPermission(userPermissions, Permissions['org:compliance:view_compliance_dashboard']) ||
-         hasPermission(userPermissions, Permissions['org:admin:access_all_reports']);
+  return (
+    hasPermission(userPermissions, Permissions['org:compliance:view_compliance_dashboard']) ||
+    hasPermission(userPermissions, Permissions['org:admin:access_all_reports'])
+  );
 }
 
 /**
@@ -171,8 +170,10 @@ export function canManageUsers(userPermissions: Permission[]): boolean {
  * Check if user can create/edit loads
  */
 export function canManageLoads(userPermissions: Permission[]): boolean {
-  return hasPermission(userPermissions, Permissions['org:dispatcher:create_edit_loads']) ||
-         hasPermission(userPermissions, Permissions['org:admin:view_edit_all_loads']);
+  return (
+    hasPermission(userPermissions, Permissions['org:dispatcher:create_edit_loads']) ||
+    hasPermission(userPermissions, Permissions['org:admin:view_edit_all_loads'])
+  );
 }
 
 /**
@@ -181,7 +182,7 @@ export function canManageLoads(userPermissions: Permission[]): boolean {
 export enum PermissionAction {
   READ = 'read',
   WRITE = 'write',
-  DELETE = 'delete'
+  DELETE = 'delete',
 }
 
 /**
@@ -190,5 +191,5 @@ export enum PermissionAction {
 export enum Resource {
   ORGANIZATION = 'organization',
   VEHICLE = 'vehicle',
-  LOAD = 'load'
+  LOAD = 'load',
 }

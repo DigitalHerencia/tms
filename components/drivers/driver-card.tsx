@@ -1,14 +1,9 @@
 import { Phone, Mail, Calendar, FileText } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { formatDate } from '@/lib/utils/utils';
-import { Driver } from '@/types/drivers';
+import type { Driver } from '@/types/drivers';
 
 interface DriverCardProps {
   driver: Driver;
@@ -20,7 +15,7 @@ export function DriverCard({ driver, onClick }: DriverCardProps) {
     // Map multiple statuses to active/inactive display
     const isActive = ['available', 'assigned', 'driving', 'on_duty'].includes(status);
     const isInactive = ['inactive', 'terminated'].includes(status);
-    
+
     if (isActive) {
       return 'bg-green-500/20 text-green-400 border-green-500/30';
     } else if (isInactive) {
@@ -35,7 +30,7 @@ export function DriverCard({ driver, onClick }: DriverCardProps) {
   const getDisplayStatus = (status: string) => {
     const isActive = ['available', 'assigned', 'driving', 'on_duty'].includes(status);
     const isInactive = ['inactive', 'terminated'].includes(status);
-    
+
     if (isActive) return 'active';
     if (isInactive) return 'inactive';
     return status.replace('_', ' ');
@@ -60,9 +55,7 @@ export function DriverCard({ driver, onClick }: DriverCardProps) {
           <h3 className="leading-none font-medium text-white">
             {driver.firstName} {driver.lastName}
           </h3>
-          <Badge className={getStatusColor(driver.status)}>
-            {getDisplayStatus(driver.status)}
-          </Badge>
+          <Badge className={getStatusColor(driver.status)}>{getDisplayStatus(driver.status)}</Badge>
         </div>
       </CardHeader>
       <CardContent className="pb-2">
@@ -102,9 +95,7 @@ export function DriverCard({ driver, onClick }: DriverCardProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5 text-blue-400" />
-                <span className="text-xs text-white/70">
-                  License Exp:
-                </span>
+                <span className="text-xs text-white/70">License Exp:</span>
               </div>
               <span className="text-xs font-medium text-white">
                 {formatDate(driver.licenseExpiration)}
@@ -115,9 +106,7 @@ export function DriverCard({ driver, onClick }: DriverCardProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5 text-blue-400" />
-                <span className="text-xs text-white/70">
-                  Medical Exp:
-                </span>
+                <span className="text-xs text-white/70">Medical Exp:</span>
               </div>
               <span className="text-xs font-medium text-white">
                 {formatDate(driver.medicalCardExpiration)}

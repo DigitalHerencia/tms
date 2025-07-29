@@ -3,11 +3,7 @@
  * Separated from core auth types for better organization
  */
 
-import type {
-  ClerkUserMetadata,
-  ClerkOrganizationMetadata,
-  UserRole,
-} from './auth';
+import type { ClerkUserMetadata, ClerkOrganizationMetadata, UserRole } from './auth';
 import type { WebhookMetadata } from './metadata';
 
 // Webhook event types
@@ -115,18 +111,14 @@ export interface OrganizationMembershipWebhookData {
 
 // Typed webhook payloads
 export type UserWebhookPayload = WebhookPayload<UserWebhookData>;
-export type OrganizationWebhookPayload =
-  WebhookPayload<OrganizationWebhookData>;
+export type OrganizationWebhookPayload = WebhookPayload<OrganizationWebhookData>;
 export type OrganizationMembershipWebhookPayload =
   WebhookPayload<OrganizationMembershipWebhookData>;
 
 // Webhook verification result
 export interface WebhookVerificationResult {
   eventType: WebhookEventType;
-  payload:
-    | UserWebhookData
-    | OrganizationWebhookData
-    | OrganizationMembershipWebhookData;
+  payload: UserWebhookData | OrganizationWebhookData | OrganizationMembershipWebhookData;
 }
 
 // Database operation result types

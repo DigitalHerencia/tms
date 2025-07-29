@@ -6,14 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Users,
-  Key,
-  ArrowRight,
-  ArrowLeft,
-  AlertCircle,
-  Phone
-} from 'lucide-react';
+import { Users, Key, ArrowRight, ArrowLeft, AlertCircle, Phone } from 'lucide-react';
 import type { OnboardingFormData } from '@/features/onboarding/OnboardingStepper';
 
 interface EmployeeJoinStepProps {
@@ -23,10 +16,15 @@ interface EmployeeJoinStepProps {
   onPrev: () => void;
 }
 
-export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: EmployeeJoinStepProps) {
+export function EmployeeJoinStep({
+  formData,
+  updateFormData,
+  onNext,
+  onPrev,
+}: EmployeeJoinStepProps) {
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState('');
-  
+
   const isValid = formData.organizationId.trim();
 
   /**
@@ -39,7 +37,7 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
     setIsValidating(true);
     setValidationError('');
 
-  try {
+    try {
       const exists = await verifyOrganizationExists(formData.organizationId);
       if (!exists) {
         setValidationError('Organization not found. Please check the ID and try again.');
@@ -58,18 +56,19 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
         <div className="mx-auto w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center mb-4">
           <Users className="h-6 w-6 text-blue-500" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Join your organization
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Join your organization</h2>
         <p className="text-gray-400">
-          Your admin should have provided you with an organization ID to join your company's FleetFusion account.
+          Your admin should have provided you with an organization ID to join your company's
+          FleetFusion account.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="organizationId" className="text-sm font-medium text-gray-200">Organization ID *</Label>
+            <Label htmlFor="organizationId" className="text-sm font-medium text-gray-200">
+              Organization ID *
+            </Label>
             <Input
               id="organizationId"
               type="text"
@@ -85,7 +84,9 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="inviteCode" className="text-sm font-medium text-gray-200">Invite Code (Optional)</Label>
+            <Label htmlFor="inviteCode" className="text-sm font-medium text-gray-200">
+              Invite Code (Optional)
+            </Label>
             <Input
               id="inviteCode"
               type="text"
@@ -131,17 +132,17 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
             <div>
               <p className="text-sm text-blue-300 font-medium">Need help?</p>
               <p className="text-xs text-blue-400 mt-1">
-                Contact your system administrator or the person who invited you to join. 
-                They can provide the correct Organization ID and any required invite codes.
+                Contact your system administrator or the person who invited you to join. They can
+                provide the correct Organization ID and any required invite codes.
               </p>
             </div>
           </div>
         </div>
 
         <div className="flex gap-3 pt-4">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={onPrev}
             className="w-full border-neutral-700 bg-neutral-800 text-gray-200 hover:bg-neutral-700 hover:text-white"
             disabled={isValidating}
@@ -149,8 +150,8 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             disabled={!isValid || isValidating}
           >

@@ -1,22 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { Vehicle } from '@/types/vehicles';
+import type { Vehicle } from '@/types/vehicles';
 import { VehicleTable } from '@/components/vehicles/vehicle-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Truck, 
-  Edit, 
-  MapPin, 
-  Calendar, 
-  Gauge, 
+import {
+  Truck,
+  Edit,
+  MapPin,
+  Calendar,
+  Gauge,
   FileText,
   Wrench,
   Shield,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -81,31 +81,31 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="bg-black border-muted">
-          <TabsTrigger 
+          <TabsTrigger
             value="overview"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Overview
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="specifications"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Specifications
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="registration"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Registration & Insurance
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="maintenance"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
             Maintenance
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="financial"
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
           >
@@ -181,7 +181,9 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
                 {vehicle.lastOdometerUpdate && (
                   <div className="flex justify-between">
                     <span className="text-white/70">Last Updated:</span>
-                    <span className="text-white text-sm">{formatDate(vehicle.lastOdometerUpdate)}</span>
+                    <span className="text-white text-sm">
+                      {formatDate(vehicle.lastOdometerUpdate)}
+                    </span>
                   </div>
                 )}
               </CardContent>
@@ -198,19 +200,27 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-white/70">Next Maintenance:</span>
-                  <span className="text-white text-sm">{formatDate(vehicle.nextMaintenanceDate)}</span>
+                  <span className="text-white text-sm">
+                    {formatDate(vehicle.nextMaintenanceDate)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/70">At Mileage:</span>
-                  <span className="text-white">{formatMileage(vehicle.nextMaintenanceMileage)}</span>
+                  <span className="text-white">
+                    {formatMileage(vehicle.nextMaintenanceMileage)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/70">Last Inspection:</span>
-                  <span className="text-white text-sm">{formatDate(vehicle.lastInspectionDate)}</span>
+                  <span className="text-white text-sm">
+                    {formatDate(vehicle.lastInspectionDate)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/70">Next Inspection:</span>
-                  <span className="text-white text-sm">{formatDate(vehicle.nextInspectionDue)}</span>
+                  <span className="text-white text-sm">
+                    {formatDate(vehicle.nextInspectionDue)}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -230,17 +240,15 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
                 <div className="flex justify-between">
                   <span className="text-white/70">Gross Vehicle Weight:</span>
                   <span className="text-white">
-                    {vehicle.grossVehicleWeight 
-                      ? `${vehicle.grossVehicleWeight.toLocaleString()} lbs` 
+                    {vehicle.grossVehicleWeight
+                      ? `${vehicle.grossVehicleWeight.toLocaleString()} lbs`
                       : 'Not set'}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/70">Max Payload:</span>
                   <span className="text-white">
-                    {vehicle.maxPayload 
-                      ? `${vehicle.maxPayload.toLocaleString()} lbs` 
-                      : 'Not set'}
+                    {vehicle.maxPayload ? `${vehicle.maxPayload.toLocaleString()} lbs` : 'Not set'}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -254,9 +262,7 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
                 <div className="flex justify-between">
                   <span className="text-white/70">Fuel Capacity:</span>
                   <span className="text-white">
-                    {vehicle.fuelCapacity 
-                      ? `${vehicle.fuelCapacity} gallons` 
-                      : 'Not set'}
+                    {vehicle.fuelCapacity ? `${vehicle.fuelCapacity} gallons` : 'Not set'}
                   </span>
                 </div>
               </CardContent>
@@ -279,8 +285,8 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
                 <div className="flex justify-between">
                   <span className="text-white/70">License Plate:</span>
                   <span className="text-white">
-                    {vehicle.licensePlate 
-                      ? `${vehicle.licensePlate} (${vehicle.licensePlateState})` 
+                    {vehicle.licensePlate
+                      ? `${vehicle.licensePlate} (${vehicle.licensePlateState})`
                       : 'Not set'}
                   </span>
                 </div>

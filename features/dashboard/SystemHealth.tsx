@@ -34,10 +34,10 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
         // Map result.data to SystemHealthData shape
         setHealthData({
           uptime: result.data.uptime,
-          databaseStatus: result.data.database ?? "unknown",
-          queueStatus: "unknown", // Default or fetch if available
-          memoryUsage: 0,         // Default or fetch if available
-          cpuUsage: 0             // Default or fetch if available
+          databaseStatus: result.data.database ?? 'unknown',
+          queueStatus: 'unknown', // Default or fetch if available
+          memoryUsage: 0, // Default or fetch if available
+          cpuUsage: 0, // Default or fetch if available
         });
         setLastUpdate(new Date());
       }
@@ -64,12 +64,9 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
-    return [
-      d ? `${d}d` : '',
-      h ? `${h}h` : '',
-      m ? `${m}m` : '',
-      `${s}s`
-    ].filter(Boolean).join(' ');
+    return [d ? `${d}d` : '', h ? `${h}h` : '', m ? `${m}m` : '', `${s}s`]
+      .filter(Boolean)
+      .join(' ');
   };
 
   const getStatusBadge = (status: string) => {
@@ -77,14 +74,34 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
       case 'healthy':
       case 'ok':
       case 'active':
-        return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Healthy</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-100 text-green-800">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Healthy
+          </Badge>
+        );
       case 'warning':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800"><AlertTriangle className="w-3 h-3 mr-1" />Warning</Badge>;
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Warning
+          </Badge>
+        );
       case 'error':
       case 'down':
-        return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />Error</Badge>;
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Error
+          </Badge>
+        );
       default:
-        return <Badge variant="outline"><Clock className="w-3 h-3 mr-1" />Unknown</Badge>;
+        return (
+          <Badge variant="outline">
+            <Clock className="w-3 h-3 mr-1" />
+            Unknown
+          </Badge>
+        );
     }
   };
 
@@ -120,7 +137,6 @@ export function SystemHealth({ initialData }: SystemHealthProps) {
       {/* Header with Refresh */}
       <div className="flex items-center justify-between">
         <div>
-          
           <p className="text-sm text-muted-foreground">
             Last updated: {lastUpdate.toLocaleTimeString()}
           </p>

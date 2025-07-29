@@ -4,11 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { getCurrentUser } from '@/lib/auth/auth';
 
-export default async function OnboardingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
   // Fetch the current user context using a server action
   const user = await getCurrentUser(true);
 

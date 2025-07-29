@@ -1,5 +1,3 @@
-
-
 import type React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';

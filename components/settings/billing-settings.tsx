@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BillingSettings } from '@/types/settings';
+import type { BillingSettings } from '@/types/settings';
 
 export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
   const [formState, setFormState] = useState(initial);
   const [saving, setSaving] = useState(false);
 
   const handleChange = (field: keyof BillingSettings, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
+    setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
@@ -27,7 +27,7 @@ export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
           <Input
             id="billingEmail"
             value={formState.billingEmail}
-            onChange={e => handleChange('billingEmail', e.target.value)}
+            onChange={(e) => handleChange('billingEmail', e.target.value)}
           />
         </div>
       </div>
@@ -39,4 +39,3 @@ export function BillingSettingsForm({ initial }: { initial: BillingSettings }) {
     </div>
   );
 }
-      

@@ -1,4 +1,3 @@
-
 import { listDriversByOrg } from '@/lib/fetchers/driverFetchers';
 import { DriversListClient } from './DriversListClient';
 
@@ -12,7 +11,7 @@ export default async function DriversList({ orgId, searchParams }: DriversListPr
   const filters = {
     page: searchParams?.page ? Number(searchParams.page) : 1,
     limit: searchParams?.limit ? Number(searchParams.limit) : 20,
-    search: typeof searchParams?.q === 'string' ? searchParams.q : "",
+    search: typeof searchParams?.q === 'string' ? searchParams.q : '',
   };
   const { data } = await listDriversByOrg(orgId, filters);
   return <DriversListClient drivers={data} orgId={orgId} />;
