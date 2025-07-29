@@ -1085,3 +1085,41 @@ export async function getAuditLogs(
 
 // --- Improved HOS Log Calculation ---
 // (Replace TODOs in getHOSLogs with actual calculations if HOS entries are available)
+
+export async function getDOTInspections(organizationId: string) {
+    try {
+        const { userId } = await auth()
+        if (!userId) throw new Error('Unauthorized')
+
+        const vehicles = await prisma.vehicle.findMany({
+            where: { organizationId },
+            select: {
+                id: true,
+                unitNumber: true,
+                lastInspectionDate: true,
+                nextInspectionDue: true,
+            },
+            orderBy: { unitNumber: 'asc' },
+        })
+
+        const inspections = vehicles.map(v => ({
+            id: v.id,
+            vehicleId: v.id,
+            vehicleUnit: v.unitNumber ?? '',
+            inspectionType: 'annual' as const,
+            status:
+                v.nextInspectionDue && new Date(v.nextInspectionDue) < new Date()
+                    ? 'overdue'
+                    : 'completed',
+            scheduledDate: v.nextInspectionDue ?? undefined,
+            completedDate: v.lastInspectionDate ?? undefined,
+            inspector: undefined,
+            location: undefined,
+            violations: 0,
+        }))
+
+        return { success: true, data: inspections }
+    } catch (error) {
+        return handleError(error, 'DOT Inspections Fetcher')
+    }
+}
