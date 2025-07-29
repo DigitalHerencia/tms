@@ -2,7 +2,7 @@
 
 import { handleError } from "@/lib/errors/handleError";
 import { invitationSchema } from "@/schemas/dashboard";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import db from "@/lib/database/db";
 import { sendInvitationEmail } from "@/lib/email/mailer";
 import crypto from "crypto";
