@@ -16,6 +16,7 @@ import { ArrowLeft, Edit, BarChart3, User } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { PageLayout } from '@/components/shared/PageLayout';
 
 // Next.js 15 async params pattern
 interface PageProps {
@@ -47,7 +48,7 @@ export default async function DriverDashboardPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
+    <PageLayout>
       {/* Back Navigation and Driver Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -108,7 +109,7 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       </Suspense>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Suspense fallback={<DriversSkeleton />}>
           <CurrentLoadCard assignment={(driver as any).currentAssignmentDetails} />
         </Suspense>
@@ -119,7 +120,7 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       </div>
 
       {/* Secondary Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Suspense fallback={<DriversSkeleton />}>
           <RecentActivityCard driverId={driver.id} orgId={orgId} />
         </Suspense>
@@ -133,6 +134,6 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       <Suspense fallback={<DriversSkeleton />}>
         <DocumentStatusCard driverId={driver.id} orgId={orgId} />
       </Suspense>
-    </div>
+    </PageLayout>
   );
 }

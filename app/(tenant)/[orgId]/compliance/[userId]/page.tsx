@@ -69,7 +69,7 @@ export default async function ComplianceDashboardPage({
         </div>
 
         {/* Compliance Metrics */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -184,7 +184,7 @@ export default async function ComplianceDashboardPage({
         </Card>
 
         {/* Dashboard Grid */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {/* Upcoming Deadlines */}
           <Card className="border border-gray-200 bg-black">
             <CardHeader>
@@ -392,8 +392,9 @@ export default async function ComplianceDashboardPage({
               Tools and reports for regulatory compliance
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
+          <CardContent>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
               <Button 
                 className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2"
               >
