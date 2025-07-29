@@ -60,3 +60,20 @@ export async function getOrganizationInvitations(organizationId?: string) {
         return handleError(error, "Get Organization Invitations")
     }
 }
+
+export async function getOrganizationInvitationById(
+    organizationId: string,
+    invitationId: string,
+) {
+    try {
+        const client = await clerkClient()
+        const invitation = await client.organizations.getOrganizationInvitation({
+            organizationId,
+            invitationId,
+        })
+
+        return { success: true, data: invitation }
+    } catch (error) {
+        return handleError(error, "Get Organization Invitation")
+    }
+}
