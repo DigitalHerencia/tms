@@ -30,6 +30,7 @@ model Organization {
   updatedAt           DateTime                 @updatedAt @map("updated_at")
   dotNumber           String?
   auditLogs           AuditLog[]
+  notifications       Notification[]
   complianceAlerts    ComplianceAlert[]
   complianceDocuments ComplianceDocument[]
   drivers             Driver[]
@@ -69,6 +70,7 @@ model User {
   calculatedIftaTaxCalculations IftaTaxCalculation[]     @relation("CalculatedByUser")
   validatedIftaTaxCalculations  IftaTaxCalculation[]     @relation("ValidatedByUser")
   auditLogs                     AuditLog[]
+  notifications                 Notification[]
   ComplianceDocument            ComplianceDocument[]     @relation("VerifiedByUser")
   driver                        Driver?
   IftaReport                    IftaReport[]             @relation("SubmittedByUser")
@@ -395,6 +397,25 @@ model AuditLog {
   @@index([action])
   @@index([timestamp])
   @@map("audit_logs")
+}
+
+model Notification {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  userId         String?      @map("user_id")
+  message        String
+  url            String?      @map("url")
+  readAt         DateTime?    @map("read_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User?        @relation(fields: [userId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([readAt])
+  @@index([createdAt])
+  @@map("notifications")
 }
 
 model WebhookEvent {
