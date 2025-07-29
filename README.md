@@ -76,6 +76,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
+### Running Tests
+
+Install project dependencies before running tests:
+
+```bash
+npm install
+npm test
+```
+
 ## Feature Flags
 FleetFusion supports runtime toggles via environment variables. See [docs/feature-flags.md](./docs/feature-flags.md) for details.
 

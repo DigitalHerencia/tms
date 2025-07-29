@@ -17,7 +17,30 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+/**
+ * Client dialog for editing an existing vehicle.
+ *
+ * @param props.orgId - Organization identifier used for mutation.
+ * @param props.vehicle - Current vehicle details, null when not loaded.
+ * @param props.onSuccess - Callback when update succeeds.
+ * @param props.open - Whether the dialog is open.
+ * @param props.onOpenChange - Triggered on open state change.
+ *
+ * Form layout switches between stacked and grid based on screen size.
+ */
 
+/**
+ * Dialog for editing an existing vehicle.
+ *
+ * Layout adapts to narrow viewports so all fields remain accessible on mobile.
+ * /* See edit-vehicle-form.png */
+ *
+ * @param orgId - Organization identifier
+ * @param vehicle - Vehicle to edit
+ * @param onSuccess - Callback on successful update
+ * @param open - Whether the dialog is open
+ * @param onOpenChange - Handler to change open state
+ */
 export default function EditVehicleDialog({
   orgId,
   vehicle,
@@ -44,7 +67,10 @@ export default function EditVehicleDialog({
     }
   }, [vehicle]);
 
-  const handleChange = (field: keyof VehicleFormData, value: any) => {
+  const handleChange = (
+    field: keyof VehicleFormData,
+    value: VehicleFormData[keyof VehicleFormData]
+  ) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -95,6 +121,7 @@ export default function EditVehicleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* See docs/screenshots/edit-vehicle-dialog.png for layout reference */}
       <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-muted text-white">
         <DialogHeader>
           <DialogTitle className="text-white">Edit Vehicle</DialogTitle>
@@ -237,3 +264,14 @@ export default function EditVehicleDialog({
     </Dialog>
   );
 }
+/**
+ * Client dialog for editing an existing vehicle.
+ *
+ * @param props.orgId - Organization identifier used for mutation.
+ * @param props.vehicle - Current vehicle details, null when not loaded.
+ * @param props.onSuccess - Callback when update succeeds.
+ * @param props.open - Whether the dialog is open.
+ * @param props.onOpenChange - Triggered on open state change.
+ *
+ * Form layout switches between stacked and grid based on screen size.
+ */

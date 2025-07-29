@@ -123,7 +123,7 @@ export default async function Page({
                                 <CardTitle className="text-base font-medium text-white">Total Miles ({period} {year})</CardTitle>
                                 <MapPin className="h-5 w-5 text-blue-500" />
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6 space-y-6">
                                 <div className="text-2xl font-bold text-white">{summary.totalMiles?.toLocaleString() ?? 0}</div>
                                 <p className="text-xs text-blue-400">&nbsp;</p>
                             </CardContent>
@@ -133,7 +133,7 @@ export default async function Page({
                                 <CardTitle className="text-base font-medium text-white">Total Gallons ({period} {year})</CardTitle>
                                 <FuelIcon className="h-5 w-5 text-blue-500" />
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6 space-y-6">
                                 <div className="text-2xl font-bold text-white">{summary.totalGallons?.toLocaleString() ?? 0}</div>
                                 <p className="text-xs text-blue-400">&nbsp;</p>
                             </CardContent>
@@ -143,7 +143,7 @@ export default async function Page({
                                 <CardTitle className="text-base font-medium text-white">Average MPG</CardTitle>
                                 <BarChart3 className="h-5 w-5 text-blue-500" />
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6 space-y-6">
                                 <div className="text-2xl font-bold text-white">{summary.averageMpg?.toFixed(2) ?? 0}</div>
                                 <p className="text-xs text-blue-400">&nbsp;</p>
                             </CardContent>
@@ -153,7 +153,7 @@ export default async function Page({
                                 <CardTitle className="text-base font-medium text-white">Jurisdictions</CardTitle>
                                 <MapPin className="h-5 w-5 text-blue-500" />
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6 space-y-6">
                                 <div className="text-2xl font-bold text-white">{jurisdictionCount}</div>
                                 <p className="text-xs text-blue-400">States/provinces this period</p>
                             </CardContent>

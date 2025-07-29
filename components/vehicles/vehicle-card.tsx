@@ -62,14 +62,14 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
 
   return (
     <Card
-      className="border-muted rounded-md border bg-black hover:border-blue-500 transition-colors cursor-pointer"
+      className="border-border rounded-md border bg-card hover:border-blue-500 transition-colors cursor-pointer"
       onClick={onClick}
     >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             {getTypeIcon(vehicle.type)}
-            <h3 className="font-medium text-white">
+            <h3 className="font-medium text-card-foreground">
               {vehicle.unitNumber || 'No Unit Number'}
             </h3>
           </div>
@@ -77,33 +77,33 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             {vehicle.status.replace('_', ' ')}
           </Badge>
         </div>
-        <p className="text-white/70 text-sm">
+        <p className="text-muted-foreground text-sm">
           {vehicle.make} {vehicle.model} {vehicle.year}
         </p>
       </CardHeader>
       <CardContent className="pb-2">
         <div className="space-y-2 text-sm">
           {vehicle.vin && (
-            <div className="flex items-center gap-2 text-white/90">
-              <span className="text-white/70">VIN:</span>
-              <span className="font-mono text-white">{vehicle.vin}</span>
+            <div className="flex items-center gap-2 text-foreground/90">
+              <span className="text-muted-foreground">VIN:</span>
+              <span className="font-mono text-card-foreground">{vehicle.vin}</span>
             </div>
           )}
           {vehicle.licensePlate && (
-            <div className="flex items-center gap-2 text-white/90">
-              <span className="text-white/70">License:</span>
-              <span className="text-white">
+            <div className="flex items-center gap-2 text-foreground/90">
+              <span className="text-muted-foreground">License:</span>
+              <span className="text-card-foreground">
                 {vehicle.licensePlate} ({vehicle.state})
               </span>
             </div>
           )}
           {vehicle.currentOdometer && (
-            <div className="flex items-center gap-2 text-white/90">
+            <div className="flex items-center gap-2 text-foreground/90">
               <Gauge className="h-4 w-4 text-blue-400" />
-              <span className="text-white">
+              <span className="text-card-foreground">
                 {vehicle.currentOdometer.toLocaleString()} miles
                 {vehicle.lastOdometerUpdate && (
-                  <span className="text-white/70 ml-1 text-xs">
+                  <span className="text-muted-foreground ml-1 text-xs">
                     (as of {formatDate(vehicle.lastOdometerUpdate)})
                   </span>
                 )}
@@ -112,7 +112,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="border-t border-white/10 pt-3">
+      <CardFooter className="border-t border-border/10 pt-3">
         {upcomingMaintenance ? (
           <div className="flex w-full items-center gap-2 text-xs">
             <AlertTriangle className="h-3.5 w-3.5 text-yellow-400" />
@@ -122,7 +122,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
             </span>
           </div>
         ) : (
-          <div className="flex w-full items-center gap-2 text-xs text-white/70">
+          <div className="flex w-full items-center gap-2 text-xs text-muted-foreground">
             <Calendar className="h-3.5 w-3.5" />
             <span>No upcoming maintenance</span>
           </div>

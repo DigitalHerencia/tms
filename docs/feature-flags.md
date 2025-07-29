@@ -14,4 +14,4 @@ FleetFusion allows certain features to be toggled at runtime via environment var
 - **Format:** `https://your-flags-service.com/api`
 - **Usage:** When provided, `isAuthFeatureEnabled` will fetch `/auth` from this service if no environment variable is set.
 
-The helper `isAuthFeatureEnabled` in `lib/config/featureFlags.ts` exposes the flag state for runtime checks.
+The helper `isAuthFeatureEnabled` in `lib/config/featureFlags.ts` is re-exported from `features/auth` for easy importing and exposes the flag state for runtime checks.

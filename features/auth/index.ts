@@ -1,4 +1,5 @@
 // Auth domain business logic entry point
+import { isAuthFeatureEnabled as checkAuthFeature } from '@/lib/config/featureFlags'
 
 export async function isAuthFeatureEnabled(): Promise<boolean> {
   const envFlag = process.env.NEXT_PUBLIC_ENABLE_AUTH
@@ -18,3 +19,4 @@ export async function isAuthFeatureEnabled(): Promise<boolean> {
   }
   return false
 }
+

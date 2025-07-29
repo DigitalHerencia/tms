@@ -19,6 +19,7 @@ import { RoleSelectionStep } from "@/components/onboarding/RoleSelectionStep"
 import { completeOnboarding } from "@/lib/actions/onboardingActions"
 import type { CompleteOnboardingData } from "@/schemas/onboarding"
 import type { SystemRole } from "@/types/abac"
+import type { OnboardingPreferences } from "@/types/onboarding"
 
 export interface OnboardingFormData {
     // Personal Info
@@ -42,7 +43,7 @@ export interface OnboardingFormData {
     inviteCode: string
 
     // Common
-    preferences: Record<string, any>
+    preferences: OnboardingPreferences
 }
 
 const steps = [
