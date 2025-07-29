@@ -89,6 +89,27 @@ export const rateSchema = z.object({
   notes: z.string().optional(),
 });
 
+// Simplified form schema for load create/update actions
+export const loadInputSchema = z.object({
+  load_number: z.string().min(1, "Load number is required"),
+  origin_address: z.string().min(1, "Origin address is required"),
+  origin_city: z.string().min(1, "Origin city is required"),
+  origin_state: z.string().min(1, "Origin state is required"),
+  origin_zip: z.string().min(1, "Origin ZIP is required"),
+  destination_address: z.string().min(1, "Destination address is required"),
+  destination_city: z.string().min(1, "Destination city is required"),
+  destination_state: z.string().min(1, "Destination state is required"),
+  destination_zip: z.string().min(1, "Destination ZIP is required"),
+  customer_id: z.string().optional(),
+  driver_id: z.string().optional(),
+  vehicle_id: z.string().optional(),
+  trailer_id: z.string().optional(),
+  scheduled_pickup_date: z.string().optional(),
+  scheduled_delivery_date: z.string().optional(),
+  notes: z.string().optional(),
+  status: z.string().optional(),
+});
+
 // Schema for creating a new load
 export const createLoadSchema = z.object({
   referenceNumber: z.string().min(1, "Reference number is required"),
