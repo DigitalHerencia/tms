@@ -508,6 +508,8 @@ export const getDashboardMetrics = unstable_cache(
             }
         }
 
+        const today = new Date()
+
         const [
             totalLoads,
             activeLoads,
@@ -517,6 +519,10 @@ export const getDashboardMetrics = unstable_cache(
             availableVehicles,
             maintenanceVehicles,
             alertsCount,
+            inspections,
+            overdueInspections,
+            revenueAgg,
+            fuelAgg,
         ] = await Promise.all([
             db.load.count({ where: { organizationId: orgId } }),
             db.load.count({
@@ -558,7 +564,29 @@ export const getDashboardMetrics = unstable_cache(
                     resolved: false,
                 },
             }),
+            db.vehicle.count({
+                where: { organizationId: orgId, lastInspectionDate: { not: null } },
+            }),
+            db.vehicle.count({
+                where: { organizationId: orgId, nextInspectionDue: { lt: today } },
+            }),
+            db.load.aggregate({
+                where: { organizationId: orgId, status: "delivered" },
+                _sum: { rate: true },
+            }),
+            db.iftaFuelPurchase.aggregate({
+                where: { organizationId: orgId },
+                _sum: { amount: true },
+            }),
         ])
+
+        const complianceScore =
+            inspections > 0
+                ? Math.round(((inspections - overdueInspections) / inspections) * 100)
+                : 100
+
+        const revenue = Number(revenueAgg._sum.rate ?? 0)
+        const fuelCosts = Number(fuelAgg._sum.amount ?? 0)
 
         return {
             activeLoads,
@@ -569,9 +597,9 @@ export const getDashboardMetrics = unstable_cache(
             totalVehicles,
             maintenanceVehicles,
             criticalAlerts: alertsCount,
-            complianceScore: 85, // TODO: Calculate based on compliance metrics
-            revenue: 0, // TODO: Calculate from completed loads
-            fuelCosts: 0, // TODO: Calculate from expense records
+            complianceScore,
+            revenue,
+            fuelCosts,
         }
     },
     ["dashboard-metrics"],

@@ -61,7 +61,8 @@ and organization management are handled through Clerk's service, enabling multi-
     for filings.
 -   **Analytics & Reporting:** Offer dashboards and reports for key metrics like fleet utilization,
     on-time delivery rate, fuel efficiency, and costs. Allow filtering and drill-down to investigate
-    specific aspects of operations.
+    specific aspects of operations. Users can save analytics filter presets for frequently used views.
+    Presets are returned with defaults listed first.
 -   **Settings & Configuration:** Allow admins to configure company-wide settings such as user roles,
     notification preferences, and possibly billing information. This includes managing which users
     have which roles within the platform.

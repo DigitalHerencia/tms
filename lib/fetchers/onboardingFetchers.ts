@@ -78,3 +78,22 @@ export async function getUserOnboardingProgress(id: string) {
     handleDatabaseError(error);
   }
 }
+
+/**
+ * Verify that an organization exists for the provided identifier.
+ * Accepts either the organization UUID or slug.
+ * Used during onboarding to validate the organization ID.
+ */
+export async function verifyOrganizationExists(orgId: string): Promise<boolean> {
+  try {
+    const organization = await db.organization.findFirst({
+      where: {
+        OR: [{ id: orgId }, { slug: orgId }],
+      },
+      select: { id: true },
+    });
+    return !!organization;
+  } catch (error) {
+    handleDatabaseError(error);
+  }
+}
