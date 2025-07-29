@@ -16,6 +16,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import {
+  getVehicleComplianceRecords,
+  type VehicleComplianceRow,
+} from '@/lib/fetchers/complianceFetchers'
+
 
 import {
   getVehicleComplianceRecords,
@@ -23,18 +29,16 @@ import {
 } from '@/lib/fetchers/complianceFetchers'
 
 export interface VehicleComplianceRow extends VehicleComplianceRecord {}
-
 interface VehicleComplianceTableProps {
   orgId: string
 }
 
 export async function VehicleComplianceTable({
   orgId,
-}: VehicleComplianceTableProps): Promise<JSX.Element> {
+}: VehicleComplianceTableProps) {
   if (!orgId) {
     return <p className="text-red-500">Organization not found.</p>
   }
-
   const vehicles: VehicleComplianceRow[] =
     await getVehicleComplianceRecords(orgId)
 
@@ -56,8 +60,11 @@ export async function VehicleComplianceTable({
         <TableBody>
           {vehicles.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                No vehicles found
+              <TableCell
+                colSpan={7}
+                className="py-8 text-center text-muted-foreground"
+              >
+               No vehicles found
               </TableCell>
             </TableRow>
           ) : (
@@ -66,32 +73,28 @@ export async function VehicleComplianceTable({
                 <TableCell className="font-medium">{v.unit}</TableCell>
                 <TableCell>{v.type}</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    {v.status === 'Compliant' ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : v.status === 'Warning' ? (
-                      <Clock className="h-4 w-4 text-amber-500" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                    )}
-                    <Badge
-                      className={
-                        v.status === 'Compliant'
-                          ? 'bg-green-100 text-green-800'
-                          : v.status === 'Warning'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-red-100 text-red-800'
-                      }
-                    >
-                      {v.status}
-                    </Badge>
-                  </div>
+                  <Badge
+                    variant="outline"
+                    className={
+                      v.status === 'Compliant'
+                        ? 'border-green-200 bg-green-50 text-green-700'
+                        : v.status === 'Warning'
+                        ? 'border-amber-200 bg-amber-50 text-amber-700'
+                        : 'border-red-200 bg-red-50 text-red-700'
+                    }
+                  >
+                    {v.status}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  {v.lastInspection ? new Date(v.lastInspection).toLocaleDateString() : 'N/A'}
+                  {v.lastInspection
+                    ? new Date(v.lastInspection).toLocaleDateString()
+                    : 'N/A'}
                 </TableCell>
                 <TableCell>
-                  {v.nextInspection ? new Date(v.nextInspection).toLocaleDateString() : 'N/A'}
+                  {v.nextInspection
+                    ? new Date(v.nextInspection).toLocaleDateString()
+                    : 'N/A'}
                 </TableCell>
                 <TableCell>
                   {v.defects === 'None' ? (
@@ -101,7 +104,9 @@ export async function VehicleComplianceTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  {v.registrationExpiry ? new Date(v.registrationExpiry).toLocaleDateString() : 'N/A'}
+                  {v.registrationExpiry
+                    ? new Date(v.registrationExpiry).toLocaleDateString()
+                    : 'N/A'}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
