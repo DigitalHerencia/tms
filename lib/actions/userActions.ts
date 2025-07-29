@@ -1,8 +1,6 @@
 "use server";
 /**
  * User management server actions.
- *
- * TODO remaining: send invitation emails when inviting users.
  */
 import db from "@/lib/database/db";
 import { handleError } from "@/lib/errors/handleError";
@@ -55,7 +53,7 @@ export async function inviteUserAction(
     const link = `${baseUrl}/accept-invitation?token=${token}`;
     await sendInvitationEmail(email, link);
 
-    return { success: true };
+    return { success: true, userId: user.id, invitationToken: token };
   } catch (error) {
     return handleError(error, "Invite User Action");
   }
