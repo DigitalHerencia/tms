@@ -7,6 +7,8 @@ import db from "@/lib/database/db";
 import { sendInvitationEmail } from "@/lib/email/mailer";
 import crypto from "crypto";
 
+const INVITATION_VALIDITY_DAYS = 7;
+
 // See CONTRIBUTING.md#L596-L618 for validation and permission checks
 
 export interface InvitationData {
@@ -26,6 +28,7 @@ export async function createOrganizationInvitation(data: InvitationData) {
     const validated = invitationSchema.parse(data);
     const token = crypto.randomUUID();
 
+    const expiresAt = new Date(Date.now() + INVITATION_VALIDITY_DAYS * 24 * 60 * 60 * 1000);
     await db.organizationInvitation.create({
       data: {
         id: crypto.randomUUID(),
@@ -33,6 +36,7 @@ export async function createOrganizationInvitation(data: InvitationData) {
         email: validated.emailAddress,
         role: validated.role,
         token,
+        expiresAt,
         status: "pending",
       },
     });

@@ -1,11 +1,10 @@
-"use server"
+"use server";
 
 /**
  * Dashboard data fetchers.
  *
- * TODO remaining:
- * - Implement AuditLog model usage when schema is ready.
- * - Calculate compliance score, revenue and fuel cost metrics.
+ * Provides audit log activity and key metrics including compliance score,
+ * revenue and fuel costs.
  */
 
 import db from "@/lib/database/db"

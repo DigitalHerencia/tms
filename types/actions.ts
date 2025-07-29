@@ -6,3 +6,10 @@ export interface ActionResult<T> {
 
 export type AdminActionResult<T> = ActionResult<T>;
 export type AnalyticsActionResult<T> = ActionResult<T>;
+
+export interface UserInvitationResult {
+  success: boolean;
+  userId?: string;
+  invitationToken?: string;
+  error?: string;
+}

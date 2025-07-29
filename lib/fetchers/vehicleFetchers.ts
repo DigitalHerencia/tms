@@ -25,7 +25,7 @@ export const listVehiclesByOrg = cache(
             const { userId } = await auth()
             if (!userId) {
                 return {
-                    vehicles: [],
+                    data: [],
                     total: 0,
                     page: 1,
                     limit: 10,
@@ -153,7 +153,7 @@ export const listVehiclesByOrg = cache(
             }))
 
             return {
-                vehicles,
+                data: vehicles,
                 total,
                 page,
                 limit,
@@ -163,7 +163,7 @@ export const listVehiclesByOrg = cache(
             console.error("Error fetching vehicles:", error)
             // Always return a valid VehicleListResponse on error
             return {
-                vehicles: [],
+                data: [],
                 total: 0,
                 page: 1,
                 limit: 10,

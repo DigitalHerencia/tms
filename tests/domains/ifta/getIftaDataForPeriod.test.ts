@@ -9,15 +9,19 @@ vi.mock('../../../lib/cache/auth-cache', () => ({
 
 const findUnique = vi.fn()
 const tripFindMany = vi.fn()
+const tripAggregate = vi.fn()
+const tripGroupBy = vi.fn()
 const fuelFindMany = vi.fn()
+const fuelAggregate = vi.fn()
+const fuelGroupBy = vi.fn()
 const reportFindFirst = vi.fn()
 
 vi.mock('../../../lib/database/db', () => ({
   __esModule: true,
   default: {
     user: { findUnique },
-    iftaTrip: { findMany: tripFindMany },
-    iftaFuelPurchase: { findMany: fuelFindMany },
+    iftaTrip: { findMany: tripFindMany, aggregate: tripAggregate, groupBy: tripGroupBy },
+    iftaFuelPurchase: { findMany: fuelFindMany, aggregate: fuelAggregate, groupBy: fuelGroupBy },
     iftaReport: { findFirst: reportFindFirst }
   }
 }))
@@ -26,7 +30,11 @@ beforeEach(() => {
   vi.clearAllMocks()
   findUnique.mockResolvedValue({ organizationId: 'org1', role: 'admin' })
   tripFindMany.mockResolvedValue([])
+  tripAggregate.mockResolvedValue({ _sum: { distance: 0 } })
+  tripGroupBy.mockResolvedValue([])
   fuelFindMany.mockResolvedValue([])
+  fuelAggregate.mockResolvedValue({ _sum: { gallons: 0, amount: 0 } })
+  fuelGroupBy.mockResolvedValue([])
 })
 
 describe('getIftaDataForPeriod', () => {
@@ -39,8 +47,8 @@ describe('getIftaDataForPeriod', () => {
     const args = reportFindFirst.mock.calls[0]![0]
 
     expect(args.where.organizationId).toBe('org1')
-    expect(args.where.createdAt.gte).toEqual(new Date(2024, 0, 1))
-    expect(args.where.createdAt.lte).toEqual(new Date(2024, 3, 0, 23, 59, 59))
+    expect(args.where.quarter).toBe(1)
+    expect(args.where.year).toBe(2024)
     expect(result.report).toEqual({
       id: 'r1',
       status: 'submitted',
