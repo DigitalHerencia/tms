@@ -1,66 +1,3 @@
-/**
- * Auth domain server mutations.
- *
- * These actions handle login, user registration, session refresh and
- * role updates. Integration with Clerk for secure authentication is
- * pending (see docs/PRD.md §1 "Auth").
- *
- * TODO: connect Clerk helpers and database persistence.
- */
-
-/**
- * Authenticate a user and create a session.
- *
- * @param email - User email
- * @param password - User password
- * @returns Promise resolving with session data
- */
-export async function loginUser(email: string, password: string): Promise<any> {
-  // TODO: Implement login mutation
-  throw new Error('Not implemented');
-}
-
-/**
- * Register a new user and their organization.
- *
- * @param data - Registration payload
- * @returns Promise resolving with the created user record
- */
-export async function registerUser(data: {
-  email: string;
-  password: string;
-  name: string;
-  companyName: string;
-}) {
-  // TODO: Implement registration mutation
-  throw new Error('Not implemented');
-}
-
-/**
- * Refresh session details for a user.
- *
- * @param userId - Clerk user id
- * @returns Promise when session update completes
- */
-export async function updateSession(userId: string): Promise<void> {
-  // TODO: Implement session update logic
-  throw new Error('Not implemented');
-}
-
-/**
- * Change a user's role in the current organization.
- *
- * @param userId - Target user id
- * @param role - New role value
- * @returns Promise when the role update is saved
- */
-export async function updateRBAC(
-  userId: string,
-  role: string,
-): Promise<void> {
-  // TODO: Implement RBAC update logic
-  throw new Error('Not implemented');
-=======
 'use server'
 
 import { clerkClient } from '@clerk/nextjs/server'
@@ -82,11 +19,14 @@ export async function loginUser(email: string, password: string) {
   try {
     const { email: validatedEmail, password: validatedPassword } = signInSchema.parse({ email, password })
     const client = await clerkClient()
-    const signIn = await client.authenticateUser({ identifier: validatedEmail, password: validatedPassword })
+    const signIn = await (client as any).authenticateUser({
+      identifier: validatedEmail,
+      password: validatedPassword,
+    })
     if (!signIn.sessionId || !signIn.userId) {
       return { success: false, error: 'Invalid credentials' }
     }
-    const session = await client.sessions.getSession(signIn.sessionId)
+    const session = await (client as any).sessions.getSession(signIn.sessionId)
     const user = await client.users.getUser(signIn.userId)
 
     await db.user.upsert({
@@ -102,7 +42,11 @@ export async function loginUser(email: string, password: string) {
       },
     })
 
-    const userContext = buildSecureUserContext(user.id, session, (user.privateMetadata as any)?.organizationId || '')
+    const userContext = buildSecureUserContext(
+      user.id,
+      session as unknown as Record<string, unknown>,
+      (user.privateMetadata as any)?.organizationId || ''
+    )
     sessionCache.set(`${user.id}-${userContext.organizationId}`, userContext)
 
     return { success: true, data: { sessionId: signIn.sessionId } }
@@ -119,11 +63,13 @@ export async function loginUser(email: string, password: string) {
  */
 export async function registerUser(data: { email: string; password: string; name: string; companyName: string }) {
   try {
-    const validated = signUpSchema.omit({ confirmPassword: true, agreeToTerms: true }).parse({
+    const validated = signUpSchema.parse({
       email: data.email,
       password: data.password,
+      confirmPassword: data.password,
       name: data.name,
       companyName: data.companyName,
+      agreeToTerms: true,
     })
 
     const client = await clerkClient()
@@ -168,13 +114,17 @@ export async function registerUser(data: { email: string; password: string; name
 export async function updateSession(userId: string) {
   try {
     const client = await clerkClient()
-    const user = await client.users.getUser(userId)
-    const sessions = await client.users.getUserSessions(userId)
+    const user = await (client as any).users.getUser(userId)
+    const sessions = await (client as any).users.getUserSessions(userId)
     const session = sessions[0]
     if (!session) {
       return { success: false, error: 'No active session' }
     }
-    const context = buildSecureUserContext(user.id, session, (user.privateMetadata as any)?.organizationId || '')
+    const context = buildSecureUserContext(
+      user.id,
+      session as unknown as Record<string, unknown>,
+      (user.privateMetadata as any)?.organizationId || ''
+    )
     sessionCache.set(`${user.id}-${context.organizationId}`, context)
     return { success: true }
   } catch (error) {
@@ -197,7 +147,7 @@ export async function updateRBAC(userId: string, role: string) {
     await client.users.updateUserMetadata(userId, {
       publicMetadata: { role: parsed, permissions },
     })
-    await db.user.update({ where: { id: userId }, data: { role: parsed } })
+    await db.user.update({ where: { id: userId }, data: { role: parsed as any } })
     sessionCache.invalidateUser(userId)
     await updateSession(userId)
     return { success: true }

@@ -356,10 +356,10 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                 )
 
                 if (!inviteResult.success) {
-                    throw new Error(inviteResult.error || "Invalid invite code")
+                    throw new Error((inviteResult as any).error || "Invalid invite code")
                 }
 
-                invitation = inviteResult.data as any
+                invitation = (inviteResult as any).data
 
                 if (
                     invitation.organizationId !== organization.id ||

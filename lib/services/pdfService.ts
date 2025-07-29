@@ -7,7 +7,7 @@
  *
  * TODO: integrate a real PDF engine and file storage.
  */
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib'
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
@@ -92,27 +92,28 @@ class PDFService {
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
-      const page = pdfDoc.addPage(pageSize)
+      const [pageWidth, pageHeight] = pageSize as [number, number]
+      const page = pdfDoc.addPage([pageWidth, pageHeight])
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
       page.drawText(`Quarterly IFTA Report - Q${quarter} ${year}`, {
         x: 50,
-        y: pageSize[1] - 50,
+        y: pageHeight - 50,
         size: 16,
         font,
         color: rgb(0, 0, 0),
       })
 
       if (options.watermark && options.watermark !== 'none') {
-        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-        page.drawText(options.watermark.toUpperCase(), {
-          x: pageSize[0] / 2 - 100,
-          y: pageSize[1] / 2,
-          size: 50,
-          font: wmFont,
-          color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
-        })
+          const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+          page.drawText(options.watermark.toUpperCase(), {
+            x: pageWidth / 2 - 100,
+            y: pageHeight / 2,
+            size: 50,
+            font: wmFont,
+            color: rgb(0.85, 0.85, 0.85),
+            rotate: degrees(45),
+          })
       }
 
       if (options.includeAttachments) {
@@ -169,12 +170,13 @@ class PDFService {
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
-      const page = pdfDoc.addPage(pageSize)
+      const [pageWidth2, pageHeight2] = pageSize as [number, number]
+      const page = pdfDoc.addPage([pageWidth2, pageHeight2])
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
       page.drawText('IFTA Trip Log', {
         x: 50,
-        y: pageSize[1] - 50,
+        y: pageHeight2 - 50,
         size: 16,
         font,
         color: rgb(0, 0, 0),
@@ -183,12 +185,12 @@ class PDFService {
       if (options.watermark && options.watermark !== 'none') {
         const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
         page.drawText(options.watermark.toUpperCase(), {
-          x: pageSize[0] / 2 - 100,
-          y: pageSize[1] / 2,
+          x: pageWidth2 / 2 - 100,
+          y: pageHeight2 / 2,
           size: 50,
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
+          rotate: degrees(45),
         })
       }
 
@@ -246,12 +248,13 @@ class PDFService {
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
-      const page = pdfDoc.addPage(pageSize)
+      const [pageWidth3, pageHeight3] = pageSize as [number, number]
+      const page = pdfDoc.addPage([pageWidth3, pageHeight3])
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
       page.drawText('IFTA Fuel Summary', {
         x: 50,
-        y: pageSize[1] - 50,
+        y: pageHeight3 - 50,
         size: 16,
         font,
         color: rgb(0, 0, 0),
@@ -260,12 +263,12 @@ class PDFService {
       if (options.watermark && options.watermark !== 'none') {
         const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
         page.drawText(options.watermark.toUpperCase(), {
-          x: pageSize[0] / 2 - 100,
-          y: pageSize[1] / 2,
+          x: pageWidth3 / 2 - 100,
+          y: pageHeight3 / 2,
           size: 50,
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
+          rotate: degrees(45),
         })
       }
 
