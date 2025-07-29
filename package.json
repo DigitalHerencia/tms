@@ -96,7 +96,8 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
-    "zod": "^3.25.67"
+    "zod": "^3.25.67",
+    "nodemailer": "^6.9.11"
   },
   "devDependencies": {
     "@clerk/testing": "^1.8.1",
