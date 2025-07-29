@@ -11,6 +11,17 @@ interface NewLoadFeatureProps {
   onSuccess?: () => void;
 }
 
+/**
+ * Form for creating a new load.
+ *
+ * The form container centers and scales for tablet and desktop widths while
+ * remaining full width on mobile. /* See new-load.png */
+ *
+ * @param orgId - Organization identifier
+ * @param drivers - Available drivers
+ * @param vehicles - Available vehicles
+ * @param onSuccess - Optional callback after saving
+ */
 export function NewLoadFeature({ orgId, drivers, vehicles, onSuccess }: NewLoadFeatureProps) {
   return (
     <Card className="mx-auto max-w-3xl mt-8 border border-gray-700 bg-neutral-900">

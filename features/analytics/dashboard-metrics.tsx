@@ -70,6 +70,14 @@ interface DashboardMetricsProps {
  */
 // See docs/screenshots/dashboard-metrics-cards.png for layout
 
+/**
+ * Display KPI metric cards for the dashboard.
+ *
+ * Cards are arranged in a responsive grid that adapts from a single column on
+ * mobile to multiple columns on larger screens. /* See analytics-kpi.png */
+ *
+ * @param orgId - Identifier for the organization whose metrics are displayed
+ */
 const DashboardMetrics: FC<DashboardMetricsProps> = async ({ orgId }) => {
   if (!orgId) {
     return <div className="text-red-500">Organization not found</div>;

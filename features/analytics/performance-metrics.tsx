@@ -31,6 +31,14 @@ interface PerformanceMetricsProps {
  */
 // See docs/screenshots/performance-metrics.png for reference
 
+/**
+ * Visualize performance metrics such as loads delivered and miles driven.
+ *
+ * Charts resize automatically using ResponsiveContainer to maintain clarity on
+ * any screen size. /* See performance-overview.png */
+ *
+ * @param performanceData - Array of revenue and load metrics
+ */
 export function PerformanceMetrics({
   performanceData,
 }: PerformanceMetricsProps) {

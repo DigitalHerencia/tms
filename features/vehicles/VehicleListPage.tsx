@@ -9,14 +9,15 @@ interface VehicleListPageProps {
 }
 
 /**
- * Server component showing the paginated vehicle list for an organization.
+ * Page displaying the fleet vehicle list.
  *
- * @param props.orgId - Organization identifier used to fetch vehicles.
- * @param props.page - Optional page index, defaults to the first page.
+ * Vehicle cards stack vertically on small screens and expand in a grid on
+ * desktop for easier browsing. /* See vehicles-grid.png */
  *
- * Layout adapts using flex utilities for mobile and desktop views.
+ * @param orgId - Organization identifier
+ * @param page - Page number for vehicle pagination
  */
-// See docs/screenshots/vehicle-list-page.png for example layout
+
 export default async function VehicleListPage({
   orgId,
   page = 1,

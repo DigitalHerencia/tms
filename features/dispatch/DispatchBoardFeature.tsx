@@ -25,6 +25,17 @@ interface DispatchBoardFeatureProps {
 
 const ITEMS_PER_PAGE = 50;
 
+/**
+ * Dispatch board for managing and filtering loads.
+ *
+ * The board layout reflows from lists to tabs depending on screen width. /* See dispatch-board.png */
+ *
+ * @param loads - Array of loads to display
+ * @param drivers - Available drivers
+ * @param vehicles - Available vehicles
+ * @param orgId - Organization identifier
+ * @param searchParams - Optional query parameters used for filtering
+ */
 export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchParams = {} }: DispatchBoardFeatureProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();

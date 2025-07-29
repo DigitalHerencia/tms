@@ -42,14 +42,15 @@ const initialState: Partial<VehicleFormData> = {
 };
 
 /**
- * Client dialog for adding a new vehicle to the organization.
+ * Dialog used to add a new vehicle to the fleet.
  *
- * @param props.orgId - Organization identifier for the vehicle.
- * @param props.onSuccess - Callback fired when creation succeeds.
- * @param props.open - Whether the dialog is open.
- * @param props.onOpenChange - Triggered when dialog visibility changes.
+ * Form fields are arranged in a responsive grid so they remain usable on
+ * mobile devices. /* See add-vehicle-form.png */
  *
- * Uses responsive grid inputs for small and large screens.
+ * @param orgId - Organization identifier
+ * @param onSuccess - Callback fired after successful creation
+ * @param open - Whether the dialog is open
+ * @param onOpenChange - Handler to change open state
  */
 export default function AddVehicleDialog({
   orgId,
