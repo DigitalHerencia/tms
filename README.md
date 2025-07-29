@@ -76,6 +76,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
+## Feature Flags
+FleetFusion supports runtime toggles via environment variables. See [docs/feature-flags.md](./docs/feature-flags.md) for details.
+
 ---
 
 ## 🆘 Help & Support
