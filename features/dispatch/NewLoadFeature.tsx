@@ -17,7 +17,7 @@ export function NewLoadFeature({ orgId, drivers, vehicles, onSuccess }: NewLoadF
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-white">Create New Load</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 space-y-6">
         <LoadForm orgId={orgId} drivers={drivers} vehicles={vehicles} onClose={onSuccess} />
       </CardContent>
     </Card>

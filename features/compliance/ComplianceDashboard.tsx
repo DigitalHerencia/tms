@@ -32,7 +32,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Driver Compliance</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {data.driverComplianceRate}%
           </span>
@@ -42,7 +42,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Vehicle Compliance</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {data.vehicleComplianceRate}%
           </span>
@@ -52,7 +52,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Pending Documents</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.pendingDocuments}</span>
         </CardContent>
       </Card>
@@ -60,7 +60,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Expired Documents</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.expiredDocuments}</span>
         </CardContent>
       </Card>
@@ -68,7 +68,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Recent Inspections</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.recentInspections}</span>
         </CardContent>
       </Card>
@@ -76,7 +76,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Overdue Inspections</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.overdueInspections}</span>
         </CardContent>
       </Card>

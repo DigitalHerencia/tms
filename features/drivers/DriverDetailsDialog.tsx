@@ -238,7 +238,7 @@ export function DriverDetailsDialog({
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-white">Contact Information</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6 space-y-6">
                     <div className="space-y-2">
                       {driver.email && (
                         <div className="flex items-center gap-2">
@@ -260,7 +260,7 @@ export function DriverDetailsDialog({
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-white">Employment</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6 space-y-6">
                     <div className="space-y-2">
                       {driver.hireDate && (
                         <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ export function DriverDetailsDialog({
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-white">License Information</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6 space-y-6">
                   <div className="space-y-2">
                     {driver.cdlNumber && (
                       <div className="flex items-center gap-2">
@@ -319,7 +319,7 @@ export function DriverDetailsDialog({
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-white">Medical Information</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-6 space-y-6">
                   <div className="space-y-2">
                     {driver.medicalCardExpiration && (
                       <div className="flex items-center gap-2">
@@ -347,7 +347,7 @@ export function DriverDetailsDialog({
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-white">Notes</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6 space-y-6">
                     <p className="text-white">{driver.notes}</p>
                   </CardContent>
                 </Card>
@@ -363,7 +363,7 @@ export function DriverDetailsDialog({
                   Recent and upcoming loads assigned to this driver
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6 space-y-6">
                 {recentLoads.length > 0 ? (
                   <div className="space-y-4">
                     {recentLoads.map(load => (

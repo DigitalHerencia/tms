@@ -11,7 +11,7 @@ export function SystemHealthChecks() {
           <CardTitle className="text-lg">System Health Checks</CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 space-y-6">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />

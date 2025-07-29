@@ -211,7 +211,7 @@ export default function AcceptInvitationPage() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <form onSubmit={handleSignUpWithInvitation} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
