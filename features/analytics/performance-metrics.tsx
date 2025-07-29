@@ -22,6 +22,14 @@ interface PerformanceMetricsProps {
   performanceData: RevenueMetrics[]; // Updated prop type to RevenueMetrics
 }
 
+/**
+ * Visualize performance metrics such as loads delivered and miles driven.
+ *
+ * Charts resize automatically using ResponsiveContainer to maintain clarity on
+ * any screen size. /* See performance-overview.png */
+ *
+ * @param performanceData - Array of revenue and load metrics
+ */
 export function PerformanceMetrics({
   performanceData,
 }: PerformanceMetricsProps) {

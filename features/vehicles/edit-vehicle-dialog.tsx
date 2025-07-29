@@ -18,6 +18,18 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Dialog for editing an existing vehicle.
+ *
+ * Layout adapts to narrow viewports so all fields remain accessible on mobile.
+ * /* See edit-vehicle-form.png */
+ *
+ * @param orgId - Organization identifier
+ * @param vehicle - Vehicle to edit
+ * @param onSuccess - Callback on successful update
+ * @param open - Whether the dialog is open
+ * @param onOpenChange - Handler to change open state
+ */
 export default function EditVehicleDialog({
   orgId,
   vehicle,

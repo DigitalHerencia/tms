@@ -8,6 +8,15 @@ interface VehicleListPageProps {
   page?: number;
 }
 
+/**
+ * Page displaying the fleet vehicle list.
+ *
+ * Vehicle cards stack vertically on small screens and expand in a grid on
+ * desktop for easier browsing. /* See vehicles-grid.png */
+ *
+ * @param orgId - Organization identifier
+ * @param page - Page number for vehicle pagination
+ */
 export default async function VehicleListPage({
   orgId,
   page = 1,

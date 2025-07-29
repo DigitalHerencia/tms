@@ -41,6 +41,17 @@ const initialState: Partial<VehicleFormData> = {
   licensePlateState: '',
 };
 
+/**
+ * Dialog used to add a new vehicle to the fleet.
+ *
+ * Form fields are arranged in a responsive grid so they remain usable on
+ * mobile devices. /* See add-vehicle-form.png */
+ *
+ * @param orgId - Organization identifier
+ * @param onSuccess - Callback fired after successful creation
+ * @param open - Whether the dialog is open
+ * @param onOpenChange - Handler to change open state
+ */
 export default function AddVehicleDialog({
   orgId,
   onSuccess,
