@@ -48,7 +48,7 @@
 -   **Backend:** Node.js/Edge, React Server Actions, Next.js API Routes
 -   **Database:** PostgreSQL (Neon), Prisma ORM
 -   **Auth:** Clerk (org-based, RBAC)
--   **Storage:** Vercel Blob Storage
+-   **Storage:** Vercel Blob Storage, S3 for generated PDFs
 -   **Monitoring:** Vercel Analytics
 -   **Testing:** Vitest, React Testing Library, Playwright
 -   **Coverage:** Codecov reports via GitHub Actions
@@ -84,6 +84,22 @@ Install project dependencies before running tests:
 npm install
 npm test
 ```
+
+### PDF Storage Configuration
+
+Set the storage provider for generated PDFs using environment variables:
+
+```bash
+PDF_STORAGE_PROVIDER=s3
+S3_BUCKET=your-bucket-name
+S3_REGION=us-east-1
+S3_ACCESS_KEY_ID=xxxxx
+S3_SECRET_ACCESS_KEY=yyyyy
+S3_PUBLIC_URL=https://your-bucket.s3.amazonaws.com
+```
+
+When `PDF_STORAGE_PROVIDER` is set to `s3`, generated reports are uploaded to
+the specified bucket and the service returns a download URL.
 
 ## Feature Flags
 FleetFusion supports runtime toggles via environment variables. See [docs/feature-flags.md](./docs/feature-flags.md) for details.

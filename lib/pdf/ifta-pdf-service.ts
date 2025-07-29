@@ -1,15 +1,16 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { writeFile, mkdir } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import type { 
-  IFTAReportData, 
-  PDFOptions, 
-  PDFGenerationResult, 
+import type {
+  IFTAReportData,
+  PDFOptions,
+  PDFGenerationResult,
   CustomReportOptions,
   DigitalSignature,
-  JurisdictionSummary 
+  JurisdictionSummary
 } from '@/types/ifta';
+import { uploadPDF } from '@/lib/storage/pdfStorage'
 
 export class IFTAPDFService {
   private static readonly STORAGE_PATH = path.join(process.cwd(), 'uploads', 'ifta-pdfs');
@@ -72,13 +73,11 @@ export class IFTAPDFService {
 
       const pdfBytes = await pdfDoc.save();
       const fileName = `ifta-quarterly-${reportData.quarter}-${reportData.year}-${Date.now()}.pdf`;
-      const filePath = path.join(this.STORAGE_PATH, fileName);
-
-      await writeFile(filePath, pdfBytes);
+      const downloadUrl = await uploadPDF(pdfBytes, fileName);
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length
       };
@@ -188,13 +187,11 @@ export class IFTAPDFService {
 
       const pdfBytes = await pdfDoc.save();
       const fileName = `ifta-trip-log-${organizationId}-${Date.now()}.pdf`;
-      const filePath = path.join(this.STORAGE_PATH, fileName);
-
-      await writeFile(filePath, pdfBytes);
+      const downloadUrl = await uploadPDF(pdfBytes, fileName);
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length
       };
@@ -324,13 +321,11 @@ export class IFTAPDFService {
 
       const pdfBytes = await pdfDoc.save();
       const fileName = `ifta-fuel-summary-${organizationId}-${Date.now()}.pdf`;
-      const filePath = path.join(this.STORAGE_PATH, fileName);
-
-      await writeFile(filePath, pdfBytes);
+      const downloadUrl = await uploadPDF(pdfBytes, fileName);
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length
       };
@@ -429,13 +424,11 @@ export class IFTAPDFService {
 
       const pdfBytes = await pdfDoc.save();
       const fileName = `ifta-custom-${options.reportType}-${organizationId}-${Date.now()}.pdf`;
-      const filePath = path.join(this.STORAGE_PATH, fileName);
-
-      await writeFile(filePath, pdfBytes);
+      const downloadUrl = await uploadPDF(pdfBytes, fileName);
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length
       };

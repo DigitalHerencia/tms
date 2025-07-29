@@ -174,7 +174,6 @@ export interface PDFGenerationRequest {
 
 export interface PDFGenerationResult {
   success: boolean;
-  filePath?: string;
   fileName?: string;
   fileSize?: number;
   downloadUrl?: string;

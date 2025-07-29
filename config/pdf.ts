@@ -8,9 +8,14 @@ import path from 'path';
 export const pdfConfig = {
   // Storage Configuration
   storage: {
-    provider: 'filesystem',
+    provider: process.env.PDF_STORAGE_PROVIDER || 'filesystem',
     basePath: path.join(process.cwd(), 'uploads', 'ifta-pdfs'),
     tempPath: path.join(process.cwd(), 'tmp', 'ifta-pdfs'),
+    s3: {
+      bucket: process.env.S3_BUCKET || '',
+      region: process.env.S3_REGION || 'us-east-1',
+      publicUrl: process.env.S3_PUBLIC_URL,
+    },
     maxFileSize: 10 * 1024 * 1024, // 10MB
     allowedFormats: ['pdf'],
   },
