@@ -23,12 +23,11 @@ export function RedirectingMessage() {
         src="/sunset_loading.png"
         alt="Loading Background"
         fill
-        style={{ objectFit: 'cover', zIndex: 1 }}
-        className="h-full w-full transition-opacity duration-1000"
+        className="h-full w-full transition-opacity duration-1000 object-cover z-[1]"
         priority
       />
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/20 transition-opacity duration-700">
-        <div className="flex flex-col items-center w-full max-w-2xl text-center" style={{ minHeight: '60vh', justifyContent: 'flex-start', marginTop: '8vh' }}>
+        <div className="flex flex-col items-center w-full max-w-2xl text-center min-h-[60vh] justify-start mt-[8vh]">
           {/* Logo and brand moved up */}
           <div className="flex flex-col items-center space-y-6 mb-10">
             <div className="flex items-center space-x-3">
