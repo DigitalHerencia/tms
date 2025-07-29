@@ -3,9 +3,8 @@
 /**
  * IFTA data fetchers.
  *
- * TODO remaining:
- * - Implement quarter/year filtering and jurisdiction tax rate models.
- * - Add driver and location lookups for trip data.
+ * Remaining TODOs:
+ * - Add jurisdiction tax rate models when schema is ready.
  */
 
 import { auth } from '@clerk/nextjs/server';
@@ -132,49 +131,56 @@ export async function getIftaDataForPeriod(
       },
     });
 
-    // Calculate summary statistics
-    const totalMiles = trips.reduce((sum, trip) => sum + trip.distance, 0);
-    const totalGallons = fuelPurchases.reduce(
-      (sum, purchase) => sum + Number(purchase.gallons),
-      0
-    );
-    const averageMpg = totalGallons > 0 ? totalMiles / totalGallons : 0;
-    const totalFuelCost = fuelPurchases.reduce(
-      (sum, purchase) => sum + Number(purchase.amount),
-      0
-    );    // Group by jurisdiction
-    const jurisdictionSummary = trips.reduce(
-      (acc, trip) => {
-        const jurisdiction = trip.jurisdiction;
-        if (!acc[jurisdiction]) {
-          acc[jurisdiction] = {
-            jurisdiction,
-            totalMiles: 0,
-            taxableMiles: 0,
-            taxableGallons: 0,
-            taxRate: 0,
-            taxDue: 0,
-            taxPaid: 0,
-            netTaxDue: 0,
-            miles: 0,
-            fuelGallons: 0,
-          };
-        }
-        acc[jurisdiction].miles = (acc[jurisdiction].miles || 0) + trip.distance;
-        acc[jurisdiction].totalMiles = (acc[jurisdiction].totalMiles || 0) + trip.distance;
-        acc[jurisdiction].taxableMiles = (acc[jurisdiction].taxableMiles || 0) + trip.distance;
-        return acc;
-      },
-      {} as Record<string, IftaJurisdictionSummary>
-    );
+    // Aggregate totals using Prisma
+    const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
+      db.iftaTrip.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true, amount: true },
+      }),
+      db.iftaTrip.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true },
+      }),
+    ]);
 
-    // Add fuel data to jurisdiction summary
-    fuelPurchases.forEach(purchase => {
-      const jurisdiction = purchase.jurisdiction;
-      if (jurisdictionSummary[jurisdiction]) {
-        const gallons = Number(purchase.gallons);
-        jurisdictionSummary[jurisdiction].fuelGallons = (jurisdictionSummary[jurisdiction].fuelGallons || 0) + gallons;
-        jurisdictionSummary[jurisdiction].taxableGallons = (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
+    const totalMiles = tripAgg._sum.distance ?? 0;
+    const totalGallons = Number(fuelAgg._sum.gallons ?? 0);
+    const averageMpg = totalGallons > 0 ? totalMiles / totalGallons : 0;
+    const totalFuelCost = Number(fuelAgg._sum.amount ?? 0);
+
+    // Merge jurisdiction aggregates
+    const jurisdictionSummary: Record<string, IftaJurisdictionSummary> = {};
+    milesByJurisdiction.forEach(j => {
+      jurisdictionSummary[j.jurisdiction] = {
+        jurisdiction: j.jurisdiction,
+        totalMiles: j._sum.distance || 0,
+        taxableMiles: j._sum.distance || 0,
+        taxableGallons: 0,
+        taxRate: 0,
+        taxDue: 0,
+        taxPaid: 0,
+        netTaxDue: 0,
+        miles: j._sum.distance || 0,
+        fuelGallons: 0,
+      };
+    });
+
+    fuelByJurisdiction.forEach(f => {
+      const entry = jurisdictionSummary[f.jurisdiction];
+      if (entry) {
+        const gallons = Number(f._sum.gallons || 0);
+        entry.fuelGallons = gallons;
+        entry.taxableGallons = gallons;
       }
     });
 
@@ -182,13 +188,70 @@ export async function getIftaDataForPeriod(
     const existingReport = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
-        },
+        quarter: quarterNum,
+        year: yearNum,
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Look up driver and location information for each trip
+    const detailedTrips = await Promise.all(
+      trips.map(async trip => {
+        const load = await db.load.findFirst({
+          where: {
+            organizationId: orgId,
+            vehicleId: trip.vehicleId,
+            OR: [
+              {
+                AND: [
+                  { scheduledPickupDate: { lte: trip.date } },
+                  { scheduledDeliveryDate: { gte: trip.date } },
+                ],
+              },
+              {
+                AND: [
+                  { actualPickupDate: { lte: trip.date } },
+                  { actualDeliveryDate: { gte: trip.date } },
+                ],
+              },
+            ],
+          },
+          select: {
+            originCity: true,
+            originState: true,
+            destinationCity: true,
+            destinationState: true,
+            drivers: { select: { firstName: true, lastName: true } },
+          },
+        });
+
+        const driverName = load?.drivers ? `${load.drivers.firstName} ${load.drivers.lastName}` : null;
+        const startLocation = load ? `${load.originCity}, ${load.originState}` : null;
+        const endLocation = load ? `${load.destinationCity}, ${load.destinationState}` : null;
+
+        return {
+          id: trip.id,
+          date: trip.date,
+          vehicleId: trip.vehicleId,
+          vehicle: {
+            id: trip.vehicle.id,
+            unitNumber: trip.vehicle.unitNumber,
+            make: trip.vehicle.make || 'Unknown',
+            model: trip.vehicle.model || 'Unknown',
+          },
+          jurisdiction: trip.jurisdiction,
+          distance: trip.distance,
+          fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
+          notes: trip.notes,
+          driver: driverName,
+          startLocation,
+          endLocation,
+          miles: trip.distance,
+          gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
+          state: trip.jurisdiction,
+        };
+      })
+    );
 
     const result: IftaPeriodData = {
       period: { quarter: quarterNum, year: yearNum },
@@ -197,28 +260,9 @@ export async function getIftaDataForPeriod(
         totalGallons,
         averageMpg: Math.round(averageMpg * 100) / 100,
         totalFuelCost,
-      },      trips: trips.map(trip => ({
-        id: trip.id,
-        date: trip.date,
-        vehicleId: trip.vehicleId,
-        vehicle: {
-          id: trip.vehicle.id,
-          unitNumber: trip.vehicle.unitNumber,
-          make: trip.vehicle.make || 'Unknown',
-          model: trip.vehicle.model || 'Unknown',
-        },
-        jurisdiction: trip.jurisdiction,
-        distance: trip.distance,
-        fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
-        notes: trip.notes,
-        // Additional fields for table compatibility
-        driver: 'Driver Name', // TODO: Add proper driver lookup
-        startLocation: 'Start Location', // TODO: Add proper location data
-        endLocation: 'End Location', // TODO: Add proper location data
-        miles: trip.distance,
-        gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
-        state: trip.jurisdiction,
-      })),fuelPurchases: fuelPurchases.map(purchase => ({
+      },
+      trips: detailedTrips,
+      fuelPurchases: fuelPurchases.map(purchase => ({
         id: purchase.id,
         date: purchase.date,
         vehicleId: purchase.vehicleId,
@@ -434,15 +478,15 @@ export async function getIftaReports(orgId: string, year?: number) {
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }], // Use createdAt instead of non-existent year/quarter fields
+      orderBy: [{ year: 'desc' }, { quarter: 'desc' }],
     });
 
     return {
       success: true,
       data: reports.map(report => ({
         id: report.id,
-        quarter: 1, // TODO: Calculate from createdAt or calculationData
-        year: report.createdAt.getFullYear(), // Use year from createdAt
+        quarter: report.quarter,
+        year: report.year,
         status: report.status,
         totalMiles: report.totalMiles,
         totalGallons: report.totalGallons ? Number(report.totalGallons) : null,
@@ -823,9 +867,8 @@ export async function validateTaxCalculations(
     const report = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        // quarter: parseInt(quarter.replace('Q', '')), // Removed: not in schema
-        // TODO: Implement quarter/year filtering using date ranges or calculationData if needed
-        // year: parseInt(year), // Only filter by year if available
+        quarter: parseInt(quarter.replace('Q', '')),
+        year: parseInt(year),
       },
     });
 
