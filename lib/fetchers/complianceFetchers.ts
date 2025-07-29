@@ -791,11 +791,19 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
                 where: { ...where, type: "hos_log" },
             }),
         ])
-        // Calculate drive/on-duty time and violations
+        // Calculate hours-of-service metrics and violations
+        const diffMinutes = (s: any, e: any) =>
+            Math.max(0, (new Date(e).getTime() - new Date(s).getTime()) / 60000)
+
         const logs = hosDocs.map(doc => {
             let totalDriveTime = 0
             let totalOnDutyTime = 0
+            let totalOffDutyTime = 0
+            let sleeperBerthTime = 0
+            let personalConveyanceTime = 0
+            let yardMovesTime = 0
             const violations: any[] = []
+
             let meta = doc.metadata
             if (typeof meta === "string") {
                 try {
@@ -804,31 +812,57 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
                     meta = {}
                 }
             }
-            if (
+
+            const entries =
                 meta &&
                 typeof meta === "object" &&
-                !Array.isArray(meta) &&
-                Array.isArray((meta as any).logs)
-            ) {
-                for (const entry of (meta as any).logs) {
-                    if (entry.status === "driving")
-                        totalDriveTime += entry.endTime - entry.startTime
-                    if (["driving", "on_duty"].includes(entry.status))
-                        totalOnDutyTime += entry.endTime - entry.startTime
-                }
-                if (totalDriveTime > 11 * 60) {
-                    violations.push({
-                        type: "11_hour",
-                        description: "Exceeded 11-hour driving limit",
-                    })
-                }
-                if (totalOnDutyTime > 14 * 60) {
-                    violations.push({
-                        type: "14_hour",
-                        description: "Exceeded 14-hour on-duty limit",
-                    })
+                !Array.isArray(meta)
+                    ? (Array.isArray((meta as any).logs)
+                          ? (meta as any).logs
+                          : Array.isArray((meta as any).timeRecords)
+                          ? (meta as any).timeRecords
+                          : [])
+                    : []
+
+            for (const entry of entries) {
+                const mins = diffMinutes(entry.startTime, entry.endTime)
+                switch (entry.status) {
+                    case "driving":
+                        totalDriveTime += mins
+                        totalOnDutyTime += mins
+                        break
+                    case "on_duty":
+                        totalOnDutyTime += mins
+                        break
+                    case "off_duty":
+                        totalOffDutyTime += mins
+                        break
+                    case "sleeper_berth":
+                        sleeperBerthTime += mins
+                        break
+                    case "personal_conveyance":
+                        personalConveyanceTime += mins
+                        break
+                    case "yard_moves":
+                        yardMovesTime += mins
+                        totalOnDutyTime += mins
+                        break
                 }
             }
+
+            if (totalDriveTime > 11 * 60) {
+                violations.push({
+                    type: "11_hour",
+                    description: "Exceeded 11-hour driving limit",
+                })
+            }
+            if (totalOnDutyTime > 14 * 60) {
+                violations.push({
+                    type: "14_hour",
+                    description: "Exceeded 14-hour on-duty limit",
+                })
+            }
+
             return {
                 id: doc.id,
                 date: doc.createdAt,
@@ -838,6 +872,10 @@ export async function getHOSLogs(filter: z.infer<typeof hosFilterSchema> = {}) {
                     | "pending_review",
                 totalDriveTime,
                 totalOnDutyTime,
+                totalOffDutyTime,
+                sleeperBerthTime,
+                personalConveyanceTime,
+                yardMovesTime,
                 violations,
                 certifiedBy: doc.verifiedBy,
                 certifiedAt: doc.verifiedAt,
