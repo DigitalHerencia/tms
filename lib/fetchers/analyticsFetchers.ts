@@ -1,5 +1,12 @@
 "use server"
 
+/**
+ * Analytics data fetchers.
+ *
+ * TODO remaining:
+ * - Create and retrieve filter presets when the model is available.
+ */
+
 import { auth } from "@clerk/nextjs/server"
 
 import { CACHE_TTL, getCachedData, setCachedData } from "@/lib/cache/auth-cache"
@@ -588,32 +595,22 @@ export async function saveFilterPreset(
         throw new Error("Unauthorized")
     }
     try {
-        // TODO: Implement analytics filter preset creation when model is added to schema
-        // const filterPreset = await prisma.analyticsFilterPreset.create({
-        //     data: {
-        //         name: preset.name,
-        //         filters: preset.filters as any, // Store as JSON
-        //         userId,
-        //         organizationId,
-        //         isDefault: preset.isDefault || false,
-        //     },
-        // })
+        const filterPreset = await prisma.analyticsFilterPreset.create({
+            data: {
+                name: preset.name,
+                description: (preset as any).description ?? null,
+                filters: preset.filters as any,
+                userId,
+                organizationId,
+                isDefault: preset.isDefault ?? false,
+            },
+        })
 
-        const filterPreset = {
-            id: Math.random().toString(36),
-            name: preset.name,
-            filters: preset.filters,
-            organizationId,
-            userId,
-            isDefault: preset.isDefault || false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        }
+        // Invalidate cached presets for the user
+        const cacheKey = `analytics:presets:${organizationId}:${userId}`
+        setCachedData(cacheKey, null as any, 0)
 
-        return {
-            success: true,
-            data: filterPreset,
-        }
+        return { success: true, data: filterPreset }
     } catch (error) {
         console.error("Error saving filter preset:", error)
         throw new Error("Failed to save filter preset")
@@ -635,16 +632,13 @@ export async function getFilterPresets(organizationId: string): Promise<any> {
         return cached
     }
     try {
-        // TODO: Implement analytics filter preset retrieval when model is added to schema
-        // const presets = await prisma.analyticsFilterPreset.findMany({
-        //     where: {
-        //         organizationId,
-        //         userId,
-        //     },
-        //     orderBy: [{ isDefault: "desc" }, { name: "asc" }],
-        // })
-
-        const presets: any[] = [] // Temporary empty array until model is implemented
+        const presets = await prisma.analyticsFilterPreset.findMany({
+            where: {
+                organizationId,
+                userId,
+            },
+            orderBy: [{ isDefault: "desc" }, { name: "asc" }],
+        })
 
         setCachedData(cacheKey, presets, CACHE_TTL.DATA)
         return presets

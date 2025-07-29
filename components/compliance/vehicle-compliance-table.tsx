@@ -142,7 +142,7 @@ export const columns: ColumnDef<Vehicle>[] = [
 export function VehicleComplianceTable({
   orgId
 }: VehicleComplianceTableProps): JSX.Element {
-  // TODO: Fetch vehicle compliance data using orgId
+  // TODO: Fetch vehicle compliance data using orgId once API endpoints are ready
   
   return (
     <div className="space-y-4">

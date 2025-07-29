@@ -1,17 +1,41 @@
-// Auth domain data retrieval
-// Add business logic for fetching user/session/org data here
+/**
+ * Auth domain data retrieval helpers.
+ *
+ * These fetchers will query user, session and organization information from
+ * Clerk and the database as described in docs/PRD.md §1 (Auth).
+ *
+ * TODO: connect to Clerk SDK and Prisma once schemas are finalized.
+ */
 
-export async function fetchUser(userId: string) {
+/**
+ * Get a single user record.
+ *
+ * @param userId - Clerk user id
+ * @returns Promise resolving with user data
+ */
+export async function fetchUser(userId: string): Promise<any> {
   // TODO: Implement user fetch logic
   throw new Error('Not implemented');
 }
 
-export async function fetchSession(userId: string) {
+/**
+ * Retrieve the active session for a user.
+ *
+ * @param userId - Clerk user id
+ * @returns Promise resolving with session details
+ */
+export async function fetchSession(userId: string): Promise<any> {
   // TODO: Implement session fetch logic
   throw new Error('Not implemented');
 }
 
-export async function fetchOrganization(orgId: string) {
+/**
+ * Lookup organization information by id.
+ *
+ * @param orgId - Organization id
+ * @returns Promise resolving with organization metadata
+ */
+export async function fetchOrganization(orgId: string): Promise<any> {
   // TODO: Implement organization fetch logic
   throw new Error('Not implemented');
 }
