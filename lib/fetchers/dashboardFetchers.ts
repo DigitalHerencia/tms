@@ -3,8 +3,8 @@
 /**
  * Dashboard data fetchers.
  *
- * Provides audit log activity and key metrics including compliance score,
- * revenue and fuel costs.
+ * Provides helper functions for retrieving dashboard metrics, KPIs,
+ * activity logs, and other related data from the database.
  */
 
 import db from "@/lib/database/db"
@@ -79,13 +79,16 @@ export async function getOrganizationUsers(orgId: string): Promise<UserManagemen
   };
 }
 
-export async function getAuditLogs(orgId: string): Promise<AuditLogEntry[]> {
+export async function getAuditLogs(
+  orgId: string,
+  limit = 100
+): Promise<AuditLogEntry[]> {
   await requireAdminForOrg(orgId);
 
   const logs = await prisma.auditLog.findMany({
     where: { organizationId: orgId },
     orderBy: { timestamp: 'desc' },
-    take: 100,
+    take: limit,
   })
 
   return logs.map(l => ({
@@ -745,11 +748,7 @@ export const getRecentActivity = unstable_cache(
         })
         if (!user) throw new Error("Unauthorized")
 
-        const auditLogs = await db.auditLog.findMany({
-            where: { organizationId: orgId },
-            orderBy: { timestamp: "desc" },
-            take: 10,
-        })
+        const auditLogs = await getAuditLogs(orgId, 10)
 
         return auditLogs.map(log => ({
             id: log.id,
