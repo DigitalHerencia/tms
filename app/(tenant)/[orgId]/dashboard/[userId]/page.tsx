@@ -8,6 +8,7 @@ import { Suspense } from 'react'
 import { Activity, BarChart, CreditCard, FileText, Settings, Shield, Users } from 'lucide-react'
 import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
 import UserManagementDashboard from '@/features/dashboard/UserManagementDashboard';
+import { PageLayout } from '@/components/shared/PageLayout';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
 import { getCurrentUser } from '@/lib/auth/auth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -44,7 +45,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const users = await getOrganizationUsers(orgId);
 
   return (
-    <div className="flex flex-col gap-3 p-6 bg-neutral-900 text-white min-h-screen">
+    <PageLayout className="gap-3">
 
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
@@ -53,7 +54,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
       {/* Main Admin Interface */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
+        <TabsList className="grid w-auto grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 bg-black border border-gray-200">
           <TabsTrigger value="overview" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
             <Shield className="h-4 w-4" />
             Overview
@@ -184,6 +185,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </PageLayout>
   );
 }
