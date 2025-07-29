@@ -330,7 +330,7 @@ export function DriverForm({ initialValues, onSubmit, submitting, mode = 'create
               Additional Notes
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 space-y-6">
             <Label htmlFor="notes" className="text-white mb-2 block">
               Notes
             </Label>

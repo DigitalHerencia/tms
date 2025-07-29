@@ -77,7 +77,7 @@ export default async function ComplianceDashboardPage({
               </CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="text-2xl font-bold">92%</div>
               <p className="text-muted-foreground text-xs">
                 2 drivers need attention
@@ -93,7 +93,7 @@ export default async function ComplianceDashboardPage({
               </CardTitle>
               <AlertTriangle className="h-4 w-4 text-amber-500" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="text-2xl font-bold">85%</div>
               <p className="text-muted-foreground text-xs">
                 4 vehicles need attention
@@ -109,7 +109,7 @@ export default async function ComplianceDashboardPage({
               </CardTitle>
               <Clock className="h-4 w-4 text-red-500" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="text-2xl font-bold">3</div>
               <p className="text-muted-foreground text-xs">Last 7 days</p>
               <Progress value={30} className="mt-2" />
@@ -123,7 +123,7 @@ export default async function ComplianceDashboardPage({
               </CardTitle>
               <FileText className="h-4 w-4 text-blue-500" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="text-2xl font-bold">96%</div>
               <p className="text-muted-foreground text-xs">
                 1 document expiring soon
@@ -144,7 +144,7 @@ export default async function ComplianceDashboardPage({
               Items requiring immediate attention
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 space-y-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between rounded-md border border-gray-200 bg-neutral-900 p-3">
                 <div className="flex items-center gap-3">
@@ -193,7 +193,7 @@ export default async function ComplianceDashboardPage({
                 Compliance items requiring attention in the next 30 days
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -294,7 +294,7 @@ export default async function ComplianceDashboardPage({
               Recent uploads and document status tracking
             </CardDescription>
           </CardHeader>
-          <CardContent className="">
+          <CardContent className="p-6 space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between bg-neutral-900 rounded-md border p-3">
                 <div className="flex items-center gap-3">
@@ -376,7 +376,7 @@ export default async function ComplianceDashboardPage({
               Monitor driver licenses, medical cards, and HOS compliance
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 space-y-6">
             {' '}
             <Suspense fallback={<LoadingSpinner />}>
               <DriverComplianceTable orgId={orgId} />
@@ -392,7 +392,7 @@ export default async function ComplianceDashboardPage({
               Tools and reports for regulatory compliance
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
               <Button 
                 className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2"

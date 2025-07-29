@@ -25,7 +25,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Total Revenue</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {'$' + summary.totalRevenue.toLocaleString()}
           </span>
@@ -35,7 +35,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Total Miles</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{summary.totalMiles}</span>
         </CardContent>
       </Card>
@@ -43,7 +43,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Total Loads</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{summary.totalLoads}</span>
         </CardContent>
       </Card>
@@ -51,7 +51,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Active Drivers</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{summary.activeDrivers}</span>
         </CardContent>
       </Card>
@@ -59,7 +59,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Active Vehicles</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{summary.activeVehicles}</span>
         </CardContent>
       </Card>
@@ -67,7 +67,7 @@ export async function MainDashboardFeature({
         <CardHeader>
           <CardTitle>Revenue per Mile</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {'$' + summary.averageRevenuePerMile.toFixed(2)}
           </span>

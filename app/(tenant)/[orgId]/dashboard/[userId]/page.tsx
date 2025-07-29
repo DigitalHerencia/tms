@@ -89,7 +89,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Key metrics and performance indicators
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <AdminOverview orgId={orgId} userId={userId} />
               </Suspense>
@@ -110,7 +110,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Manage user accounts, roles, and permissions for your organization
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <UserManagementDashboard orgId={orgId} users={Array.isArray(users) ? users : users.users} />
               </Suspense>
@@ -134,7 +134,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
               <BillingActions />
               </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
             <BillingManagementClient billingInfo={billingInfo} />
               </Suspense>
@@ -155,7 +155,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 View system activity, user actions, and security events
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <AuditLogViewer logs={ auditLogs } selectedLog={ null } setSelectedLog={ () => {} } getActionBadgeVariant={ () => 'default' } />
               </Suspense>
@@ -176,7 +176,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Monitor system performance, uptime, and infrastructure status
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <SystemHealth />
               </Suspense>
