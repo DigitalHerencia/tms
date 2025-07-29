@@ -1,5 +1,12 @@
 "use server"
 
+/**
+ * Analytics data fetchers.
+ *
+ * TODO remaining:
+ * - Create and retrieve filter presets when the model is available.
+ */
+
 import { auth } from "@clerk/nextjs/server"
 
 import { CACHE_TTL, getCachedData, setCachedData } from "@/lib/cache/auth-cache"

@@ -1,5 +1,11 @@
 "use server";
 
+/**
+ * User management server actions.
+ *
+ * TODO remaining: send invitation emails when inviting users.
+ */
+
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
 

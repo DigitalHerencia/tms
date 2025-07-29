@@ -1,5 +1,11 @@
 "use server"
 
+/**
+ * Onboarding actions manage invitation flow during user sign up.
+ *
+ * TODO remaining: implement robust invitation code validation.
+ */
+
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { currentUser } from "@clerk/nextjs/server"

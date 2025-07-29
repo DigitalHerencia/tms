@@ -38,7 +38,7 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
     setValidationError('');
 
     try {
-      // TODO: Validate organization ID exists
+      // TODO: Validate organization ID exists once org lookup API is available
       // For now, we'll just proceed
       setTimeout(() => {
         setIsValidating(false);

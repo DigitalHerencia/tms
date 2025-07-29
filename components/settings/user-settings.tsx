@@ -156,7 +156,7 @@ export function UserSettings() {
 
     const handleRevokeInvitation = async (invitationId: string) => {
         try {
-            // TODO: Implement actual revoke logic here, e.g. call an API or action
+            // TODO: Implement actual revoke logic here once API endpoint exists
             // Example:
             // const result = await revokeOrganizationInvitation(invitationId)
             const result = { success: false, error: "Revoke not implemented" } // Placeholder

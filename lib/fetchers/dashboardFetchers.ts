@@ -1,5 +1,13 @@
 "use server"
 
+/**
+ * Dashboard data fetchers.
+ *
+ * TODO remaining:
+ * - Implement AuditLog model usage when schema is ready.
+ * - Calculate compliance score, revenue and fuel cost metrics.
+ */
+
 import db from "@/lib/database/db"
 import type {
     ActivityItem,
