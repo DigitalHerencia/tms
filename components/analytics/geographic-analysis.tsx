@@ -25,151 +25,52 @@ import {
   Clock,
   AlertTriangle
 } from 'lucide-react';
-import { AnalyticsData } from '@/types/analytics';
+import { AnalyticsData, RouteAnalytics, HeatmapDataPoint } from '@/types/analytics';
 
 interface GeographicAnalysisProps {
   data: AnalyticsData;
   orgId: string;
+  routes: RouteAnalytics[];
+  heatmap: HeatmapDataPoint[];
 }
 
-interface RouteData {
-  id: string;
-  origin: {
-    city: string;
-    state: string;
-    lat: number;
-    lng: number;
-  };
-  destination: {
-    city: string;
-    state: string;
-    lat: number;
-    lng: number;
-  };
-  frequency: number;
-  revenue: number;
-  avgDeliveryTime: number;
-  onTimeRate: number;
-  fuelCost: number;
-  distance: number;
-}
 
-interface HeatmapData {
-  city: string;
-  state: string;
-  lat: number;
-  lng: number;
-  loads: number;
-  revenue: number;
-  utilization: number;
-}
-
-// Mock geographic data - in real implementation, this would come from the API
-const mockRouteData: RouteData[] = [
-  {
-    id: 'route-1',
-    origin: { city: 'Los Angeles', state: 'CA', lat: 34.0522, lng: -118.2437 },
-    destination: { city: 'Phoenix', state: 'AZ', lat: 33.4484, lng: -112.0740 },
-    frequency: 45,
-    revenue: 125000,
-    avgDeliveryTime: 8.5,
-    onTimeRate: 92,
-    fuelCost: 15000,
-    distance: 370
-  },
-  {
-    id: 'route-2',
-    origin: { city: 'Chicago', state: 'IL', lat: 41.8781, lng: -87.6298 },
-    destination: { city: 'Detroit', state: 'MI', lat: 42.3314, lng: -83.0458 },
-    frequency: 38,
-    revenue: 98000,
-    avgDeliveryTime: 5.2,
-    onTimeRate: 88,
-    fuelCost: 8500,
-    distance: 280
-  },
-  {
-    id: 'route-3',
-    origin: { city: 'Dallas', state: 'TX', lat: 32.7767, lng: -96.7970 },
-    destination: { city: 'Houston', state: 'TX', lat: 29.7604, lng: -95.3698 },
-    frequency: 52,
-    revenue: 156000,
-    avgDeliveryTime: 4.8,
-    onTimeRate: 95,
-    fuelCost: 12000,
-    distance: 240
-  },
-  {
-    id: 'route-4',
-    origin: { city: 'Atlanta', state: 'GA', lat: 33.7490, lng: -84.3880 },
-    destination: { city: 'Miami', state: 'FL', lat: 25.7617, lng: -80.1918 },
-    frequency: 28,
-    revenue: 89000,
-    avgDeliveryTime: 12.5,
-    onTimeRate: 85,
-    fuelCost: 18500,
-    distance: 650
-  },
-  {
-    id: 'route-5',
-    origin: { city: 'Seattle', state: 'WA', lat: 47.6062, lng: -122.3321 },
-    destination: { city: 'Portland', state: 'OR', lat: 45.5152, lng: -122.6784 },
-    frequency: 34,
-    revenue: 75000,
-    avgDeliveryTime: 3.2,
-    onTimeRate: 96,
-    fuelCost: 6500,
-    distance: 170
-  }
-];
-
-const mockHeatmapData: HeatmapData[] = [
-  { city: 'Los Angeles', state: 'CA', lat: 34.0522, lng: -118.2437, loads: 156, revenue: 450000, utilization: 85 },
-  { city: 'Chicago', state: 'IL', lat: 41.8781, lng: -87.6298, loads: 128, revenue: 380000, utilization: 78 },
-  { city: 'Dallas', state: 'TX', lat: 32.7767, lng: -96.7970, loads: 142, revenue: 420000, utilization: 82 },
-  { city: 'Atlanta', state: 'GA', lat: 33.7490, lng: -84.3880, loads: 98, revenue: 285000, utilization: 72 },
-  { city: 'Seattle', state: 'WA', lat: 47.6062, lng: -122.3321, loads: 76, revenue: 220000, utilization: 68 },
-  { city: 'Phoenix', state: 'AZ', lat: 33.4484, lng: -112.0740, loads: 89, revenue: 255000, utilization: 75 },
-  { city: 'Denver', state: 'CO', lat: 39.7392, lng: -104.9903, loads: 67, revenue: 195000, utilization: 65 },
-  { city: 'Miami', state: 'FL', lat: 25.7617, lng: -80.1918, loads: 54, revenue: 165000, utilization: 62 }
-];
-
-export function GeographicAnalysis({ data, orgId }: GeographicAnalysisProps) {
+export function GeographicAnalysis({ data, orgId, routes, heatmap }: GeographicAnalysisProps) {
   const [selectedView, setSelectedView] = useState<'routes' | 'heatmap' | 'optimization'>('routes');
   const [selectedMetric, setSelectedMetric] = useState<'revenue' | 'loads' | 'utilization'>('revenue');
-  const [selectedRoute, setSelectedRoute] = useState<RouteData | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<RouteAnalytics | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 39.8283, lng: -98.5795 }); // Center of US
 
   // Calculate route efficiency metrics
   const routeMetrics = useMemo(() => {
-    return mockRouteData.map(route => ({
+    return routes.map(route => ({
       ...route,
       efficiency: (route.revenue / route.fuelCost).toFixed(2),
       revenuePerMile: (route.revenue / route.distance).toFixed(2),
       profitability: route.onTimeRate > 90 ? 'high' : route.onTimeRate > 80 ? 'medium' : 'low'
     }));
-  }, []);
+  }, [routes]);
 
   // Calculate geographic insights
   const geoInsights = useMemo(() => {
-    const totalRevenue = mockHeatmapData.reduce((sum, city) => sum + city.revenue, 0);
-    const avgUtilization = mockHeatmapData.reduce((sum, city) => sum + city.utilization, 0) / mockHeatmapData.length;
-    
-    const topPerformingCity = mockHeatmapData.reduce((max, city) => 
+    const totalRevenue = heatmap.reduce((sum, city) => sum + city.revenue, 0);
+    const avgUtilization = heatmap.reduce((sum, city) => sum + city.utilization, 0) / heatmap.length;
+
+    const topPerformingCity = heatmap.reduce((max, city) =>
       city.revenue > max.revenue ? city : max
     );
-    
-    const underutilizedCities = mockHeatmapData.filter(city => city.utilization < 70);
-    
+
+    const underutilizedCities = heatmap.filter(city => city.utilization < 70);
+
     return {
       totalRevenue,
       avgUtilization,
       topPerformingCity,
       underutilizedCities,
-      totalCities: mockHeatmapData.length,
-      totalRoutes: mockRouteData.length
+      totalCities: heatmap.length,
+      totalRoutes: routes.length
     };
-  }, []);
+  }, [heatmap, routes]);
 
   // Simple SVG map visualization (in real implementation, use Google Maps or Mapbox)
   const MapVisualization = () => (
@@ -224,15 +125,15 @@ export function GeographicAnalysis({ data, orgId }: GeographicAnalysisProps) {
         })}
         
         {/* Heatmap circles */}
-        {selectedView === 'heatmap' && mockHeatmapData.map((city, index) => {
+        {selectedView === 'heatmap' && heatmap.map((city, index) => {
           const x = ((city.lng + 130) / 60) * 800;
           const y = ((50 - city.lat) / 25) * 400;
           const value = selectedMetric === 'revenue' ? city.revenue : 
                        selectedMetric === 'loads' ? city.loads * 1000 : 
                        city.utilization * 1000;
-          const maxValue = Math.max(...mockHeatmapData.map(c => 
-            selectedMetric === 'revenue' ? c.revenue : 
-            selectedMetric === 'loads' ? c.loads * 1000 : 
+          const maxValue = Math.max(...heatmap.map(c =>
+            selectedMetric === 'revenue' ? c.revenue :
+            selectedMetric === 'loads' ? c.loads * 1000 :
             c.utilization * 1000
           ));
           const radius = 8 + (value / maxValue) * 20;
@@ -507,7 +408,7 @@ export function GeographicAnalysis({ data, orgId }: GeographicAnalysisProps) {
                 
                 {/* City Performance Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {mockHeatmapData
+                  {heatmap
                     .sort((a, b) => b[selectedMetric] - a[selectedMetric])
                     .map((city, index) => (
                       <Card key={index} className="relative">

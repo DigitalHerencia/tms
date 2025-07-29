@@ -11,7 +11,12 @@ import { auth } from "@clerk/nextjs/server"
 
 import { CACHE_TTL, getCachedData, setCachedData } from "@/lib/cache/auth-cache"
 import prisma from "@/lib/database/db"
-import type { DashboardSummary } from "@/types/analytics"
+import type {
+    DashboardSummary,
+    PredictionData,
+    RouteAnalytics,
+    HeatmapDataPoint,
+} from "@/types/analytics"
 import { unstable_cache } from "next/cache"
 
 export interface AnalyticsFilters {
@@ -1155,6 +1160,175 @@ export async function getGeographicAnalytics(
         console.error("Error fetching geographic analytics:", error)
         throw new Error("Failed to fetch geographic analytics")
     }
+}
+
+/**
+ * Get route and heatmap analytics data
+ */
+export async function getRouteHeatmapAnalytics(
+    organizationId: string,
+    timeRange: string = "30d",
+    filters: AnalyticsFilters = {},
+): Promise<{ routes: RouteAnalytics[]; heatmap: HeatmapDataPoint[] }> {
+    const { userId } = await auth()
+    if (!userId) {
+        throw new Error("Unauthorized")
+    }
+
+    const cacheKey = `analytics:routeheatmap:${organizationId}:${timeRange}:${JSON.stringify(
+        filters,
+    )}`
+    const cached = getCachedData(cacheKey)
+    if (cached) {
+        return cached as { routes: RouteAnalytics[]; heatmap: HeatmapDataPoint[] }
+    }
+
+    try {
+        const { startDate, endDate } = getDateRange(timeRange)
+
+        const whereClause: any = {
+            organizationId,
+            status: "delivered",
+            actualDeliveryDate: {
+                gte: startDate,
+                lte: endDate,
+            },
+        }
+        if (filters.driverId) whereClause.driverId = filters.driverId
+        if (filters.vehicleId) whereClause.vehicleId = filters.vehicleId
+
+        const loads = await prisma.load.findMany({
+            where: whereClause,
+            select: {
+                originCity: true,
+                originState: true,
+                originLat: true,
+                originLng: true,
+                destinationCity: true,
+                destinationState: true,
+                destinationLat: true,
+                destinationLng: true,
+                rate: true,
+                actualMiles: true,
+                actualDeliveryDate: true,
+                scheduledDeliveryDate: true,
+            },
+        })
+
+        const routeMap = new Map<string, any>()
+        const cityMap = new Map<string, any>()
+
+        loads.forEach(load => {
+            const routeKey = `${load.originCity || "Unknown"}-${load.destinationCity || "Unknown"}`
+            if (!routeMap.has(routeKey)) {
+                routeMap.set(routeKey, {
+                    id: routeKey,
+                    origin: {
+                        city: load.originCity || "",
+                        state: load.originState || "",
+                        lat: Number(load.originLat || 0),
+                        lng: Number(load.originLng || 0),
+                    },
+                    destination: {
+                        city: load.destinationCity || "",
+                        state: load.destinationState || "",
+                        lat: Number(load.destinationLat || 0),
+                        lng: Number(load.destinationLng || 0),
+                    },
+                    frequency: 0,
+                    revenue: 0,
+                    deliveryTimeSum: 0,
+                    onTime: 0,
+                    distanceSum: 0,
+                })
+            }
+            const r = routeMap.get(routeKey)
+            r.frequency += 1
+            r.revenue += Number(load.rate || 0)
+            r.distanceSum += Number(load.actualMiles || 0)
+            if (load.actualDeliveryDate && load.scheduledDeliveryDate) {
+                const diff =
+                    new Date(load.actualDeliveryDate).getTime() -
+                    new Date(load.scheduledDeliveryDate).getTime()
+                r.deliveryTimeSum += diff / (1000 * 60 * 60)
+                if (diff <= 0) r.onTime += 1
+            }
+
+            const cityKey = `${load.destinationCity || ""}-${load.destinationState || ""}`
+            if (!cityMap.has(cityKey)) {
+                cityMap.set(cityKey, {
+                    city: load.destinationCity || "",
+                    state: load.destinationState || "",
+                    lat: Number(load.destinationLat || 0),
+                    lng: Number(load.destinationLng || 0),
+                    loads: 0,
+                    revenue: 0,
+                })
+            }
+            const c = cityMap.get(cityKey)
+            c.loads += 1
+            c.revenue += Number(load.rate || 0)
+        })
+
+        const routes: RouteAnalytics[] = Array.from(routeMap.values()).map(r => ({
+            id: r.id,
+            origin: r.origin,
+            destination: r.destination,
+            frequency: r.frequency,
+            revenue: r.revenue,
+            avgDeliveryTime: r.frequency > 0 ? r.deliveryTimeSum / r.frequency : 0,
+            onTimeRate: r.frequency > 0 ? (r.onTime / r.frequency) * 100 : 0,
+            fuelCost: 0,
+            distance: r.frequency > 0 ? r.distanceSum / r.frequency : 0,
+        }))
+
+        const heatmapArray = Array.from(cityMap.values())
+        const maxLoads = Math.max(...heatmapArray.map(c => c.loads), 1)
+        const heatmap: HeatmapDataPoint[] = heatmapArray.map(c => ({
+            ...c,
+            utilization: (c.loads / maxLoads) * 100,
+        }))
+
+        const result = { routes, heatmap }
+        setCachedData(cacheKey, result, CACHE_TTL.DATA)
+        return result
+    } catch (error) {
+        console.error("Error fetching route heatmap analytics:", error)
+        throw new Error("Failed to fetch route heatmap analytics")
+    }
+}
+
+/**
+ * Get performance projections data
+ */
+export async function getPerformanceProjections(
+    organizationId: string,
+    timeRange: string = "30d",
+    filters: AnalyticsFilters = {},
+): Promise<PredictionData[]> {
+    const performance = await getPerformanceAnalytics(organizationId, timeRange, filters)
+    const data: any[] = performance?.timeSeriesData || []
+
+    if (data.length < 3) return []
+
+    const lastThree = data.slice(-3)
+    const first = lastThree[0]
+    const last = lastThree[2]
+    if (!first || !last) return []
+
+    const trend = (last.value - first.value) / 2
+    const predictions: PredictionData[] = []
+    for (let i = 1; i <= 7; i++) {
+        const lastDate = new Date(last.date)
+        lastDate.setDate(lastDate.getDate() + i)
+        predictions.push({
+            date: lastDate.toISOString().split("T")[0],
+            value: last.value + trend * i,
+            isPrediction: true,
+        })
+    }
+
+    return predictions
 }
 
 /**
