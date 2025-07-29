@@ -11,7 +11,7 @@ interface VehiclesPageProps {
 
 export default async function VehiclesPage({ params }: VehiclesPageProps) {
   const { orgId } = await params;
-  const { vehicles } = await listVehiclesByOrg(orgId);
+  const { data } = await listVehiclesByOrg(orgId);
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
@@ -30,7 +30,7 @@ export default async function VehiclesPage({ params }: VehiclesPageProps) {
       </div>
       
       <Suspense fallback={<VehicleListSkeleton />}>
-        <VehiclesClient orgId={orgId} initialVehicles={vehicles} />
+        <VehiclesClient orgId={orgId} initialVehicles={data} />
       </Suspense>
     </div>
   );

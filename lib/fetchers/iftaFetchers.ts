@@ -4,6 +4,7 @@
  * IFTA data fetchers.
  * Provides server-side data access for IFTA reporting
  * including quarter/year filtering and tax rate management.
+ *
  */
 
 import { auth } from '@clerk/nextjs/server';
@@ -166,6 +167,29 @@ export async function getIftaDataForPeriod(
           (jurisdictionSummary[jurisdiction].fuelGallons || 0) + gallons;
         jurisdictionSummary[jurisdiction].taxableGallons =
           (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
+
+        
+    // Aggregate totals using Prisma
+    const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
+      db.iftaTrip.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true, amount: true },
+      }),
+      db.iftaTrip.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true },
+      }),
+    ]);
       }
     });
 
@@ -173,13 +197,70 @@ export async function getIftaDataForPeriod(
     const existingReport = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
-        },
+        quarter: quarterNum,
+        year: yearNum,
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Look up driver and location information for each trip
+    const detailedTrips = await Promise.all(
+      trips.map(async trip => {
+        const load = await db.load.findFirst({
+          where: {
+            organizationId: orgId,
+            vehicleId: trip.vehicleId,
+            OR: [
+              {
+                AND: [
+                  { scheduledPickupDate: { lte: trip.date } },
+                  { scheduledDeliveryDate: { gte: trip.date } },
+                ],
+              },
+              {
+                AND: [
+                  { actualPickupDate: { lte: trip.date } },
+                  { actualDeliveryDate: { gte: trip.date } },
+                ],
+              },
+            ],
+          },
+          select: {
+            originCity: true,
+            originState: true,
+            destinationCity: true,
+            destinationState: true,
+            drivers: { select: { firstName: true, lastName: true } },
+          },
+        });
+
+        const driverName = load?.drivers ? `${load.drivers.firstName} ${load.drivers.lastName}` : null;
+        const startLocation = load ? `${load.originCity}, ${load.originState}` : null;
+        const endLocation = load ? `${load.destinationCity}, ${load.destinationState}` : null;
+
+        return {
+          id: trip.id,
+          date: trip.date,
+          vehicleId: trip.vehicleId,
+          vehicle: {
+            id: trip.vehicle.id,
+            unitNumber: trip.vehicle.unitNumber,
+            make: trip.vehicle.make || 'Unknown',
+            model: trip.vehicle.model || 'Unknown',
+          },
+          jurisdiction: trip.jurisdiction,
+          distance: trip.distance,
+          fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
+          notes: trip.notes,
+          driver: driverName,
+          startLocation,
+          endLocation,
+          miles: trip.distance,
+          gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
+          state: trip.jurisdiction,
+        };
+      })
+    );
 
     const result: IftaPeriodData = {
       period: { quarter: quarterNum, year: yearNum },
@@ -443,7 +524,7 @@ export async function getIftaReports(orgId: string, year?: number) {
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }], // Use createdAt instead of non-existent year/quarter fields
+      orderBy: [{ year: 'desc' }, { quarter: 'desc' }],
     });
 
     return {
@@ -835,6 +916,8 @@ export async function validateTaxCalculations(orgId: string, quarter: string, ye
       where: {
         organizationId: orgId,
         createdAt: { gte: qStart, lte: qEnd },
+        quarter: parseInt(quarter.replace('Q', '')),
+        year: parseInt(year),
       },
     });
 
