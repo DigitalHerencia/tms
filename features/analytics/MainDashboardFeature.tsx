@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDashboardSummary } from '@/lib/fetchers/analyticsFetchers';
+import type { DashboardSummary } from '@/types/analytics';
 
 interface MainDashboardFeatureProps {
   orgId: string;
@@ -12,7 +13,7 @@ export async function MainDashboardFeature({
     return <p className="text-red-500">Organization not found.</p>;
   }
 
-  let summary: any;
+  let summary: DashboardSummary;
   try {
     summary = await getDashboardSummary(orgId);
   } catch (err) {

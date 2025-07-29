@@ -51,7 +51,10 @@ export default function AddVehicleDialog({
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleChange = (field: keyof VehicleFormData, value: any) => {
+  const handleChange = (
+    field: keyof VehicleFormData,
+    value: VehicleFormData[keyof VehicleFormData]
+  ) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 

@@ -44,7 +44,10 @@ export default function EditVehicleDialog({
     }
   }, [vehicle]);
 
-  const handleChange = (field: keyof VehicleFormData, value: any) => {
+  const handleChange = (
+    field: keyof VehicleFormData,
+    value: VehicleFormData[keyof VehicleFormData]
+  ) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
