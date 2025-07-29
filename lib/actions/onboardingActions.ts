@@ -18,6 +18,77 @@ import db from "@/lib/database/db"
 import { generateSlug, ensureUniqueSlug } from "../utils/slugUtils"
 import { getOrganizationInvitationById } from "./invitationActions"
 
+async function validateInvite(
+    organizationId: string,
+    inviteCode: string,
+    userId: string,
+    role?: string,
+) {
+    try {
+        const existingMembership = await db.organizationMembership.findUnique({
+            where: {
+                organizationId_userId: { organizationId, userId },
+            },
+        })
+
+        if (existingMembership) {
+            return {
+                success: false,
+                error: "User already belongs to this organization",
+            }
+        }
+
+        const inviteResult = await getOrganizationInvitationById(
+            organizationId,
+            inviteCode,
+        )
+
+        if (!inviteResult.success) {
+            return {
+                success: false,
+                error:
+                    "error" in inviteResult
+                        ? inviteResult.error
+                        : "Invalid invite code",
+            }
+        }
+
+        const invitation = (inviteResult as { success: true; data: any }).data
+
+        if (invitation.organizationId !== organizationId) {
+            return {
+                success: false,
+                error: "Invitation does not match organization",
+            }
+        }
+
+        if (role && invitation.role !== role) {
+            return {
+                success: false,
+                error: "Invitation does not match role",
+            }
+        }
+
+        if (invitation.status !== "pending") {
+            return {
+                success: false,
+                error: "Invitation has already been used or revoked",
+            }
+        }
+
+        if (
+            invitation.expiresAt &&
+            new Date(invitation.expiresAt) < new Date()
+        ) {
+            return { success: false, error: "Invitation has expired" }
+        }
+
+        return { success: true, data: invitation }
+    } catch (error) {
+        return handleError(error, "Validate Invitation")
+    }
+}
+
 // Infer the resolved client type
 type ResolvedClerkClient = Awaited<ReturnType<typeof clerkClient>>
 
@@ -49,6 +120,16 @@ export async function submitOnboardingStepAction(
 
         if (!dbUser) {
             throw new Error("User not found in database")
+        }
+
+        // Validate invite code if provided in step data
+        const inviteCode = (data as any).inviteCode
+        const orgId = (data as any).organizationId
+        if (inviteCode && orgId) {
+            const validation = await validateInvite(orgId, inviteCode, dbUser.id)
+            if (!validation.success) {
+                return validation
+            }
         }
 
         // Update onboarding steps
@@ -348,36 +429,15 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                 throw new Error("Organization not found")
             }
             
-            let invitation
             if (inviteCode) {
-                const inviteResult = await getOrganizationInvitationById(
+                const validation = await validateInvite(
                     organization.id,
-                    inviteCode
+                    inviteCode,
+                    dbUser.id,
+                    role,
                 )
-
-                if (!inviteResult.success) {
-                    throw new Error(
-                        'error' in inviteResult
-                            ? inviteResult.error
-                            : "Invalid invite code"
-                    )
-                }
-
-                invitation = ('data' in inviteResult ? inviteResult.data : undefined) as any
-
-                if (
-                    invitation.organizationId !== organization.id ||
-                    invitation.role !== role
-                ) {
-                    throw new Error("Invitation does not match organization or role")
-                }
-
-                if (invitation.status !== "pending") {
-                    throw new Error("Invitation has already been used or revoked")
-                }
-
-                if (invitation.expiresAt && new Date(invitation.expiresAt) < new Date()) {
-                    throw new Error("Invitation has expired")
+                if (!validation.success) {
+                    return validation
                 }
             }
 
