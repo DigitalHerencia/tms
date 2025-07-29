@@ -159,7 +159,7 @@ export async function getIftaDataForPeriod(
     );
 
     // Add fuel data to jurisdiction summary
-    fuelPurchases.forEach((purchase) => {
+    fuelPurchases.forEach(async (purchase) => {
       const jurisdiction = purchase.jurisdiction;
       if (jurisdictionSummary[jurisdiction]) {
         const gallons = Number(purchase.gallons);
@@ -569,7 +569,7 @@ export async function getJurisdictionRates(orgId?: string): Promise<Record<strin
     const currentDate = new Date();
     const dbRates = await db.jurisdictionTaxRate.findMany({
       where: {
-        organizationId: { in: orgId ? [orgId, null] : [null] },
+        organizationId: orgId,
         isActive: true,
         effectiveDate: { lte: currentDate },
         OR: [{ endDate: null }, { endDate: { gte: currentDate } }],

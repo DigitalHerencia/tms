@@ -1,6 +1,6 @@
 // eslint.config.js  – Flat Config (ESM)
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { URL, fileURLToPath } from 'node:url';
 
 import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
@@ -8,7 +8,6 @@ import tsParser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
-import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
 import { FlatCompat } from '@eslint/eslintrc';
 import { defineConfig } from 'eslint/config';
@@ -80,7 +79,6 @@ export default defineConfig([
       '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 
@@ -115,14 +113,6 @@ export default defineConfig([
         'jsx-a11y/alt-text': 'warn',
         'jsx-a11y/anchor-is-valid': 'warn',
       },
-    },
-  },
-
-  /* ---------- Prettier ---------- */
-  {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    rules: {
-      'prettier/prettier': 'error',
     },
   },
 

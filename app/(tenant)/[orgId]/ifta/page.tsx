@@ -1,5 +1,5 @@
-import { Suspense } from 'react';
-import { Activity, BarChart3, CalendarIcon, FileText, MapPin } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { BarChart3, CalendarIcon, FileText, MapPin } from 'lucide-react';
 import type { IFTAReport } from '@/components/ifta/ifta-columns';
 import { IftaReportTableClient, IftaTripTableClient } from '@/components/ifta/ifta-tables';
 import { Button } from '@/components/ui/button';

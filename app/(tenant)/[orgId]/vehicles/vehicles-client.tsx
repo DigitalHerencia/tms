@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { Vehicle } from '@/types/vehicles';
 import { VehicleTable } from '@/components/vehicles/vehicle-table';
 import { VehicleCard } from '@/components/vehicles/vehicle-card';
@@ -66,7 +66,12 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {vehicles.map((vehicle) => (
-            <VehicleCard vehicle={vehicle} onClick={() => handleVehicleSelect(vehicle)} />
+            <VehicleCard
+              className="border-muted rounded-md border bg-neutral-900"
+              key={vehicle.id}
+              vehicle={vehicle}
+              onClick={() => handleVehicleSelect(vehicle)}
+            />
           ))}
         </div>
       )}

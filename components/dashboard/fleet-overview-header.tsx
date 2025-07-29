@@ -1,8 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { getDashboardSummary } from '@/lib/fetchers/analyticsFetchers';
 import type { DashboardSummary } from '@/types/dashboard';
-import { RefreshCw, Home } from 'lucide-react';
-
+import { RefreshCw, Shield } from 'lucide-react';
+import React from 'react';
 interface FleetOverviewHeaderProps {
   orgId: string;
   userId: string; // <-- Add userId to props

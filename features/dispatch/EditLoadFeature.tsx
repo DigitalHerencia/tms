@@ -1,55 +1,64 @@
-"use client";
+/* eslint-disable prettier/prettier */
+'use client';
 
-import { useState } from "react";
-import { LoadForm } from "@/components/dispatch/load-form";
-import { LoadDetailsDialog } from "@/components/dispatch/load-details-dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import type { Driver } from "@/types/drivers";
-import type { Vehicle } from "@/types/vehicles";
-import type { Load } from "@/types/dispatch";
+import React, { useState } from 'react';
+import { LoadForm } from '@/components/dispatch/load-form';
+import { LoadDetailsDialog } from '@/components/dispatch/load-details-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import type { Driver } from '@/types/drivers';
+import type { Vehicle } from '@/types/vehicles';
+import type { Load } from '@/types/dispatch';
 
 interface EditLoadFeatureProps {
   orgId: string;
   drivers: Driver[];
   vehicles: Vehicle[];
   load: Load;
-
 }
 
 /**
  * Edit an existing load and view details.
  *
- * Layout uses tabs that collapse into a vertical stack on small screens. /* See edit-load.png */
+ * Layout uses tabs that collapse into a vertical stack on small screens.
  *
  * @param orgId - Organization identifier
  * @param drivers - Drivers available for assignment
  * @param vehicles - Vehicles available for assignment
  * @param load - Load object being edited
  */
+
 export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeatureProps) {
-  const [activeTab, setActiveTab] = useState("edit");
+  const [activeTab, setActiveTab] = useState('edit');
   const [filters, setFilters] = useState({
-    status: "",
-    driverId: "",
-    origin: "",
-    destination: "",
-    dateRange: "",
+    status: '',
+    driverId: '',
+    origin: '',
+    destination: '',
+    dateRange: '',
   });
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
 
   const handleFilterChange = (field: string, value: string) =>
-    setFilters(prev => ({ ...prev, [field]: value }));
+    setFilters((prev) => ({ ...prev, [field]: value }));
 
-  const handleApplyFilters = () => { /* implement if showing related/recent loads */ };
+  const handleApplyFilters = () => {
+    /* implement if showing related/recent loads */
+  };
   const handleResetFilters = () =>
-    setFilters({ status: "", driverId: "", origin: "", destination: "", dateRange: "" });
+    setFilters({ status: '', driverId: '', origin: '', destination: '', dateRange: '' });
 
   return (
-    <>
+    <div>
       <Tabs defaultValue="edit" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-4 grid grid-cols-3">
           <TabsTrigger value="edit">Edit Load</TabsTrigger>
@@ -71,7 +80,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
             drivers={drivers}
             vehicles={vehicles}
             isOpen={true}
-            onClose={() => setActiveTab("edit")}
+            onClose={() => setActiveTab('edit')}
           />
         </TabsContent>
 
@@ -80,8 +89,8 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
           <div>
             <Label>Status</Label>
             <Select
-              onValueChange={value => handleFilterChange("status", value)}
-              value={filters.status || ""}
+              onValueChange={(value) => handleFilterChange('status', value)}
+              value={filters.status || ''}
             >
               <SelectTrigger className="w-full mt-1">
                 <SelectValue placeholder="Any status" />
@@ -101,10 +110,10 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
             <select
               className="mt-1 w-full rounded border bg-transparent px-2 py-1 text-sm"
               value={filters.driverId}
-              onChange={e => handleFilterChange("driverId", e.target.value)}
+              onChange={(e) => handleFilterChange('driverId', e.target.value)}
             >
               <option value="">Any</option>
-              {drivers.map(driver => (
+              {drivers.map((driver) => (
                 <option key={driver.id} value={driver.id}>
                   {driver.name || `${driver.firstName} ${driver.lastName}`}
                 </option>
@@ -116,7 +125,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
             <Input
               className="mt-1"
               value={filters.origin}
-              onChange={e => handleFilterChange("origin", e.target.value)}
+              onChange={(e) => handleFilterChange('origin', e.target.value)}
               placeholder="City name"
             />
           </div>
@@ -125,7 +134,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
             <Input
               className="mt-1"
               value={filters.destination}
-              onChange={e => handleFilterChange("destination", e.target.value)}
+              onChange={(e) => handleFilterChange('destination', e.target.value)}
               placeholder="City name"
             />
           </div>
@@ -134,7 +143,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
             <select
               className="mt-1 w-full rounded border bg-transparent px-2 py-1 text-sm"
               value={filters.dateRange}
-              onChange={e => handleFilterChange("dateRange", e.target.value)}
+              onChange={(e) => handleFilterChange('dateRange', e.target.value)}
             >
               <option value="recent">Last 30 days</option>
               <option value="">Any time</option>
@@ -162,6 +171,6 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
           onClose={() => setShowDetailsDialog(false)}
         />
       )}
-    </>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 
 import { useClerk } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
-import { useTransition } from 'react';
+import React, { useTransition } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useOrganizationContext } from '@/components/auth/context';
 import { cancelSubscriptionAction } from '@/lib/actions/dashboardActions';

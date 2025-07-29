@@ -4,7 +4,7 @@
  * Main dashboard showing key metrics, recent activity, and quick actions
  */
 
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Activity, BarChart, CreditCard, FileText, Settings, Shield, Users } from 'lucide-react';
 import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
 import UserManagementDashboard from '@/features/dashboard/UserManagementDashboard';

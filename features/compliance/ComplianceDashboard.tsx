@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
 import type { ComplianceDashboardData } from '@/types/compliance';
 
+import React from 'react';
+
 interface ComplianceDashboardProps {
   orgId: string;
 }
@@ -12,7 +14,6 @@ interface ComplianceDashboardProps {
  *
  * Metrics grid adapts from two to three columns responsively.
  */
-// See docs/screenshots/compliance-dashboard.png for visuals
 
 export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
   if (!orgId) {
@@ -27,7 +28,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-row gap-2">
       <Card className="border border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle>Driver Compliance</CardTitle>

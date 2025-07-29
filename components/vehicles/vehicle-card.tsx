@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Truck, Calendar, Gauge, AlertTriangle } from 'lucide-react';
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -30,6 +31,7 @@ interface Vehicle {
 
 interface VehicleCardProps {
   vehicle: Vehicle;
+  className?: string;
   onClick: () => void;
 }
 
@@ -57,7 +59,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
 
   return (
     <Card
-      className="border-border rounded-md border bg-card hover:border-blue-500 transition-colors cursor-pointer"
+      className="border-border rounded-md border bg-black hover:border-blue-500 transition-colors cursor-pointer"
       onClick={onClick}
     >
       <CardHeader className="pb-2">

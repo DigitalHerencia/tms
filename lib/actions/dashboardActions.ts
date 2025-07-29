@@ -10,7 +10,6 @@ import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import { objectsToCsv, generateSimplePdf, uploadExport } from '@/lib/services/exportService';
 import { getOrganizationKPIs } from '@/lib/fetchers/dashboardFetchers';
 import type {
   OrganizationKPIs,
@@ -260,7 +259,10 @@ export async function exportOrganizationDataAction(
     const token = process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN;
     if (!token) throw new Error('Blob read-write token not configured');
 
-    const pathname = `exports/${orgId}/${Date.now()}.${ext}`;
+    const pathname = `${orgId}/export-${Date.now()}.${ext}`; // Unique filename with timestamp
+    if (pathname.length > 200) {
+      return { success: false, error: 'Export filename too long' };
+    }
     // Only 'public' is allowed for the 'access' parameter.
     const { downloadUrl } = await put(pathname, Readable.from(buffer), {
       access: 'public',

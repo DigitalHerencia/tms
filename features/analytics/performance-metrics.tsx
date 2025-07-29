@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   Line,
   LineChart,
@@ -25,7 +26,6 @@ interface PerformanceMetricsProps {
  *
  * Charts resize responsively using Recharts containers.
  */
-// See docs/screenshots/performance-metrics.png for reference
 
 /**
  * Visualize performance metrics such as loads delivered and miles driven.

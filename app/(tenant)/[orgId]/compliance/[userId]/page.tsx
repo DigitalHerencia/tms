@@ -4,7 +4,7 @@
  * Compliance officer dashboard for managing documents, monitoring compliance, and tracking violations
  */
 
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import {
   AlertTriangle,
   CheckCircle,
@@ -15,6 +15,8 @@ import {
   Shield,
   Users,
   Truck,
+  ClipboardCheck,
+  RefreshCw,
 } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,30 +33,38 @@ interface ComplianceDashboardPageProps {
 export default async function ComplianceDashboardPage({ params }: ComplianceDashboardPageProps) {
   const { orgId, userId } = await params;
   return (
-    <>
+    <div>
       <div className="space-y-6 p-6 pt-8">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Compliance Center</h1>
-            <p className="text-muted-foreground">
+        <div className="flex flex-row items-baseline justify-between mb-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <ClipboardCheck className="h-8 w-8" />
+              <h1 className="text-3xl font-extrabold text-white">Compliance Center</h1>
+              <div className="flex items-center gap-2 bg-green-500/20 rounded-full px-3 py-1">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-400 text-sm font-medium">Live</span>
+              </div>
+            </div>
+            <div className="text-sm text-white/90 font-medium">
               Monitor and manage compliance for drivers, vehicles, and documentation.
-            </p>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <Button className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800">
-              <FileText className="mr-2 h-4 w-4" />
-              Export Report
-            </Button>
-            <Button className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800">
-              <Upload className="mr-2 h-4 w-4" />
-              Upload Document
-            </Button>
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-white/70">
+              <RefreshCw className="h-3 w-3" />
+              <span>
+                Last updated:{' '}
+                {new Date().toLocaleString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Compliance Metrics */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-4 gap-4">
           <Card className="border border-gray-200 bg-black">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Driver Compliance</CardTitle>
@@ -149,7 +159,7 @@ export default async function ComplianceDashboardPage({ params }: ComplianceDash
         </Card>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4">
           {/* Upcoming Deadlines */}
           <Card className="border border-gray-200 bg-black">
             <CardHeader>
@@ -215,7 +225,10 @@ export default async function ComplianceDashboardPage({ params }: ComplianceDash
                 <p className="text-center text-sm">
                   Overall compliance score improved by 4% in the last 30 days
                 </p>
-                <Button variant="outline" size="sm">
+                <Button
+                  size="sm"
+                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                >
                   View Detailed Report
                 </Button>
               </div>
@@ -310,17 +323,17 @@ export default async function ComplianceDashboardPage({ params }: ComplianceDash
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Button className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2">
+              <Button className="flex border border-gray-200 bg-blue-500 h-20 flex-col gap-2">
                 <Shield className="h-6 w-6" />
                 <span>Generate Compliance Report</span>
               </Button>
 
-              <Button className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2">
+              <Button className="flex border border-gray-200 bg-blue-500 h-20 flex-col gap-2">
                 <FileText className="h-6 w-6" />
                 <span>Export All Documents</span>
               </Button>
 
-              <Button className="flex border border-gray-200 bg-neutral-900 h-20 flex-col gap-2">
+              <Button className="flex border border-gray-200 bg-blue-500 h-20 flex-col gap-2">
                 <Clock className="h-6 w-6" />
                 <span>HOS Violation Report</span>
               </Button>
@@ -328,6 +341,6 @@ export default async function ComplianceDashboardPage({ params }: ComplianceDash
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }
