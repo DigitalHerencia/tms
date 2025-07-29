@@ -163,3 +163,148 @@ export interface TimeSeriesData {
   value: number;
   label?: string;
 }
+
+// --- Fleet Fusion analytics fetcher result types ---
+
+export interface PerformanceAnalytics {
+  timeSeriesData: TimeSeriesData[];
+  utilizationRate: number;
+  onTimeDeliveryRate: number;
+  totalLoads: number;
+  totalMiles: number;
+  totalRevenue: number;
+  averageRevenuePerMile: number;
+}
+
+export interface FinancialAnalytics {
+  revenue: TimeSeriesData[];
+  expenses: TimeSeriesData[];
+  profitMargin: TimeSeriesData[];
+  totalRevenue: number;
+  totalExpenses: number;
+  averageLoadValue: number;
+}
+
+export interface DriverPerformance {
+  id: string;
+  name: string;
+  loadsCompleted: number;
+  totalRevenue: number;
+  totalMiles: number;
+  averageRevenuePerMile: number;
+  onTimeDeliveryRate: number;
+}
+
+export interface VehicleUtilization {
+  id: string;
+  unitNumber: string;
+  make: string;
+  model: string;
+  loadsCompleted: number;
+  totalMiles: number;
+  utilizationRate: number;
+  activeDays: number;
+}
+
+export interface SavePresetResult {
+  success: boolean;
+  data: FilterPreset;
+}
+
+export interface ProcessedAnalyticsData {
+  date: string;
+  revenue: number;
+  loads: number;
+  miles: number;
+  drivers: number;
+  vehicles: number;
+  customers: number;
+  revenuePerMile: number;
+}
+
+export interface ComparisonMetric {
+  current: number;
+  previous: number;
+  change: number;
+  trend: "up" | "down";
+}
+
+export interface ComparisonMetrics {
+  revenue: ComparisonMetric;
+  loads: ComparisonMetric;
+  miles: ComparisonMetric;
+  rpm: ComparisonMetric;
+}
+
+export interface AnalyticsProjection {
+  nextMonth: {
+    revenue: number;
+    loads: number;
+    confidence: string;
+  };
+  trend: {
+    direction: string;
+    strength: "weak" | "moderate" | "strong";
+  };
+}
+
+export interface AdvancedAnalytics {
+  current: ProcessedAnalyticsData[];
+  previous: ProcessedAnalyticsData[] | null;
+  comparison: ComparisonMetrics | null;
+  filters: AnalyticsFilters;
+  timeRange: {
+    from: Date;
+    to: Date;
+  };
+  projections?: AnalyticsProjection | null;
+}
+
+export interface GeographicAnalytics {
+  byState: {
+    state: string;
+    loads: number;
+    revenue: number;
+    miles: number;
+  }[];
+  byRoute: {
+    route: string;
+    loads: number;
+    revenue: number;
+    miles: number;
+  }[];
+  summary: {
+    totalStates: number;
+    totalRoutes: number;
+    averageRevenuePerState: number;
+  };
+}
+
+export interface FilterPreset {
+  id: string;
+  name: string;
+  description?: string | null;
+  filters: AnalyticsFilters;
+  userId: string;
+  organizationId: string;
+  isDefault?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AnalyticsFilters {
+  driverId?: string;
+  vehicleId?: string;
+  customerName?: string;
+  routeId?: string;
+  customerId?: string;
+  equipmentType?: string;
+  priority?: string;
+  dateRange?: {
+    from: string;
+    to: string;
+  };
+  compareWithPrevious?: boolean;
+  groupBy?: "day" | "week" | "month" | "quarter";
+  includeProjections?: boolean;
+}

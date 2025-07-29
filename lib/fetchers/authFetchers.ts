@@ -13,7 +13,7 @@
  * @param userId - Clerk user id
  * @returns Promise resolving with user data
  */
-export async function fetchUser(userId: string): Promise<any> {
+export async function fetchUser(userId: string): Promise<Record<string, unknown>> {
   // TODO: Implement user fetch logic
   throw new Error('Not implemented');
 }
@@ -24,7 +24,7 @@ export async function fetchUser(userId: string): Promise<any> {
  * @param userId - Clerk user id
  * @returns Promise resolving with session details
  */
-export async function fetchSession(userId: string): Promise<any> {
+export async function fetchSession(userId: string): Promise<Record<string, unknown>> {
   // TODO: Implement session fetch logic
   throw new Error('Not implemented');
 }
@@ -35,7 +35,7 @@ export async function fetchSession(userId: string): Promise<any> {
  * @param orgId - Organization id
  * @returns Promise resolving with organization metadata
  */
-export async function fetchOrganization(orgId: string): Promise<any> {
+export async function fetchOrganization(orgId: string): Promise<Record<string, unknown>> {
   // TODO: Implement organization fetch logic
   throw new Error('Not implemented');
 }
