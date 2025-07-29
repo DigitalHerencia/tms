@@ -1,6 +1,11 @@
 /**
- * PDF Service for IFTA Report Generation
- * Handles PDF generation for quarterly reports, trip logs, and fuel summaries
+ * PDF generation utilities for the IFTA domain.
+ *
+ * This service is responsible for producing quarterly, trip log and fuel
+ * summary reports as PDFs. It aligns with the IFTA Reporting requirements in
+ * docs/PRD.md §1.
+ *
+ * TODO: integrate a real PDF engine and file storage.
  */
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import { writeFile, mkdir } from 'fs/promises'
@@ -65,7 +70,13 @@ class PDFService {
   }
 
   /**
-   * Generate quarterly IFTA report PDF
+   * Generate quarterly IFTA report PDF.
+   *
+   * @param orgId - Organization id
+   * @param quarter - Quarter identifier (e.g. 'Q1')
+   * @param year - 4 digit year
+   * @param options - PDF generation options
+   * @returns Result object containing file metadata
    */
   async generateQuarterlyReport(
     orgId: string,
@@ -140,7 +151,11 @@ class PDFService {
   }
 
   /**
-   * Generate trip log report PDF
+   * Generate trip log report PDF.
+   *
+   * @param orgId - Organization id
+   * @param options - Custom report settings
+   * @returns PDFGenerationResult
    */
   async generateTripLogReport(
     orgId: string,
@@ -213,7 +228,11 @@ class PDFService {
   }
 
   /**
-   * Generate fuel summary report PDF
+   * Generate fuel summary report PDF.
+   *
+   * @param orgId - Organization id
+   * @param options - Custom report settings
+   * @returns PDFGenerationResult
    */
   async generateFuelSummaryReport(
     orgId: string,

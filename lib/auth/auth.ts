@@ -1,5 +1,11 @@
 'use server';
 
+/**
+ * Auth utilities used throughout the application.
+ *
+ * TODO remaining: return real organization metadata in `getCurrentCompany`.
+ */
+
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 

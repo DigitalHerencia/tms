@@ -249,6 +249,7 @@ export const SecurityMonitoring = {
         // In production, send to monitoring service
         if (process.env.NODE_ENV === "production") {
             // TODO: Integrate with monitoring service (DataDog, New Relic, etc.)
+            // When implemented, forward logEntry to the chosen service.
             console.log("[SECURITY_EVENT]", JSON.stringify(logEntry))
         } else {
             console.log("[SECURITY_EVENT]", logEntry)

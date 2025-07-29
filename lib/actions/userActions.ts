@@ -1,9 +1,14 @@
 "use server";
-
+/**
+ * User management server actions.
+ *
+ * TODO remaining: send invitation emails when inviting users.
+ */
 import db from "@/lib/database/db";
 import { handleError } from "@/lib/errors/handleError";
 import { sendInvitationEmail } from "@/lib/email/mailer";
 import crypto from "crypto";
+
 
 // Invite user: create pending membership and send invite (implementation stub)
 export async function inviteUserAction(

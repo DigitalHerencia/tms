@@ -1,5 +1,13 @@
 'use server';
 
+/**
+ * IFTA data fetchers.
+ *
+ * TODO remaining:
+ * - Implement quarter/year filtering and jurisdiction tax rate models.
+ * - Add driver and location lookups for trip data.
+ */
+
 import { auth } from '@clerk/nextjs/server';
 
 import

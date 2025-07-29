@@ -158,7 +158,6 @@ export function UserSettings() {
   const handleRevokeInvitation = async (invitationId: string) => {
     try {
       const result = await revokeOrganizationInvitation(invitationId);
-
       if (result.success) {
         toast({
           title: "Invitation Revoked",
