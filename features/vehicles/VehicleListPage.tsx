@@ -23,7 +23,7 @@ export default async function VehicleListPage({
   orgId,
   page = 1,
 }: VehicleListPageProps) {
-  const { vehicles } = await listVehiclesByOrg(orgId, {
+  const { data } = await listVehiclesByOrg(orgId, {
     page,
     limit: 50,
   });
@@ -39,7 +39,7 @@ export default async function VehicleListPage({
       </div>
       
       <Suspense fallback={<VehicleListSkeleton />}>
-        <VehicleListClient orgId={orgId} initialVehicles={vehicles} />
+        <VehicleListClient orgId={orgId} initialVehicles={data} />
       </Suspense>
     </div>
   );
