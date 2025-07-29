@@ -13,13 +13,19 @@
 // User and Authentication Types
 export interface User {
   id: string;
-  email: string;
-  name: string;
-  role: import('./auth').UserRole; // Use canonical type
-  tenantId: string;
-  avatar?: string;
+  organizationId?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImage?: string;
+  role: import('./auth').UserRole;
+  permissions?: string[];
+  isActive: boolean;
+  lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
+  onboardingComplete: boolean;
+  preferences?: Record<string, unknown>;
 }
 
 // Removed duplicate UserRole, Permission, ResourceType, etc. Use from types/auth or types/abac
@@ -28,11 +34,23 @@ export interface Tenant {
   id: string;
   name: string;
   slug: string;
-  plan: SubscriptionPlan;
+  subscriptionTier: SubscriptionTier;
+  subscriptionStatus: SubscriptionStatus;
+  maxUsers: number;
+  billingEmail?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  phone?: string;
+  email?: string;
+  logoUrl?: string;
+  dotNumber?: string;
+  mcNumber?: string;
+  settings: TenantSettings;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  settings: TenantSettings;
-  status: 'active' | 'suspended' | 'pending';
 }
 
 export interface TenantSettings {
@@ -54,11 +72,8 @@ export interface TenantSettings {
   };
 }
 
-export type SubscriptionPlan =
-  | 'free'
-  | 'starter'
-  | 'professional'
-  | 'enterprise';
+export type SubscriptionTier = 'starter' | 'growth' | 'enterprise';
+export type SubscriptionStatus = 'active' | 'inactive' | 'trial' | 'cancelled';
 
 // Dashboard Types
 export interface DashboardMetrics {

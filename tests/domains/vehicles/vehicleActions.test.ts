@@ -7,7 +7,7 @@ vi.mock('../lib/database/db', () => ({
   default: {
     vehicle: {
       findFirst: vi.fn().mockResolvedValue(null),
-      create: vi.fn().mockResolvedValue({ id: 'v1', organizationId: 'org1', type: 'tractor', status: 'available' })
+      create: vi.fn().mockResolvedValue({ id: 'v1', organizationId: 'org1', type: 'tractor', status: 'active' })
     }
   }
 }));
