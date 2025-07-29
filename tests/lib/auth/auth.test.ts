@@ -11,7 +11,8 @@ vi.mock('next/navigation', () => ({
 }));
 vi.mock('../../../lib/database/db', () => ({
   DatabaseQueries: {
-    getUserByClerkId: vi.fn(),
+    getUserById: vi.fn(),
+    getOrganizationById: vi.fn(),
   },
 }));
 
@@ -56,14 +57,14 @@ describe('auth.ts', () => {
     it('returns null if no db user', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
       require('@clerk/nextjs/server').currentUser.mockResolvedValue(mockUser);
-      require('../../../lib/database/db').DatabaseQueries.getUserByClerkId.mockResolvedValue(null);
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue(null);
       const result = await authModule.getCurrentUser();
       expect(result).toBeNull();
     });
     it('returns user context if allowNoOrg', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
       require('@clerk/nextjs/server').currentUser.mockResolvedValue(mockUser);
-      require('../../../lib/database/db').DatabaseQueries.getUserByClerkId.mockResolvedValue({ memberships: [] });
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({ memberships: [] });
       const result = await authModule.getCurrentUser(true);
       expect(result).toMatchObject({
         userId: 'u1',
@@ -75,7 +76,16 @@ describe('auth.ts', () => {
     it('returns user context if membership exists', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
       require('@clerk/nextjs/server').currentUser.mockResolvedValue(mockUser);
-      require('../../../lib/database/db').DatabaseQueries.getUserByClerkId.mockResolvedValue(mockDbUser);
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue(mockDbUser);
+      require('../../../lib/database/db').DatabaseQueries.getOrganizationById.mockResolvedValue({
+        name: 'Org',
+        subscriptionTier: 'starter',
+        subscriptionStatus: 'active',
+        maxUsers: 5,
+        billingEmail: 'b@example.com',
+        createdAt: new Date(),
+        settings: {},
+      });
       const result = await authModule.getCurrentUser();
       expect(result).toMatchObject({
         userId: 'u1',
@@ -94,15 +104,24 @@ describe('auth.ts', () => {
     });
     it('returns null if no org', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
-      require('../../../lib/database/db').DatabaseQueries.getUserByClerkId.mockResolvedValue({ memberships: [] });
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue({ memberships: [] });
       const result = await authModule.getCurrentCompany();
       expect(result).toBeNull();
     });
-    it('returns default org meta if org exists', async () => {
+    it('returns org meta if org exists', async () => {
       require('@clerk/nextjs/server').auth.mockResolvedValue({ userId: 'u1' });
-      require('../../../lib/database/db').DatabaseQueries.getUserByClerkId.mockResolvedValue(mockDbUser);
+      require('../../../lib/database/db').DatabaseQueries.getUserById.mockResolvedValue(mockDbUser);
+      require('../../../lib/database/db').DatabaseQueries.getOrganizationById.mockResolvedValue({
+        name: 'Org',
+        subscriptionTier: 'starter',
+        subscriptionStatus: 'active',
+        maxUsers: 5,
+        billingEmail: 'b@example.com',
+        createdAt: new Date(),
+        settings: {},
+      });
       const result = await authModule.getCurrentCompany();
-      expect(result).toHaveProperty('name');
+      expect(result).toMatchObject({ name: 'Org' });
     });
   });
 
