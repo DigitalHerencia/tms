@@ -83,9 +83,13 @@ export function transformLoad(raw: any): Load | null {
     pickupDate: raw.scheduledPickupDate ?? raw.actualPickupDate ?? new Date(),
     deliveryDate: raw.scheduledDeliveryDate ?? raw.actualDeliveryDate ?? new Date(),
     equipment: raw.equipment || {},
-    driver: raw.drivers ?? raw.driver ?? null,
+    driver: raw.drivers
+      ? transformDriver(raw.drivers)
+      : raw.driver
+        ? transformDriver(raw.driver)
+        : null,
     driverId: raw.driver_id ?? raw.driverId ?? null,
-    vehicle: raw.vehicle,
+    vehicle: raw.vehicle ? transformVehicle(raw.vehicle) : undefined,
     vehicleId: raw.vehicleId || null,
     cargo: raw.cargo || {},
     rate: raw.rate || {},

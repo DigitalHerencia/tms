@@ -30,7 +30,7 @@ interface LoadCardProps {
   isUpdating?: boolean;
 }
 
-export function LoadCard({ load, onStatusUpdate, isUpdating }: LoadCardProps) {
+export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'assigned':
@@ -67,7 +67,10 @@ export function LoadCard({ load, onStatusUpdate, isUpdating }: LoadCardProps) {
   };
 
   return (
-    <Card className="bg-card text-card-foreground border border-border">
+    <Card
+      onClick={onClick}
+      className="bg-card text-card-foreground border border-border cursor-pointer"
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{load.referenceNumber}</CardTitle>
