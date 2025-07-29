@@ -36,8 +36,8 @@ describe('getIftaDataForPeriod', () => {
 
     const { getIftaDataForPeriod } = await import('../../../lib/fetchers/iftaFetchers')
     const result = await getIftaDataForPeriod('org1', 'Q1', '2024')
+    const args = reportFindFirst.mock.calls[0]![0]
 
-    const args = reportFindFirst.mock.calls[0][0]
     expect(args.where.organizationId).toBe('org1')
     expect(args.where.createdAt.gte).toEqual(new Date(2024, 0, 1))
     expect(args.where.createdAt.lte).toEqual(new Date(2024, 3, 0, 23, 59, 59))

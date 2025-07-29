@@ -1,10 +1,11 @@
 "use client";
 
 import { AssignmentDialogButton } from '@/features/drivers/AssignmentDialogButton';
+import type { DriverAssignment } from '@/types/drivers';
 
 interface AssignmentDialogWrapperProps {
   driverId: string;
-  currentAssignment: any;
+  currentAssignment: Partial<DriverAssignment>;
 }
 
 export function AssignmentDialogWrapper({ driverId, currentAssignment }: AssignmentDialogWrapperProps) {

@@ -104,7 +104,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <UserIcon className="h-4 w-4 text--info" />
               </CardHeader>
-              <CardContent>                
+              <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
                   {hasData && dashboardData.totalDrivers > 0 ? 
                     `${Math.round((dashboardData.driversInCompliance / dashboardData.totalDrivers) * 100)}%` 
@@ -126,7 +126,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <TruckIcon className="h-4 w-4 text-info" />
               </CardHeader>
-              <CardContent>                
+              <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
                   {hasData && dashboardData.totalVehicles > 0 ? 
                     `${Math.round((dashboardData.vehiclesInCompliance / dashboardData.totalVehicles) * 100)}%` 
@@ -148,7 +148,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <AlertTriangle className="h-4 w-4 text-warning" />
               </CardHeader>
-              <CardContent>                
+              <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
                   {hasData ? (dashboardData.activeViolations || 0) : 0}
                 </div>
@@ -162,7 +162,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 </CardTitle>
                 <FileText className="h-4 w-4 text-info" />
               </CardHeader>
-              <CardContent>               
+              <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
                   {hasData && dashboardData.totalDocuments > 0 ? 
                     `${Math.round(((dashboardData.totalDocuments - dashboardData.expiredDocuments) / dashboardData.totalDocuments) * 100)}%` 
@@ -240,7 +240,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 Schedule, track, and manage DOT inspections and violations.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<div>Loading DOT inspection data...</div>}>
                 <DOTInspectionManagement orgId={orgId} />
               </Suspense>
@@ -256,7 +256,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
                 Monitor and respond to compliance alerts and notifications.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<div>Loading compliance alerts...</div>}>
                 <ComplianceAlerts orgId={orgId} />
               </Suspense>

@@ -59,19 +59,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <Shield className="h-4 w-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="users" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <Users className="h-4 w-4" />
             Users
           </TabsTrigger>
-          <TabsTrigger value="billing" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="billing" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <CreditCard className="h-4 w-4" />
             Billing
           </TabsTrigger>
-          <TabsTrigger value="audit" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="audit" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <FileText className="h-4 w-4" />
             Audit
           </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="system" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <Settings className="h-4 w-4" />
             System
           </TabsTrigger>
@@ -81,7 +81,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <BarChart className="h-8 w-8" />
                   Company Statistics
                 </h1>
@@ -90,7 +90,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Key metrics and performance indicators
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <AdminOverview orgId={orgId} userId={userId} />
               </Suspense>
@@ -102,7 +102,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <Users className="h-8 w-8" />
                   User Management
                 </h1>
@@ -111,7 +111,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Manage user accounts, roles, and permissions for your organization
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <UserManagementDashboard orgId={orgId} users={Array.isArray(users) ? users : users.users} />
               </Suspense>
@@ -124,7 +124,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <CardHeader className='flex flex-row'>
               <div>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <CreditCard className="h-8 w-8" />
                   Billing & Subscriptions
                 </h1>
@@ -135,7 +135,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
               <BillingActions />
               </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
             <BillingManagementClient billingInfo={billingInfo} />
               </Suspense>
@@ -147,7 +147,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <FileText className="h-8 w-8" />
                   Audit Logs
                 </h1>
@@ -156,7 +156,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 View system activity, user actions, and security events
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <AuditLogViewer logs={ auditLogs } selectedLog={ null } setSelectedLog={ () => {} } getActionBadgeVariant={ () => 'default' } />
               </Suspense>
@@ -168,7 +168,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <Activity className="w-8 h-8" />
                   System Health Monitor
                 </h1>
@@ -177,7 +177,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Monitor system performance, uptime, and infrastructure status
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
                 <SystemHealth />
               </Suspense>

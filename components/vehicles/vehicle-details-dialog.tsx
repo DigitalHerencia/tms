@@ -209,37 +209,37 @@ export function VehicleDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-screen max-w-4xl overflow-y-auto bg-neutral-900 border-muted text-white">
+      <DialogContent className="max-h-screen max-w-4xl overflow-y-auto bg-background border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
+          <DialogTitle className="flex items-center gap-2 text-foreground">
             <Truck className="h-5 w-5 text-blue-400" />
             Vehicle Details - Unit #{vehicle.unitNumber || 'N/A'}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="bg-black border-muted">
+          <TabsList className="bg-card border-border">
             <TabsTrigger 
               value="overview"
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Overview
             </TabsTrigger>
             <TabsTrigger 
               value="maintenance"
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Maintenance
             </TabsTrigger>
             <TabsTrigger 
               value="inspections"
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Inspections
             </TabsTrigger>
             <TabsTrigger 
               value="loads"
-              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white text-white/70"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-card-foreground text-muted-foreground"
             >
               Recent Loads
             </TabsTrigger>
@@ -247,21 +247,21 @@ export function VehicleDetailsDialog({
 
           <TabsContent value="overview" className="mt-4 space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Card className="bg-black border-muted">
+              <Card className="bg-card border-border">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-white">Vehicle Information</CardTitle>
+                  <CardTitle className="text-sm text-card-foreground">Vehicle Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs text-white/70">Type</Label>
-                        <div className="font-medium capitalize text-white">
+                        <Label className="text-xs text-muted-foreground">Type</Label>
+                        <div className="font-medium capitalize text-card-foreground">
                           {vehicle.type}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs text-white/70">Status</Label>
+                        <Label className="text-xs text-muted-foreground">Status</Label>
                         <div>
                           <Badge className={getStatusColor(vehicle.status)}>
                             {vehicle.status.replace('_', ' ')}
@@ -270,21 +270,21 @@ export function VehicleDetailsDialog({
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs text-white/70">VIN</Label>
-                      <div className="font-mono font-medium text-white">
+                      <Label className="text-xs text-muted-foreground">VIN</Label>
+                      <div className="font-mono font-medium text-card-foreground">
                         {vehicle.vin || 'N/A'}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs text-white/70">License Plate</Label>
-                        <div className="font-medium text-white">
+                        <Label className="text-xs text-muted-foreground">License Plate</Label>
+                        <div className="font-medium text-card-foreground">
                           {vehicle.licensePlate || 'N/A'}
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs text-white/70">State</Label>
-                        <div className="font-medium text-white">
+                        <Label className="text-xs text-muted-foreground">State</Label>
+                        <div className="font-medium text-card-foreground">
                           {vehicle.licensePlateState || 'N/A'}
                         </div>
                       </div>
@@ -293,33 +293,33 @@ export function VehicleDetailsDialog({
                 </CardContent>
               </Card>
 
-              <Card className="bg-black border-muted">
+              <Card className="bg-card border-border">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-white">Usage Information</CardTitle>
+                  <CardTitle className="text-sm text-card-foreground">Usage Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <Label className="flex items-center gap-1 text-xs text-white/70">
+                      <Label className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Gauge className="h-3 w-3 text-blue-400" /> Total Mileage
                       </Label>
-                      <div className="font-medium text-white">
+                      <div className="font-medium text-card-foreground">
                         {vehicle.totalMileage
                           ? `${vehicle.totalMileage.toLocaleString()} miles`
                           : 'N/A'}
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs text-white/70">Last Maintenance Mileage</Label>
-                      <div className="font-medium text-white">
+                      <Label className="text-xs text-muted-foreground">Last Maintenance Mileage</Label>
+                      <div className="font-medium text-card-foreground">
                         {vehicle.lastMaintenanceMileage
                           ? `${vehicle.lastMaintenanceMileage.toLocaleString()} miles`
                           : 'N/A'}
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs text-white/70">Fuel Type</Label>
-                      <div className="font-medium capitalize text-white">
+                      <Label className="text-xs text-muted-foreground">Fuel Type</Label>
+                      <div className="font-medium capitalize text-card-foreground">
                         {vehicle.fuelType || 'N/A'}
                       </div>
                     </div>
@@ -328,9 +328,9 @@ export function VehicleDetailsDialog({
               </Card>
 
               {upcomingMaintenance.length > 0 && (
-                <Card className="md:col-span-2 bg-black border-muted">
+                <Card className="md:col-span-2 bg-card border-border">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-white">
+                    <CardTitle className="text-sm text-card-foreground">
                       Upcoming Maintenance
                     </CardTitle>
                   </CardHeader>
@@ -339,14 +339,14 @@ export function VehicleDetailsDialog({
                       {upcomingMaintenance.map((record: MaintenanceRecord) => (
                         <div
                           key={record.id}
-                          className="flex items-start gap-2 rounded-md border border-white/10 p-2 bg-black"
+                          className="flex items-start gap-2 rounded-md border border-border/10 p-2 bg-card"
                         >
                           <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-400" />
                           <div>
-                            <div className="font-medium text-white">
+                            <div className="font-medium text-card-foreground">
                               {record.description}
                             </div>
-                            <div className="text-white/70 text-sm">
+                            <div className="text-muted-foreground text-sm">
                               Scheduled:{' '}
                               {record.scheduledDate
                                 ? formatDate(record.scheduledDate)
@@ -366,23 +366,23 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="maintenance" className="mt-4 space-y-4">
-            <Card className="bg-black border-muted">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-white">Maintenance Records</CardTitle>
-                <CardDescription className="text-white/70">
+                <CardTitle className="text-card-foreground">Maintenance Records</CardTitle>
+                <CardDescription className="text-muted-foreground">
                   View and manage maintenance for this vehicle
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <h4 className="font-medium text-white">Schedule Maintenance</h4>
-                    <p className="text-white/70 text-sm">
+                    <h4 className="font-medium text-card-foreground">Schedule Maintenance</h4>
+                    <p className="text-muted-foreground text-sm">
                       Add a new maintenance record
                     </p>
                   </div>
                   <Button 
-                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
                   >
                     <Tool className="mr-2 h-4 w-4" />
                     Schedule
@@ -392,13 +392,13 @@ export function VehicleDetailsDialog({
                 {maintenanceRecords.length > 0 ? (
                   <div className="space-y-4">
                     {maintenanceRecords.map((record: MaintenanceRecord) => (
-                      <div key={record.id} className="rounded-md border border-white/10 p-4 bg-black">
+                      <div key={record.id} className="rounded-md border border-border/10 p-4 bg-card">
                         <div className="flex items-start justify-between">
                           <div>
-                            <div className="font-medium text-white">
+                            <div className="font-medium text-card-foreground">
                               {record.description}
                             </div>
-                            <div className="text-white/70 text-sm">
+                            <div className="text-muted-foreground text-sm">
                               {record.type.charAt(0).toUpperCase() +
                                 record.type.slice(1)}{' '}
                               maintenance
@@ -412,10 +412,10 @@ export function VehicleDetailsDialog({
                         </div>
                         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <span className="text-white/70">
+                            <span className="text-muted-foreground">
                               Date:{' '}
                             </span>
-                            <span className="text-white">
+                            <span className="text-card-foreground">
                               {record.completedDate
                                 ? formatDate(record.completedDate)
                                 : record.scheduledDate
@@ -472,7 +472,7 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="inspections" className="mt-4 space-y-4">
-            <Card className="bg-black border-muted">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle>Inspection Records</CardTitle>
                 <CardDescription>
@@ -488,7 +488,7 @@ export function VehicleDetailsDialog({
                     </p>
                   </div>
                   <Button 
-                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                  className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Add Inspection
@@ -567,7 +567,7 @@ export function VehicleDetailsDialog({
           </TabsContent>
 
           <TabsContent value="loads" className="mt-4 space-y-4">
-            <Card className="bg-black border-muted">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle>Recent Loads</CardTitle>
                 <CardDescription>
@@ -634,13 +634,13 @@ export function VehicleDetailsDialog({
           <div className="flex gap-2">
             <Button 
               asChild
-              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
             >
               <Link href={`/vehicles/${vehicle.id}/edit`}>Edit Vehicle</Link>
             </Button>
             <Button 
               onClick={() => onOpenChange(false)}
-              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+              className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
             >
               Close
             </Button>
@@ -650,7 +650,7 @@ export function VehicleDetailsDialog({
               <Button
                 onClick={() => handleStatusUpdate('maintenance')}
                 disabled={isUpdatingStatus}
-                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
               >
                 Mark for Maintenance
               </Button>
@@ -659,7 +659,7 @@ export function VehicleDetailsDialog({
               <Button
                 onClick={() => handleStatusUpdate('active')}
                 disabled={isUpdatingStatus}
-                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+                className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
               >
                 Mark as Active
               </Button>

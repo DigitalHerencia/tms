@@ -17,9 +17,19 @@ interface EditLoadFeatureProps {
   drivers: Driver[];
   vehicles: Vehicle[];
   load: Load;
-  
+
 }
 
+/**
+ * Edit an existing load and view details.
+ *
+ * Layout uses tabs that collapse into a vertical stack on small screens. /* See edit-load.png */
+ *
+ * @param orgId - Organization identifier
+ * @param drivers - Drivers available for assignment
+ * @param vehicles - Vehicles available for assignment
+ * @param load - Load object being edited
+ */
 export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeatureProps) {
   const [activeTab, setActiveTab] = useState("edit");
   const [filters, setFilters] = useState({
@@ -31,7 +41,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
   });
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
 
-  const handleFilterChange = (field: string, value: any) =>
+  const handleFilterChange = (field: string, value: string) =>
     setFilters(prev => ({ ...prev, [field]: value }));
 
   const handleApplyFilters = () => { /* implement if showing related/recent loads */ };

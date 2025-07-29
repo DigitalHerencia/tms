@@ -51,6 +51,10 @@ export interface PreferencesData {
   theme: 'light' | 'dark' | 'system';
 }
 
+export interface OnboardingPreferences {
+  [key: string]: string | number | boolean;
+}
+
 export type OnboardingStepData =
   | ProfileSetupData
   | CompanySetupData

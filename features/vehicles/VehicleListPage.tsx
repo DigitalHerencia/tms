@@ -8,6 +8,16 @@ interface VehicleListPageProps {
   page?: number;
 }
 
+/**
+ * Page displaying the fleet vehicle list.
+ *
+ * Vehicle cards stack vertically on small screens and expand in a grid on
+ * desktop for easier browsing. /* See vehicles-grid.png */
+ *
+ * @param orgId - Organization identifier
+ * @param page - Page number for vehicle pagination
+ */
+
 export default async function VehicleListPage({
   orgId,
   page = 1,
@@ -19,7 +29,7 @@ export default async function VehicleListPage({
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
-      {/* Fleet Vehicles Header */}
+      {/* Fleet Vehicles Header - see docs/screenshots/vehicles-header.png for spacing */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Fleet Vehicles</h1>

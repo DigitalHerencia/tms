@@ -6,14 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Users, 
-  Building, 
+import {
+  Users,
   Key,
   ArrowRight,
   ArrowLeft,
   AlertCircle,
-  CheckCircle,
   Phone
 } from 'lucide-react';
 import type { OnboardingFormData } from '@/features/onboarding/OnboardingStepper';
@@ -41,19 +39,12 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
     setIsValidating(true);
     setValidationError('');
 
-    try {
-      // TODO: Validate organization ID exists once org lookup API is available
-      // For now, we'll just proceed
-      setTimeout(() => {
-      // Verify the organization exists before allowing the user to proceed
+  try {
       const exists = await verifyOrganizationExists(formData.organizationId);
       if (!exists) {
         setValidationError('Organization not found. Please check the ID and try again.');
-         main
-        setIsValidating(false);
         return;
       }
-
       onNext();
     } catch (error) {
       setValidationError('Organization not found. Please check the ID and try again.');
