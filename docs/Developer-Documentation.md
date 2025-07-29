@@ -500,6 +500,43 @@ practices:
   critical issue, the team can use Vercel's "Rollback" feature to instantly revert to the last good
   deployment. Additionally, maintaining good version control practices (like tagging releases) helps
   in quickly identifying a stable commit to redeploy if needed.
+-   **Hosting:** The production environment is hosted on Vercel, which provides a convenient platform
+    for Next.js applications. The default production domain is `fleet-fusion.vercel.app` (a custom
+    domain can be configured as needed).
+-   **Environment Management:** Sensitive configuration is provided via environment variables. During
+    deployment, these are set in Vercel's dashboard (for production) and via `.env.local` files for
+    local development. It’s crucial to set production Clerk keys, the Neon database URL, and any
+    third-party API keys in the Vercel environment before deploying. The
+    database connection also relies on `DIRECT_URL`, `DATABASE_MAX_CONNECTIONS`,
+    and `DATABASE_CONNECTION_TIMEOUT`.
+-   **Manual Deployment:** Initially, one can deploy FleetFusion by connecting the GitHub repo to
+    Vercel and using the Vercel UI to trigger a deployment. In this flow, Vercel will install
+    dependencies and run `next build` to compile the app. Ensure the project settings on Vercel (build
+    command, output directory, etc.) are properly configured (Next.js defaults are usually
+    auto-detected).
+-   **Continuous Deployment (CD):** The project is configured for automatic deployments. Whenever
+    changes are pushed to the `main` branch (after passing tests), Vercel will automatically build and
+    deploy the new version. This provides a seamless deployment process, where code merges result in
+    live updates to the app.
+-   **Continuous Integration (CI):** GitHub Actions (see `.github/workflows/ci.yml`) handle testing and integration steps:
+
+    -   A typical workflow might run on every pull request and push to `main`. It will install
+        dependencies, run `eslint` for linting, run `tsc` for type checks, and execute all tests.
+    -   Only if these steps succeed can code be merged or deployed. This prevents broken builds or
+        obvious bugs from reaching production.
+
+-   **Vercel Integration via CI:** In addition to Vercel’s own git integration, the CI workflow can
+    deploy to Vercel by using Vercel’s API tokens. Secrets such as `VERCEL_TOKEN`, `VERCEL_ORG_ID`,
+    and `VERCEL_PROJECT_ID` are stored in GitHub and used by the action to authenticate with Vercel’s
+    API. This way, the CI can programmatically trigger deployments after tests pass.
+-   **Post-Deployment Verification:** After deploying, it’s recommended to perform a quick smoke test:
+
+    -   Visit the production site and ensure pages are loading.
+    -   Test login and a few key user flows (e.g., create a load, sign out, etc.) to confirm that the
+        production environment (with its environment variables) is configured correctly (especially
+        Clerk, since incorrect domains or keys would affect auth).
+    -   Check Vercel's function logs or monitoring tools for any runtime errors that might not have
+        appeared in testing.
 
 By adhering to these DevOps practices, FleetFusion achieves a robust deployment pipeline with
 minimal downtime, quick iteration cycles for developers, and confidence that each release has been
