@@ -55,7 +55,7 @@ export function RecentActivityRow({
             </CardDescription>
 
           {/* 2) Stats on top, first activity item right below it */}
-          <div className="flex flex-col gap-2 text-sm text-white">
+          <div className="flex flex-col gap-2 text-sm text-green-500">
             <span className="space-x-2">
               {stats.totalLoads} loads total   |  {stats.pendingLoads} pending | {"   "}
               {stats.assignedLoads} assigned  |  {stats.inTransitLoads} in transit | {"   "}

@@ -15,42 +15,42 @@ export function SystemHealthChecks() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">API Endpoints</p>
               <p className="text-xs text-muted-foreground">All endpoints responding</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">Background Jobs</p>
               <p className="text-xs text-muted-foreground">Queue processing normally</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">File Storage</p>
               <p className="text-xs text-muted-foreground">Storage accessible</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">Email Service</p>
               <p className="text-xs text-muted-foreground">Sending notifications</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">Cache System</p>
               <p className="text-xs text-muted-foreground">Cache hits optimal</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <CheckCircle className="w-5 h-5 text-green-500" />
-            <div className="bg-neutral-900">
+            <div>
               <p className="font-medium text-sm">Security</p>
               <p className="text-xs text-muted-foreground">All scans clean</p>
             </div>

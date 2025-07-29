@@ -20,6 +20,7 @@ import type { BillingInfo } from '@/types/dashboard';import { SystemHealth } fro
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getOrganizationUsers } from '@/lib/fetchers/dashboardFetchers';
 import { BillingActions } from '@/components/dashboard/billing-actions';
+import { getAuditLogs } from '@/lib/fetchers/dashboardFetchers';
 
 
 interface DashboardPageProps {
@@ -36,6 +37,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   if (!currentUser) {
     return { error: 'Unauthorized' };
   }
+
+  const auditLogs = await getAuditLogs(orgId);
 
   // Fetch users for the organization
   const users = await getOrganizationUsers(orgId);
@@ -154,7 +157,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             </CardHeader>
             <CardContent>
               <Suspense fallback={<LoadingSpinner />}>
-                <AuditLogViewer orgId={orgId} />
+                <AuditLogViewer logs={ auditLogs } selectedLog={ null } setSelectedLog={ () => {} } getActionBadgeVariant={ () => 'default' } />
               </Suspense>
             </CardContent>
           </Card>
