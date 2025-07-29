@@ -245,6 +245,17 @@ export interface DriverComplianceRow {
     lastInspection: Date | null
 }
 
+export interface VehicleComplianceRow {
+    id: string
+    unit: string
+    type: string
+    status: string
+    lastInspection: Date | null
+    nextInspection: Date | null
+    defects: string
+    registrationExpiry: Date | null
+}
+
 export async function getDriverComplianceStatuses(
     organizationId: string
 ): Promise<DriverComplianceRow[]> {
@@ -322,6 +333,69 @@ export async function getDriverComplianceStatuses(
     } catch (error) {
         console.error("Error fetching driver compliance status:", error)
         throw new Error("Failed to fetch driver compliance status")
+    }
+}
+
+export async function getVehicleComplianceRecords(
+    organizationId: string
+): Promise<VehicleComplianceRow[]> {
+    try {
+        const vehicles = await prisma.vehicle.findMany({
+            where: { organizationId, status: "active" },
+            include: { complianceDocuments: true },
+        })
+
+        const today = new Date()
+        const soon = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+        return vehicles.map(v => {
+            const registrationDoc = v.complianceDocuments.find(
+                d =>
+                    d.type === "vehicle_registration" ||
+                    d.type === "apportioned_registration"
+            )
+            const inspectionDoc = v.complianceDocuments.find(
+                d => d.type === "annual_inspection" || d.type === "emission_test"
+            )
+            const insuranceDoc = v.complianceDocuments.find(
+                d => d.type === "vehicle_insurance"
+            )
+
+            let status = "Compliant"
+            ;[registrationDoc, inspectionDoc, insuranceDoc].forEach(doc => {
+                if (!doc) {
+                    status = "Non-Compliant"
+                    return
+                }
+                if (doc.expirationDate && doc.expirationDate < today) {
+                    status = "Non-Compliant"
+                    return
+                }
+                if (
+                    doc.expirationDate &&
+                    doc.expirationDate < soon &&
+                    status !== "Non-Compliant"
+                ) {
+                    status = "Warning"
+                }
+            })
+
+            return {
+                id: v.id,
+                unit: v.unitNumber,
+                type: v.type,
+                status,
+                lastInspection: v.lastInspectionDate,
+                nextInspection: v.nextInspectionDue,
+                defects: "None",
+                registrationExpiry:
+                    registrationDoc?.expirationDate ?? v.registrationExpiration ??
+                    null,
+            } as VehicleComplianceRow
+        })
+    } catch (error) {
+        console.error("Error fetching vehicle compliance records:", error)
+        throw new Error("Failed to fetch vehicle compliance records")
     }
 }
 
