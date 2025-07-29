@@ -1,8 +1,22 @@
 // Auth domain business logic entry point
-//
-// Exposes feature flag helpers and auth utilities.
-
 import { isAuthFeatureEnabled as checkAuthFeature } from '@/lib/config/featureFlags'
 
-// Re-export feature flag helper so consumers can import from this domain module
-export const isAuthFeatureEnabled = checkAuthFeature
+export async function isAuthFeatureEnabled(): Promise<boolean> {
+  const envFlag = process.env.NEXT_PUBLIC_ENABLE_AUTH
+  if (envFlag !== undefined) {
+    return envFlag === 'true'
+  }
+  const serviceUrl = process.env.FEATURE_SERVICE_URL
+  if (serviceUrl) {
+    try {
+      const res = await fetch(`${serviceUrl}/auth`)
+      if (!res.ok) return false
+      const data = (await res.json()) as { enabled?: boolean }
+      return data.enabled === true
+    } catch {
+      return false
+    }
+  }
+  return false
+}
+
