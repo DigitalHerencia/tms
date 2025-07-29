@@ -44,14 +44,14 @@ export default async function DispatchPage({ params }: DispatchPageProps) {
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
       {/* Header - Real-time status & connection */}
       <Suspense fallback={<DispatchSkeleton />}>
-        <DispatchHeader orgId={orgId} userId={userId} />
+        <DispatchHeader orgId={orgId} />
       </Suspense>
 
       {/* Recent Activity & Quick Actions */}
       <RecentActivityRow
         params={{ userId }}
         stats={summaryStats}
-        RecentActivity={recentActivity.data.map((activity) => ({
+        activities={recentActivity.data.map((activity) => ({
           ...activity,
           timestamp:
             activity.timestamp instanceof Date

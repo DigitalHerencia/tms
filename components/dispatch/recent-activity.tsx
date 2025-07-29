@@ -1,5 +1,3 @@
-"use client";
-
 import { Activity as ActivityIcon, Clock } from "lucide-react";
 import {
   Card,
@@ -11,6 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+interface ActivityItem {
+  id: string | number;
+  userName: string;
+  timestamp: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+}
+
 interface RecentActivityProps {
   params: { userId: string };
   stats: {
@@ -20,25 +27,18 @@ interface RecentActivityProps {
     inTransitLoads: number;
     completedLoads: number;
   };
-  RecentActivity: Array<{
-    id: string | number;
-    userName: string;
-    timestamp: string;
-    action: string;
-    entityType: string;
-    entityId: string;
-  }>;
+  activities: ActivityItem[];
 }
 
 export function RecentActivityRow({
   params,
   stats,
-  RecentActivity,
+  activities,
 }: RecentActivityProps) {
-  const formatLabel = (item: any) =>
+  const formatLabel = (item: ActivityItem) =>
     `${item.userName} ${item.action.toLowerCase()} ${item.entityType.toLowerCase()} ${item.entityId}`;
 
-  const [first, ...rest] = RecentActivity;
+  const [first, ...rest] = activities;
 
   return (
     <Card className="bg-black border border-gray-200">

@@ -153,5 +153,8 @@ export async function getRecentDispatchActivity(orgId: string, limit = 5) {
     orderBy: { timestamp: "desc" },
     take: limit,
   });
-  return { success: true, data: activities };
+
+  const unique = Array.from(new Map(activities.map(a => [a.id, a])).values());
+
+  return { success: true, data: unique };
 }

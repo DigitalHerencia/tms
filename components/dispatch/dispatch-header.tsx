@@ -6,7 +6,6 @@ import { Activity, RadioTower, RefreshCw, WifiOff } from "lucide-react";
 
 interface DispatchHeaderProps {
   orgId: string;
-  userId: string;
 }
 
 export default function DispatchHeader({ orgId }: DispatchHeaderProps) {
