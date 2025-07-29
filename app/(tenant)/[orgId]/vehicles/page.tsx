@@ -3,6 +3,7 @@ import { listVehiclesByOrg } from '@/lib/fetchers/vehicleFetchers';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import VehiclesClient from './vehicles-client';
+import { VehicleListSkeleton } from '@/components/vehicles/vehicle-list-skeleton';
 
 interface VehiclesPageProps {
   params: Promise<{ orgId: string }>;
@@ -28,7 +29,7 @@ export default async function VehiclesPage({ params }: VehiclesPageProps) {
         </Link>
       </div>
       
-      <Suspense fallback={<div className="text-white/70">Loading vehicles...</div>}>
+      <Suspense fallback={<VehicleListSkeleton />}>
         <VehiclesClient orgId={orgId} initialVehicles={vehicles} />
       </Suspense>
     </div>

@@ -1,4 +1,4 @@
-import { DriversSkeleton } from '@/components/drivers/drivers-skeleton';
+import { DriverListSkeleton } from '@/components/drivers/driver-list-skeleton';
 import { Suspense } from 'react';
 import DriversListHeader from '@/components/drivers/drivers-list-header';
 import DriversList from '@/features/drivers/DriversList';
@@ -16,12 +16,12 @@ export default async function DriverListPage({ params, searchParams }: PageProps
   return (
     <PageLayout>
       {/* Drivers List Header */}
-      <Suspense fallback={<DriversSkeleton />}>
+      <Suspense fallback={<DriverListSkeleton />}>
         <DriversListHeader />
       </Suspense>
 
       {/* Driver Tabs */}
-      <Suspense fallback={<DriversSkeleton />}>
+      <Suspense fallback={<DriverListSkeleton />}>
         <DriversList orgId={orgId} searchParams={resolvedSearchParams} />
       </Suspense>
     </PageLayout>
