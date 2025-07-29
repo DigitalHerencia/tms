@@ -3,8 +3,8 @@
 /**
  * Analytics data fetchers.
  *
- * TODO remaining:
- * - Create and retrieve filter presets when the model is available.
+ * Includes helpers for saving and retrieving filter presets for
+ * analytics dashboards.
  */
 
 import { auth } from "@clerk/nextjs/server"
