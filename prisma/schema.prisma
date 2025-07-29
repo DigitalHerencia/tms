@@ -720,6 +720,7 @@ model OrganizationInvitation {
   email          String
   role           String
   token          String           @unique
+  expiresAt      DateTime?        @map("expires_at")
   status         InvitationStatus @default(pending)
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")

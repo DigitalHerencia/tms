@@ -63,11 +63,16 @@ export type SubscriptionPlan =
 // Dashboard Types
 export interface DashboardMetrics {
   activeLoads: number;
-  availableDrivers: number;
-  pendingMaintenance: number;
-  monthlyRevenue: number;
-  fuelExpenses: number;
+  totalLoads: number;
+  activeDrivers: number;
+  totalDrivers: number;
+  availableVehicles: number;
+  totalVehicles: number;
+  maintenanceVehicles: number;
+  criticalAlerts: number;
   complianceScore: number;
+  revenue: number;
+  fuelCosts: number;
 }
 
 // Common Types
@@ -94,3 +99,5 @@ export type { Metadata, WebhookMetadata, ComplianceMetadata } from './metadata';
 export type { GlobalSearchResultItem } from './search';
 export type { Notification, NotificationActionResult } from './notifications';
 export type { MetadataRecord } from './metadata';
+\nexport * from './prisma-models';
+

@@ -232,6 +232,17 @@ export const getComplianceDashboard = unstable_cache(
     { revalidate: 300, tags: ["compliance", "dashboard"] }
 )
 
+export interface VehicleComplianceRecord {
+    id: string
+    unit: string
+    type: string
+    status: string
+    lastInspection: Date | null
+    nextInspection: Date | null
+    defects: string
+    registrationExpiry: Date | null
+}
+
 export interface DriverComplianceRow {
     id: string
     name: string
@@ -322,6 +333,56 @@ export async function getDriverComplianceStatuses(
     } catch (error) {
         console.error("Error fetching driver compliance status:", error)
         throw new Error("Failed to fetch driver compliance status")
+    }
+}
+
+export async function getVehicleComplianceRecords(
+    organizationId: string
+): Promise<VehicleComplianceRecord[]> {
+    try {
+        const vehicles = await prisma.vehicle.findMany({
+            where: { organizationId, status: "active" },
+            select: {
+                id: true,
+                unitNumber: true,
+                type: true,
+                lastInspectionDate: true,
+                nextInspectionDue: true,
+                registrationExpiration: true,
+            },
+        })
+
+        const today = new Date()
+        const soon = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+        return vehicles.map(v => {
+            let status = "Compliant"
+            if (
+                (v.registrationExpiration && v.registrationExpiration < today) ||
+                (v.nextInspectionDue && v.nextInspectionDue < today)
+            ) {
+                status = "Non-Compliant"
+            } else if (
+                (v.registrationExpiration && v.registrationExpiration < soon) ||
+                (v.nextInspectionDue && v.nextInspectionDue < soon)
+            ) {
+                status = "Warning"
+            }
+
+            return {
+                id: v.id,
+                unit: v.unitNumber,
+                type: v.type,
+                status,
+                lastInspection: v.lastInspectionDate,
+                nextInspection: v.nextInspectionDue,
+                defects: "None",
+                registrationExpiry: v.registrationExpiration,
+            } as VehicleComplianceRecord
+        })
+    } catch (error) {
+        console.error("Error fetching vehicle compliance records:", error)
+        throw new Error("Failed to fetch vehicle compliance records")
     }
 }
 

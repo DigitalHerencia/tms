@@ -74,54 +74,50 @@ export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | 
  * If the user is not authenticated, has no organization, or the organization
  * cannot be found, `null` is returned. Any errors encountered while fetching
  * data are logged and swallowed.
+ *
  */
 export async function getCurrentCompany(): Promise<ClerkOrganizationMetadata | null> {
-  try {
-    const { userId } = await auth();
-    if (!userId) return null;
-    const dbUser = await DatabaseQueries.getUserById(userId);
-    const orgId = dbUser?.memberships?.[0]?.organizationId;
-    if (!orgId) return null;
+  const { userId } = await auth();
+  if (!userId) return null;
+  const dbUser = await DatabaseQueries.getUserById(userId);
+  const orgId = dbUser?.memberships?.[0]?.organizationId;
+  if (!orgId) return null;
 
-    const org = await DatabaseQueries.getOrganizationById(orgId);
-    if (!org) return null;
+  const org = await DatabaseQueries.getOrganizationById(orgId);
+  if (!org) return null;
 
-    const settings = (org.settings as any) || {};
+  const settings = (org.settings as any) || {};
 
-    const tierMap: Record<string, 'free' | 'pro' | 'enterprise'> = {
-      starter: 'free',
-      growth: 'pro',
-      enterprise: 'enterprise',
-    };
+  const tierMap: Record<string, 'free' | 'pro' | 'enterprise'> = {
+    starter: 'free',
+    growth: 'pro',
+    enterprise: 'enterprise',
+  };
 
-    const metadata: ClerkOrganizationMetadata = {
-      name: org.name,
-      subscriptionTier: tierMap[org.subscriptionTier] || 'free',
-      subscriptionStatus: org.subscriptionStatus as any,
-      maxUsers: org.maxUsers ?? 5,
-      features: [],
-      billingEmail: org.billingEmail || '',
-      createdAt: org.createdAt.toISOString(),
-      dotNumber: org.dotNumber || undefined,
-      mcNumber: org.mcNumber || undefined,
-      address: org.address || undefined,
-      city: org.city || undefined,
-      state: org.state || undefined,
-      zip: org.zip || undefined,
-      phone: org.phone || undefined,
-      settings: {
-        timezone: settings.timezone || 'UTC',
-        dateFormat: settings.dateFormat || 'MM/dd/yyyy',
-        distanceUnit: settings.distanceUnit || 'miles',
-        fuelUnit: settings.fuelUnit || 'gallons',
-      },
-    };
+  const metadata: ClerkOrganizationMetadata = {
+    name: org.name,
+    subscriptionTier: tierMap[org.subscriptionTier] || 'free',
+    subscriptionStatus: org.subscriptionStatus as any,
+    maxUsers: org.maxUsers ?? 5,
+    features: [],
+    billingEmail: org.billingEmail || '',
+    createdAt: org.createdAt.toISOString(),
+    dotNumber: org.dotNumber || undefined,
+    mcNumber: org.mcNumber || undefined,
+    address: org.address || undefined,
+    city: org.city || undefined,
+    state: org.state || undefined,
+    zip: org.zip || undefined,
+    phone: org.phone || undefined,
+    settings: {
+      timezone: settings.timezone || 'UTC',
+      dateFormat: settings.dateFormat || 'MM/dd/yyyy',
+      distanceUnit: settings.distanceUnit || 'miles',
+      fuelUnit: settings.fuelUnit || 'gallons',
+    },
+  };
 
-    return metadata;
-  } catch (error) {
-    console.error('Error fetching organization metadata:', error);
-    return null;
-  }
+  return metadata;
 }
 
 // Check if the user has the required role

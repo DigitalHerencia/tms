@@ -1,68 +1,3 @@
-/**
- * Auth domain server mutations.
- *
- * These actions handle login, user registration, session refresh and
- * role updates. Integration with Clerk for secure authentication is
- * pending (see docs/PRD.md §1 "Auth").
- *
- * TODO: connect Clerk helpers and database persistence.
- */
-
-/**
- * Authenticate a user and create a session.
- *
- * @param email - User email
- * @param password - User password
- * @returns Promise resolving with session data
- */
-export async function loginUser(email: string, password: string): Promise<any> {
-  // TODO: Implement login mutation
-  throw new Error('Not implemented');
-}
-
-/**
- * Register a new user and their organization.
- *
- * @param data - Registration payload
- * @returns Promise resolving with the created user record
- */
-export async function registerUser(data: {
-  email: string;
-  password: string;
-  name: string;
-  companyName: string;
-}) {
-  // TODO: Implement registration mutation
-  throw new Error('Not implemented');
-}
-
-/**
- * Refresh session details for a user.
- *
- * @param userId - Clerk user id
- * @returns Promise when session update completes
- */
-export async function updateSession(userId: string): Promise<void> {
-  // TODO: Implement session update logic
-  throw new Error('Not implemented');
-}
-
-/**
- * Change a user's role in the current organization.
- *
- * @param userId - Target user id
- * @param role - New role value
- * @returns Promise when the role update is saved
- */
-export async function updateRBAC(
-  userId: string,
-  role: string,
-): Promise<void> {
-  // TODO: Implement RBAC update logic
-  throw new Error('Not implemented');
-}
-
-=======
 'use server'
 
 import { clerkClient } from '@clerk/nextjs/server'
@@ -71,7 +6,7 @@ import db from '@/lib/database/db'
 import { sessionCache, buildSecureUserContext } from '@/lib/auth/secure-session-management'
 import { getPermissionsForRole, SystemRole } from '@/types/abac'
 import { handleError } from '@/lib/errors/handleError'
-import { z } from 'zod'
+import type { ActionResult } from '@/types/actions'
 
 /**
  * Authenticate a user using Clerk and update the local session cache.
@@ -80,7 +15,10 @@ import { z } from 'zod'
  * @param password - User password
  * @returns Result object with session information or error
  */
-export async function loginUser(email: string, password: string) {
+export async function loginUser(
+  email: string,
+  password: string,
+): Promise<ActionResult<{ sessionId: string }>> {
   try {
     const { email: validatedEmail, password: validatedPassword } = signInSchema.parse({ email, password })
     const client = await clerkClient()
@@ -126,7 +64,9 @@ export async function loginUser(email: string, password: string) {
  * @param data - Registration form values
  * @returns Result object indicating success or failure
  */
-export async function registerUser(data: { email: string; password: string; name: string; companyName: string }) {
+export async function registerUser(
+  data: { email: string; password: string; name: string; companyName: string },
+): Promise<ActionResult<void>> {
   try {
     const validated = signUpSchema.parse({
       email: data.email,
@@ -176,7 +116,7 @@ export async function registerUser(data: { email: string; password: string; name
  * @param userId - Clerk user identifier
  * @returns Result object indicating success or failure
  */
-export async function updateSession(userId: string) {
+export async function updateSession(userId: string): Promise<ActionResult<void>> {
   try {
     const client = await clerkClient()
     const user = await (client as any).users.getUser(userId)
@@ -204,7 +144,10 @@ export async function updateSession(userId: string) {
  * @param role - New system role
  * @returns Result object indicating success or failure
  */
-export async function updateRBAC(userId: string, role: string) {
+export async function updateRBAC(
+  userId: string,
+  role: string,
+): Promise<ActionResult<void>> {
   try {
     const parsed = systemRoleSchema.parse(role) as SystemRole
     const client = await clerkClient()
