@@ -295,6 +295,12 @@ async function main() {
       }
     });
 
+    const existingDriver = await prisma.driver.findUnique({ where: { id: 'the-id-you-are-trying-to-insert' } });
+      if (existingDriver) {
+      console.log(`Driver with id ${existingDriver.id} already exists.`);
+      } else {
+    
+
     const driver = await prisma.driver.create({
       data: {
         id: `drv_${i}`,
@@ -304,7 +310,6 @@ async function main() {
         firstName,
         lastName,
         email: driverUser.email,
-        phone: faker.phone.number("915-555-####"),
         status: "active",
         licenseNumber: `TX${faker.string.numeric(9)}`,
         licenseState: "TX",
@@ -369,7 +374,6 @@ async function main() {
         name: faker.company.name(),
         contactName: faker.person.fullName(),
         email: faker.internet.email(),
-        phone: faker.phone.number("915-555-####"),
         address: faker.location.streetAddress(),
         city: faker.location.city(),
         state: "TX",
@@ -416,7 +420,7 @@ async function main() {
         destinationZip: `8500${faker.number.int({ min: 1, max: 9 })}`,
         destinationLat: Number(faker.location.latitude({ min: 33, max: 35, precision: 0.000001 })),
         destinationLng: Number(faker.location.longitude({ min: -112, max: -110, precision: 0.000001 })),
-        rate: faker.number.float({ min: 1000, max: 10000, precision: 0.01 }),
+        rate: faker.number.float({ min: 1000, max: 10000 }),
         currency: "USD",
         scheduledPickupDate: faker.date.future(),
         weight: faker.number.int({ min: 5000, max: 50000 }),
@@ -469,3 +473,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+}

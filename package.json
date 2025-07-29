@@ -27,6 +27,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.538.0",
     "@clerk/agent-toolkit": "^0.1.1",
     "@clerk/nextjs": "^6.22.0",
     "@hookform/resolvers": "^5.1.1",
@@ -82,6 +83,7 @@
     "lucide-react": "^0.517.0",
     "next": "^15.4.0",
     "next-themes": "0.4.6",
+    "nodemailer": "^6.9.11",
     "pdf-lib": "^1.17.1",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
@@ -94,13 +96,12 @@
     "recharts": "^2.15.3",
     "sonner": "^2.0.5",
     "svix": "^1.67.0",
-    "@aws-sdk/client-s3": "^3.538.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.20.3",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",
-    "zod": "^3.25.67",
-    "nodemailer": "^6.9.11"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@clerk/testing": "^1.8.1",
