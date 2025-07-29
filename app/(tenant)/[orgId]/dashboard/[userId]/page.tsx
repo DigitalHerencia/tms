@@ -44,7 +44,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const users = await getOrganizationUsers(orgId);
 
   return (
-    <div className="flex flex-col gap-3 p-6 bg-neutral-900 text-white min-h-screen">
+    <div className="flex flex-col gap-3 p-6 bg-background text-foreground min-h-screen">
 
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
@@ -53,24 +53,24 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
       {/* Main Admin Interface */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
-          <TabsTrigger value="overview" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+        <TabsList className="grid w-auto grid-cols-5 bg-card border border-border">
+          <TabsTrigger value="overview" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <Shield className="h-4 w-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="users" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <Users className="h-4 w-4" />
             Users
           </TabsTrigger>
-          <TabsTrigger value="billing" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="billing" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <CreditCard className="h-4 w-4" />
             Billing
           </TabsTrigger>
-          <TabsTrigger value="audit" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="audit" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <FileText className="h-4 w-4" />
             Audit
           </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
+          <TabsTrigger value="system" className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70">
             <Settings className="h-4 w-4" />
             System
           </TabsTrigger>
@@ -80,7 +80,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <BarChart className="h-8 w-8" />
                   Company Statistics
                 </h1>
@@ -101,7 +101,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <Users className="h-8 w-8" />
                   User Management
                 </h1>
@@ -123,7 +123,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <CardHeader className='flex flex-row'>
               <div>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <CreditCard className="h-8 w-8" />
                   Billing & Subscriptions
                 </h1>
@@ -146,7 +146,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <FileText className="h-8 w-8" />
                   Audit Logs
                 </h1>
@@ -167,7 +167,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <Card className='bg-blue-500/60'>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-white">
+                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
                   <Activity className="w-8 h-8" />
                   System Health Monitor
                 </h1>

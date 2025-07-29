@@ -88,24 +88,24 @@ export default function AddVehicleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-black border-muted text-white">
+      <DialogContent className="sm:max-w-[500px] bg-background border-border text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-white">Add New Vehicle</DialogTitle>
+          <DialogTitle className="text-foreground">Add New Vehicle</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="unitNumber" className="text-white/90">Unit Number</Label>
+              <Label htmlFor="unitNumber" className="text-foreground/90">Unit Number</Label>
               <Input
                 id="unitNumber"
                 name="unitNumber"
                 value={form.unitNumber}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-white/90">Vehicle Type</Label>
+              <Label htmlFor="type" className="text-foreground/90">Vehicle Type</Label>
               <Select
                 value={form.type}
                 onValueChange={val =>
@@ -115,73 +115,73 @@ export default function AddVehicleDialog({
                   }))
                 }
               >
-                <SelectTrigger className="bg-neutral-900 border-muted text-white">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-                <SelectContent className="bg-black border-muted">
-                  <SelectItem value="tractor" className="text-white hover:bg-blue-500/20">Tractor</SelectItem>
-                  <SelectItem value="trailer" className="text-white hover:bg-blue-500/20">Trailer</SelectItem>
-                  <SelectItem value="straight_truck" className="text-white hover:bg-blue-500/20">Straight Truck</SelectItem>
-                  <SelectItem value="other" className="text-white hover:bg-blue-500/20">Other</SelectItem>
+                <SelectContent className="bg-background border-border">
+                  <SelectItem value="tractor" className="text-card-foreground hover:bg-blue-500/20">Tractor</SelectItem>
+                  <SelectItem value="trailer" className="text-card-foreground hover:bg-blue-500/20">Trailer</SelectItem>
+                  <SelectItem value="straight_truck" className="text-card-foreground hover:bg-blue-500/20">Straight Truck</SelectItem>
+                  <SelectItem value="other" className="text-card-foreground hover:bg-blue-500/20">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="make" className="text-white/90">Make</Label>
+              <Label htmlFor="make" className="text-foreground/90">Make</Label>
               <Input
                 id="make"
                 name="make"
                 value={form.make}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="model" className="text-white/90">Model</Label>
+              <Label htmlFor="model" className="text-foreground/90">Model</Label>
               <Input
                 id="model"
                 name="model"
                 value={form.model}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="year" className="text-white/90">Year</Label>
+              <Label htmlFor="year" className="text-foreground/90">Year</Label>
               <Input
                 id="year"
                 name="year"
                 type="number"
                 value={form.year}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="vin" className="text-white/90">VIN</Label>
+              <Label htmlFor="vin" className="text-foreground/90">VIN</Label>
               <Input
                 id="vin"
                 name="vin"
                 value={form.vin}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {' '}
             <div className="space-y-2">
-              <Label htmlFor="licensePlate" className="text-white/90">License Plate</Label>
+              <Label htmlFor="licensePlate" className="text-foreground/90">License Plate</Label>
               <Input
                 id="licensePlate"
                 name="licensePlate"
                 value={form.licensePlate}
                 onChange={handleChange}
-                className="bg-neutral-900 border-muted text-white placeholder:text-white/50"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
           </div>
@@ -189,14 +189,14 @@ export default function AddVehicleDialog({
         <DialogFooter>
           <Button 
             onClick={() => onOpenChange(false)}
-            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleSubmit} 
             disabled={loading}
-            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+            className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-card-foreground hover:bg-blue-800"
           >
             Add Vehicle
           </Button>
