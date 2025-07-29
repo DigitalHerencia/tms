@@ -75,6 +75,14 @@ the `AnalyticsFilterPreset` model and scoped per organization and user.
 - Use `saveAnalyticsFilterPresetAction` to create a preset.
 - Use `getAnalyticsFilterPresetsAction` to load presets, with default presets returned first.
 
+### Analytics Filter Presets
+
+Saved filter presets allow users to quickly reapply common dashboard filters. Presets are stored in
+the `AnalyticsFilterPreset` model and scoped per organization and user.
+
+- Use `saveAnalyticsFilterPresetAction` to create a preset.
+- Use `getAnalyticsFilterPresetsAction` to load presets, with default presets returned first.
+
 ## User Stories
 
 - _As a fleet manager, I want to easily onboard my company into FleetFusion and invite my team
