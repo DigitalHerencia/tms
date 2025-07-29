@@ -224,11 +224,19 @@ export interface DigitalSignature {
   isValid: boolean;
 }
 
+export interface IftaReportSummary {
+  totalMiles: number;
+  totalFuelPurchased: number;
+  totalFuelConsumed: number;
+  totalTaxDue: number;
+  jurisdictionBreakdown?: JurisdictionSummary[];
+}
+
 export interface IFTAReportData {
-  quarter: any;
-  year: any;
-  organizationId: any;
-  reportSummary: any;
+  quarter: number;
+  year: number;
+  organizationId: string;
+  reportSummary: IftaReportSummary;
   organization: {
     id: string;
     name: string;
@@ -341,7 +349,7 @@ export interface IftaPDFGenerationLog {
   organizationId: string;
   userId: string;
   reportType: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   status: string;
   filePath?: string;
   fileName?: string;
@@ -373,7 +381,7 @@ export interface IftaReportPDF {
   watermark?: string;
   downloadCount: number;
   lastDownload?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   generatedByUser?: {
     firstName?: string;
     lastName?: string;
@@ -387,8 +395,8 @@ export interface IftaAuditLog {
   entityType: 'TRIP' | 'FUEL_PURCHASE' | 'REPORT' | 'TAX_CALCULATION';
   entityId: string;
   action: 'CREATE' | 'UPDATE' | 'DELETE' | 'SUBMIT' | 'APPROVE';
-  oldValues?: Record<string, any>;
-  newValues?: Record<string, any>;
+  oldValues?: Record<string, unknown>;
+  newValues?: Record<string, unknown>;
   userId: string;
   timestamp: Date;
   ipAddress?: string;

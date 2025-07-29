@@ -1,11 +1,12 @@
 "use client";
 
 import { useTransition } from "react";
-import type { Load } from "@/types/dispatch";
+import type { Load, LoadStatus } from "@/types/dispatch";
 import type { Driver } from "@/types/drivers";
 import type { Vehicle } from "@/types/vehicles";
 import { DispatchBoardUI } from "@/components/dispatch/dispatch-board";
 import { useRouter } from "next/navigation";
+import { updateLoadStatusAction } from "@/lib/actions/dispatchActions";
 
 interface DispatchBoardFeatureProps {
   loads: Load[];
@@ -98,13 +99,9 @@ export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchPa
     router.push(`/${orgId}/loads/${load.id}`);
   };
 
-  const onStatusUpdate = async (loadId: string, newStatus: string) => {
+  const onStatusUpdate = async (loadId: string, newStatus: LoadStatus) => {
     startTransition(async () => {
-      await fetch(`/api/loads/${loadId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
-      });
+      await updateLoadStatusAction(orgId, loadId, newStatus);
       router.refresh();
     });
   };

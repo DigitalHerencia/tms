@@ -295,6 +295,11 @@ async function main() {
       }
     });
 
+    const existingDriver = await prisma.driver.findUnique({ where: { id: 'the-id-you-are-trying-to-insert' } });
+      if (existingDriver) {
+      console.log(`Driver with id ${existingDriver.id} already exists.`);
+      } else {
+    
     const driver = await prisma.driver.create({
       data: {
         id: `drv_${i}`,
@@ -896,3 +901,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+}

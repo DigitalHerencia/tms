@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import db from "@/lib/database/db";
 import { handleError } from "@/lib/errors/handleError";
 import type { DashboardActionResult } from "@/types/dashboard";
+import type { LoadStatus } from "@/types/dispatch";
 
 /**
  * Create a new load (dispatch)
@@ -235,5 +236,55 @@ export async function assignDriverToLoadAction(
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, "Assign Driver to Load");
+  }
+}
+
+/**
+ * Update status for a load
+ */
+export async function updateLoadStatusAction(
+  orgId: string,
+  loadId: string,
+  newStatus: LoadStatus
+): Promise<DashboardActionResult<{ id: string }>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
+    await db.load.update({
+      where: { id: loadId, organizationId: orgId },
+      data: {
+        status: newStatus,
+        lastModifiedBy: userId,
+        updatedAt: new Date(),
+      },
+    });
+
+    await db.loadStatusEvent.create({
+      data: {
+        loadId,
+        status: newStatus,
+        timestamp: new Date(),
+        automaticUpdate: false,
+        source: "dispatcher",
+        createdBy: userId,
+      },
+    });
+
+    await db.dispatchActivity.create({
+      data: {
+        organizationId: orgId,
+        entityType: "load",
+        action: "status_change",
+        entityId: loadId,
+        userName: userId,
+        timestamp: new Date(),
+      },
+    });
+
+    revalidatePath(`/${orgId}/dispatch`);
+    return { success: true, data: { id: loadId } };
+  } catch (error) {
+    return handleError(error, "Update Load Status");
   }
 }

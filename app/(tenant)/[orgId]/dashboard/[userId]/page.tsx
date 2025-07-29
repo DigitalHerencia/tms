@@ -54,7 +54,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
       {/* Main Admin Interface */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-auto grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 bg-black border border-gray-200">
+        <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
           <TabsTrigger value="overview" className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70">
             <Shield className="h-4 w-4" />
             Overview

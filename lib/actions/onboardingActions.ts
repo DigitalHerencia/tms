@@ -3,7 +3,7 @@
 /**
  * Onboarding actions manage invitation flow during user sign up.
  *
- * TODO remaining: implement robust invitation code validation.
+ * Includes helpers to validate invitation codes against the database.
  */
 
 import { redirect } from "next/navigation"
@@ -17,7 +17,7 @@ import { SystemRole, getPermissionsForRole } from "@/types/abac"
 import db from "@/lib/database/db"
 import { generateSlug, ensureUniqueSlug } from "../utils/slugUtils"
 
-async function validateInvite(
+export async function validateInvite(
     organizationId: string,
     inviteCode: string,
     userId: string,

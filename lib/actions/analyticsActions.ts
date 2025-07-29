@@ -7,6 +7,11 @@ import prisma from '@/lib/database/db';
 import { hasPermission } from '@/lib/auth/permissions';
 import { handleError } from '@/lib/errors/handleError';
 import type { AnalyticsActionResult } from '@/types/actions';
+import {
+  saveFilterPreset,
+  getFilterPresets,
+} from '@/lib/fetchers/analyticsFetchers';
+import type { FilterPreset } from '@/types/analytics';
 
 interface FleetMetrics {
   vehicleCount: number;
@@ -247,5 +252,37 @@ export async function getComplianceAnalyticsAction(
     return { success: true, data: analytics };
   } catch (error) {
     return handleError(error, 'Get Compliance Analytics');
+  }
+}
+
+/**
+ * Save an analytics filter preset for the current user.
+ */
+export async function saveAnalyticsFilterPresetAction(
+  orgId: string,
+  preset: Omit<FilterPreset, 'id' | 'createdAt' | 'updatedAt'>,
+): Promise<AnalyticsActionResult<FilterPreset>> {
+  try {
+    const result = await saveFilterPreset(orgId, preset);
+    if (!result.success) {
+      return { success: false };
+    }
+    return { success: true, data: result.data };
+  } catch (error) {
+    return handleError(error, 'Save Filter Preset');
+  }
+}
+
+/**
+ * Load analytics filter presets for the current user.
+ */
+export async function getAnalyticsFilterPresetsAction(
+  orgId: string,
+): Promise<AnalyticsActionResult<FilterPreset[]>> {
+  try {
+    const presets = await getFilterPresets(orgId);
+    return { success: true, data: presets };
+  } catch (error) {
+    return handleError(error, 'Get Filter Presets');
   }
 }

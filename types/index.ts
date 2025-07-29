@@ -114,5 +114,17 @@ export type { Metadata, WebhookMetadata, ComplianceMetadata } from './metadata';
 export type { GlobalSearchResultItem } from './search';
 export type { Notification, NotificationActionResult } from './notifications';
 export type { MetadataRecord } from './metadata';
-\nexport * from './prisma-models';
 
+export * from './prisma-models';
+export * from './vehicles';
+export * from './drivers';
+export * from './dispatch';
+export * from './analytics';
+export * from './ifta';
+export * from './compliance';
+export * from './settings';
+export * from './dashboard';
+export * from './api';
+export * from './actions';
+export * from './users';
+export * from './webhooks';

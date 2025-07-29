@@ -77,7 +77,7 @@ export function LoadCard({
   };
 
   return (
-    <Card className="bg-black text-white border border-gray-200">
+    <Card className="bg-card text-card-foreground border border-border">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg">{load.referenceNumber}</CardTitle>
@@ -99,7 +99,7 @@ export function LoadCard({
             <div>
               <p className="text-sm font-medium">Origin</p>
               <p className="text-muted-foreground text-sm">
-                {String(load.origin)}
+                {load.origin.city}, {load.origin.state}
               </p>
             </div>
           </div>
@@ -108,7 +108,7 @@ export function LoadCard({
             <div>
               <p className="text-sm font-medium">Destination</p>
               <p className="text-muted-foreground text-sm">
-                {String(load.destination)},
+                {load.destination.city}, {load.destination.state}
               </p>
             </div>
           </div>
