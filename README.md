@@ -99,6 +99,10 @@ FleetFusion supports runtime toggles via environment variables. See [docs/featur
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
 
+### Linting & Formatting
+
+Run `npm run lint` to check code quality. Use `npm run format` to automatically format the project with Prettier.
+
 ---
 
 ## 📝 License

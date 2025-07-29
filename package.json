@@ -22,7 +22,9 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
     "clean:cache": "rimraf .next node_modules/.cache",
-    "clean:all": "rimraf .next node_modules && npm install"
+    "clean:all": "rimraf .next node_modules && npm install",
+    "lint": "next lint",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@clerk/agent-toolkit": "^0.1.1",
