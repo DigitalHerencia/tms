@@ -1,8 +1,8 @@
 // Auth domain business logic entry point
 //
-// TODO remaining: implement feature flag logic to toggle auth flows.
+// Exposes feature flag helpers and auth utilities.
 
-export function isAuthFeatureEnabled() {
-  // TODO: Implement feature flag logic
-  return true;
-}
+import { isAuthFeatureEnabled as checkAuthFeature } from '@/lib/config/featureFlags'
+
+// Re-export feature flag helper so consumers can import from this domain module
+export const isAuthFeatureEnabled = checkAuthFeature
