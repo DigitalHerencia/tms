@@ -70,6 +70,52 @@ export async function getOrganizationBillingAction(
   }
 }
 
+export async function cancelSubscriptionAction(
+  orgId: string,
+): Promise<DashboardActionResult<{ message: string }>> {
+  try {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: 'Unauthorized' };
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: { organizationId: true, role: true },
+    });
+    if (!user || user.organizationId !== orgId || user.role !== 'admin') {
+      return { success: false, error: 'Forbidden' };
+    }
+
+    const apiUrl = process.env.BILLING_PROVIDER_API_URL;
+    const apiKey = process.env.BILLING_PROVIDER_API_KEY;
+    if (!apiUrl || !apiKey) {
+      throw new Error('Billing provider API not configured');
+    }
+
+    const res = await fetch(`${apiUrl}/subscriptions/${orgId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`Billing provider error: ${res.status} ${text}`);
+    }
+
+    await db.organization.update({
+      where: { id: orgId },
+      data: { subscriptionStatus: 'cancelled' },
+    });
+
+    revalidatePath(`/${orgId}/dashboard`);
+    return { success: true, data: { message: 'Subscription cancelled' } };
+  } catch (error) {
+    return handleError(error, 'Cancel Subscription');
+  }
+}
+
 export async function activateUsersAction(
   orgId: string,
   formData: FormData,
