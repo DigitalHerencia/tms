@@ -82,8 +82,9 @@ export function DriverAssignmentDialog({
       } else {
         setForm(f => ({ ...f, error: result.error || 'Failed to assign' }));
       }
-    } catch (err: any) {
-      setForm(f => ({ ...f, error: err.message || 'Validation error' }));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Validation error';
+      setForm(f => ({ ...f, error: message }));
     } finally {
       setForm(f => ({ ...f, submitting: false }));
     }
@@ -103,8 +104,9 @@ export function DriverAssignmentDialog({
       } else {
         setForm(f => ({ ...f, error: result.error || 'Failed to unassign' }));
       }
-    } catch (err: any) {
-      setForm(f => ({ ...f, error: err.message || 'Error' }));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error';
+      setForm(f => ({ ...f, error: message }));
     } finally {
       setForm(f => ({ ...f, submitting: false }));
     }

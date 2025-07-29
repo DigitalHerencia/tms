@@ -40,6 +40,7 @@ import {
   DocumentListEmpty,
 } from '@/components/shared/DocumentUpload';
 import { updateDriverStatusAction } from '@/lib/actions/driverActions';
+import type { DriverStatus } from '@/types/drivers';
 import { toast } from '@/hooks/use-toast';
 import type { Driver } from '@/types/drivers';
 
@@ -95,7 +96,7 @@ export function DriverDetailsDialog({
     
     try {
       const result = await updateDriverStatusAction(driver.id, {
-        status: newStatus as any,
+        status: newStatus as DriverStatus,
       });
 
       if (result.success) {

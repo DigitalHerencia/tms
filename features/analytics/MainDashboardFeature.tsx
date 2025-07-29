@@ -1,9 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDashboardSummary } from '@/lib/fetchers/analyticsFetchers';
+import type { DashboardSummary } from '@/types/analytics';
 
 interface MainDashboardFeatureProps {
   orgId: string;
 }
+/**
+ * Server component for the main analytics dashboard overview.
+ *
+ * @param props.orgId - Organization identifier used to load summary data.
+ *
+ * Cards reflow from single column on mobile to grid on larger screens.
+ */
+// See docs/screenshots/dashboard-overview.png for spacing
 
 export async function MainDashboardFeature({
   orgId,
@@ -12,7 +21,7 @@ export async function MainDashboardFeature({
     return <p className="text-red-500">Organization not found.</p>;
   }
 
-  let summary: any;
+  let summary: DashboardSummary;
   try {
     summary = await getDashboardSummary(orgId);
   } catch (err) {

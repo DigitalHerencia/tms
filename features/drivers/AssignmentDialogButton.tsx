@@ -3,13 +3,14 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { DriverAssignmentDialog } from '@/features/drivers/DriverAssignmentDialog';
+import type { DriverAssignment } from '@/types/drivers';
 
 export function AssignmentDialogButton({
   driverId,
   currentAssignment,
 }: {
   driverId: string;
-  currentAssignment?: any;
+  currentAssignment?: Partial<DriverAssignment>;
 }) {
   const [open, setOpen] = useState(false);
   return (

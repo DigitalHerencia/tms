@@ -61,6 +61,14 @@ function MetricCard({
 interface DashboardMetricsProps {
   orgId: string;
 }
+/**
+ * Server component displaying key metrics for the dashboard.
+ *
+ * @param props.orgId - Organization identifier to load metrics.
+ *
+ * Metric cards wrap from two columns on tablets to four columns on desktop.
+ */
+// See docs/screenshots/dashboard-metrics-cards.png for layout
 
 const DashboardMetrics: FC<DashboardMetricsProps> = async ({ orgId }) => {
   if (!orgId) {

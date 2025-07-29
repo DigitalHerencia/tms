@@ -60,6 +60,8 @@ export async function updateRBAC(
 ): Promise<void> {
   // TODO: Implement RBAC update logic
   throw new Error('Not implemented');
+}
+
 =======
 'use server'
 
@@ -82,11 +84,14 @@ export async function loginUser(email: string, password: string) {
   try {
     const { email: validatedEmail, password: validatedPassword } = signInSchema.parse({ email, password })
     const client = await clerkClient()
-    const signIn = await client.authenticateUser({ identifier: validatedEmail, password: validatedPassword })
+    const signIn = await (client as any).authenticateUser({
+      identifier: validatedEmail,
+      password: validatedPassword,
+    })
     if (!signIn.sessionId || !signIn.userId) {
       return { success: false, error: 'Invalid credentials' }
     }
-    const session = await client.sessions.getSession(signIn.sessionId)
+    const session = await (client as any).sessions.getSession(signIn.sessionId)
     const user = await client.users.getUser(signIn.userId)
 
     await db.user.upsert({
@@ -102,7 +107,11 @@ export async function loginUser(email: string, password: string) {
       },
     })
 
-    const userContext = buildSecureUserContext(user.id, session, (user.privateMetadata as any)?.organizationId || '')
+    const userContext = buildSecureUserContext(
+      user.id,
+      session as unknown as Record<string, unknown>,
+      (user.privateMetadata as any)?.organizationId || ''
+    )
     sessionCache.set(`${user.id}-${userContext.organizationId}`, userContext)
 
     return { success: true, data: { sessionId: signIn.sessionId } }
@@ -119,11 +128,13 @@ export async function loginUser(email: string, password: string) {
  */
 export async function registerUser(data: { email: string; password: string; name: string; companyName: string }) {
   try {
-    const validated = signUpSchema.omit({ confirmPassword: true, agreeToTerms: true }).parse({
+    const validated = signUpSchema.parse({
       email: data.email,
       password: data.password,
+      confirmPassword: data.password,
       name: data.name,
       companyName: data.companyName,
+      agreeToTerms: true,
     })
 
     const client = await clerkClient()
@@ -168,13 +179,17 @@ export async function registerUser(data: { email: string; password: string; name
 export async function updateSession(userId: string) {
   try {
     const client = await clerkClient()
-    const user = await client.users.getUser(userId)
-    const sessions = await client.users.getUserSessions(userId)
+    const user = await (client as any).users.getUser(userId)
+    const sessions = await (client as any).users.getUserSessions(userId)
     const session = sessions[0]
     if (!session) {
       return { success: false, error: 'No active session' }
     }
-    const context = buildSecureUserContext(user.id, session, (user.privateMetadata as any)?.organizationId || '')
+    const context = buildSecureUserContext(
+      user.id,
+      session as unknown as Record<string, unknown>,
+      (user.privateMetadata as any)?.organizationId || ''
+    )
     sessionCache.set(`${user.id}-${context.organizationId}`, context)
     return { success: true }
   } catch (error) {
@@ -197,7 +212,7 @@ export async function updateRBAC(userId: string, role: string) {
     await client.users.updateUserMetadata(userId, {
       publicMetadata: { role: parsed, permissions },
     })
-    await db.user.update({ where: { id: userId }, data: { role: parsed } })
+    await db.user.update({ where: { id: userId }, data: { role: parsed as any } })
     sessionCache.invalidateUser(userId)
     await updateSession(userId)
     return { success: true }
