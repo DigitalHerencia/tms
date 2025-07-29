@@ -68,12 +68,13 @@ export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | 
   return null;
 }
 
-// Get the current company (organization) context by orgId (UUID)
 /**
- * Retrieve metadata for the organization associated with the current user.
+ * Returns metadata for the organization the current user belongs to.
  *
- * Returns `null` when the user is unauthenticated or not linked to an
- * organization. Throws if any database query fails.
+ * If the user is not authenticated, has no organization, or the organization
+ * cannot be found, `null` is returned. Any errors encountered while fetching
+ * data are logged and swallowed.
+ *
  */
 export async function getCurrentCompany(): Promise<ClerkOrganizationMetadata | null> {
   const { userId } = await auth();
