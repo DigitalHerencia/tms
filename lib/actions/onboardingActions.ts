@@ -10,6 +10,7 @@ import type { CompleteOnboardingData } from "@/schemas/onboarding"
 import { SystemRole, getPermissionsForRole } from "@/types/abac"
 import db from "@/lib/database/db"
 import { generateSlug, ensureUniqueSlug } from "../utils/slugUtils"
+import { getOrganizationInvitationById } from "./invitationActions"
 
 // Infer the resolved client type
 type ResolvedClerkClient = Awaited<ReturnType<typeof clerkClient>>
@@ -341,17 +342,43 @@ export async function completeOnboarding(data: CompleteOnboardingData) {
                 throw new Error("Organization not found")
             }
             
-            // TODO: Add proper invitation code validation
-            
+            let invitation
+            if (inviteCode) {
+                const inviteResult = await getOrganizationInvitationById(
+                    organization.id,
+                    inviteCode
+                )
+
+                if (!inviteResult.success) {
+                    throw new Error(inviteResult.error || "Invalid invite code")
+                }
+
+                invitation = inviteResult.data as any
+
+                if (
+                    invitation.organizationId !== organization.id ||
+                    invitation.role !== role
+                ) {
+                    throw new Error("Invitation does not match organization or role")
+                }
+
+                if (invitation.status !== "pending") {
+                    throw new Error("Invitation has already been used or revoked")
+                }
+
+                if (invitation.expiresAt && new Date(invitation.expiresAt) < new Date()) {
+                    throw new Error("Invitation has expired")
+                }
+            }
+
             // Create membership for user
             await db.organizationMembership.create({
                 data: {
-                    id: crypto.randomUUID(), // <-- Add this line
+                    id: crypto.randomUUID(),
                     userId: dbUser.id,
                     organizationId: organization.id,
                     role: role as any,
-                    // accepted: true, // <-- Remove this line
-                }
+                },
             })
             
             // Update user with organization
