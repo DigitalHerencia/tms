@@ -6,13 +6,18 @@
  * - Handles error logging and type-safe queries
  * - Implements secure connection management with retry logic
  *
- * @format
  */
 
-import { PrismaNeon } from "@prisma/adapter-neon"
-import { PrismaClient } from "@prisma/client"
+import 'dotenv/config';
+import { PrismaClient } from '@prisma/client';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { neonConfig } from '@neondatabase/serverless';
+
+import ws from 'ws';
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import crypto from "crypto"
+
+neonConfig.webSocketConstructor = ws;
 
 // Validate required environment variables
 const requiredEnvVars = ["DATABASE_URL"] as const
