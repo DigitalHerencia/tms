@@ -1,4 +1,4 @@
-  import { Suspense } from 'react';
+import { Suspense } from 'react';
 import {
   CalendarIcon,
   ClipboardCheck,
@@ -11,13 +11,7 @@ import {
 } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DriverComplianceTable } from '@/components/compliance/driver-compliance-table';
 import { VehicleComplianceTable } from '@/components/compliance/vehicle-compliance-table';
@@ -29,12 +23,12 @@ import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
 import { PageLayout } from '@/components/shared/PageLayout';
 
 interface CompliancePageProps {
-  params: Promise<{ orgId: string }>
+  params: Promise<{ orgId: string }>;
 }
 
 export default async function CompliancePage({ params }: CompliancePageProps) {
   const { orgId } = await params;
-    // Fetch dashboard data with error handling
+  // Fetch dashboard data with error handling
   let dashboardData: any = {};
   try {
     dashboardData = await getComplianceDashboard(orgId);
@@ -54,24 +48,25 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
     };
   }
 
-  const hasData = dashboardData && typeof dashboardData === 'object' && dashboardData.totalDocuments !== undefined;
-  
+  const hasData =
+    dashboardData &&
+    typeof dashboardData === 'object' &&
+    dashboardData.totalDocuments !== undefined;
+
   return (
     <PageLayout className="compliance-page p-4 md:p-6">
-      <div className="mt-14 mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="page-title">Compliance Management</h1>
-          <p className="page-subtitle">
-            Monitor and manage regulatory compliance for your fleet, drivers,
-            and documents.
+      <div className="flex flex-row items-baseline justify-between mb-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <FileText className="h-8 w-8 text-white" />
+            <h1 className="text-3xl font-extrabold text-white">Compliance Management</h1>
+          </div>
+          <p className="text-sm text-white/90 font-medium">
+            Monitor and manage regulatory compliance for your fleet, drivers, and documents.
           </p>
         </div>
-        <div className="mr-6 flex w-full flex-col gap-4 md:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="btn btn-outline w-full md:w-auto"
-          >
+        <div className="flex w-full flex-col gap-4 md:w-auto">
+          <Button variant="outline" size="sm" className="btn btn-outline w-full md:w-auto">
             <Eye className="mr-2 h-4 w-4" />
             Schedule Audit
           </Button>
@@ -80,7 +75,8 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
             Generate Report
           </Button>
         </div>
-        {/* Enhanced Dashboard with Real Data */}
+      </div>
+      {/* Enhanced Dashboard with Real Data */}
       <Suspense fallback={<div>Loading compliance dashboard...</div>}>
         <ComplianceDashboard orgId={orgId} />
       </Suspense>
@@ -94,99 +90,85 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
           <TabsTrigger value="inspections">DOT</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="overview" className="mt-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Card className="card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Driver Compliance
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Driver Compliance</CardTitle>
                 <UserIcon className="h-4 w-4 text--info" />
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
-                  {hasData && dashboardData.totalDrivers > 0 ? 
-                    `${Math.round((dashboardData.driversInCompliance / dashboardData.totalDrivers) * 100)}%` 
-                    : '0%'
-                  }
+                  {hasData && dashboardData.totalDrivers > 0
+                    ? `${Math.round((dashboardData.driversInCompliance / dashboardData.totalDrivers) * 100)}%`
+                    : '0%'}
                 </div>
                 <p className="text-xs text-success">
-                  {hasData ? 
-                    `${dashboardData.driversInCompliance} of ${dashboardData.totalDrivers} drivers compliant` 
-                    : 'No data available'
-                  }
+                  {hasData
+                    ? `${dashboardData.driversInCompliance} of ${dashboardData.totalDrivers} drivers compliant`
+                    : 'No data available'}
                 </p>
               </CardContent>
             </Card>
             <Card className="card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Vehicle Compliance
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Vehicle Compliance</CardTitle>
                 <TruckIcon className="h-4 w-4 text-info" />
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
-                  {hasData && dashboardData.totalVehicles > 0 ? 
-                    `${Math.round((dashboardData.vehiclesInCompliance / dashboardData.totalVehicles) * 100)}%` 
-                    : '0%'
-                  }
+                  {hasData && dashboardData.totalVehicles > 0
+                    ? `${Math.round((dashboardData.vehiclesInCompliance / dashboardData.totalVehicles) * 100)}%`
+                    : '0%'}
                 </div>
                 <p className="text-xs text-success">
-                  {hasData ? 
-                    `${dashboardData.vehiclesInCompliance} of ${dashboardData.totalVehicles} vehicles compliant` 
-                    : 'No data available'
-                  }
+                  {hasData
+                    ? `${dashboardData.vehiclesInCompliance} of ${dashboardData.totalVehicles} vehicles compliant`
+                    : 'No data available'}
                 </p>
               </CardContent>
             </Card>
             <Card className="card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Active Violations
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Active Violations</CardTitle>
                 <AlertTriangle className="h-4 w-4 text-warning" />
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
-                  {hasData ? (dashboardData.activeViolations || 0) : 0}
+                  {hasData ? dashboardData.activeViolations || 0 : 0}
                 </div>
                 <p className="text-xs text-danger">Requires attention</p>
               </CardContent>
             </Card>
             <Card className="card">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Document Status
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Document Status</CardTitle>
                 <FileText className="h-4 w-4 text-info" />
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="card-metric">
-                  {hasData && dashboardData.totalDocuments > 0 ? 
-                    `${Math.round(((dashboardData.totalDocuments - dashboardData.expiredDocuments) / dashboardData.totalDocuments) * 100)}%` 
-                    : '0%'
-                  }
+                  {hasData && dashboardData.totalDocuments > 0
+                    ? `${Math.round(((dashboardData.totalDocuments - dashboardData.expiredDocuments) / dashboardData.totalDocuments) * 100)}%`
+                    : '0%'}
                 </div>
                 <p className="text-xs text-success">
-                  {hasData ? 
-                    `${dashboardData.totalDocuments - dashboardData.expiredDocuments} of ${dashboardData.totalDocuments} current` 
-                    : 'No documents'
-                  }
+                  {hasData
+                    ? `${dashboardData.totalDocuments - dashboardData.expiredDocuments} of ${dashboardData.totalDocuments} current`
+                    : 'No documents'}
                 </p>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="drivers" className="mt-4">
           <Card className="card">
             <CardHeader>
               <CardTitle>Driver Compliance Status</CardTitle>
               <CardDescription>
-                Monitor driver compliance with regulations including HOS,
-                licenses, and medical certifications.
+                Monitor driver compliance with regulations including HOS, licenses, and medical
+                certifications.
               </CardDescription>
             </CardHeader>
             <CardContent className="overflow-x-auto">
@@ -196,26 +178,23 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="vehicles" className="mt-4">
           <Card className="card">
             <CardHeader>
               <CardTitle>Vehicle Compliance Status</CardTitle>
               <CardDescription>
-                Track vehicle inspections, maintenance, and registration
-                compliance.
+                Track vehicle inspections, maintenance, and registration compliance.
               </CardDescription>
             </CardHeader>
             <CardContent className="overflow-x-auto">
-              <Suspense
-                fallback={<div>Loading vehicle compliance data...</div>}
-              >
+              <Suspense fallback={<div>Loading vehicle compliance data...</div>}>
                 <VehicleComplianceTable orgId={orgId} />
               </Suspense>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="documents" className="mt-4">
           <Card className="card">
             <CardHeader>
@@ -231,7 +210,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="inspections" className="mt-4">
           <Card className="card">
             <CardHeader>
@@ -247,7 +226,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="alerts" className="mt-4">
           <Card className="card">
             <CardHeader>

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { BarChart3, CalendarIcon, FileText, MapPin } from 'lucide-react';
+import { Activity, BarChart3, CalendarIcon, FileText, MapPin } from 'lucide-react';
 import type { IFTAReport } from '@/components/ifta/ifta-columns';
 import { IftaReportTableClient, IftaTripTableClient } from '@/components/ifta/ifta-tables';
 import { Button } from '@/components/ui/button';
@@ -81,20 +81,20 @@ export default async function Page({ params }: { params: Promise<{ orgId: string
   return (
     <div className="min-h-screen space-y-6 bg-neutral-900 p-6 pt-8">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-8 w-8 text-blue-500" />
-            <h1 className="text-3xl font-bold text-white">IFTA Management</h1>
+      <div className="flex flex-row items-baseline justify-between mb-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <Activity className="h-8 w-8 text-white" />
+            <h1 className="text-3xl font-extrabold text-white">IFTA Management</h1>
             <span className="border border-blue-200 bg-blue-50 text-blue-700 rounded px-2 py-1 text-xs font-semibold">
               Compliance
             </span>
           </div>
-          <p className="text-gray-400">
+          <p className="text-gray-400 font-medium">
             Track and manage International Fuel Tax Agreement reporting
           </p>
         </div>
-        <div className="flex flex-row gap-4 mt-4 md:mt-0">
+        <div className="flex flex-row gap-4">
           <Button
             size="sm"
             className="rounded-md bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800 flex items-center gap-2"
