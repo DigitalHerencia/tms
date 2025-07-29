@@ -167,6 +167,7 @@ export async function getIftaDataForPeriod(
           (jurisdictionSummary[jurisdiction].fuelGallons || 0) + gallons;
         jurisdictionSummary[jurisdiction].taxableGallons =
           (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
+
         
     // Aggregate totals using Prisma
     const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
