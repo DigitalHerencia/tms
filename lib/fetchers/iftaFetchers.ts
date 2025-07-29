@@ -2,23 +2,17 @@
 
 /**
  * IFTA data fetchers.
+ * Provides server-side data access for IFTA reporting
+ * including quarter/year filtering and tax rate management.
  *
- * TODO remaining:
- * - Implement quarter/year filtering and jurisdiction tax rate models.
- * - Add driver and location lookups for trip data.
  */
 
 import { auth } from '@clerk/nextjs/server';
 
-import
-  {
-    CACHE_TTL,
-    getCachedData,
-    setCachedData,
-  } from '@/lib/cache/auth-cache';
+import { CACHE_TTL, getCachedData, setCachedData } from '@/lib/cache/auth-cache';
 import db from '@/lib/database/db';
 
-import type { IftaJurisdictionSummary, IftaPeriodData } from "@/types/ifta";
+import type { IftaJurisdictionSummary, IftaPeriodData } from '@/types/ifta';
 /**
  * Check user access to organization
  */
@@ -45,7 +39,7 @@ async function checkUserAccess(organizationId: string) {
 export async function getIftaDataForPeriod(
   orgId: string,
   quarter: string,
-  year: string
+  year: string,
 ): Promise<IftaPeriodData> {
   try {
     await checkUserAccess(orgId);
@@ -53,12 +47,7 @@ export async function getIftaDataForPeriod(
     const quarterNum = parseInt(quarter.replace('Q', ''));
     const yearNum = parseInt(year);
 
-    if (
-      isNaN(quarterNum) ||
-      isNaN(yearNum) ||
-      quarterNum < 1 ||
-      quarterNum > 4
-    ) {
+    if (isNaN(quarterNum) || isNaN(yearNum) || quarterNum < 1 || quarterNum > 4) {
       throw new Error('Invalid quarter or year format');
     }
 
@@ -102,6 +91,13 @@ export async function getIftaDataForPeriod(
             model: true,
           },
         },
+        driver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
       orderBy: {
         date: 'desc',
@@ -134,15 +130,9 @@ export async function getIftaDataForPeriod(
 
     // Calculate summary statistics
     const totalMiles = trips.reduce((sum, trip) => sum + trip.distance, 0);
-    const totalGallons = fuelPurchases.reduce(
-      (sum, purchase) => sum + Number(purchase.gallons),
-      0
-    );
+    const totalGallons = fuelPurchases.reduce((sum, purchase) => sum + Number(purchase.gallons), 0);
     const averageMpg = totalGallons > 0 ? totalMiles / totalGallons : 0;
-    const totalFuelCost = fuelPurchases.reduce(
-      (sum, purchase) => sum + Number(purchase.amount),
-      0
-    );    // Group by jurisdiction
+    const totalFuelCost = fuelPurchases.reduce((sum, purchase) => sum + Number(purchase.amount), 0); // Group by jurisdiction
     const jurisdictionSummary = trips.reduce(
       (acc, trip) => {
         const jurisdiction = trip.jurisdiction;
@@ -165,16 +155,40 @@ export async function getIftaDataForPeriod(
         acc[jurisdiction].taxableMiles = (acc[jurisdiction].taxableMiles || 0) + trip.distance;
         return acc;
       },
-      {} as Record<string, IftaJurisdictionSummary>
+      {} as Record<string, IftaJurisdictionSummary>,
     );
 
     // Add fuel data to jurisdiction summary
-    fuelPurchases.forEach(purchase => {
+    fuelPurchases.forEach((purchase) => {
       const jurisdiction = purchase.jurisdiction;
       if (jurisdictionSummary[jurisdiction]) {
         const gallons = Number(purchase.gallons);
-        jurisdictionSummary[jurisdiction].fuelGallons = (jurisdictionSummary[jurisdiction].fuelGallons || 0) + gallons;
-        jurisdictionSummary[jurisdiction].taxableGallons = (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
+        jurisdictionSummary[jurisdiction].fuelGallons =
+          (jurisdictionSummary[jurisdiction].fuelGallons || 0) + gallons;
+        jurisdictionSummary[jurisdiction].taxableGallons =
+          (jurisdictionSummary[jurisdiction].taxableGallons || 0) + gallons;
+        
+    // Aggregate totals using Prisma
+    const [tripAgg, fuelAgg, milesByJurisdiction, fuelByJurisdiction] = await Promise.all([
+      db.iftaTrip.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.aggregate({
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true, amount: true },
+      }),
+      db.iftaTrip.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { distance: true },
+      }),
+      db.iftaFuelPurchase.groupBy({
+        by: ['jurisdiction'],
+        where: { organizationId: orgId, date: { gte: startDate, lte: endDate } },
+        _sum: { gallons: true },
+      }),
+    ]);
       }
     });
 
@@ -182,13 +196,70 @@ export async function getIftaDataForPeriod(
     const existingReport = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
-        },
+        quarter: quarterNum,
+        year: yearNum,
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    // Look up driver and location information for each trip
+    const detailedTrips = await Promise.all(
+      trips.map(async trip => {
+        const load = await db.load.findFirst({
+          where: {
+            organizationId: orgId,
+            vehicleId: trip.vehicleId,
+            OR: [
+              {
+                AND: [
+                  { scheduledPickupDate: { lte: trip.date } },
+                  { scheduledDeliveryDate: { gte: trip.date } },
+                ],
+              },
+              {
+                AND: [
+                  { actualPickupDate: { lte: trip.date } },
+                  { actualDeliveryDate: { gte: trip.date } },
+                ],
+              },
+            ],
+          },
+          select: {
+            originCity: true,
+            originState: true,
+            destinationCity: true,
+            destinationState: true,
+            drivers: { select: { firstName: true, lastName: true } },
+          },
+        });
+
+        const driverName = load?.drivers ? `${load.drivers.firstName} ${load.drivers.lastName}` : null;
+        const startLocation = load ? `${load.originCity}, ${load.originState}` : null;
+        const endLocation = load ? `${load.destinationCity}, ${load.destinationState}` : null;
+
+        return {
+          id: trip.id,
+          date: trip.date,
+          vehicleId: trip.vehicleId,
+          vehicle: {
+            id: trip.vehicle.id,
+            unitNumber: trip.vehicle.unitNumber,
+            make: trip.vehicle.make || 'Unknown',
+            model: trip.vehicle.model || 'Unknown',
+          },
+          jurisdiction: trip.jurisdiction,
+          distance: trip.distance,
+          fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
+          notes: trip.notes,
+          driver: driverName,
+          startLocation,
+          endLocation,
+          miles: trip.distance,
+          gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
+          state: trip.jurisdiction,
+        };
+      })
+    );
 
     const result: IftaPeriodData = {
       period: { quarter: quarterNum, year: yearNum },
@@ -197,7 +268,8 @@ export async function getIftaDataForPeriod(
         totalGallons,
         averageMpg: Math.round(averageMpg * 100) / 100,
         totalFuelCost,
-      },      trips: trips.map(trip => ({
+      },
+      trips: trips.map((trip) => ({
         id: trip.id,
         date: trip.date,
         vehicleId: trip.vehicleId,
@@ -212,13 +284,14 @@ export async function getIftaDataForPeriod(
         fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
         notes: trip.notes,
         // Additional fields for table compatibility
-        driver: 'Driver Name', // TODO: Add proper driver lookup
-        startLocation: 'Start Location', // TODO: Add proper location data
-        endLocation: 'End Location', // TODO: Add proper location data
+        driver: trip.driver ? `${trip.driver.firstName} ${trip.driver.lastName}` : undefined,
+        startLocation: trip.startLocation || undefined,
+        endLocation: trip.endLocation || undefined,
         miles: trip.distance,
         gallons: trip.fuelUsed ? Number(trip.fuelUsed) : 0,
         state: trip.jurisdiction,
-      })),fuelPurchases: fuelPurchases.map(purchase => ({
+      })),
+      fuelPurchases: fuelPurchases.map((purchase) => ({
         id: purchase.id,
         date: purchase.date,
         vehicleId: purchase.vehicleId,
@@ -267,7 +340,7 @@ export async function getIftaTripData(
     startDate?: string;
     endDate?: string;
     jurisdiction?: string;
-  } = {}
+  } = {},
 ) {
   try {
     await checkUserAccess(orgId);
@@ -282,6 +355,10 @@ export async function getIftaTripData(
 
     if (filters.jurisdiction) {
       where.jurisdiction = filters.jurisdiction;
+    }
+
+    if (filters.driverId) {
+      where.driverId = filters.driverId;
     }
 
     if (filters.startDate || filters.endDate) {
@@ -305,6 +382,13 @@ export async function getIftaTripData(
             model: true,
           },
         },
+        driver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
       orderBy: {
         date: 'desc',
@@ -313,7 +397,7 @@ export async function getIftaTripData(
 
     return {
       success: true,
-      data: trips.map(trip => ({
+      data: trips.map((trip) => ({
         id: trip.id,
         date: trip.date,
         vehicleId: trip.vehicleId,
@@ -322,6 +406,9 @@ export async function getIftaTripData(
         distance: trip.distance,
         fuelUsed: trip.fuelUsed ? Number(trip.fuelUsed) : null,
         notes: trip.notes,
+        driver: trip.driver ? `${trip.driver.firstName} ${trip.driver.lastName}` : undefined,
+        startLocation: trip.startLocation || undefined,
+        endLocation: trip.endLocation || undefined,
         createdAt: trip.createdAt,
         updatedAt: trip.updatedAt,
       })),
@@ -342,7 +429,7 @@ export async function getIftaFuelPurchases(
     startDate?: string;
     endDate?: string;
     jurisdiction?: string;
-  } = {}
+  } = {},
 ) {
   try {
     await checkUserAccess(orgId);
@@ -388,7 +475,7 @@ export async function getIftaFuelPurchases(
 
     return {
       success: true,
-      data: purchases.map(purchase => ({
+      data: purchases.map((purchase) => ({
         id: purchase.id,
         date: purchase.date,
         vehicleId: purchase.vehicleId,
@@ -421,7 +508,9 @@ export async function getIftaReports(orgId: string, year?: number) {
     };
 
     if (year) {
-      where.year = year;
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31, 23, 59, 59);
+      where.createdAt = { gte: startDate, lte: endDate };
     }
 
     const reports = await db.iftaReport.findMany({
@@ -434,15 +523,15 @@ export async function getIftaReports(orgId: string, year?: number) {
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }], // Use createdAt instead of non-existent year/quarter fields
+      orderBy: [{ year: 'desc' }, { quarter: 'desc' }],
     });
 
     return {
       success: true,
-      data: reports.map(report => ({
+      data: reports.map((report) => ({
         id: report.id,
-        quarter: 1, // TODO: Calculate from createdAt or calculationData
-        year: report.createdAt.getFullYear(), // Use year from createdAt
+        quarter: Math.floor(report.createdAt.getMonth() / 3) + 1,
+        year: report.createdAt.getFullYear(),
         status: report.status,
         totalMiles: report.totalMiles,
         totalGallons: report.totalGallons ? Number(report.totalGallons) : null,
@@ -474,44 +563,17 @@ export async function getJurisdictionRates(orgId?: string): Promise<Record<strin
   try {
     if (orgId) {
       await checkUserAccess(orgId);
-    }    // Try to get rates from database (TODO: Add jurisdictionTaxRate model)
-    // const currentDate = new Date();
-    // const dbRates = await db.jurisdictionTaxRate.findMany({
-    const dbRates: any[] = []; // Temporary empty array until model is implemented
+    }
     const currentDate = new Date();
-    // const dbRatesQuery = {      //   where: {
-      //     OR: [
-      //       {
-      //         AND: [
-      //           { organizationId: orgId },
-      //           {
-      //             effectiveDate: { lte: currentDate },
-      //             OR: [
-      //               { endDate: null },
-      //               { endDate: { gte: currentDate } },
-      //             ],
-      //           },
-      //         ],
-      //       },
-      //       {
-      //         AND: [
-      //           { organizationId: undefined }, // Global rates
-      //           {
-      //             effectiveDate: { lte: currentDate },
-      //             OR: [
-      //               { endDate: null },
-      //               { endDate: { gte: currentDate } },
-      //             ],
-      //           },
-      //         ],
-      //       },
-      //     ],
-      //   },
-      //   orderBy: [
-      //     { organizationId: 'desc' }, // Org-specific rates take precedence
-      //     { effectiveDate: 'desc' },
-      //   ],
-      // });
+    const dbRates = await db.jurisdictionTaxRate.findMany({
+      where: {
+        organizationId: { in: orgId ? [orgId, null] : [null] },
+        isActive: true,
+        effectiveDate: { lte: currentDate },
+        OR: [{ endDate: null }, { endDate: { gte: currentDate } }],
+      },
+      orderBy: [{ organizationId: 'desc' }, { effectiveDate: 'desc' }],
+    });
 
     // Convert to jurisdiction -> rate mapping
     const rates: Record<string, number> = {};
@@ -523,70 +585,70 @@ export async function getJurisdictionRates(orgId?: string): Promise<Record<strin
 
     // Add default fallback rates for common jurisdictions
     const defaultRates = {
-      AL: 0.19,    // Alabama
-      AK: 0.08,    // Alaska
-      AZ: 0.18,    // Arizona
-      AR: 0.225,   // Arkansas
-      CA: 0.387,   // California
-      CO: 0.205,   // Colorado
-      CT: 0.25,    // Connecticut
-      DE: 0.23,    // Delaware
-      FL: 0.205,   // Florida
-      GA: 0.184,   // Georgia
-      HI: 0.16,    // Hawaii
-      ID: 0.25,    // Idaho
-      IL: 0.398,   // Illinois
-      IN: 0.16,    // Indiana
-      IA: 0.30,    // Iowa
-      KS: 0.24,    // Kansas
-      KY: 0.183,   // Kentucky
-      LA: 0.16,    // Louisiana
-      ME: 0.253,   // Maine
-      MD: 0.243,   // Maryland
-      MA: 0.21,    // Massachusetts
-      MI: 0.255,   // Michigan
-      MN: 0.22,    // Minnesota
-      MS: 0.18,    // Mississippi
-      MO: 0.17,    // Missouri
-      MT: 0.2775,  // Montana
-      NE: 0.243,   // Nebraska
-      NV: 0.23,    // Nevada
-      NH: 0.22,    // New Hampshire
-      NJ: 0.144,   // New Jersey
-      NM: 0.188,   // New Mexico
-      NY: 0.392,   // New York
-      NC: 0.351,   // North Carolina
-      ND: 0.23,    // North Dakota
-      OH: 0.28,    // Ohio
-      OK: 0.16,    // Oklahoma
-      OR: 0.24,    // Oregon
-      PA: 0.537,   // Pennsylvania
-      RI: 0.32,    // Rhode Island
-      SC: 0.167,   // South Carolina
-      SD: 0.22,    // South Dakota
-      TN: 0.17,    // Tennessee
-      TX: 0.20,    // Texas
-      UT: 0.294,   // Utah
-      VT: 0.263,   // Vermont
-      VA: 0.162,   // Virginia
-      WA: 0.375,   // Washington
-      WV: 0.325,   // West Virginia
-      WI: 0.306,   // Wisconsin
-      WY: 0.14,    // Wyoming
+      AL: 0.19, // Alabama
+      AK: 0.08, // Alaska
+      AZ: 0.18, // Arizona
+      AR: 0.225, // Arkansas
+      CA: 0.387, // California
+      CO: 0.205, // Colorado
+      CT: 0.25, // Connecticut
+      DE: 0.23, // Delaware
+      FL: 0.205, // Florida
+      GA: 0.184, // Georgia
+      HI: 0.16, // Hawaii
+      ID: 0.25, // Idaho
+      IL: 0.398, // Illinois
+      IN: 0.16, // Indiana
+      IA: 0.3, // Iowa
+      KS: 0.24, // Kansas
+      KY: 0.183, // Kentucky
+      LA: 0.16, // Louisiana
+      ME: 0.253, // Maine
+      MD: 0.243, // Maryland
+      MA: 0.21, // Massachusetts
+      MI: 0.255, // Michigan
+      MN: 0.22, // Minnesota
+      MS: 0.18, // Mississippi
+      MO: 0.17, // Missouri
+      MT: 0.2775, // Montana
+      NE: 0.243, // Nebraska
+      NV: 0.23, // Nevada
+      NH: 0.22, // New Hampshire
+      NJ: 0.144, // New Jersey
+      NM: 0.188, // New Mexico
+      NY: 0.392, // New York
+      NC: 0.351, // North Carolina
+      ND: 0.23, // North Dakota
+      OH: 0.28, // Ohio
+      OK: 0.16, // Oklahoma
+      OR: 0.24, // Oregon
+      PA: 0.537, // Pennsylvania
+      RI: 0.32, // Rhode Island
+      SC: 0.167, // South Carolina
+      SD: 0.22, // South Dakota
+      TN: 0.17, // Tennessee
+      TX: 0.2, // Texas
+      UT: 0.294, // Utah
+      VT: 0.263, // Vermont
+      VA: 0.162, // Virginia
+      WA: 0.375, // Washington
+      WV: 0.325, // West Virginia
+      WI: 0.306, // Wisconsin
+      WY: 0.14, // Wyoming
       // Canadian provinces
-      AB: 0.09,    // Alberta
-      BC: 0.11,    // British Columbia
-      MB: 0.105,   // Manitoba
-      NB: 0.152,   // New Brunswick
-      NL: 0.165,   // Newfoundland and Labrador
-      NT: 0.063,   // Northwest Territories
-      NS: 0.154,   // Nova Scotia
-      NU: 0.063,   // Nunavut
-      ON: 0.147,   // Ontario
-      PE: 0.174,   // Prince Edward Island
-      QC: 0.202,   // Quebec
-      SK: 0.15,    // Saskatchewan
-      YT: 0.062,   // Yukon
+      AB: 0.09, // Alberta
+      BC: 0.11, // British Columbia
+      MB: 0.105, // Manitoba
+      NB: 0.152, // New Brunswick
+      NL: 0.165, // Newfoundland and Labrador
+      NT: 0.063, // Northwest Territories
+      NS: 0.154, // Nova Scotia
+      NU: 0.063, // Nunavut
+      ON: 0.147, // Ontario
+      PE: 0.174, // Prince Edward Island
+      QC: 0.202, // Quebec
+      SK: 0.15, // Saskatchewan
+      YT: 0.062, // Yukon
     };
 
     // Merge database rates with default rates
@@ -597,7 +659,7 @@ export async function getJurisdictionRates(orgId?: string): Promise<Record<strin
     return {
       CA: 0.387,
       NY: 0.392,
-      TX: 0.20,
+      TX: 0.2,
       FL: 0.205,
       IL: 0.398,
     };
@@ -609,41 +671,77 @@ export async function getJurisdictionRates(orgId?: string): Promise<Record<strin
  */
 export async function getJurisdictionTaxRates(orgId: string): Promise<Record<string, number>> {
   try {
-    // TODO: Implement jurisdictionTaxRate model when added to schema
-    // const currentDate = new Date();
-    // const taxRates = await db.jurisdictionTaxRate.findMany({
-    //   where: {
-    //     organizationId: orgId,
-    //     isActive: true,
-    //     effectiveDate: { lte: currentDate },
-    //     OR: [
-    //       { endDate: null },
-    //       { endDate: { gte: currentDate } },
-    //     ],
-    //   },
-    //   orderBy: { effectiveDate: 'desc' },
-    // });    const taxRates: any[] = []; // Temporary empty array until model is implemented
+    const currentDate = new Date();
+    const taxRates = await db.jurisdictionTaxRate.findMany({
+      where: {
+        organizationId: orgId,
+        isActive: true,
+        effectiveDate: { lte: currentDate },
+        OR: [{ endDate: null }, { endDate: { gte: currentDate } }],
+      },
+      orderBy: { effectiveDate: 'desc' },
+    });
 
     // Convert to jurisdiction -> rate mapping
     const rateMap: Record<string, number> = {};
-    // taxRates.forEach((rate: any) => {
-    //   if (!rateMap[rate.jurisdiction]) {
-    //     rateMap[rate.jurisdiction] = Number(rate.taxRate);
-    //   }
-    // });
+    taxRates.forEach((rate: any) => {
+      if (!rateMap[rate.jurisdiction]) {
+        rateMap[rate.jurisdiction] = Number(rate.taxRate);
+      }
+    });
 
     // Add default rates for common jurisdictions if not present
     const defaultRates = {
-      'AL': 0.19, 'AK': 0.08, 'AZ': 0.18, 'AR': 0.225, 'CA': 0.40,
-      'CO': 0.205, 'CT': 0.40, 'DE': 0.22, 'FL': 0.06, 'GA': 0.074,
-      'HI': 0.17, 'ID': 0.25, 'IL': 0.216, 'IN': 0.16, 'IA': 0.31,
-      'KS': 0.26, 'KY': 0.024, 'LA': 0.16, 'ME': 0.301, 'MD': 0.243,
-      'MA': 0.21, 'MI': 0.15, 'MN': 0.20, 'MS': 0.177, 'MO': 0.17,
-      'MT': 0.2775, 'NE': 0.246, 'NV': 0.27, 'NH': 0.223, 'NJ': 0.105,
-      'NM': 0.17, 'NY': 0.08, 'NC': 0.06, 'ND': 0.23, 'OH': 0.28,
-      'OK': 0.16, 'OR': 0.01, 'PA': 0.074, 'RI': 0.32, 'SC': 0.16,
-      'SD': 0.22, 'TN': 0.17, 'TX': 0.20, 'UT': 0.295, 'VT': 0.26,
-      'VA': 0.162, 'WA': 0.375, 'WV': 0.205, 'WI': 0.309, 'WY': 0.24,
+      AL: 0.19,
+      AK: 0.08,
+      AZ: 0.18,
+      AR: 0.225,
+      CA: 0.4,
+      CO: 0.205,
+      CT: 0.4,
+      DE: 0.22,
+      FL: 0.06,
+      GA: 0.074,
+      HI: 0.17,
+      ID: 0.25,
+      IL: 0.216,
+      IN: 0.16,
+      IA: 0.31,
+      KS: 0.26,
+      KY: 0.024,
+      LA: 0.16,
+      ME: 0.301,
+      MD: 0.243,
+      MA: 0.21,
+      MI: 0.15,
+      MN: 0.2,
+      MS: 0.177,
+      MO: 0.17,
+      MT: 0.2775,
+      NE: 0.246,
+      NV: 0.27,
+      NH: 0.223,
+      NJ: 0.105,
+      NM: 0.17,
+      NY: 0.08,
+      NC: 0.06,
+      ND: 0.23,
+      OH: 0.28,
+      OK: 0.16,
+      OR: 0.01,
+      PA: 0.074,
+      RI: 0.32,
+      SC: 0.16,
+      SD: 0.22,
+      TN: 0.17,
+      TX: 0.2,
+      UT: 0.295,
+      VT: 0.26,
+      VA: 0.162,
+      WA: 0.375,
+      WV: 0.205,
+      WI: 0.309,
+      WY: 0.24,
     };
 
     Object.entries(defaultRates).forEach(([jurisdiction, rate]) => {
@@ -667,67 +765,53 @@ export async function updateJurisdictionTaxRate(
   jurisdiction: string,
   taxRate: number,
   effectiveDate: Date,
-  userId: string
-) {  try {
-    // TODO: Implement jurisdictionTaxRate model when added to schema
-    // Deactivate existing rates for this jurisdiction
-    // await db.jurisdictionTaxRate.updateMany({
-    //   where: {
-    //     organizationId: orgId,
-    //     jurisdiction,
-    //     isActive: true,
-    //   },
-    //   data: {
-    //     isActive: false,
-    //     endDate: new Date(effectiveDate.getTime() - 1), // End one day before new rate
-    //   },
-    // });
+  userId: string,
+) {
+  try {
+    await checkUserAccess(orgId);
 
-    // Create new rate
-    // const newRate = await db.jurisdictionTaxRate.create({
-    //   data: {
-    //     organizationId: orgId,
-    //     jurisdiction,
-    //     taxRate,
-    //     effectiveDate,
-    //     source: 'MANUAL',
-    //     verifiedDate: new Date(),
-    //     isActive: true,
-    //     createdBy: userId,
-    //     notes: `Tax rate updated manually by user`,
-    //   },
-    // });
+    await db.jurisdictionTaxRate.updateMany({
+      where: {
+        organizationId: orgId,
+        jurisdiction,
+        isActive: true,
+      },
+      data: {
+        isActive: false,
+        endDate: new Date(effectiveDate.getTime() - 1),
+      },
+    });
 
-    const newRate = {
-      id: Math.random().toString(36),
-      organizationId: orgId,
-      jurisdiction,
-      taxRate,
-      effectiveDate,
-      source: 'MANUAL',
-      verifiedDate: new Date(),
-      isActive: true,
-      createdBy: userId,
-      notes: `Tax rate updated manually by user`,    };
+    const newRate = await db.jurisdictionTaxRate.create({
+      data: {
+        organizationId: orgId,
+        jurisdiction,
+        taxRate,
+        effectiveDate,
+        source: 'MANUAL',
+        verifiedDate: new Date(),
+        isActive: true,
+        createdBy: userId,
+        notes: `Tax rate updated manually by user`,
+      },
+    });
 
     return newRate;
   } catch (error) {
     console.error('Error updating tax rate:', error);
-    throw new Error(`Failed to update tax rate: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to update tax rate: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 }
 
 /**
  * Calculate quarterly taxes with advanced calculations
  */
-export async function calculateQuarterlyTaxes(
-  orgId: string,
-  quarter: string,
-  year: string
-) {
+export async function calculateQuarterlyTaxes(orgId: string, quarter: string, year: string) {
   try {
     await checkUserAccess(orgId);
-    
+
     const data = await getIftaDataForPeriod(orgId, quarter, year);
     const rates = await getJurisdictionRates(orgId);
 
@@ -742,24 +826,24 @@ export async function calculateQuarterlyTaxes(
 
     const jurisdictionCalculations = jurisdictionSummary.map((jurisdiction) => {
       const rate = rates[jurisdiction.jurisdiction as keyof typeof rates] || 0;
-      
+
       // Get miles and fuel data for this jurisdiction
       const jurisdictionMiles = jurisdiction.miles || jurisdiction.totalMiles || 0;
       const jurisdictionFuelGallons = jurisdiction.fuelGallons || 0;
-      
+
       // Calculate fuel consumed based on miles traveled and fleet average MPG
       const fleetAverageMpg = data.summary.averageMpg || 7.5; // Default to 7.5 MPG for commercial vehicles
       const fuelConsumed = jurisdictionMiles > 0 ? jurisdictionMiles / fleetAverageMpg : 0;
-      
+
       // Calculate tax due based on fuel consumed (not purchased)
       const taxDue = fuelConsumed * rate;
-      
+
       // Calculate credits from fuel purchased in jurisdiction
       const credits = jurisdictionFuelGallons * rate;
-      
+
       // Net tax = tax due - credits (can be negative for refund)
       const netTax = taxDue - credits;
-      
+
       // Track totals
       totalTaxDue += taxDue;
       totalCredits += credits;
@@ -776,7 +860,8 @@ export async function calculateQuarterlyTaxes(
         netTax: Math.round(netTax * 100) / 100,
         // Additional calculation details
         averageMpg: fleetAverageMpg,
-        fuelEfficiency: jurisdictionMiles > 0 ? Math.round((jurisdictionMiles / fuelConsumed) * 100) / 100 : 0,
+        fuelEfficiency:
+          jurisdictionMiles > 0 ? Math.round((jurisdictionMiles / fuelConsumed) * 100) / 100 : 0,
       };
     });
 
@@ -789,7 +874,12 @@ export async function calculateQuarterlyTaxes(
       totalCredits: Math.round(totalCredits * 100) / 100,
       totalNetTax: Math.round(totalNetTax * 100) / 100,
       averageMpg: data.summary.averageMpg,
-      fuelBalance: Math.round((data.summary.totalGallons - jurisdictionCalculations.reduce((sum, j) => sum + j.fuelConsumed, 0)) * 100) / 100,
+      fuelBalance:
+        Math.round(
+          (data.summary.totalGallons -
+            jurisdictionCalculations.reduce((sum, j) => sum + j.fuelConsumed, 0)) *
+            100,
+        ) / 100,
     };
 
     return {
@@ -808,24 +898,25 @@ export async function calculateQuarterlyTaxes(
 /**
  * Validate tax calculations against IFTA regulations
  */
-export async function validateTaxCalculations(
-  orgId: string,
-  quarter: string,
-  year: string
-) {
+export async function validateTaxCalculations(orgId: string, quarter: string, year: string) {
   try {
     await checkUserAccess(orgId);
-    
+
     const calculated = await calculateQuarterlyTaxes(orgId, quarter, year);
     const data = await getIftaDataForPeriod(orgId, quarter, year);
-    
+
     // Get existing report if available
+    const qNum = parseInt(quarter.replace('Q', ''));
+    const yNum = parseInt(year);
+    const qStart = new Date(yNum, (qNum - 1) * 3, 1);
+    const qEnd = new Date(yNum, qNum * 3, 0, 23, 59, 59);
+
     const report = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        // quarter: parseInt(quarter.replace('Q', '')), // Removed: not in schema
-        // TODO: Implement quarter/year filtering using date ranges or calculationData if needed
-        // year: parseInt(year), // Only filter by year if available
+        createdAt: { gte: qStart, lte: qEnd },
+        quarter: parseInt(quarter.replace('Q', '')),
+        year: parseInt(year),
       },
     });
 
@@ -838,7 +929,7 @@ export async function validateTaxCalculations(
       jurisdictionCompleteness: validateJurisdictionCompleteness(calculated, data),
     };
 
-    const isValid = Object.values(validationResults).every(result => result.isValid);
+    const isValid = Object.values(validationResults).every((result) => result.isValid);
 
     return {
       calculated,
@@ -857,16 +948,20 @@ export async function validateTaxCalculations(
  * Helper validation functions
  */
 function validateMileageConsistency(calculated: any, data: any) {
-  const totalCalculatedMiles = calculated.jurisdictions.reduce((sum: number, j: any) => sum + j.miles, 0);
+  const totalCalculatedMiles = calculated.jurisdictions.reduce(
+    (sum: number, j: any) => sum + j.miles,
+    0,
+  );
   const totalReportedMiles = data.summary.totalMiles;
   const difference = Math.abs(totalCalculatedMiles - totalReportedMiles);
   const threshold = totalReportedMiles * 0.05; // 5% tolerance
-  
+
   return {
     isValid: difference <= threshold,
-    message: difference > threshold 
-      ? `Mileage discrepancy detected: ${difference.toFixed(1)} miles difference`
-      : 'Mileage totals are consistent',
+    message:
+      difference > threshold
+        ? `Mileage discrepancy detected: ${difference.toFixed(1)} miles difference`
+        : 'Mileage totals are consistent',
     details: {
       calculated: totalCalculatedMiles,
       reported: totalReportedMiles,
@@ -879,12 +974,13 @@ function validateMileageConsistency(calculated: any, data: any) {
 function validateFuelBalance(calculated: any, data: any) {
   const fuelBalance = calculated.summary.fuelBalance;
   const tolerance = data.summary.totalGallons * 0.1; // 10% tolerance
-  
+
   return {
     isValid: Math.abs(fuelBalance) <= tolerance,
-    message: Math.abs(fuelBalance) > tolerance
-      ? `Significant fuel imbalance: ${fuelBalance.toFixed(1)} gallons`
-      : 'Fuel balance is within acceptable range',
+    message:
+      Math.abs(fuelBalance) > tolerance
+        ? `Significant fuel imbalance: ${fuelBalance.toFixed(1)} gallons`
+        : 'Fuel balance is within acceptable range',
     details: {
       balance: fuelBalance,
       tolerance,
@@ -896,12 +992,13 @@ function validateFuelBalance(calculated: any, data: any) {
 
 function validateTaxRates(calculated: any) {
   const invalidRates = calculated.jurisdictions.filter((j: any) => j.taxRate <= 0 || j.taxRate > 1);
-  
+
   return {
     isValid: invalidRates.length === 0,
-    message: invalidRates.length > 0
-      ? `Invalid tax rates found for ${invalidRates.map((j: any) => j.jurisdiction).join(', ')}`
-      : 'All tax rates are valid',
+    message:
+      invalidRates.length > 0
+        ? `Invalid tax rates found for ${invalidRates.map((j: any) => j.jurisdiction).join(', ')}`
+        : 'All tax rates are valid',
     details: {
       invalidJurisdictions: invalidRates.map((j: any) => j.jurisdiction),
       totalJurisdictions: calculated.jurisdictions.length,
@@ -911,14 +1008,15 @@ function validateTaxRates(calculated: any) {
 
 function validateMpgReasonableness(calculated: any) {
   const averageMpg = calculated.summary.averageMpg;
-  const minReasonableMpg = 4;  // Minimum reasonable MPG for commercial vehicles
+  const minReasonableMpg = 4; // Minimum reasonable MPG for commercial vehicles
   const maxReasonableMpg = 12; // Maximum reasonable MPG for commercial vehicles
-  
+
   return {
     isValid: averageMpg >= minReasonableMpg && averageMpg <= maxReasonableMpg,
-    message: (averageMpg < minReasonableMpg || averageMpg > maxReasonableMpg)
-      ? `MPG outside reasonable range: ${averageMpg.toFixed(2)} MPG`
-      : 'MPG is within reasonable range',
+    message:
+      averageMpg < minReasonableMpg || averageMpg > maxReasonableMpg
+        ? `MPG outside reasonable range: ${averageMpg.toFixed(2)} MPG`
+        : 'MPG is within reasonable range',
     details: {
       averageMpg,
       minReasonable: minReasonableMpg,
@@ -930,12 +1028,13 @@ function validateMpgReasonableness(calculated: any) {
 function validateJurisdictionCompleteness(calculated: any, data: any) {
   const jurisdictionsWithMiles = calculated.jurisdictions.filter((j: any) => j.miles > 0);
   const jurisdictionsWithFuel = calculated.jurisdictions.filter((j: any) => j.fuelPurchased > 0);
-  
+
   return {
     isValid: jurisdictionsWithMiles.length > 0,
-    message: jurisdictionsWithMiles.length === 0
-      ? 'No jurisdictions with recorded miles found'
-      : `${jurisdictionsWithMiles.length} jurisdictions with miles, ${jurisdictionsWithFuel.length} with fuel purchases`,
+    message:
+      jurisdictionsWithMiles.length === 0
+        ? 'No jurisdictions with recorded miles found'
+        : `${jurisdictionsWithMiles.length} jurisdictions with miles, ${jurisdictionsWithFuel.length} with fuel purchases`,
     details: {
       totalJurisdictions: calculated.jurisdictions.length,
       jurisdictionsWithMiles: jurisdictionsWithMiles.length,
@@ -946,27 +1045,27 @@ function validateJurisdictionCompleteness(calculated: any, data: any) {
 
 function generateRecommendedActions(validationResults: any) {
   const actions: string[] = [];
-  
+
   if (!validationResults.mileageConsistency.isValid) {
     actions.push('Review trip records for missing or duplicate entries');
   }
-  
+
   if (!validationResults.fuelBalanceCheck.isValid) {
     actions.push('Verify fuel purchase records and check for missing receipts');
   }
-  
+
   if (!validationResults.taxRateValidity.isValid) {
     actions.push('Update jurisdiction tax rates to current values');
   }
-  
+
   if (!validationResults.mpgReasonableness.isValid) {
     actions.push('Review fuel efficiency calculations and vehicle data');
   }
-  
+
   if (!validationResults.jurisdictionCompleteness.isValid) {
     actions.push('Ensure all interstate travel is properly recorded');
   }
-  
+
   return actions;
 }
 
@@ -976,27 +1075,27 @@ function generateRecommendedActions(validationResults: any) {
 export async function getTaxAdjustments(orgId: string, year?: number) {
   try {
     await checkUserAccess(orgId);
-    
+
     const where: any = { organizationId: orgId };
     if (year) where.year = year;
-    
-    const reports = await db.iftaReport.findMany({ 
+
+    const reports = await db.iftaReport.findMany({
       where,
       include: {
         submittedByUser: {
           select: {
             firstName: true,
             lastName: true,
-          }
-        }
+          },
+        },
       },
       // orderBy: [
       //   { year: 'desc' },
       //   { quarter: 'desc' },
       // ],
     });
-    
-    return reports.map(report => ({
+
+    return reports.map((report) => ({
       id: report.id,
       // quarter: report.quarter,
       // year: report.year,
@@ -1006,8 +1105,10 @@ export async function getTaxAdjustments(orgId: string, year?: number) {
       // submittedBy: report.submittedByUser,
       submittedAt: report.submittedAt,
       totalTaxDue: report.totalTaxOwed ? Number(report.totalTaxOwed) : 0,
-      netAdjustment: ((report.calculationData as any)?.adjustments || [])
-        .reduce((sum: number, adj: any) => sum + (adj.amount || 0), 0),
+      netAdjustment: ((report.calculationData as any)?.adjustments || []).reduce(
+        (sum: number, adj: any) => sum + (adj.amount || 0),
+        0,
+      ),
     }));
   } catch (error) {
     console.error('Error fetching tax adjustments:', error);
@@ -1018,17 +1119,13 @@ export async function getTaxAdjustments(orgId: string, year?: number) {
 /**
  * Calculate fuel efficiency metrics
  */
-export async function calculateFuelEfficiencyMetrics(
-  orgId: string,
-  quarter: string,
-  year: string
-) {
+export async function calculateFuelEfficiencyMetrics(orgId: string, quarter: string, year: string) {
   try {
     await checkUserAccess(orgId);
-    
+
     const data = await getIftaDataForPeriod(orgId, quarter, year);
     const calculated = await calculateQuarterlyTaxes(orgId, quarter, year);
-    
+
     // Calculate efficiency by jurisdiction
     const jurisdictionEfficiency = calculated.jurisdictions.map((j: any) => ({
       jurisdiction: j.jurisdiction,
@@ -1038,7 +1135,7 @@ export async function calculateFuelEfficiencyMetrics(
       efficiency: j.fuelEfficiency,
       efficiencyRating: getEfficiencyRating(j.fuelEfficiency),
     }));
-    
+
     // Calculate fleet-wide metrics
     const fleetMetrics = {
       totalMiles: data.summary.totalMiles,
@@ -1048,7 +1145,7 @@ export async function calculateFuelEfficiencyMetrics(
       efficiencyTrend: 'stable', // Would need historical data for actual trend
       benchmarkComparison: getBenchmarkComparison(calculated.summary.averageMpg),
     };
-    
+
     return {
       period: data.period,
       jurisdictionEfficiency,
@@ -1072,7 +1169,7 @@ function getEfficiencyRating(mpg: number): string {
 function getBenchmarkComparison(mpg: number): string {
   const industryAverage = 6.8; // Industry average for commercial trucks
   const difference = ((mpg - industryAverage) / industryAverage) * 100;
-  
+
   if (difference > 10) return `${difference.toFixed(1)}% above industry average`;
   if (difference > 0) return `${difference.toFixed(1)}% above industry average`;
   if (difference > -10) return `${Math.abs(difference).toFixed(1)}% below industry average`;
@@ -1081,22 +1178,22 @@ function getBenchmarkComparison(mpg: number): string {
 
 function generateEfficiencyRecommendations(metrics: any): string[] {
   const recommendations: string[] = [];
-  
+
   if (metrics.averageMpg < 6) {
     recommendations.push('Consider driver training programs to improve fuel efficiency');
     recommendations.push('Review vehicle maintenance schedules');
     recommendations.push('Implement route optimization strategies');
   }
-  
+
   if (metrics.fuelCostPerMile > 0.5) {
     recommendations.push('Evaluate fuel purchasing strategies and vendor agreements');
     recommendations.push('Consider fuel card programs for better pricing');
   }
-  
+
   if (metrics.averageMpg > 8) {
     recommendations.push('Excellent efficiency - consider sharing best practices across fleet');
   }
-  
+
   return recommendations;
 }
 
@@ -1107,7 +1204,7 @@ export async function getIftaFuelData(
   orgId: string,
   startDate: Date,
   endDate: Date,
-  vehicleId?: string
+  vehicleId?: string,
 ) {
   try {
     const fuelPurchases = await db.iftaFuelPurchase.findMany({
@@ -1140,5 +1237,3 @@ export async function getIftaFuelData(
     throw new Error('Failed to fetch IFTA fuel data');
   }
 }
-
-

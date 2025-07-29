@@ -5,12 +5,12 @@
  * summary reports as PDFs. It aligns with the IFTA Reporting requirements in
  * docs/PRD.md §1.
  *
- * TODO: integrate a real PDF engine and file storage.
- */
+ * PDF files are uploaded to a configurable storage provider rather than
+ * written to the local filesystem.
+*/
 import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib'
-import { writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
+import type { StorageProvider } from './storageProvider'
+import { getStorageProvider } from './storageProvider'
 
 
 export interface PDFOptions {
@@ -27,7 +27,7 @@ export interface PDFOptions {
 export interface PDFGenerationResult {
   success: boolean;
   error?: string;
-  filePath?: string;
+  downloadUrl?: string;
   fileName?: string;
   fileSize?: number;
   metadata?: {
@@ -61,12 +61,10 @@ export interface CustomReportOptions extends PDFOptions {
 }
 
 class PDFService {
-  private async ensureOrgDir(orgId: string): Promise<string> {
-    const dir = path.join(process.cwd(), 'generated-reports', orgId)
-    if (!existsSync(dir)) {
-      await mkdir(dir, { recursive: true })
-    }
-    return dir
+  private storage: StorageProvider
+
+  constructor(storage: StorageProvider = getStorageProvider()) {
+    this.storage = storage
   }
 
   /**
@@ -86,7 +84,6 @@ class PDFService {
     attachments: PDFAttachment[] = []
   ): Promise<PDFGenerationResult> {
     try {
-      const dir = await this.ensureOrgDir(orgId)
       const size: [number, number] = options.format === 'A4'
         ? [595.28, 841.89]
         : [612, 792]
@@ -129,13 +126,15 @@ class PDFService {
 
       const pdfBytes = await pdfDoc.save()
       const fileName = `ifta-quarterly-${quarter}-${year}.pdf`
-      const filePath = path.join(dir, fileName)
-
-      await writeFile(filePath, pdfBytes)
+      const downloadUrl = await this.storage.upload(
+        `${orgId}/${fileName}`,
+        pdfBytes,
+        'application/pdf'
+      )
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length,
         metadata: {
@@ -166,7 +165,6 @@ class PDFService {
     attachments: PDFAttachment[] = []
   ): Promise<PDFGenerationResult> {
     try {
-      const dir = await this.ensureOrgDir(orgId)
       const size: [number, number] = options.format === 'A4'
         ? [595.28, 841.89]
         : [612, 792]
@@ -209,13 +207,15 @@ class PDFService {
 
       const pdfBytes = await pdfDoc.save()
       const fileName = `ifta-trip-log-${Date.now()}.pdf`
-      const filePath = path.join(dir, fileName)
-
-      await writeFile(filePath, pdfBytes)
+      const downloadUrl = await this.storage.upload(
+        `${orgId}/${fileName}`,
+        pdfBytes,
+        'application/pdf'
+      )
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length,
         metadata: {
@@ -246,7 +246,6 @@ class PDFService {
     attachments: PDFAttachment[] = []
   ): Promise<PDFGenerationResult> {
     try {
-      const dir = await this.ensureOrgDir(orgId)
       const size: [number, number] = options.format === 'A4'
         ? [595.28, 841.89]
         : [612, 792]
@@ -289,13 +288,15 @@ class PDFService {
 
       const pdfBytes = await pdfDoc.save()
       const fileName = `ifta-fuel-summary-${Date.now()}.pdf`
-      const filePath = path.join(dir, fileName)
-
-      await writeFile(filePath, pdfBytes)
+      const downloadUrl = await this.storage.upload(
+        `${orgId}/${fileName}`,
+        pdfBytes,
+        'application/pdf'
+      )
 
       return {
         success: true,
-        filePath,
+        downloadUrl,
         fileName,
         fileSize: pdfBytes.length,
         metadata: {

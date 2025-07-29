@@ -46,6 +46,7 @@ model Organization {
   dispatchActivities  DispatchActivity[]
   analyticsFilterPresets AnalyticsFilterPreset[]
   invitations         OrganizationInvitation[]
+  jurisdictionTaxRates JurisdictionTaxRate[]
 
   @@index([slug])
   @@map("organizations")
@@ -206,6 +207,7 @@ model Driver {
   organization          Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   user                  User?                @relation(fields: [userId], references: [id])
   loads                 Load[]
+  iftaTrips             IftaTrip[]
 
   @@unique([organizationId, employeeId], name: "drivers_org_employee_unique")
   @@index([organizationId])
@@ -448,18 +450,23 @@ model IftaTrip {
   id             String       @id @default(uuid())
   organizationId String       @map("organization_id")
   vehicleId      String       @map("vehicle_id")
+  driverId       String?      @map("driver_id")
   date           DateTime     @map("date")
   distance       Int          @map("distance")
   jurisdiction   String       @map("jurisdiction")
+  startLocation  String?      @map("start_location")
+  endLocation    String?      @map("end_location")
   fuelUsed       Decimal?     @map("fuel_used") @db.Decimal(10, 3)
   notes          String?      @map("notes")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   vehicle        Vehicle      @relation("VehicleIftaTrips", fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver         Driver?      @relation(fields: [driverId], references: [id])
 
   @@index([organizationId])
   @@index([vehicleId])
+  @@index([driverId])
   @@index([date])
   @@map("ifta_trips")
 }
@@ -629,6 +636,27 @@ model IftaTaxCalculation {
   validatedByUser  User?      @relation("ValidatedByUser", fields: [validatedBy], references: [id])
 }
 
+model JurisdictionTaxRate {
+  id             String       @id @default(uuid())
+  organizationId String?      @map("organization_id")
+  jurisdiction   String       @map("jurisdiction")
+  taxRate        Decimal      @map("tax_rate") @db.Decimal(10, 4)
+  effectiveDate  DateTime     @map("effective_date")
+  endDate        DateTime?    @map("end_date")
+  source         String       @default("MANUAL")
+  verifiedDate   DateTime     @map("verified_date")
+  isActive       Boolean      @default(true) @map("is_active")
+  createdBy      String?      @map("created_by")
+  notes          String?
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([jurisdiction])
+  @@map("jurisdiction_tax_rates")
+}
+
 model AnalyticsFilterPreset {
   id             String       @id @default(uuid())
   organizationId String       @map("organization_id")
@@ -720,6 +748,7 @@ model OrganizationInvitation {
   email          String
   role           String
   token          String           @unique
+  expiresAt      DateTime?        @map("expires_at")
   status         InvitationStatus @default(pending)
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")
