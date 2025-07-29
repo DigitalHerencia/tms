@@ -295,6 +295,23 @@ export class DatabaseQueries {
         }
     }
 
+    static async getOrganizationById(orgId: string) {
+        try {
+            if (!orgId) {
+                console.warn(
+                    "getOrganizationById called with undefined/empty orgId"
+                )
+                return null
+            }
+            const organization = await db.organization.findUnique({
+                where: { id: orgId },
+            })
+            return organization || null
+        } catch (error) {
+            handleDatabaseError(error)
+        }
+    }
+
     /**
      * Create or update organization from Clerk webhook
      */
