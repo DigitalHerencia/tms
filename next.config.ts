@@ -6,7 +6,7 @@ const nextConfig: import( 'next' ).NextConfig = {
   /* ───── Development ergonomics ───── */
   // Let the File‑System Access API (and other cross‑origin tools) hit your
   // dev server without CORS errors.
-  allowedDevOrigins: ['http://localhost:3000', 'chrome-extension://*'], // tweak as needed :contentReference[oaicite:0]{index=0}
+  allowedDevOrigins: ['http://localhost:3000', 'chrome-extension://*'], // tweak as needed
 
   /* ───── RSC / Route‑handler bundling ───── */
   // NEW in v15 → top‑level, renamed from `serverComponentsExternalPackages`
@@ -16,7 +16,7 @@ const nextConfig: import( 'next' ).NextConfig = {
   /* ───── Build‑performance toggles ───── */
   experimental: {
     webpackBuildWorker: true,           // spawn a worker for each webpack job (on by default, but keep explicit)
-    parallelServerBuildTraces: true,    // needs `webpackBuildWorker: true` :contentReference[oaicite:2]{index=2}
+    parallelServerBuildTraces: true,    // needs `webpackBuildWorker: true`
     parallelServerCompiles: true        // ditto
   },
 
