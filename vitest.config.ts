@@ -16,7 +16,6 @@ export default defineConfig({
         exclude: ["tests/e2e/**", "tests/**/*.spec.ts", "node_modules/**"],
         environment: "jsdom",
         globals: true,
-        setupFiles: ["./vitest.setup.ts"],
         retry: process.env.CI ? 2 : 0,
         testTimeout: 30000,
         coverage: {
