@@ -332,7 +332,7 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
               <CardHeader>
                 <CardTitle className="text-white">Maintenance Schedule</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6 space-y-6">
                 <div className="text-white/70">
                   Maintenance records and scheduling will be implemented here.
                 </div>
@@ -383,7 +383,7 @@ export default function VehicleDetailsClient({ orgId, vehicle }: VehicleDetailsC
           <CardHeader>
             <CardTitle className="text-white">Notes</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 space-y-6">
             <p className="text-white/90 whitespace-pre-wrap">{vehicle.notes}</p>
           </CardContent>
         </Card>

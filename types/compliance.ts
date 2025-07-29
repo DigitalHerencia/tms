@@ -478,3 +478,19 @@ export interface EldData {
   malfunctions?: EldMalfunction[];
   dataQuality: 'good' | 'fair' | 'poor';
 }
+
+export interface ComplianceDashboardData {
+  totalDocuments: number;
+  pendingDocuments: number;
+  expiredDocuments: number;
+  expiringDocuments: number;
+  driverComplianceRate: string;
+  vehicleComplianceRate: string;
+  totalDrivers: number;
+  driversInCompliance: number;
+  totalVehicles: number;
+  vehiclesInCompliance: number;
+  recentInspections: number;
+  overdueInspections: number;
+  inspectionComplianceRate: string;
+}

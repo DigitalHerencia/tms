@@ -108,7 +108,7 @@ export function DispatchBoardFeature({ loads, drivers, vehicles, orgId, searchPa
   };
 
   const onFilterChange = (field: string, value: string) => {
-    const newParams = new URLSearchParams(searchParams as any);
+    const newParams = new URLSearchParams(searchParams as Record<string, string>);
     if (value) {
       newParams.set(field, value);
     } else {

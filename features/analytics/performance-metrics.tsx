@@ -21,6 +21,15 @@ interface PerformanceMetricsProps {
   timeRange: string;
   performanceData: RevenueMetrics[]; // Updated prop type to RevenueMetrics
 }
+/**
+ * Client chart component for performance trends over time.
+ *
+ * @param props.timeRange - Selected range of data.
+ * @param props.performanceData - Metrics for loads, miles, and more.
+ *
+ * Charts resize responsively using Recharts containers.
+ */
+// See docs/screenshots/performance-metrics.png for reference
 
 /**
  * Visualize performance metrics such as loads delivered and miles driven.

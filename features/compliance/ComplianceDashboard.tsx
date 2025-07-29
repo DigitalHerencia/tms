@@ -1,16 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
+import type { ComplianceDashboardData } from '@/types/compliance';
 
 interface ComplianceDashboardProps {
   orgId: string;
 }
+/**
+ * Server component displaying compliance statistics.
+ *
+ * @param props.orgId - Organization identifier used to load compliance data.
+ *
+ * Metrics grid adapts from two to three columns responsively.
+ */
+// See docs/screenshots/compliance-dashboard.png for visuals
 
 export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
   if (!orgId) {
     return <p className="text-red-500">Organization not found.</p>;
   }
 
-  let data: any;
+  let data: ComplianceDashboardData;
   try {
     data = await getComplianceDashboard(orgId);
   } catch (err) {
@@ -23,7 +32,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Driver Compliance</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {data.driverComplianceRate}%
           </span>
@@ -33,7 +42,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Vehicle Compliance</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">
             {data.vehicleComplianceRate}%
           </span>
@@ -43,7 +52,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Pending Documents</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.pendingDocuments}</span>
         </CardContent>
       </Card>
@@ -51,7 +60,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Expired Documents</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.expiredDocuments}</span>
         </CardContent>
       </Card>
@@ -59,7 +68,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Recent Inspections</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.recentInspections}</span>
         </CardContent>
       </Card>
@@ -67,7 +76,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
         <CardHeader>
           <CardTitle>Overdue Inspections</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6 space-y-6">
           <span className="text-3xl font-bold">{data.overdueInspections}</span>
         </CardContent>
       </Card>
