@@ -226,10 +226,59 @@ export function buildSecureUserContext(
  * Security monitoring hooks
  */
 export const SecurityMonitoring = {
+    sanitizeSensitiveData(data: Record<string, any>): Record<string, any> {
+        const sanitized: Record<string, any> = {}
+        for (const [key, value] of Object.entries(data)) {
+            if (/password|token|secret|key/i.test(key)) {
+                sanitized[key] = "[REDACTED]"
+            } else if (value && typeof value === "object") {
+                sanitized[key] = SecurityMonitoring.sanitizeSensitiveData(
+                    value as Record<string, any>
+                )
+            } else {
+                sanitized[key] = value
+            }
+        }
+        return sanitized
+    },
+
+    async sendToMonitoringService(entry: Record<string, any>): Promise<void> {
+        try {
+            const ddKey = process.env.DATADOG_API_KEY
+            const ddUrl = process.env.DATADOG_LOG_URL
+            const nrKey = process.env.NEW_RELIC_LICENSE_KEY
+            const nrUrl = process.env.NEW_RELIC_LOG_URL
+
+            const body = JSON.stringify(entry)
+
+            if (ddKey && ddUrl) {
+                await fetch(ddUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "DD-API-KEY": ddKey,
+                    },
+                    body,
+                })
+            } else if (nrKey && nrUrl) {
+                await fetch(nrUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Api-Key": nrKey,
+                    },
+                    body,
+                })
+            }
+        } catch (error) {
+            console.error("Monitoring service error", error)
+        }
+    },
+
     /**
      * Log security events for audit trail
      */
-    logSecurityEvent: (event: {
+    logSecurityEvent: async (event: {
         type:
             | "SESSION_CREATED"
             | "SESSION_INVALIDATED"
@@ -239,17 +288,22 @@ export const SecurityMonitoring = {
         orgId?: string
         details?: Record<string, any>
         timestamp?: Date
-    }) => {
+    }): Promise<void> => {
         const logEntry = {
             ...event,
             timestamp: event.timestamp || new Date(),
             source: "session_management",
         }
 
-        // In production, send to monitoring service
         if (process.env.NODE_ENV === "production") {
-            // TODO: Integrate with monitoring service (DataDog, New Relic, etc.)
-            console.log("[SECURITY_EVENT]", JSON.stringify(logEntry))
+            const sanitized = {
+                ...logEntry,
+                details: event.details
+                    ? SecurityMonitoring.sanitizeSensitiveData(event.details)
+                    : undefined,
+            }
+            console.log("[SECURITY_EVENT]", JSON.stringify(sanitized))
+            void SecurityMonitoring.sendToMonitoringService(sanitized)
         } else {
             console.log("[SECURITY_EVENT]", logEntry)
         }
