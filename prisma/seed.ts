@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -18,9 +20,9 @@ async function main() {
       phone: "915-555-0100",
       email: "info@digitalherencia.com",
       logoUrl: "https://img.clerk.com/logo-dhl.png",
-      subscriptionTier: "enterprise",
+      subscriptionTier: "growth",
       subscriptionStatus: "active",
-      maxUsers: 20,
+      maxUsers: 25,
       billingEmail: "billing@digitalherencia.com",
       settings: {
         fuelUnit: "gallons",
@@ -266,6 +268,195 @@ async function main() {
       timestamp: new Date()
     }
   });
+
+  // ──────────────────────────────────────────────────────────
+  // Additional seed data to simulate maxed out Growth plan
+  // ──────────────────────────────────────────────────────────
+
+  const additionalDrivers: string[] = [];
+
+  for (let i = 3; i <= 25; i++) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+
+    const driverUser = await prisma.user.create({
+      data: {
+        id: faker.string.uuid(),
+        organizationId: organization.id,
+        email: faker.internet.email({ firstName, lastName }),
+        firstName,
+        lastName,
+        profileImage: "https://www.gravatar.com/avatar?d=mp",
+        role: "driver",
+        permissions: [],
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    });
+
+    const driver = await prisma.driver.create({
+      data: {
+        id: `drv_${i}`,
+        organizationId: organization.id,
+        userId: driverUser.id,
+        employeeId: `E1${String(i).padStart(3, "0")}`,
+        firstName,
+        lastName,
+        email: driverUser.email,
+        phone: faker.phone.number("915-555-####"),
+        status: "active",
+        licenseNumber: `TX${faker.string.numeric(9)}`,
+        licenseState: "TX",
+        licenseClass: "A",
+        hireDate: faker.date.past({ years: 1 }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    });
+
+    additionalDrivers.push(driver.id);
+  }
+
+  const additionalVehicles: string[] = [];
+  for (let i = 2; i <= 25; i++) {
+    const veh = await prisma.vehicle.create({
+      data: {
+        id: `veh_freight_${i}`,
+        organizationId: organization.id,
+        type: "tractor",
+        status: "active",
+        make: faker.vehicle.manufacturer(),
+        model: faker.vehicle.model(),
+        year: faker.number.int({ min: 2018, max: 2024 }),
+        vin: faker.vehicle.vin(),
+        licensePlate: `TX${faker.string.alphanumeric(5).toUpperCase()}`,
+        unitNumber: `TRK-${String(i).padStart(2, "0")}`,
+        currentOdometer: faker.number.int({ min: 5000, max: 250000 }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    });
+    additionalVehicles.push(veh.id);
+  }
+
+  const additionalTrailers: string[] = [];
+  for (let i = 2; i <= 25; i++) {
+    const trl = await prisma.trailer.create({
+      data: {
+        id: `trl_reefer_${i}`,
+        organizationId: organization.id,
+        unitNumber: `TRL-${String(i).padStart(2, "0")}`,
+        type: "reefer",
+        length: 53,
+        make: faker.vehicle.manufacturer(),
+        model: faker.vehicle.model(),
+        year: faker.number.int({ min: 2018, max: 2024 }),
+        vin: faker.vehicle.vin(),
+        licensePlate: `TX-T${i}`,
+        status: "active",
+      }
+    });
+    additionalTrailers.push(trl.id);
+  }
+
+  const customers: string[] = [customer.id];
+  for (let i = 2; i <= 10; i++) {
+    const cust = await prisma.customer.create({
+      data: {
+        id: `cust_${i}`,
+        organizationId: organization.id,
+        name: faker.company.name(),
+        contactName: faker.person.fullName(),
+        email: faker.internet.email(),
+        phone: faker.phone.number("915-555-####"),
+        address: faker.location.streetAddress(),
+        city: faker.location.city(),
+        state: "TX",
+        zipCode: `7990${faker.number.int({ min: 1, max: 9 })}`,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    });
+    customers.push(cust.id);
+  }
+
+  for (let i = 2; i <= 50; i++) {
+    const driverId = faker.helpers.arrayElement([driverIvan.id, driverJane.id, ...additionalDrivers]);
+    const vehicleId = faker.helpers.arrayElement([vehicle.id, ...additionalVehicles]);
+    const trailerId = faker.helpers.arrayElement([trailer.id, ...additionalTrailers]);
+    const customerId = faker.helpers.arrayElement(customers);
+    const cust = await prisma.customer.findUnique({ where: { id: customerId } });
+
+    const load = await prisma.load.create({
+      data: {
+        id: `load${i}`,
+        organizationId: organization.id,
+        driver_id: driverId,
+        vehicleId,
+        trailerId,
+        loadNumber: `L-${String(i).padStart(4, "0")}`,
+        referenceNumber: `REF-${String(i).padStart(4, "0")}`,
+        status: "in_transit",
+        customerId,
+        customerName: cust?.name ?? "Customer",
+        customerContact: cust?.contactName ?? "", 
+        customerPhone: cust?.phone ?? "", 
+        customerEmail: cust?.email ?? "", 
+        originAddress: faker.location.streetAddress(),
+        originCity: faker.location.city(),
+        originState: "TX",
+        originZip: `7990${faker.number.int({ min: 1, max: 9 })}`,
+        originLat: Number(faker.location.latitude({ min: 30, max: 32, precision: 0.000001 })),
+        originLng: Number(faker.location.longitude({ min: -106, max: -103, precision: 0.000001 })),
+        destinationAddress: faker.location.streetAddress(),
+        destinationCity: faker.location.city(),
+        destinationState: "AZ",
+        destinationZip: `8500${faker.number.int({ min: 1, max: 9 })}`,
+        destinationLat: Number(faker.location.latitude({ min: 33, max: 35, precision: 0.000001 })),
+        destinationLng: Number(faker.location.longitude({ min: -112, max: -110, precision: 0.000001 })),
+        rate: faker.number.float({ min: 1000, max: 10000, precision: 0.01 }),
+        currency: "USD",
+        scheduledPickupDate: faker.date.future(),
+        weight: faker.number.int({ min: 5000, max: 50000 }),
+        pieces: faker.number.int({ min: 1, max: 40 }),
+        commodity: faker.commerce.product(),
+        hazmat: false,
+        estimatedMiles: faker.number.int({ min: 100, max: 1500 }),
+        actualMiles: faker.number.int({ min: 100, max: 1500 }),
+        notes: faker.lorem.sentence(),
+        instructions: faker.lorem.sentence(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: user.id,
+        lastModifiedBy: user.id,
+        priority: "high",
+        tags: ["generated"],
+      }
+    });
+
+    await prisma.loadStatusEvent.create({
+      data: {
+        loadId: load.id,
+        status: "in_transit",
+        timestamp: new Date(),
+        source: "dispatcher",
+        createdBy: user.id,
+      }
+    });
+
+    await prisma.dispatchActivity.create({
+      data: {
+        organizationId: organization.id,
+        entityType: "Load",
+        action: "CREATED",
+        entityId: load.loadNumber,
+        userName: "Ivan Roman",
+        timestamp: new Date(),
+      }
+    });
+  }
 
   console.log('Seed data created successfully.');
 }
