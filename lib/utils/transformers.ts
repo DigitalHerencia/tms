@@ -1,6 +1,10 @@
 import type { Driver } from '@/types/drivers';
 import type { Vehicle } from '@/types/vehicles';
-import type { Load } from '@/types/dispatch';
+import type {
+  Load,
+  LoadAssignedDriver,
+  LoadAssignedVehicle,
+} from '@/types/dispatch';
 
 export function transformDriver(raw: any): Driver {
   return {
@@ -47,6 +51,34 @@ export function transformVehicle(raw: any): Vehicle {
   };
 }
 
+export function transformAssignedDriver(raw: any): LoadAssignedDriver {
+  return {
+    id: raw.id,
+    userId: raw.userId ?? raw.user_id ?? '',
+    name: raw.name ?? `${raw.firstName ?? ''} ${raw.lastName ?? ''}`.trim(),
+    phone: raw.phone ?? undefined,
+    email: raw.email ?? undefined,
+    licenseNumber: raw.licenseNumber ?? raw.license_number ?? undefined,
+    cdlClass: raw.licenseClass ?? raw.cdlClass ?? undefined,
+    assignedAt: raw.assignedAt ?? raw.createdAt ?? new Date(),
+    assignedBy: raw.assignedBy ?? raw.createdBy ?? '',
+  };
+}
+
+export function transformAssignedVehicle(raw: any): LoadAssignedVehicle {
+  return {
+    id: raw.id,
+    unit: raw.unitNumber ?? raw.unit ?? '',
+    make: raw.make ?? '',
+    model: raw.model ?? '',
+    year: raw.year ?? 0,
+    vin: raw.vin ?? '',
+    licensePlate: raw.licensePlate ?? '',
+    assignedAt: raw.assignedAt ?? raw.createdAt ?? new Date(),
+    assignedBy: raw.assignedBy ?? raw.createdBy ?? '',
+  };
+}
+
 export function transformLoad(raw: any): Load | null {
   if (!raw) return null;
 
@@ -84,12 +116,12 @@ export function transformLoad(raw: any): Load | null {
     deliveryDate: raw.scheduledDeliveryDate ?? raw.actualDeliveryDate ?? new Date(),
     equipment: raw.equipment || {},
     driver: raw.drivers
-      ? transformDriver(raw.drivers)
+      ? transformAssignedDriver(raw.drivers)
       : raw.driver
-        ? transformDriver(raw.driver)
+        ? transformAssignedDriver(raw.driver)
         : null,
     driverId: raw.driver_id ?? raw.driverId ?? null,
-    vehicle: raw.vehicle ? transformVehicle(raw.vehicle) : undefined,
+    vehicle: raw.vehicle ? transformAssignedVehicle(raw.vehicle) : undefined,
     vehicleId: raw.vehicleId || null,
     cargo: raw.cargo || {},
     rate: raw.rate || {},
