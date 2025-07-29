@@ -39,14 +39,12 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
     setIsValidating(true);
     setValidationError('');
 
-    try {
+  try {
       const exists = await verifyOrganizationExists(formData.organizationId);
       if (!exists) {
         setValidationError('Organization not found. Please check the ID and try again.');
-        setIsValidating(false);
         return;
       }
-
       onNext();
     } catch (error) {
       setValidationError('Organization not found. Please check the ID and try again.');
