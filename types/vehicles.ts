@@ -2,11 +2,10 @@ import type { UserRole } from './auth';
 
 export type VehicleType = 'tractor' | 'trailer' | 'straight_truck' | 'other';
 export type VehicleStatus =
-  | 'available'
-  | 'assigned'
-  | 'in_maintenance'
-  | 'out_of_service'
-  | 'retired';
+  | 'active'
+  | 'inactive'
+  | 'maintenance'
+  | 'decommissioned';
 
 export interface Vehicle {
   lastMaintenanceDate: any;

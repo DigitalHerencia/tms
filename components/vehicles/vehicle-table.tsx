@@ -48,19 +48,13 @@ export function VehicleTable({
 
   const getStatusColor = (status: VehicleStatus) => {
     switch (status) {
-      // case 'active':
-      case 'available':
+      case 'active':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'assigned':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      // case 'maintenance':
-      case 'in_maintenance':
+      case 'maintenance':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      // case 'inactive':
-      case 'out_of_service':
+      case 'inactive':
         return 'bg-red-500/20 text-red-400 border-red-500/30';
-      // case 'decommissioned':
-      case 'retired':
+      case 'decommissioned':
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -141,15 +135,10 @@ export function VehicleTable({
                 </SelectTrigger>
                 <SelectContent className="bg-black border-muted">
                   <SelectItem value="all">All Statuses</SelectItem>
-                  {/* <SelectItem value="active">Active</SelectItem> */}
-                  <SelectItem value="available">Available</SelectItem>
-                  <SelectItem value="assigned">Assigned</SelectItem>
-                  {/* <SelectItem value="maintenance">Maintenance</SelectItem> */}
-                  <SelectItem value="in_maintenance">Maintenance</SelectItem>
-                  {/* <SelectItem value="inactive">Inactive</SelectItem> */}
-                  <SelectItem value="out_of_service">Inactive</SelectItem>
-                  {/* <SelectItem value="decommissioned">Decommissioned</SelectItem> */}
-                  <SelectItem value="retired">Decommissioned</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="decommissioned">Decommissioned</SelectItem>
                 </SelectContent>
               </Select>
             </div>

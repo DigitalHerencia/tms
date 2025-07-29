@@ -99,15 +99,13 @@ export function VehicleDetailsDialog({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available':
+      case 'active':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'assigned':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'in_maintenance':
+      case 'maintenance':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'out_of_service':
+      case 'inactive':
         return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'retired':
+      case 'decommissioned':
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -166,22 +164,19 @@ export function VehicleDetailsDialog({
         let status: VehicleStatus;
         switch (newStatus) {
           case 'active':
-            status = 'available';
+            status = 'active';
             break;
           case 'maintenance':
-            status = 'in_maintenance';
+            status = 'maintenance';
             break;
           case 'inactive':
-            status = 'out_of_service';
+            status = 'inactive';
             break;
-          case 'assigned':
-            status = 'assigned';
-            break;
-          case 'retired':
-            status = 'retired';
+          case 'decommissioned':
+            status = 'decommissioned';
             break;
           default:
-            status = 'available';
+            status = 'active';
         }
         const result = await updateVehicleStatusAction(vehicle.id, { status });
         setIsUpdatingStatus(false);
@@ -646,7 +641,7 @@ export function VehicleDetailsDialog({
             </Button>
           </div>
           <div className="flex gap-2">
-            {vehicle.status === 'available' && (
+            {vehicle.status === 'active' && (
               <Button
                 onClick={() => handleStatusUpdate('maintenance')}
                 disabled={isUpdatingStatus}
@@ -655,7 +650,7 @@ export function VehicleDetailsDialog({
                 Mark for Maintenance
               </Button>
             )}
-            {vehicle.status === 'in_maintenance' && (
+            {vehicle.status === 'maintenance' && (
               <Button
                 onClick={() => handleStatusUpdate('active')}
                 disabled={isUpdatingStatus}

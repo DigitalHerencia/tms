@@ -110,13 +110,7 @@ export const VehicleFiltersSchema = z.object({
   search: z.string().optional(),
   type: z.enum(['tractor', 'trailer', 'straight_truck', 'other']).optional(),
   status: z
-    .enum([
-      'available',
-      'assigned',
-      'in_maintenance',
-      'out_of_service',
-      'retired',
-    ])
+    .enum(['active', 'inactive', 'maintenance', 'decommissioned'])
     .optional(),
   make: z.string().optional(),
   model: z.string().optional(),
