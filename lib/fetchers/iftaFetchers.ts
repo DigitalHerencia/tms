@@ -170,14 +170,16 @@ export async function getIftaDataForPeriod(
       }
     });
 
-    // Check for existing IFTA report for this period  
-    // Note: Quarter and year fields don't exist in current schema
-    // This would need to be implemented using calculationData or date ranges
+    // Check for existing IFTA report for this period
     const existingReport = await db.iftaReport.findFirst({
       where: {
         organizationId: orgId,
-        // TODO: Implement quarter/year filtering using date ranges or calculationData
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     const result: IftaPeriodData = {
