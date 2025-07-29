@@ -8,6 +8,15 @@ interface VehicleListPageProps {
   page?: number;
 }
 
+/**
+ * Server component showing the paginated vehicle list for an organization.
+ *
+ * @param props.orgId - Organization identifier used to fetch vehicles.
+ * @param props.page - Optional page index, defaults to the first page.
+ *
+ * Layout adapts using flex utilities for mobile and desktop views.
+ */
+// See docs/screenshots/vehicle-list-page.png for example layout
 export default async function VehicleListPage({
   orgId,
   page = 1,
@@ -19,7 +28,7 @@ export default async function VehicleListPage({
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
-      {/* Fleet Vehicles Header */}
+      {/* Fleet Vehicles Header - see docs/screenshots/vehicles-header.png for spacing */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Fleet Vehicles</h1>

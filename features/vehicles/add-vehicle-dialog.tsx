@@ -41,6 +41,16 @@ const initialState: Partial<VehicleFormData> = {
   licensePlateState: '',
 };
 
+/**
+ * Client dialog for adding a new vehicle to the organization.
+ *
+ * @param props.orgId - Organization identifier for the vehicle.
+ * @param props.onSuccess - Callback fired when creation succeeds.
+ * @param props.open - Whether the dialog is open.
+ * @param props.onOpenChange - Triggered when dialog visibility changes.
+ *
+ * Uses responsive grid inputs for small and large screens.
+ */
 export default function AddVehicleDialog({
   orgId,
   onSuccess,
@@ -51,7 +61,10 @@ export default function AddVehicleDialog({
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleChange = (field: keyof VehicleFormData, value: any) => {
+  const handleChange = (
+    field: keyof VehicleFormData,
+    value: VehicleFormData[keyof VehicleFormData]
+  ) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -98,6 +111,7 @@ export default function AddVehicleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* See docs/screenshots/add-vehicle-dialog.png for layout reference */}
       <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-muted text-white">
         <DialogHeader>
           <DialogTitle className="text-white">Add New Vehicle</DialogTitle>

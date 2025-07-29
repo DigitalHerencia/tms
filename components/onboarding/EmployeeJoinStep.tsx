@@ -6,14 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Users, 
-  Building, 
+import {
+  Users,
   Key,
   ArrowRight,
   ArrowLeft,
   AlertCircle,
-  CheckCircle,
   Phone
 } from 'lucide-react';
 import type { OnboardingFormData } from '@/features/onboarding/OnboardingStepper';
@@ -45,6 +43,7 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
       const exists = await verifyOrganizationExists(formData.organizationId);
       if (!exists) {
         setValidationError('Organization not found. Please check the ID and try again.');
+        setIsValidating(false);
         return;
       }
 
