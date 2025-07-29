@@ -135,8 +135,8 @@ export function UserSettings() {
       const result = await getOrganizationInvitations(
         user.publicMetadata.organizationId as string,
       );
-      if (result.success && result.data) {
-        setInvitations(result.data as any);
+      if (result.success && (result as any).data) {
+        setInvitations((result as any).data);
       } else {
         setInvitations([]);
       }
@@ -168,7 +168,8 @@ export function UserSettings() {
         toast({
           title: "Failed to Revoke Invitation",
           description:
-            result.error || "An error occurred while revoking the invitation.",
+            (result as any).error ||
+            "An error occurred while revoking the invitation.",
           variant: "destructive",
         });
       }
