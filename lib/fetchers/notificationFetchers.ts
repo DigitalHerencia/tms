@@ -4,9 +4,6 @@
 
 /**
  * Notification fetchers.
- *
- * TODO remaining:
- * - Add persistence once the notification model is defined.
  */
 
 import type { Notification } from "@/types/notifications"

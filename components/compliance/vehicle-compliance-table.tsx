@@ -1,5 +1,5 @@
-import { MoreHorizontal } from 'lucide-react'
-
+import { MoreHorizontal, AlertCircle, CheckCircle, Clock } from 'lucide-react'
+import type { JSX } from 'react'
 import {
   Table,
   TableBody,
@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,13 @@ import {
   type VehicleComplianceRow,
 } from '@/lib/fetchers/complianceFetchers'
 
+
+import {
+  getVehicleComplianceRecords,
+  type VehicleComplianceRecord,
+} from '@/lib/fetchers/complianceFetchers'
+
+export interface VehicleComplianceRow extends VehicleComplianceRecord {}
 interface VehicleComplianceTableProps {
   orgId: string
 }
@@ -56,7 +64,7 @@ export async function VehicleComplianceTable({
                 colSpan={7}
                 className="py-8 text-center text-muted-foreground"
               >
-                No vehicles found
+               No vehicles found
               </TableCell>
             </TableRow>
           ) : (
@@ -110,6 +118,9 @@ export async function VehicleComplianceTable({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-neutral-900">
                       <DropdownMenuItem>View Details</DropdownMenuItem>
+                      <DropdownMenuItem>Update Status</DropdownMenuItem>
+                      <DropdownMenuItem>Schedule Inspection</DropdownMenuItem>
+                      <DropdownMenuItem>View Maintenance History</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

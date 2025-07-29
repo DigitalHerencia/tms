@@ -232,6 +232,17 @@ export const getComplianceDashboard = unstable_cache(
     { revalidate: 300, tags: ["compliance", "dashboard"] }
 )
 
+export interface VehicleComplianceRecord {
+    id: string
+    unit: string
+    type: string
+    status: string
+    lastInspection: Date | null
+    nextInspection: Date | null
+    defects: string
+    registrationExpiry: Date | null
+}
+
 export interface DriverComplianceRow {
     id: string
     name: string
