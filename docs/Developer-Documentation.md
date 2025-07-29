@@ -201,7 +201,7 @@ support these product requirements._
 -   **Vercel Deployment:** The application is deployed on Vercel, which handles building and serving
     the Next.js app. Commits to the main branch trigger Vercel to build and deploy the latest version.
     Vercel handles scaling, SSL (HTTPS), and CDN distribution automatically.
--   **CI/CD Pipeline:** A GitHub Actions workflow is set up to automate testing and deployment:
+  -   **CI/CD Pipeline:** A GitHub Actions workflow (see `.github/workflows/ci.yml`) is set up to automate testing and deployment:
 
     -   On push or merge to `main`, the workflow runs the test suite and build process.
     -   If tests pass, it uses Vercel's CLI or API (with stored credentials) to initiate a deployment of
@@ -489,7 +489,7 @@ practices:
     changes are pushed to the `main` branch (after passing tests), Vercel will automatically build and
     deploy the new version. This provides a seamless deployment process, where code merges result in
     live updates to the app.
--   **Continuous Integration (CI):** GitHub Actions handle testing and integration steps:
+-   **Continuous Integration (CI):** GitHub Actions (see `.github/workflows/ci.yml`) handle testing and integration steps:
 
     -   A typical workflow might run on every pull request and push to `main`. It will install
         dependencies, run `eslint` for linting, run `tsc` for type checks, and execute all tests.
