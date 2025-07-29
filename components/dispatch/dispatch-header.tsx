@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { useDispatchRealtime } from '@/hooks/use-dispatch-realtime';
-import { Activity, RadioTower, RefreshCw, WifiOff } from 'lucide-react';
+import { Activity, ClipboardList, RefreshCw, WifiOff } from 'lucide-react';
 
 interface DispatchHeaderProps {
   orgId: string;
@@ -38,7 +38,7 @@ export default function DispatchHeader({ orgId }: DispatchHeaderProps) {
     <div className="flex flex-row items-baseline justify-between mb-6">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <RadioTower className="h-8 w-8 text-white" />
+          <ClipboardList className="h-8 w-8 text-white" />
           <h1 className="text-3xl font-extrabold text-white">Dispatch Dashboard</h1>
           <div className="flex items-center gap-2 bg-green-500/20 rounded-full px-3 py-1">
             {isConnected ? (

@@ -1,4 +1,4 @@
-import { BarChart3, DollarSign, Filter, MapPin, TrendingUp, Truck, User } from 'lucide-react';
+import { BarChart2, DollarSign, Filter, MapPin, TrendingUp, Truck, User } from 'lucide-react';
 
 import { DriverPerformance } from '@/components/analytics/driver-performance';
 import { ExportOptions } from '@/components/analytics/export-options';
@@ -181,14 +181,17 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
           timeRange={timeRange}
         />
       </div>
-      <div className="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="mb-1 text-3xl font-extrabold text-white">Analytics Dashboard</h1>
-          <p className="text-base text-white/90">
+      <div className="flex flex-row items-baseline justify-between mb-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <BarChart2 className="h-8 w-8 text-white" />
+            <h1 className="text-3xl font-extrabold text-white">Analytics Dashboard</h1>
+          </div>
+          <p className="text-base text-white/90 font-medium">
             Track and analyze fleet performance metrics with advanced insights
           </p>
-        </div>{' '}
-        <div className="mt-4 flex flex-col gap-2 md:mt-0 md:flex-row">
+        </div>
+        <div className="flex flex-col gap-2 md:flex-row">
           <ExportOptions
             orgId={orgId}
             filters={filters}

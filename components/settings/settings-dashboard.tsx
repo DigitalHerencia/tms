@@ -125,19 +125,21 @@ export function SettingsDashboard({
   return (
     <div className="min-h-screen space-y-6 bg-neutral-900 p-6 pt-8">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Settings className="h-8 w-8 text-blue-500" />
-            <h1 className="text-3xl font-bold text-white">Settings Management</h1>
+      <div className="flex flex-row items-baseline justify-between mb-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <Settings className="h-8 w-8 text-white" />
+            <h1 className="text-3xl font-extrabold text-white">Settings Management</h1>
             <span className="border border-blue-200 bg-blue-50 text-blue-700 rounded px-2 py-1 text-xs font-semibold">
               Admin
             </span>
           </div>
-          <p className="text-gray-400">Export, import, and manage your organization settings</p>
+          <p className="text-gray-400 font-medium">
+            Export, import, and manage your organization settings
+          </p>
         </div>
         {accessibleTabs.includes('organization') && (
-          <div className="flex flex-row gap-4 mt-4 md:mt-0">
+          <div className="flex flex-row gap-4">
             <Button
               variant="outline"
               size="sm"
