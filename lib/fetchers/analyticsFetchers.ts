@@ -16,37 +16,18 @@ import type {
     PredictionData,
     RouteAnalytics,
     HeatmapDataPoint,
+    AnalyticsFilters,
+    FilterPreset,
+    PerformanceAnalytics,
+    FinancialAnalytics,
+    DriverPerformance,
+    VehicleUtilization,
+    SavePresetResult,
+    AdvancedAnalytics,
+    GeographicAnalytics,
 } from "@/types/analytics"
 import { unstable_cache } from "next/cache"
 
-export interface AnalyticsFilters {
-    driverId?: string
-    vehicleId?: string
-    customerName?: string
-    routeId?: string
-    customerId?: string
-    equipmentType?: string
-    priority?: string
-    dateRange?: {
-        from: string
-        to: string
-    }
-    compareWithPrevious?: boolean
-    groupBy?: "day" | "week" | "month" | "quarter"
-    includeProjections?: boolean
-}
-
-export interface FilterPreset {
-    description: any
-    id: string
-    name: string
-    filters: AnalyticsFilters
-    userId: string
-    organizationId: string
-    isDefault?: boolean
-    createdAt: Date
-    updatedAt: Date
-}
 
 /**
  * Get analytics data for performance metrics
@@ -55,7 +36,7 @@ export async function getPerformanceAnalytics(
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<PerformanceAnalytics> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -158,7 +139,7 @@ export async function getFinancialAnalytics(
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<FinancialAnalytics> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -264,7 +245,7 @@ export async function getDriverAnalytics(
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<DriverPerformance[]> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -364,7 +345,7 @@ export async function getVehicleAnalytics(
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<VehicleUtilization[]> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -594,7 +575,7 @@ export async function getDashboardSummary(
 export async function saveFilterPreset(
     organizationId: string,
     preset: Omit<FilterPreset, "id" | "createdAt" | "updatedAt">
-): Promise<any> {
+): Promise<SavePresetResult> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -625,7 +606,9 @@ export async function saveFilterPreset(
 /**
  * Get saved filter presets for user
  */
-export async function getFilterPresets(organizationId: string): Promise<any> {
+export async function getFilterPresets(
+    organizationId: string,
+): Promise<FilterPreset[]> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -659,7 +642,7 @@ export async function getFilterPresets(organizationId: string): Promise<any> {
 export async function getAdvancedAnalytics(
     organizationId: string,
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<AdvancedAnalytics> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -735,8 +718,8 @@ export async function getAdvancedAnalytics(
             },
         })
 
-        let previousData: any[] = []
-        let comparisonMetrics = null
+        let previousData: ProcessedAnalyticsData[] = []
+        let comparisonMetrics: ComparisonMetrics | null = null
 
         // Get comparison data if requested
         if (filters.compareWithPrevious) {
@@ -780,7 +763,7 @@ export async function getAdvancedAnalytics(
 
         
         } // Process and group data
-        const analytics: any = {
+        const analytics: AdvancedAnalytics = {
             current: processAnalyticsData(
                 currentData,
                 filters.groupBy || "day"
@@ -1054,7 +1037,7 @@ export async function getGeographicAnalytics(
     organizationId: string,
     timeRange: string = "30d",
     filters: AnalyticsFilters = {}
-): Promise<any> {
+): Promise<GeographicAnalytics> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")

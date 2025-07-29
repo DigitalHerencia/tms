@@ -17,7 +17,7 @@ import { CACHE_TTL, getCachedData, setCachedData } from "@/lib/cache/auth-cache"
 import prisma from "@/lib/database/db"
 import { handleError } from "@/lib/errors/handleError"
 
-import type { HosLog } from "@/types/compliance"
+import type { HosLog, ComplianceDashboardData } from "@/types/compliance"
 
 // Utility function to create default organization metadata
 function createDefaultOrgMetadata(): ClerkOrganizationMetadata {
@@ -41,7 +41,9 @@ function createDefaultOrgMetadata(): ClerkOrganizationMetadata {
 /**
  * Get compliance dashboard overview data
  */
-async function _getComplianceDashboard(organizationId: string): Promise<any> {
+async function _getComplianceDashboard(
+    organizationId: string,
+): Promise<ComplianceDashboardData> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -226,11 +228,24 @@ async function _getComplianceDashboard(organizationId: string): Promise<any> {
     }
 }
 
-export const getComplianceDashboard = unstable_cache(
+export const getComplianceDashboard: (
+    organizationId: string,
+) => Promise<ComplianceDashboardData> = unstable_cache(
     _getComplianceDashboard,
     ["compliance-dashboard"],
-    { revalidate: 300, tags: ["compliance", "dashboard"] }
+    { revalidate: 300, tags: ["compliance", "dashboard"] },
 )
+
+export interface VehicleComplianceRecord {
+    id: string
+    unit: string
+    type: string
+    status: string
+    lastInspection: Date | null
+    nextInspection: Date | null
+    defects: string
+    registrationExpiry: Date | null
+}
 
 export interface DriverComplianceRow {
     id: string
@@ -243,6 +258,17 @@ export interface DriverComplianceRow {
     violationStatus: string
     lastViolation: Date | null
     lastInspection: Date | null
+}
+
+export interface VehicleComplianceRow {
+    id: string
+    unit: string
+    type: string
+    status: string
+    lastInspection: Date | null
+    nextInspection: Date | null
+    defects: string
+    registrationExpiry: Date | null
 }
 
 export async function getDriverComplianceStatuses(
@@ -322,6 +348,69 @@ export async function getDriverComplianceStatuses(
     } catch (error) {
         console.error("Error fetching driver compliance status:", error)
         throw new Error("Failed to fetch driver compliance status")
+    }
+}
+
+export async function getVehicleComplianceRecords(
+    organizationId: string
+): Promise<VehicleComplianceRow[]> {
+    try {
+        const vehicles = await prisma.vehicle.findMany({
+            where: { organizationId, status: "active" },
+            include: { complianceDocuments: true },
+        })
+
+        const today = new Date()
+        const soon = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+        return vehicles.map(v => {
+            const registrationDoc = v.complianceDocuments.find(
+                d =>
+                    d.type === "vehicle_registration" ||
+                    d.type === "apportioned_registration"
+            )
+            const inspectionDoc = v.complianceDocuments.find(
+                d => d.type === "annual_inspection" || d.type === "emission_test"
+            )
+            const insuranceDoc = v.complianceDocuments.find(
+                d => d.type === "vehicle_insurance"
+            )
+
+            let status = "Compliant"
+            ;[registrationDoc, inspectionDoc, insuranceDoc].forEach(doc => {
+                if (!doc) {
+                    status = "Non-Compliant"
+                    return
+                }
+                if (doc.expirationDate && doc.expirationDate < today) {
+                    status = "Non-Compliant"
+                    return
+                }
+                if (
+                    doc.expirationDate &&
+                    doc.expirationDate < soon &&
+                    status !== "Non-Compliant"
+                ) {
+                    status = "Warning"
+                }
+            })
+
+            return {
+                id: v.id,
+                unit: v.unitNumber,
+                type: v.type,
+                status,
+                lastInspection: v.lastInspectionDate,
+                nextInspection: v.nextInspectionDue,
+                defects: "None",
+                registrationExpiry:
+                    registrationDoc?.expirationDate ?? v.registrationExpiration ??
+                    null,
+            } as VehicleComplianceRow
+        })
+    } catch (error) {
+        console.error("Error fetching vehicle compliance records:", error)
+        throw new Error("Failed to fetch vehicle compliance records")
     }
 }
 
@@ -1085,3 +1174,41 @@ export async function getAuditLogs(
 
 // --- Improved HOS Log Calculation ---
 // (Replace TODOs in getHOSLogs with actual calculations if HOS entries are available)
+
+export async function getDOTInspections(organizationId: string) {
+    try {
+        const { userId } = await auth()
+        if (!userId) throw new Error('Unauthorized')
+
+        const vehicles = await prisma.vehicle.findMany({
+            where: { organizationId },
+            select: {
+                id: true,
+                unitNumber: true,
+                lastInspectionDate: true,
+                nextInspectionDue: true,
+            },
+            orderBy: { unitNumber: 'asc' },
+        })
+
+        const inspections = vehicles.map(v => ({
+            id: v.id,
+            vehicleId: v.id,
+            vehicleUnit: v.unitNumber ?? '',
+            inspectionType: 'annual' as const,
+            status:
+                v.nextInspectionDue && new Date(v.nextInspectionDue) < new Date()
+                    ? 'overdue'
+                    : 'completed',
+            scheduledDate: v.nextInspectionDue ?? undefined,
+            completedDate: v.lastInspectionDate ?? undefined,
+            inspector: undefined,
+            location: undefined,
+            violations: 0,
+        }))
+
+        return { success: true, data: inspections }
+    } catch (error) {
+        return handleError(error, 'DOT Inspections Fetcher')
+    }
+}

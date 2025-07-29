@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import db from "@/lib/database/db";
 import { handleError } from "@/lib/errors/handleError";
-// import { loadInputSchema } from '@/schemas/dispatch' // (stub for Zod validation)
+import { loadInputSchema } from "@/schemas/dispatch";
 import type { DashboardActionResult } from "@/types/dashboard";
 
 /**
@@ -18,27 +18,30 @@ export async function createLoadAction(
     const { userId } = await auth();
     if (!userId) return { success: false, error: "Unauthorized" };
 
-    // Required fields
-    const loadNumber        = formData.get("load_number") as string;
-    const originAddress     = formData.get("origin_address") as string;
-    const originCity        = formData.get("origin_city") as string;
-    const originState       = formData.get("origin_state") as string;
-    const originZip         = formData.get("origin_zip") as string;
-    const destinationAddress= formData.get("destination_address") as string;
-    const destinationCity   = formData.get("destination_city") as string;
-    const destinationState  = formData.get("destination_state") as string;
-    const destinationZip    = formData.get("destination_zip") as string;
+    // Validate input data
+    const parsed = loadInputSchema.parse(Object.fromEntries(formData));
 
-    // Optional/nullable fields
-    const customerId           = formData.get("customer_id") as string;
-    const driverId             = formData.get("driver_id") as string;
-    const vehicleId            = formData.get("vehicle_id") as string;
-    const trailerId            = formData.get("trailer_id") as string; 
-    const scheduledPickupDate  = formData.get("scheduled_pickup_date") ? new Date(formData.get("scheduled_pickup_date") as string) : null;
-    const scheduledDeliveryDate= formData.get("scheduled_delivery_date") ? new Date(formData.get("scheduled_delivery_date") as string) : null;
-    const notes                = formData.get("notes") as string | null;
+    const loadNumber = parsed.load_number;
+    const originAddress = parsed.origin_address;
+    const originCity = parsed.origin_city;
+    const originState = parsed.origin_state;
+    const originZip = parsed.origin_zip;
+    const destinationAddress = parsed.destination_address;
+    const destinationCity = parsed.destination_city;
+    const destinationState = parsed.destination_state;
+    const destinationZip = parsed.destination_zip;
 
-    // If you need to default/validate, do it here.
+    const customerId = parsed.customer_id ?? undefined;
+    const driverId = parsed.driver_id ?? undefined;
+    const vehicleId = parsed.vehicle_id ?? undefined;
+    const trailerId = parsed.trailer_id ?? undefined;
+    const scheduledPickupDate = parsed.scheduled_pickup_date
+      ? new Date(parsed.scheduled_pickup_date)
+      : null;
+    const scheduledDeliveryDate = parsed.scheduled_delivery_date
+      ? new Date(parsed.scheduled_delivery_date)
+      : null;
+    const notes = parsed.notes ?? null;
 
     const load = await db.load.create({
       data: {
@@ -83,30 +86,30 @@ export async function updateLoadAction(
     const { userId } = await auth();
     if (!userId) return { success: false, error: "Unauthorized" };
 
+    const parsed = loadInputSchema
+      .partial()
+      .parse(Object.fromEntries(formData));
+
     const data: Record<string, any> = {};
-    [
-      "customer_id",
-      "driver_id",
-      "vehicle_id",
-      "trailer_id",
-      "origin_address",
-      "destination_address",
-      "scheduled_pickup_date",
-      "scheduled_delivery_date",
-      "notes",
-      "status",
-    ].forEach((key) => {
-      const val = formData.get(key);
-      if (val !== null && val !== undefined) {
-        if (
-          ["scheduled_pickup_date", "scheduled_delivery_date"].includes(key)
-        ) {
-          data[key] = val ? new Date(val as string) : null;
-        } else {
-          data[key] = val;
-        }
-      }
-    });
+
+    if (parsed.customer_id !== undefined) data.customer_id = parsed.customer_id;
+    if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
+    if (parsed.vehicle_id !== undefined) data.vehicle_id = parsed.vehicle_id;
+    if (parsed.trailer_id !== undefined) data.trailer_id = parsed.trailer_id;
+    if (parsed.origin_address !== undefined)
+      data.origin_address = parsed.origin_address;
+    if (parsed.destination_address !== undefined)
+      data.destination_address = parsed.destination_address;
+    if (parsed.scheduled_pickup_date !== undefined)
+      data.scheduled_pickup_date = parsed.scheduled_pickup_date
+        ? new Date(parsed.scheduled_pickup_date)
+        : null;
+    if (parsed.scheduled_delivery_date !== undefined)
+      data.scheduled_delivery_date = parsed.scheduled_delivery_date
+        ? new Date(parsed.scheduled_delivery_date)
+        : null;
+    if (parsed.notes !== undefined) data.notes = parsed.notes;
+    if (parsed.status !== undefined) data.status = parsed.status;
 
     data["lastModifiedBy"] = userId;
     data["updatedAt"] = new Date();

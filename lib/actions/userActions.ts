@@ -1,13 +1,12 @@
 "use server";
 /**
  * User management server actions.
- *
- * TODO remaining: send invitation emails when inviting users.
  */
 import db from "@/lib/database/db";
 import { handleError } from "@/lib/errors/handleError";
 import { sendInvitationEmail } from "@/lib/email/mailer";
 import crypto from "crypto";
+import type { UserInvitationResult } from "@/types/users";
 
 
 // Invite user: create pending membership and send invite (implementation stub)
@@ -15,7 +14,7 @@ export async function inviteUserAction(
   orgId: string,
   email: string,
   role: string,
-) {
+): Promise<UserInvitationResult> {
   try {
     // Find or create user by email
     let user = await db.user.findFirst({ where: { email } });
@@ -55,7 +54,7 @@ export async function inviteUserAction(
     const link = `${baseUrl}/accept-invitation?token=${token}`;
     await sendInvitationEmail(email, link);
 
-    return { success: true };
+    return { success: true, userId: user.id, invitationToken: token };
   } catch (error) {
     return handleError(error, "Invite User Action");
   }

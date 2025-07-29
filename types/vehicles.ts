@@ -1,12 +1,12 @@
 import type { UserRole } from './auth';
+import type { ApiResponse, PaginatedResponse } from './index';
 
 export type VehicleType = 'tractor' | 'trailer' | 'straight_truck' | 'other';
 export type VehicleStatus =
-  | 'available'
-  | 'assigned'
-  | 'in_maintenance'
-  | 'out_of_service'
-  | 'retired';
+  | 'active'
+  | 'inactive'
+  | 'maintenance'
+  | 'decommissioned';
 
 export interface Vehicle {
   lastMaintenanceDate: any;
@@ -134,13 +134,7 @@ export interface VehicleFilters {
   limit?: number;
 }
 
-export interface VehicleListResponse {
-  vehicles: Vehicle[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type VehicleListResponse = PaginatedResponse<Vehicle>;
 
 export interface VehicleMaintenanceRecord {
   id: string;
@@ -180,10 +174,6 @@ export interface VehicleUtilizationStats {
 
 // ================== Action Result Types ==================
 
-export interface VehicleActionResult {
-  data: boolean;
-  success: boolean;
-  vehicle?: Vehicle; // Changed from data to be more specific for single vehicle results
-  error?: string;
-  fieldErrors?: Record<string, string[]>; // Added for field-specific errors
+export interface VehicleActionResult extends ApiResponse<Vehicle> {
+  fieldErrors?: Record<string, string[]>;
 }

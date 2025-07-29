@@ -3,6 +3,8 @@
  * Comprehensive driver management for FleetFusion TMS
  */
 
+import type { PaginatedResponse, ApiResponse } from './index';
+
 // ================== Core Driver Types ==================
 
 export interface Driver {
@@ -361,13 +363,7 @@ export interface DriverFilters {
 
 // ================== API Response Types ==================
 
-export interface DriverListResponse {
-  drivers: Driver[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type DriverListResponse = PaginatedResponse<Driver>;
 
 export interface DriverStatsResponse {
   totalDrivers: number;
@@ -386,10 +382,7 @@ export interface DriverStatsResponse {
 
 // ================== Action Result Types ==================
 
-export interface DriverActionResult {
-  success: boolean;
-  data?: Driver | Driver[];
-  error?: string;
+export interface DriverActionResult extends ApiResponse<Driver | Driver[]> {
   code?: string;
 }
 

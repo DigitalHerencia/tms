@@ -420,6 +420,22 @@ export interface ComplianceAlert {
   updatedAt: Date;
 }
 
+export interface DOTInspection {
+  id: string;
+  vehicleId: string;
+  vehicleUnit: string;
+  inspectionType: 'annual' | 'roadside' | 'maintenance';
+  status: 'scheduled' | 'completed' | 'overdue' | 'failed';
+  scheduledDate?: Date;
+  completedDate?: Date;
+  inspector?: string;
+  location?: string;
+  violations: number;
+  score?: number;
+  reportUrl?: string;
+  notes?: string;
+}
+
 export interface AuditTrial {
   id: string;
   tenantId: string;
