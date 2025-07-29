@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 
 import { listVehiclesByOrg } from '@/lib/fetchers/vehicleFetchers';
 import VehicleListClient from '@/components/vehicles/vehicle-list-client';
+import { VehicleListSkeleton } from '@/components/vehicles/vehicle-list-skeleton';
 
 interface VehicleListPageProps {
   orgId: string;
@@ -27,7 +28,7 @@ export default async function VehicleListPage({
         </div>
       </div>
       
-      <Suspense fallback={<div className="text-white/70">Loading vehicles...</div>}>
+      <Suspense fallback={<VehicleListSkeleton />}>
         <VehicleListClient orgId={orgId} initialVehicles={vehicles} />
       </Suspense>
     </div>
