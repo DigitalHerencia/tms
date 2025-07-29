@@ -13,7 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AnalyticsData, TimeSeriesData } from "@/types/analytics"
+import { AnalyticsData } from "@/types/analytics"
 import { AnimatePresence, motion } from "framer-motion"
 import {
     Activity,
@@ -91,34 +91,6 @@ export function InteractiveCharts({
     >("line")
     const [showPredictions, setShowPredictions] = useState(false)
     const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true })
-    // Generate predictive analytics data
-    const generatePredictions = (historicalData: TimeSeriesData[]) => {
-        if (historicalData.length < 3) return []
-
-        const lastThreePoints = historicalData.slice(-3)
-        const firstPoint = lastThreePoints[0]
-        const lastPoint = lastThreePoints[2]
-
-        if (!firstPoint || !lastPoint) return []
-
-        const trend = (lastPoint.value - firstPoint.value) / 2
-        const predictions: { date: string; value: number; isPrediction: boolean }[] = []
-
-        for (let i = 1; i <= 7; i++) {
-            const lastDate = new Date(lastPoint.date)
-            lastDate.setDate(lastDate.getDate() + i)
-
-            predictions.push({
-                date:
-                    lastDate.toISOString().split("T")[0] ??
-                    lastDate.toISOString(),
-                value: lastPoint.value + trend * i,
-                isPrediction: true,
-            })
-        }
-
-        return predictions
-    }
 
     // Handle chart drill-down
     const handleDrillDown = (chartType: string, dataPoint: any) => {
@@ -195,10 +167,11 @@ export function InteractiveCharts({
 
     const renderChart = () => {
         const chartData = data.timeSeriesData || []
-        const predictions = showPredictions
-            ? generatePredictions(chartData)
-            : []
-        const combinedData = [...chartData, ...predictions]
+        const predictions = showPredictions ? data.predictions || [] : []
+        const combinedData = [
+            ...chartData,
+            ...predictions.map(p => ({ ...p, isPrediction: true })),
+        ]
 
         switch (chartType) {
             case "area":

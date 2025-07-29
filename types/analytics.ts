@@ -137,13 +137,52 @@ export interface DashboardSummary {
   safetyScore: number;
 }
 
+export interface PredictionData extends TimeSeriesData {
+  isPrediction: boolean;
+}
+
+export interface RouteAnalytics {
+  id: string;
+  origin: {
+    city: string;
+    state: string;
+    lat: number;
+    lng: number;
+  };
+  destination: {
+    city: string;
+    state: string;
+    lat: number;
+    lng: number;
+  };
+  frequency: number;
+  revenue: number;
+  avgDeliveryTime: number;
+  onTimeRate: number;
+  fuelCost: number;
+  distance: number;
+}
+
+export interface HeatmapDataPoint {
+  city: string;
+  state: string;
+  lat: number;
+  lng: number;
+  loads: number;
+  revenue: number;
+  utilization: number;
+}
+
 export interface AnalyticsData {
   timeSeriesData: TimeSeriesData[];
+  predictions?: PredictionData[];
   summary?: DashboardSummary;
   performanceData?: PerformanceDataPoint[];
   financialData?: ProfitabilityMetrics;
   driverPerformanceMetrics?: DriverPerformanceMetrics[];
   vehicleData?: VehiclePerformanceMetrics[];
+  routes?: RouteAnalytics[];
+  heatmap?: HeatmapDataPoint[];
 }
 
 export interface PerformanceDataPoint {

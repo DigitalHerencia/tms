@@ -26,6 +26,8 @@ import {
     getDriverAnalytics,
     getFinancialAnalytics,
     getPerformanceAnalytics,
+    getPerformanceProjections,
+    getRouteHeatmapAnalytics,
     getVehicleAnalytics,
 } from "@/lib/fetchers/analyticsFetchers"
 import { listDriversByOrg } from "@/lib/fetchers/driverFetchers"
@@ -82,6 +84,8 @@ export default async function AnalyticsPage({
         driverPerformanceMetricsRaw,
         vehicleDataRaw,
         driversList,
+        predictions,
+        geographicData,
     ] = await Promise.all([
         getDashboardSummary(orgId, timeRange, filters),
         getPerformanceAnalytics(orgId, timeRange, filters),
@@ -89,6 +93,8 @@ export default async function AnalyticsPage({
         getDriverAnalytics(orgId, timeRange, filters),
         getVehicleAnalytics(orgId, timeRange, filters),
         listDriversByOrg(orgId, { limit: 100 }),
+        getPerformanceProjections(orgId, timeRange, filters),
+        getRouteHeatmapAnalytics(orgId, timeRange, filters),
     ])
     // Defensive: ensure arrays/objects for all analytics data
     const performanceData = Array.isArray(performanceDataRaw)
@@ -101,6 +107,9 @@ export default async function AnalyticsPage({
     const drivers = Array.isArray(driversList?.drivers)
         ? driversList.drivers
         : []
+    const predictionData = Array.isArray(predictions) ? predictions : []
+    const routeData = geographicData?.routes || []
+    const heatmapData = geographicData?.heatmap || []
     // Process financial data to match component expectations
     const rawFinancialData =
         financialDataRaw &&
@@ -358,6 +367,7 @@ export default async function AnalyticsPage({
                                     driverPerformanceMetrics,
                                     vehicleData,
                                     timeSeriesData,
+                                    predictions,
                                 }}
                                 timeRange={timeRange}
                                 orgId={orgId}
@@ -387,6 +397,8 @@ export default async function AnalyticsPage({
                                     timeSeriesData,
                                 }}
                                 orgId={orgId}
+                                routes={geographicData.routes}
+                                heatmap={geographicData.heatmap}
                             />
                         </CardContent>
                     </Card>
