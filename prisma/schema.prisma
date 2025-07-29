@@ -44,6 +44,7 @@ model Organization {
   customers           Customer[]  
   dispatchActivities  DispatchActivity[]
   analyticsFilterPresets AnalyticsFilterPreset[]
+  invitations         OrganizationInvitation[]
 
   @@index([slug])
   @@map("organizations")
@@ -122,26 +123,27 @@ model Vehicle {
 
 // Trailer model
 model Trailer {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   organizationId String
   unitNumber     String
-  type           String               // e.g. "dry_van", "reefer"
+  type           String // e.g. "dry_van", "reefer"
   length         Int?
   make           String?
   model          String?
   year           Int?
   vin            String?
   licensePlate   String?
-  status         String               // "active", "maintenance", "out_of_service"
-  loads          Load[]   @relation("TrailerLoads")
+  status         String // "active", "maintenance", "out_of_service"
+  loads          Load[]       @relation("TrailerLoads")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   @@index([organizationId])
   @@map("trailers")
 }
 
 // Customer model
 model Customer {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   organizationId String
   name           String
   contactName    String?
@@ -158,11 +160,12 @@ model Customer {
   rating         Int?
   notes          String?
   tags           String[]
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   loads          Load[]
+
   @@index([organizationId])
   @@map("customers")
 }
@@ -213,7 +216,7 @@ model Driver {
 model Load {
   id                    String            @id @default(uuid())
   organizationId        String            @map("organization_id")
-  driver_id             String            @map("driver_id")  
+  driver_id             String            @map("driver_id")
   vehicleId             String?           @map("vehicle_id")
   loadNumber            String            @map("load_number")
   referenceNumber       String?           @map("reference_number")
@@ -265,7 +268,6 @@ model Load {
   trailerId             String?           @map("trailer_id")
   trailer               Trailer?          @relation("TrailerLoads", fields: [trailerId], references: [id])
 
-
   @@unique([organizationId, loadNumber], name: "loads_org_load_unique")
   @@index([organizationId])
   @@index([vehicleId])
@@ -294,14 +296,15 @@ model LoadStatusEvent {
 }
 
 model DispatchActivity {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   organizationId String
   entityType     String
   action         String
   entityId       String
   userName       String
-  timestamp      DateTime @default(now())
+  timestamp      DateTime     @default(now())
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   @@index([organizationId, timestamp])
   @@map("dispatch_activity")
 }
@@ -688,4 +691,25 @@ enum LoadPriority {
   medium
   high
   urgent
+}
+
+model OrganizationInvitation {
+  id             String           @id @default(uuid())
+  organizationId String           @map("organization_id")
+  email          String
+  role           String
+  token          String           @unique
+  status         InvitationStatus @default(pending)
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("organization_invitations")
+}
+
+enum InvitationStatus {
+  pending
+  accepted
+  revoked
 }

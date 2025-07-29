@@ -27,7 +27,7 @@ const mockDb = {
   complianceAlert: { count: complianceCount }
 };
 
-vi.mock('../../lib/database/db', () => ({ __esModule: true, default: mockDb }));
+vi.mock('../../../lib/database/db', () => ({ __esModule: true, default: mockDb }));
 
 describe('getDashboardSummary', () => {
   beforeEach(() => {
