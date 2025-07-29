@@ -2,32 +2,21 @@
 
 /**
  * Dashboard server actions.
- *
  */
 
 import { billingInfoSchema } from '@/schemas/dashboard';
 import type { BillingInfo } from '@/types/dashboard';
-import { auth } from "@clerk/nextjs/server"
-import { revalidatePath } from "next/cache"
-import db from "@/lib/database/db"
-import { handleError } from "@/lib/errors/handleError"
-import { objectsToCsv, generateSimplePdf, uploadExport } from '@/lib/services/exportService'
-import { getOrganizationKPIs } from "@/lib/fetchers/dashboardFetchers"
-import type { OrganizationKPIs } from "@/types/dashboard"
-import type { DashboardActionResult, DashboardAlert, DashboardScheduleItem } from "@/types/dashboard"
-import { auth } from '@clerk/nextjs/server';
-import { revalidatePath } from 'next/cache';
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import db from "@/lib/database/db";
+import { handleError } from "@/lib/errors/handleError";
+import { objectsToCsv, generateSimplePdf, uploadExport } from '@/lib/services/exportService';
+import { getOrganizationKPIs } from "@/lib/fetchers/dashboardFetchers";
+import type { OrganizationKPIs, DashboardActionResult, DashboardAlert, DashboardScheduleItem } from "@/types/dashboard";
 import { Readable } from 'node:stream';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { put } from '@vercel/blob';
-import { handleError } from '@/lib/errors/handleError';
-import { getOrganizationKPIs } from '@/lib/fetchers/dashboardFetchers';
-import type { OrganizationKPIs } from '@/types/dashboard';
-import type {
-  DashboardActionResult,
-  DashboardAlert,
-  DashboardScheduleItem,
-} from '@/types/dashboard';
+import { string } from 'zod';
 
 /**
  * Get organization billing info
@@ -174,64 +163,19 @@ export async function deactivateUsersAction(
   }
 }
 
+// Single, corrected export action:
 export async function exportOrganizationDataAction(
-    orgId: string,
-    formData: FormData
-): Promise<DashboardActionResult<{ downloadUrl: string }>> {
-    try {
-        const { userId } = await auth()
-        if (!userId) return { success: false, error: "Unauthorized" }
-
-        const exportType = (formData.get("exportType") as string) || "users"
-        const format = (formData.get("format") as string) || "csv"
-
-        let data: any[] = []
-        if (exportType === "vehicles") {
-            data = await db.vehicle.findMany({
-                where: { organizationId: orgId },
-                select: { id: true, unitNumber: true, type: true, status: true }
-            })
-        } else {
-            data = await db.user.findMany({
-                where: { organizationId: orgId },
-                select: {
-                    id: true,
-                    email: true,
-                    firstName: true,
-                    lastName: true,
-                    role: true
-                }
-            })
-        }
-
-        let buffer: Buffer
-        let extension = "csv"
-        if (format === "pdf") {
-            const pdf = await generateSimplePdf(`${exportType} export`, data)
-            buffer = Buffer.from(pdf)
-            extension = "pdf"
-        } else {
-            const csv = objectsToCsv(data as Record<string, any>[])
-            buffer = Buffer.from(csv)
-        }
-
-        const filePath = `exports/${orgId}/${exportType}-${Date.now()}.${extension}`
-        const downloadUrl = await uploadExport(filePath, buffer)
-
-        return { success: true, data: { downloadUrl } }
-    } catch (error) {
-        return handleError(error, "Export Organization Data")
   orgId: string,
   formData: FormData,
 ): Promise<DashboardActionResult<{ downloadUrl: string }>> {
   try {
     const { userId } = await auth();
-    if (!userId) return { success: false, error: 'Unauthorized' };
+    if (!userId) return { success: false, error: "Unauthorized" };
 
-    const exportType = (formData.get('exportType') as string) || 'full';
-    const format = (formData.get('format') as string) || 'csv';
+    const exportType = (formData.get("exportType") as string) || "users";
+    const format = (formData.get("format") as string) || "csv";
 
-    const rows: Record<string, any>[] = [];
+    let rows: Record<string, any>[] = [];
 
     if (exportType === 'users' || exportType === 'full') {
       const users = await db.user.findMany({
@@ -282,18 +226,24 @@ export async function exportOrganizationDataAction(
       const page = doc.addPage();
       const { height } = page.getSize();
       const font = await doc.embedFont(StandardFonts.Helvetica);
-      const headers = Object.keys(rows[0]);
-      let y = height - 40;
-      page.drawText(headers.join(' | '), { x: 50, y, size: 12, font });
-      y -= 20;
-      rows.forEach((r) => {
-        const line = headers.map((h) => String(r[h] ?? '')).join(' | ');
-        page.drawText(line, { x: 50, y, size: 10, font });
-        y -= 15;
-      });
-      buffer = Buffer.from(await doc.save());
+
+      if (rows.length > 0) {
+        const headers = Object.keys(string(rows[0]));
+        let y = height - 40;
+        page.drawText(headers.join(' | '), { x: 50, y, size: 12, font });
+        y -= 20;
+        rows.forEach((r) => {
+          const line = headers.map((h) => String(r[h] ?? '')).join(' | ');
+          page.drawText(line, { x: 50, y, size: 10, font });
+          y -= 15;
+        });
+        buffer = Buffer.from(await doc.save());
+      } else {
+        // fallback to empty file
+        buffer = Buffer.from('');
+      }
     } else {
-      const headers = Object.keys(rows[0]);
+      const headers = Object.keys(string(rows[0]));
       const escape = (val: string) => `"${val.replace(/"/g, '""')}"`;
       const csv = [headers.join(',')];
       rows.forEach((r) => {
@@ -306,20 +256,18 @@ export async function exportOrganizationDataAction(
     if (!token) throw new Error('Blob read-write token not configured');
 
     const pathname = `exports/${orgId}/${Date.now()}.${ext}`;
+    // Only 'public' is allowed for the 'access' parameter.
     const { downloadUrl } = await put(pathname, Readable.from(buffer), {
-      access: 'private',
+      access: 'public',
       token,
     });
 
     return { success: true, data: { downloadUrl } };
   } catch (error) {
-    return handleError(error, 'Export Organization Data');
+    return handleError(error, "Export Organization Data");
   }
 }
 
-/**
- * Get dashboard overview statistics
- */
 export async function getDashboardOverviewAction(): Promise<
   DashboardActionResult<OrganizationKPIs>
 > {
