@@ -87,8 +87,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
@@ -105,15 +107,15 @@ class PDFService {
       })
 
       if (options.watermark && options.watermark !== 'none') {
-          const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-          page.drawText(options.watermark.toUpperCase(), {
-            x: pageWidth / 2 - 100,
-            y: pageHeight / 2,
-            size: 50,
-            font: wmFont,
-            color: rgb(0.85, 0.85, 0.85),
-            rotate: degrees(45),
-          })
+        const wmFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+        page.drawText(options.watermark.toUpperCase(), {
+          x: pageSize[0] / 2 - 100,
+          y: pageSize[1] / 2,
+          size: 50,
+          font: wmFont,
+          color: rgb(0.85, 0.85, 0.85),
+          rotate: degrees(45),
+        })
       }
 
       if (options.includeAttachments) {
@@ -165,8 +167,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
@@ -243,8 +247,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
