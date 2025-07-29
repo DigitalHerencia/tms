@@ -45,7 +45,7 @@ model Organization {
   dispatchActivities  DispatchActivity[]
   analyticsFilterPresets AnalyticsFilterPreset[]
   invitations         OrganizationInvitation[]
-  
+
   @@index([slug])
   @@map("organizations")
 }
