@@ -24,8 +24,12 @@ for (const envVar of requiredEnvVars) {
 
 // Secure connection string validation
 const connectionString = process.env.DATABASE_URL!
-const maxConnections = parseInt(process.env.DB_MAX_CONNECTIONS || "10")
-const connectionTimeout = parseInt(process.env.DB_CONNECTION_TIMEOUT || "10000")
+const maxConnections = parseInt(
+    process.env.DATABASE_MAX_CONNECTIONS || "10"
+)
+const connectionTimeout = parseInt(
+    process.env.DATABASE_CONNECTION_TIMEOUT || "10000"
+)
 if (!connectionString.includes("sslmode=require")) {
     console.warn("Database connection should use SSL in production")
 }

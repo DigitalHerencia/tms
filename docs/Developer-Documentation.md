@@ -196,6 +196,8 @@ support these product requirements._
     (Clerk API keys, database URL, etc.). The repository provides an `.env.example` listing required
     keys. In production (Vercel), these variables are configured in the project settings. In
     development, a `.env.local` file is used.
+    Required database variables include `DATABASE_URL`, `DIRECT_URL`,
+    `DATABASE_MAX_CONNECTIONS`, and `DATABASE_CONNECTION_TIMEOUT`.
 -   **Vercel Deployment:** The application is deployed on Vercel, which handles building and serving
     the Next.js app. Commits to the main branch trigger Vercel to build and deploy the latest version.
     Vercel handles scaling, SSL (HTTPS), and CDN distribution automatically.
@@ -475,7 +477,9 @@ practices:
 -   **Environment Management:** Sensitive configuration is provided via environment variables. During
     deployment, these are set in Vercel's dashboard (for production) and via `.env.local` files for
     local development. It’s crucial to set production Clerk keys, the Neon database URL, and any
-    third-party API keys in the Vercel environment before deploying.
+    third-party API keys in the Vercel environment before deploying. The
+    database connection also relies on `DIRECT_URL`, `DATABASE_MAX_CONNECTIONS`,
+    and `DATABASE_CONNECTION_TIMEOUT`.
 -   **Manual Deployment:** Initially, one can deploy FleetFusion by connecting the GitHub repo to
     Vercel and using the Vercel UI to trigger a deployment. In this flow, Vercel will install
     dependencies and run `next build` to compile the app. Ensure the project settings on Vercel (build
