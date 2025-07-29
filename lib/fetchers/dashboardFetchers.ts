@@ -82,21 +82,20 @@ export async function getOrganizationUsers(orgId: string): Promise<UserManagemen
 
 export async function getAuditLogs(orgId: string): Promise<AuditLogEntry[]> {
   await requireAdminForOrg(orgId);
-  
-  // TODO: AuditLog model not yet implemented in schema
-  // const logs = await prisma.auditLog.findMany({
-  //   where: { organizationId: orgId },
-  //   orderBy: { timestamp: 'desc' },
-  // });
-  // return logs.map(l => ({
-  //   id: l.id,
-  //   userId: l.userId || '',
-  //   action: l.action,
-  //   target: l.entityType + ':' + l.entityId,
-  //   createdAt: l.timestamp.toISOString(),
-  // }));
-  
-  return [];
+
+  const logs = await prisma.auditLog.findMany({
+    where: { organizationId: orgId },
+    orderBy: { timestamp: 'desc' },
+    take: 100,
+  })
+
+  return logs.map(l => ({
+    id: l.id,
+    userId: l.userId || '',
+    action: l.action,
+    target: `${l.entityType}:${l.entityId}`,
+    createdAt: l.timestamp.toISOString(),
+  }))
 }
 
 export async function getBillingInfo(orgId: string): Promise<BillingInfo> {
