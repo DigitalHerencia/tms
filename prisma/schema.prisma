@@ -41,10 +41,11 @@ model Organization {
   users               User[]
   vehicles            Vehicle[]
   trailers            Trailer[]
-  customers           Customer[]
+  customers           Customer[]  
   dispatchActivities  DispatchActivity[]
+  analyticsFilterPresets AnalyticsFilterPreset[]
   invitations         OrganizationInvitation[]
-
+  
   @@index([slug])
   @@map("organizations")
 }
@@ -74,6 +75,7 @@ model User {
   driver                        Driver?
   IftaReport                    IftaReport[]             @relation("SubmittedByUser")
   memberships                   OrganizationMembership[]
+  analyticsFilterPresets        AnalyticsFilterPreset[]
   organization                  Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -604,6 +606,24 @@ model IftaTaxCalculation {
   calculatedByUser User       @relation("CalculatedByUser", fields: [calculatedBy], references: [id])
   report           IftaReport @relation(fields: [reportId], references: [id])
   validatedByUser  User?      @relation("ValidatedByUser", fields: [validatedBy], references: [id])
+}
+
+model AnalyticsFilterPreset {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  userId         String       @map("user_id")
+  name           String
+  description    String?
+  filters        Json         @map("filters")
+  isDefault      Boolean      @default(false) @map("is_default")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("analytics_filter_presets")
 }
 
 enum UserRole {
