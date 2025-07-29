@@ -25,7 +25,6 @@ export interface FuelPurchase {
   updatedAt: Date;
 }
 
-
 export interface MileageByJurisdiction {
   id: string;
   tenantId: string;
@@ -76,7 +75,6 @@ export interface IftaJurisdictionSummary {
   fuelGallons?: number;
 }
 
-
 export interface TripReport {
   id: string;
   tenantId: string;
@@ -114,6 +112,7 @@ export interface IftaTripRecord {
     make: string;
     model: string;
   };
+  driverId?: string;
   jurisdiction: string;
   distance: number;
   fuelUsed: number | null;
