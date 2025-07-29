@@ -3,17 +3,23 @@
 /**
  * Dashboard server actions.
  *
- * TODO remaining: implement actual export logic and file generation.
  */
 
 import { billingInfoSchema } from '@/schemas/dashboard';
 import type { BillingInfo } from '@/types/dashboard';
+import { auth } from "@clerk/nextjs/server"
+import { revalidatePath } from "next/cache"
+import db from "@/lib/database/db"
+import { handleError } from "@/lib/errors/handleError"
+import { objectsToCsv, generateSimplePdf, uploadExport } from '@/lib/services/exportService'
+import { getOrganizationKPIs } from "@/lib/fetchers/dashboardFetchers"
+import type { OrganizationKPIs } from "@/types/dashboard"
+import type { DashboardActionResult, DashboardAlert, DashboardScheduleItem } from "@/types/dashboard"
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { Readable } from 'node:stream';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { put } from '@vercel/blob';
-import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
 import { getOrganizationKPIs } from '@/lib/fetchers/dashboardFetchers';
 import type { OrganizationKPIs } from '@/types/dashboard';
@@ -123,6 +129,52 @@ export async function deactivateUsersAction(
 }
 
 export async function exportOrganizationDataAction(
+    orgId: string,
+    formData: FormData
+): Promise<DashboardActionResult<{ downloadUrl: string }>> {
+    try {
+        const { userId } = await auth()
+        if (!userId) return { success: false, error: "Unauthorized" }
+
+        const exportType = (formData.get("exportType") as string) || "users"
+        const format = (formData.get("format") as string) || "csv"
+
+        let data: any[] = []
+        if (exportType === "vehicles") {
+            data = await db.vehicle.findMany({
+                where: { organizationId: orgId },
+                select: { id: true, unitNumber: true, type: true, status: true }
+            })
+        } else {
+            data = await db.user.findMany({
+                where: { organizationId: orgId },
+                select: {
+                    id: true,
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                    role: true
+                }
+            })
+        }
+
+        let buffer: Buffer
+        let extension = "csv"
+        if (format === "pdf") {
+            const pdf = await generateSimplePdf(`${exportType} export`, data)
+            buffer = Buffer.from(pdf)
+            extension = "pdf"
+        } else {
+            const csv = objectsToCsv(data as Record<string, any>[])
+            buffer = Buffer.from(csv)
+        }
+
+        const filePath = `exports/${orgId}/${exportType}-${Date.now()}.${extension}`
+        const downloadUrl = await uploadExport(filePath, buffer)
+
+        return { success: true, data: { downloadUrl } }
+    } catch (error) {
+        return handleError(error, "Export Organization Data")
   orgId: string,
   formData: FormData,
 ): Promise<DashboardActionResult<{ downloadUrl: string }>> {
