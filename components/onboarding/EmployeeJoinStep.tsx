@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { verifyOrganizationExists } from '@/lib/fetchers/onboardingFetchers';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,9 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
   
   const isValid = formData.organizationId.trim();
 
+  /**
+   * Validates the organization ID before moving to the next step.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
@@ -41,12 +45,19 @@ export function EmployeeJoinStep({ formData, updateFormData, onNext, onPrev }: E
       // TODO: Validate organization ID exists once org lookup API is available
       // For now, we'll just proceed
       setTimeout(() => {
+      // Verify the organization exists before allowing the user to proceed
+      const exists = await verifyOrganizationExists(formData.organizationId);
+      if (!exists) {
+        setValidationError('Organization not found. Please check the ID and try again.');
+         main
         setIsValidating(false);
-        onNext();
-      }, 1000);
-      
+        return;
+      }
+
+      onNext();
     } catch (error) {
       setValidationError('Organization not found. Please check the ID and try again.');
+    } finally {
       setIsValidating(false);
     }
   };
