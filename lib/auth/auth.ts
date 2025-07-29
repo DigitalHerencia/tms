@@ -2,8 +2,6 @@
 
 /**
  * Auth utilities used throughout the application.
- *
- * TODO remaining: return real organization metadata in `getCurrentCompany`.
  */
 
 import { auth, currentUser } from '@clerk/nextjs/server';
@@ -70,7 +68,13 @@ export async function getCurrentUser(allowNoOrg = false): Promise<UserContext | 
   return null;
 }
 
-// Get the current company (organization) context by orgId (UUID)
+/**
+ * Returns metadata for the organization the current user belongs to.
+ *
+ * If the user is not authenticated, has no organization, or the organization
+ * cannot be found, `null` is returned. Any errors encountered while fetching
+ * data are logged and swallowed.
+ */
 export async function getCurrentCompany(): Promise<ClerkOrganizationMetadata | null> {
   try {
     const { userId } = await auth();
