@@ -31,7 +31,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
   });
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
 
-  const handleFilterChange = (field: string, value: any) =>
+  const handleFilterChange = (field: string, value: string) =>
     setFilters(prev => ({ ...prev, [field]: value }));
 
   const handleApplyFilters = () => { /* implement if showing related/recent loads */ };

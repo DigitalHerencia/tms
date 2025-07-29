@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
+import type { ComplianceDashboardData } from '@/types/compliance';
 
 interface ComplianceDashboardProps {
   orgId: string;
@@ -10,7 +11,7 @@ export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
     return <p className="text-red-500">Organization not found.</p>;
   }
 
-  let data: any;
+  let data: ComplianceDashboardData;
   try {
     data = await getComplianceDashboard(orgId);
   } catch (err) {
