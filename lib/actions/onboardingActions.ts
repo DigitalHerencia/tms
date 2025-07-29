@@ -16,7 +16,6 @@ import type { CompleteOnboardingData } from "@/schemas/onboarding"
 import { SystemRole, getPermissionsForRole } from "@/types/abac"
 import db from "@/lib/database/db"
 import { generateSlug, ensureUniqueSlug } from "../utils/slugUtils"
-import { getOrganizationInvitationById } from "./invitationActions"
 
 async function validateInvite(
     organizationId: string,
@@ -38,22 +37,13 @@ async function validateInvite(
             }
         }
 
-        const inviteResult = await getOrganizationInvitationById(
-            organizationId,
-            inviteCode,
-        )
+        const invitation = await db.organizationInvitation.findUnique({
+            where: { token: inviteCode },
+        })
 
-        if (!inviteResult.success) {
-            return {
-                success: false,
-                error:
-                    "error" in inviteResult
-                        ? inviteResult.error
-                        : "Invalid invite code",
-            }
+        if (!invitation) {
+            return { success: false, error: "Invalid invite code" }
         }
-
-        const invitation = (inviteResult as { success: true; data: any }).data
 
         if (invitation.organizationId !== organizationId) {
             return {

@@ -110,6 +110,7 @@ export interface OrganizationInvitation {
   email: string;
   role: string;
   token: string;
+  expiresAt?: Date | null;
   status: InvitationStatus;
   createdAt: Date;
   updatedAt: Date;
