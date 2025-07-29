@@ -4,6 +4,14 @@ import { getDashboardSummary } from '@/lib/fetchers/analyticsFetchers';
 interface MainDashboardFeatureProps {
   orgId: string;
 }
+/**
+ * Server component for the main analytics dashboard overview.
+ *
+ * @param props.orgId - Organization identifier used to load summary data.
+ *
+ * Cards reflow from single column on mobile to grid on larger screens.
+ */
+// See docs/screenshots/dashboard-overview.png for spacing
 
 export async function MainDashboardFeature({
   orgId,

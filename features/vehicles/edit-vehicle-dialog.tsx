@@ -17,6 +17,17 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+/**
+ * Client dialog for editing an existing vehicle.
+ *
+ * @param props.orgId - Organization identifier used for mutation.
+ * @param props.vehicle - Current vehicle details, null when not loaded.
+ * @param props.onSuccess - Callback when update succeeds.
+ * @param props.open - Whether the dialog is open.
+ * @param props.onOpenChange - Triggered on open state change.
+ *
+ * Form layout switches between stacked and grid based on screen size.
+ */
 
 export default function EditVehicleDialog({
   orgId,
@@ -95,6 +106,7 @@ export default function EditVehicleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* See docs/screenshots/edit-vehicle-dialog.png for layout reference */}
       <DialogContent className="sm:max-w-[500px] bg-neutral-900 border-muted text-white">
         <DialogHeader>
           <DialogTitle className="text-white">Edit Vehicle</DialogTitle>
@@ -237,3 +249,14 @@ export default function EditVehicleDialog({
     </Dialog>
   );
 }
+/**
+ * Client dialog for editing an existing vehicle.
+ *
+ * @param props.orgId - Organization identifier used for mutation.
+ * @param props.vehicle - Current vehicle details, null when not loaded.
+ * @param props.onSuccess - Callback when update succeeds.
+ * @param props.open - Whether the dialog is open.
+ * @param props.onOpenChange - Triggered on open state change.
+ *
+ * Form layout switches between stacked and grid based on screen size.
+ */

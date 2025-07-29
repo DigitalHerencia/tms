@@ -4,6 +4,14 @@ import { getComplianceDashboard } from '@/lib/fetchers/complianceFetchers';
 interface ComplianceDashboardProps {
   orgId: string;
 }
+/**
+ * Server component displaying compliance statistics.
+ *
+ * @param props.orgId - Organization identifier used to load compliance data.
+ *
+ * Metrics grid adapts from two to three columns responsively.
+ */
+// See docs/screenshots/compliance-dashboard.png for visuals
 
 export async function ComplianceDashboard({ orgId }: ComplianceDashboardProps) {
   if (!orgId) {
