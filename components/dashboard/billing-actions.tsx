@@ -3,20 +3,39 @@
 
 import { useClerk } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
+import { useTransition } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { useOrganizationContext } from '@/components/auth/context';
+import { cancelSubscriptionAction } from '@/lib/actions/dashboardActions';
 
 export function BillingActions() {
   const { redirectToUserProfile } = useClerk();
+  const org = useOrganizationContext();
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
 
   const handleManageBilling = async () => {
     // Sends users to their Clerk Account Portal → Billing/Subcriptions
     await redirectToUserProfile();
   };
 
-  const handleCancel = async () => {
-    // If you expose a custom Server Action to cancel, call it here.
-    // Example stub:
-    // await fetch(`/api/billing/cancel`, { method: 'POST' });
-    alert('Cancel subscription you would wire this up to your API.');
+  const handleCancel = () => {
+    if (!org) return;
+    startTransition(async () => {
+      const result = await cancelSubscriptionAction(org.id);
+      if (result.success) {
+        toast({
+          title: 'Subscription cancelled',
+          description: 'Your subscription has been cancelled.',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error || 'Failed to cancel subscription.',
+          variant: 'destructive',
+        });
+      }
+    });
   };
 
   return (
@@ -24,7 +43,11 @@ export function BillingActions() {
       <Button onClick={handleManageBilling} className="bg-blue-500 hover:bg-blue-800">
         Manage Payment & Invoices
       </Button>
-      <Button onClick={handleCancel} className="bg-red-600 text-white hover:bg-red-800 w-full">
+      <Button
+        onClick={handleCancel}
+        disabled={isPending}
+        className="bg-red-600 text-white hover:bg-red-800 w-full"
+      >
         Cancel Subscription
       </Button>
     </div>
