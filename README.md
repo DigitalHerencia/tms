@@ -112,7 +112,8 @@ FleetFusion supports runtime toggles via environment variables. See [docs/featur
 -   **Project Board**: All issues/PRs are tracked on the
     [Project Board](https://github.com/users/DigitalHerencia/projects/4).
 -   **Milestones**: Features are grouped by release milestones (e.g., Q3 2025).
--   **Merge Conflicts**: See our [Merge Conflict Resolution Guide](./docs/merge-conflict-resolution.md) for step-by-step help.
+  -   **Merge Conflicts**: See our [Merge Conflict Resolution Guide](./docs/merge-conflict-resolution.md) for step-by-step help.
+  -   **CI Pipeline**: Automated via GitHub Actions in [`ci.yml`](.github/workflows/ci.yml) to lint, type-check, test, and deploy to Vercel.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for full guidelines.
 
