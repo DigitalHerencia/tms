@@ -17,7 +17,7 @@ import { CACHE_TTL, getCachedData, setCachedData } from "@/lib/cache/auth-cache"
 import prisma from "@/lib/database/db"
 import { handleError } from "@/lib/errors/handleError"
 
-import type { HosLog } from "@/types/compliance"
+import type { HosLog, ComplianceDashboardData } from "@/types/compliance"
 
 // Utility function to create default organization metadata
 function createDefaultOrgMetadata(): ClerkOrganizationMetadata {
@@ -41,7 +41,9 @@ function createDefaultOrgMetadata(): ClerkOrganizationMetadata {
 /**
  * Get compliance dashboard overview data
  */
-async function _getComplianceDashboard(organizationId: string): Promise<any> {
+async function _getComplianceDashboard(
+    organizationId: string,
+): Promise<ComplianceDashboardData> {
     const { userId } = await auth()
     if (!userId) {
         throw new Error("Unauthorized")
@@ -226,10 +228,12 @@ async function _getComplianceDashboard(organizationId: string): Promise<any> {
     }
 }
 
-export const getComplianceDashboard = unstable_cache(
+export const getComplianceDashboard: (
+    organizationId: string,
+) => Promise<ComplianceDashboardData> = unstable_cache(
     _getComplianceDashboard,
     ["compliance-dashboard"],
-    { revalidate: 300, tags: ["compliance", "dashboard"] }
+    { revalidate: 300, tags: ["compliance", "dashboard"] },
 )
 
 export interface VehicleComplianceRecord {

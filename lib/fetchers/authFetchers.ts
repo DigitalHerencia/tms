@@ -26,6 +26,7 @@ export interface FetchedUser {
  * @param userId - Clerk user id
  * @returns Promise resolving with user data
  */
+
 export async function fetchUser(userId: string): Promise<FetchedUser | null> {
   try {
     const client = await clerkClient();
@@ -47,6 +48,7 @@ export async function fetchUser(userId: string): Promise<FetchedUser | null> {
  * @param userId - Clerk user id
  * @returns Promise resolving with session details
  */
+
 export async function fetchSession(userId: string): Promise<Session | null> {
   try {
     const client = await clerkClient();
@@ -64,6 +66,7 @@ export async function fetchSession(userId: string): Promise<Session | null> {
  * @param orgId - Organization id
  * @returns Promise resolving with organization metadata
  */
+
 export async function fetchOrganization(
   orgId: string,
 ): Promise<DatabaseOrganization | null> {
