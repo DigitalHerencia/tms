@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -300,7 +300,6 @@ async function main() {
       console.log(`Driver with id ${existingDriver.id} already exists.`);
       } else {
     
-
     const driver = await prisma.driver.create({
       data: {
         id: `drv_${i}`,
@@ -310,11 +309,23 @@ async function main() {
         firstName,
         lastName,
         email: driverUser.email,
+        phone: faker.phone.number("915-555-####"),
         status: "active",
         licenseNumber: `TX${faker.string.numeric(9)}`,
         licenseState: "TX",
         licenseClass: "A",
         hireDate: faker.date.past({ years: 1 }),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    });
+
+    await prisma.organizationMembership.create({
+      data: {
+        id: faker.string.uuid(),
+        organizationId: organization.id,
+        userId: driverUser.id,
+        role: 'driver',
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -374,6 +385,7 @@ async function main() {
         name: faker.company.name(),
         contactName: faker.person.fullName(),
         email: faker.internet.email(),
+        phone: faker.phone.number("915-555-####"),
         address: faker.location.streetAddress(),
         city: faker.location.city(),
         state: "TX",
@@ -420,7 +432,7 @@ async function main() {
         destinationZip: `8500${faker.number.int({ min: 1, max: 9 })}`,
         destinationLat: Number(faker.location.latitude({ min: 33, max: 35, precision: 0.000001 })),
         destinationLng: Number(faker.location.longitude({ min: -112, max: -110, precision: 0.000001 })),
-        rate: faker.number.float({ min: 1000, max: 10000 }),
+        rate: faker.number.float({ min: 1000, max: 10000, precision: 0.01 }),
         currency: "USD",
         scheduledPickupDate: faker.date.future(),
         weight: faker.number.int({ min: 5000, max: 50000 }),
@@ -461,6 +473,422 @@ async function main() {
       }
     });
   }
+
+  // ------------------------------------------------------------------
+  // Additional rows for remaining tables
+  // ------------------------------------------------------------------
+
+  // Compliance documents
+  await prisma.complianceDocument.createMany({ data: [
+    {
+      id: 'doc_driver_cdl',
+      organizationId: organization.id,
+      driver_id: driverIvan.id,
+      type: 'license',
+      title: 'Commercial Driver License',
+      documentNumber: 'CDL123',
+      fileUrl: 'https://example.com/ivan-cdl.pdf',
+      fileName: 'ivan-cdl.pdf',
+      issueDate: new Date('2022-01-01'),
+      expirationDate: new Date('2026-01-01'),
+      status: 'active',
+      isVerified: true,
+      verifiedBy: user.id,
+      verifiedAt: new Date(),
+    },
+    {
+      id: 'doc_vehicle_reg',
+      organizationId: organization.id,
+      vehicleId: vehicle.id,
+      type: 'registration',
+      title: 'Vehicle Registration',
+      documentNumber: 'REG789',
+      fileUrl: 'https://example.com/truck-reg.pdf',
+      fileName: 'truck-reg.pdf',
+      issueDate: new Date('2024-01-01'),
+      expirationDate: new Date('2025-01-01'),
+      status: 'active',
+      isVerified: true,
+      verifiedBy: user.id,
+      verifiedAt: new Date(),
+    }
+  ]});
+
+  // IFTA Reports and calculations
+  const iftaReport1 = await prisma.iftaReport.create({
+    data: {
+      id: 'ifta2024q1',
+      organizationId: organization.id,
+      quarter: 1,
+      year: 2024,
+      status: 'submitted',
+      totalMiles: 10000,
+      totalGallons: 1500,
+      totalTaxOwed: 1200,
+      totalTaxPaid: 1100,
+      submittedAt: new Date(),
+      submittedBy: user.id,
+      dueDate: new Date(),
+      filedDate: new Date(),
+      reportFileUrl: 'https://example.com/ifta-q1.pdf',
+      notes: 'Q1 IFTA report',
+    }
+  });
+
+  const iftaReport2 = await prisma.iftaReport.create({
+    data: {
+      id: 'ifta2024q2',
+      organizationId: organization.id,
+      quarter: 2,
+      year: 2024,
+      status: 'draft',
+      totalMiles: 8000,
+      totalGallons: 1200,
+      totalTaxOwed: 900,
+      totalTaxPaid: 0,
+      notes: 'Q2 draft',
+    }
+  });
+
+  await prisma.iftaTaxCalculation.createMany({ data: [
+    {
+      id: 'calc1',
+      organizationId: organization.id,
+      reportId: iftaReport1.id,
+      jurisdiction: 'TX',
+      totalMiles: 4000,
+      taxableMiles: 4000,
+      fuelPurchased: 600,
+      fuelConsumed: 550,
+      taxRate: 0.35,
+      taxDue: 140,
+      taxPaid: 135,
+      taxCredits: 0,
+      netTaxDue: 5,
+      calculatedBy: user.id,
+    },
+    {
+      id: 'calc2',
+      organizationId: organization.id,
+      reportId: iftaReport1.id,
+      jurisdiction: 'NM',
+      totalMiles: 6000,
+      taxableMiles: 6000,
+      fuelPurchased: 900,
+      fuelConsumed: 850,
+      taxRate: 0.32,
+      taxDue: 192,
+      taxPaid: 180,
+      taxCredits: 0,
+      netTaxDue: 12,
+      calculatedBy: user.id,
+    }
+  ]});
+
+  await prisma.iftaPDFGenerationLog.createMany({ data: [
+    {
+      id: 'pdfgen1',
+      organizationId: organization.id,
+      userId: user.id,
+      reportType: 'ifta',
+      parameters: {},
+      status: 'completed',
+      filePath: '/tmp/ifta1.pdf',
+      fileName: 'ifta1.pdf',
+      fileSize: 12345,
+    },
+    {
+      id: 'pdfgen2',
+      organizationId: organization.id,
+      userId: user.id,
+      reportType: 'ifta',
+      parameters: {},
+      status: 'completed',
+      filePath: '/tmp/ifta2.pdf',
+      fileName: 'ifta2.pdf',
+      fileSize: 22345,
+    }
+  ]});
+
+  await prisma.iftaReportPDF.createMany({ data: [
+    {
+      id: 'reportpdf1',
+      organizationId: organization.id,
+      reportId: iftaReport1.id,
+      reportType: 'ifta',
+      quarter: '1',
+      year: 2024,
+      fileName: 'ifta-q1.pdf',
+      filePath: '/tmp/ifta-q1.pdf',
+      fileSize: 12000,
+      mimeType: 'application/pdf',
+      generatedBy: user.id,
+    },
+    {
+      id: 'reportpdf2',
+      organizationId: organization.id,
+      reportId: iftaReport2.id,
+      reportType: 'ifta',
+      quarter: '2',
+      year: 2024,
+      fileName: 'ifta-q2.pdf',
+      filePath: '/tmp/ifta-q2.pdf',
+      fileSize: 15000,
+      mimeType: 'application/pdf',
+      generatedBy: user.id,
+    }
+  ]});
+
+  // Fuel purchases
+  await prisma.iftaFuelPurchase.createMany({ data: [
+    {
+      id: 'fuel1',
+      organizationId: organization.id,
+      vehicleId: vehicle.id,
+      date: new Date(),
+      jurisdiction: 'TX',
+      gallons: 150,
+      amount: 600,
+      vendor: 'Pilot',
+      receiptNumber: 'R001',
+    },
+    {
+      id: 'fuel2',
+      organizationId: organization.id,
+      vehicleId: vehicle.id,
+      date: new Date(),
+      jurisdiction: 'NM',
+      gallons: 175,
+      amount: 700,
+      vendor: 'Love',
+      receiptNumber: 'R002',
+    }
+  ]});
+
+  // IFTA trips
+  await prisma.iftaTrip.createMany({ data: [
+    {
+      id: 'trip1',
+      organizationId: organization.id,
+      vehicleId: vehicle.id,
+      driverId: driverIvan.id,
+      date: new Date('2024-07-20'),
+      distance: 300,
+      jurisdiction: 'TX',
+      startLocation: 'El Paso',
+      endLocation: 'Dallas',
+      fuelUsed: 30,
+    },
+    {
+      id: 'trip2',
+      organizationId: organization.id,
+      vehicleId: vehicle.id,
+      driverId: driverJane.id,
+      date: new Date('2024-07-22'),
+      distance: 450,
+      jurisdiction: 'NM',
+      startLocation: 'El Paso',
+      endLocation: 'Albuquerque',
+      fuelUsed: 45,
+    }
+  ]});
+
+  // Compliance alerts
+  await prisma.complianceAlert.createMany({ data: [
+    {
+      id: 'alert1',
+      organizationId: organization.id,
+      userId: user.id,
+      driver_id: driverIvan.id,
+      type: 'document_expiration',
+      severity: 'high',
+      title: 'CDL Expiring',
+      message: 'Ivan Roman CDL expires soon',
+      entityType: 'Driver',
+      entityId: driverIvan.id,
+      due_date: new Date('2025-12-31'),
+    },
+    {
+      id: 'alert2',
+      organizationId: organization.id,
+      userId: user.id,
+      vehicleId: vehicle.id,
+      type: 'inspection_due',
+      severity: 'medium',
+      title: 'Annual Inspection',
+      message: 'Vehicle inspection due',
+      entityType: 'Vehicle',
+      entityId: vehicle.id,
+      due_date: new Date('2024-12-01'),
+    }
+  ]});
+
+  // Load documents
+  await prisma.loadDocument.createMany({ data: [
+    {
+      id: 'loaddoc1',
+      organizationId: organization.id,
+      title: 'BOL',
+      fileUrl: 'https://example.com/bol1.pdf',
+      fileName: 'bol1.pdf',
+      fileSize: 1000,
+      mimeType: 'application/pdf',
+      loadId: 'load1',
+    },
+    {
+      id: 'loaddoc2',
+      organizationId: organization.id,
+      title: 'POD',
+      fileUrl: 'https://example.com/pod1.pdf',
+      fileName: 'pod1.pdf',
+      fileSize: 800,
+      mimeType: 'application/pdf',
+      loadId: 'load1',
+    }
+  ]});
+
+  // Regulatory audits
+  await prisma.regulatoryAudit.createMany({ data: [
+    {
+      id: 'audit1',
+      organizationId: organization.id,
+      type: 'DOT',
+      status: 'completed',
+      notes: 'Annual DOT audit',
+    },
+    {
+      id: 'audit2',
+      organizationId: organization.id,
+      type: 'Safety',
+      status: 'scheduled',
+      notes: 'Safety compliance audit',
+    }
+  ]});
+
+  // Audit logs
+  await prisma.auditLog.createMany({ data: [
+    {
+      id: 'log1',
+      organizationId: organization.id,
+      userId: user.id,
+      entityType: 'Load',
+      entityId: 'load1',
+      action: 'CREATE',
+      changes: {},
+    },
+    {
+      id: 'log2',
+      organizationId: organization.id,
+      userId: user.id,
+      entityType: 'Vehicle',
+      entityId: vehicle.id,
+      action: 'UPDATE',
+      changes: {},
+    }
+  ]});
+
+  // Notifications
+  await prisma.notification.createMany({ data: [
+    {
+      id: 'note1',
+      organizationId: organization.id,
+      userId: user.id,
+      message: 'Load L-0001 created',
+      url: '/loads/load1',
+    },
+    {
+      id: 'note2',
+      organizationId: organization.id,
+      userId: user.id,
+      message: 'Vehicle inspection due soon',
+      url: '/vehicles/veh_freight_1',
+    }
+  ]});
+
+  // Webhook events
+  await prisma.webhookEvent.createMany({ data: [
+    {
+      id: 'wh1',
+      eventType: 'load.created',
+      eventId: 'evt_1',
+      organizationId: organization.id,
+      userId: user.id,
+      payload: {},
+      status: 'processed',
+      processedAt: new Date(),
+    },
+    {
+      id: 'wh2',
+      eventType: 'vehicle.updated',
+      eventId: 'evt_2',
+      organizationId: organization.id,
+      userId: user.id,
+      payload: {},
+      status: 'processed',
+      processedAt: new Date(),
+    }
+  ]});
+
+  // Jurisdiction tax rates
+  await prisma.jurisdictionTaxRate.createMany({ data: [
+    {
+      id: 'tax1',
+      organizationId: organization.id,
+      jurisdiction: 'TX',
+      taxRate: 0.35,
+      effectiveDate: new Date('2024-01-01'),
+      verifiedDate: new Date('2024-01-01'),
+    },
+    {
+      id: 'tax2',
+      organizationId: organization.id,
+      jurisdiction: 'NM',
+      taxRate: 0.32,
+      effectiveDate: new Date('2024-01-01'),
+      verifiedDate: new Date('2024-01-01'),
+    }
+  ]});
+
+  // Analytics filter presets
+  await prisma.analyticsFilterPreset.createMany({ data: [
+    {
+      id: 'preset1',
+      organizationId: organization.id,
+      userId: user.id,
+      name: 'Default Loads',
+      description: 'Loads created this month',
+      filters: { status: 'in_transit' },
+      isDefault: true,
+    },
+    {
+      id: 'preset2',
+      organizationId: organization.id,
+      userId: user.id,
+      name: 'Active Vehicles',
+      description: 'Only active tractors',
+      filters: { type: 'tractor', status: 'active' },
+    }
+  ]});
+
+  // Organization invitations
+  await prisma.organizationInvitation.createMany({ data: [
+    {
+      id: 'invite1',
+      organizationId: organization.id,
+      email: 'newdriver1@example.com',
+      role: 'driver',
+      token: 'tok1',
+      status: 'pending',
+    },
+    {
+      id: 'invite2',
+      organizationId: organization.id,
+      email: 'staff@example.com',
+      role: 'dispatcher',
+      token: 'tok2',
+      status: 'pending',
+    }
+  ]});
 
   console.log('Seed data created successfully.');
 }
