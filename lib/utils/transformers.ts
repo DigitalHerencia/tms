@@ -50,6 +50,26 @@ export function transformVehicle(raw: any): Vehicle {
 export function transformLoad(raw: any): Load | null {
   if (!raw) return null;
 
+  const origin = {
+    name: raw.originAddress || '',
+    address: raw.originAddress || '',
+    city: raw.originCity || '',
+    state: raw.originState || '',
+    zipCode: raw.originZip || '',
+    latitude: raw.originLat ? Number(raw.originLat) : undefined,
+    longitude: raw.originLng ? Number(raw.originLng) : undefined,
+  };
+
+  const destination = {
+    name: raw.destinationAddress || '',
+    address: raw.destinationAddress || '',
+    city: raw.destinationCity || '',
+    state: raw.destinationState || '',
+    zipCode: raw.destinationZip || '',
+    latitude: raw.destinationLat ? Number(raw.destinationLat) : undefined,
+    longitude: raw.destinationLng ? Number(raw.destinationLng) : undefined,
+  };
+
   return {
     id: raw.id,
     organizationId: raw.organizationId,
@@ -58,13 +78,15 @@ export function transformLoad(raw: any): Load | null {
     priority: raw.priority || 'medium',
     customerId: raw.customerId,
     customer: raw.customer,
-    origin: raw.origin || {},
-    destination: raw.destination || {},
-    pickupDate: raw.pickupDate || new Date(),
-    deliveryDate: raw.deliveryDate || new Date(),
+    origin,
+    destination,
+    pickupDate:
+      raw.scheduledPickupDate ?? raw.actualPickupDate ?? new Date(),
+    deliveryDate:
+      raw.scheduledDeliveryDate ?? raw.actualDeliveryDate ?? new Date(),
     equipment: raw.equipment || {},
-    driver: raw.driver,
-    driverId: raw.driverId || null,
+    driver: raw.drivers ?? raw.driver ?? null,
+    driverId: raw.driver_id ?? raw.driverId ?? null,
     vehicle: raw.vehicle,
     vehicleId: raw.vehicleId || null,
     cargo: raw.cargo || {},
