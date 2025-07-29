@@ -37,7 +37,7 @@ export interface Driver {
   cdlExpiration: Date;
   endorsements?: string[];
   restrictions?: string[];
-  licenseState?: string; 
+  licenseState?: string;
   licenseExpiration?: Date;
 
   // Medical & Compliance
@@ -405,16 +405,14 @@ export interface DriverBulkActionResult {
 // ================== Type Guards ==================
 
 export function isDriver(obj: unknown): obj is Driver {
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+  const record = obj as Record<string, unknown>;
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    'id' in obj &&
-    typeof (obj as any).id === 'string' &&
-    'tenantId' in obj &&
-    typeof (obj as any).tenantId === 'string' &&
-    'cdlNumber' in obj &&
-    typeof (obj as any).cdlNumber === 'string' &&
-    'status' in obj &&
-    typeof (obj as any).status === 'string'
+    typeof record.id === 'string' &&
+    typeof record.tenantId === 'string' &&
+    typeof record.cdlNumber === 'string' &&
+    typeof record.status === 'string'
   );
 }

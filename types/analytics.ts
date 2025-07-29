@@ -119,9 +119,9 @@ export interface ProfitabilityMetrics {
 
 export interface DashboardSummary {
   averageRevenuePerMile: number;
-  totalLoads: any;
-  activeDrivers: any;
-  activeVehicles: any;
+  totalLoads: number;
+  activeDrivers: number;
+  activeVehicles: number;
   totalRevenue: number;
   totalMiles: number;
   activeLoads: number;
@@ -265,7 +265,7 @@ export interface ComparisonMetric {
   current: number;
   previous: number;
   change: number;
-  trend: "up" | "down";
+  trend: 'up' | 'down';
 }
 
 export interface ComparisonMetrics {
@@ -283,7 +283,7 @@ export interface AnalyticsProjection {
   };
   trend: {
     direction: string;
-    strength: "weak" | "moderate" | "strong";
+    strength: 'weak' | 'moderate' | 'strong';
   };
 }
 
@@ -344,6 +344,6 @@ export interface AnalyticsFilters {
     to: string;
   };
   compareWithPrevious?: boolean;
-  groupBy?: "day" | "week" | "month" | "quarter";
+  groupBy?: 'day' | 'week' | 'month' | 'quarter';
   includeProjections?: boolean;
 }
