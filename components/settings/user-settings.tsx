@@ -135,8 +135,8 @@ export function UserSettings() {
       const result = await getOrganizationInvitations(
         user.publicMetadata.organizationId as string,
       );
-      if (result.success && result.data) {
-        setInvitations(result.data as any);
+      if (result.success) {
+        setInvitations((result as { success: true; data: any }).data);
       } else {
         setInvitations([]);
       }
@@ -158,20 +158,22 @@ export function UserSettings() {
   const handleRevokeInvitation = async (invitationId: string) => {
     try {
       const result = await revokeOrganizationInvitation(invitationId);
-      if (result.success) {
-        toast({
-          title: "Invitation Revoked",
-          description: "The invitation has been successfully revoked.",
-        });
-        await loadInvitations(); // Refresh the list
-      } else {
-        toast({
-          title: "Failed to Revoke Invitation",
-          description:
-            result.error || "An error occurred while revoking the invitation.",
-          variant: "destructive",
-        });
-      }
+        if (result.success) {
+          toast({
+            title: "Invitation Revoked",
+            description: "The invitation has been successfully revoked.",
+          });
+          await loadInvitations(); // Refresh the list
+        } else {
+          toast({
+            title: "Failed to Revoke Invitation",
+            description:
+              'error' in result
+                ? result.error
+                : "An error occurred while revoking the invitation.",
+            variant: "destructive",
+          });
+        }
     } catch (error) {
       console.error("Error revoking invitation:", error);
       toast({

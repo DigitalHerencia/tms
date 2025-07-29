@@ -7,7 +7,7 @@
  *
  * TODO: integrate a real PDF engine and file storage.
  */
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, degrees } from 'pdf-lib'
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
@@ -87,8 +87,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
@@ -111,7 +113,7 @@ class PDFService {
           size: 50,
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
+          rotate: degrees(45),
         })
       }
 
@@ -164,8 +166,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
@@ -188,7 +192,7 @@ class PDFService {
           size: 50,
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
+          rotate: degrees(45),
         })
       }
 
@@ -241,8 +245,10 @@ class PDFService {
   ): Promise<PDFGenerationResult> {
     try {
       const dir = await this.ensureOrgDir(orgId)
-      const size = options.format === 'A4' ? [595.28, 841.89] : [612, 792]
-      const pageSize =
+      const size: [number, number] = options.format === 'A4'
+        ? [595.28, 841.89]
+        : [612, 792]
+      const pageSize: [number, number] =
         options.orientation === 'landscape' ? [size[1], size[0]] : size
 
       const pdfDoc = await PDFDocument.create()
@@ -265,7 +271,7 @@ class PDFService {
           size: 50,
           font: wmFont,
           color: rgb(0.85, 0.85, 0.85),
-          rotate: { type: 'degrees', angle: 45 },
+          rotate: degrees(45),
         })
       }
 
