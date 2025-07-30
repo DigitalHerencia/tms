@@ -90,7 +90,7 @@ export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCard
             <div>
               <p className="text-sm font-medium">Origin</p>
               <p className="text-muted-foreground text-sm">
-                {load.origin.city}, {load.origin.state}
+                {load.origin?.city ?? 'Unknown'}, {load.origin?.state ?? ''}
               </p>
             </div>
           </div>
@@ -99,7 +99,7 @@ export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCard
             <div>
               <p className="text-sm font-medium">Destination</p>
               <p className="text-muted-foreground text-sm">
-                {load.destination.city}, {load.destination.state}
+                {load.destination?.city ?? 'Unknown'}, {load.destination?.state ?? ''}
               </p>
             </div>
           </div>

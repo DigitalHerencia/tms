@@ -4,6 +4,7 @@ import type {
   Load,
   LoadAssignedDriver,
   LoadAssignedVehicle,
+  LoadAssignedTrailer,
 } from '@/types/dispatch';
 
 export function transformDriver(raw: any): Driver {
@@ -79,6 +80,21 @@ export function transformAssignedVehicle(raw: any): LoadAssignedVehicle {
   };
 }
 
+export function transformAssignedTrailer(raw: any): LoadAssignedTrailer {
+  return {
+    id: raw.id,
+    unit: raw.unitNumber ?? raw.unit ?? '',
+    type: raw.type ?? '',
+    make: raw.make ?? '',
+    model: raw.model ?? '',
+    year: raw.year ?? 0,
+    vin: raw.vin ?? '',
+    licensePlate: raw.licensePlate ?? '',
+    assignedAt: raw.assignedAt ?? raw.createdAt ?? new Date(),
+    assignedBy: raw.assignedBy ?? raw.createdBy ?? '',
+  };
+}
+
 export function transformLoad(raw: any): Load | null {
   if (!raw) return null;
 
@@ -123,6 +139,8 @@ export function transformLoad(raw: any): Load | null {
     driverId: raw.driver_id ?? raw.driverId ?? null,
     vehicle: raw.vehicle ? transformAssignedVehicle(raw.vehicle) : undefined,
     vehicleId: raw.vehicleId || null,
+    trailer: raw.trailer ? transformAssignedTrailer(raw.trailer) : undefined,
+    trailerId: raw.trailerId || null,
     cargo: raw.cargo || {},
     rate: raw.rate || {},
     statusEvents: raw.statusEvents || [],
