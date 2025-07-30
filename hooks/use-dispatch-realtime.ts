@@ -174,11 +174,11 @@ export function useDispatchRealtime({
           },
         );
 
+        const data = await response.json().catch(() => null);
+
         if (response.ok) {
-          const data = await response.json();
-          if (data.updates && data.updates.length > 0) {
+          if (data?.updates && data.updates.length > 0) {
             data.updates.forEach((update: DispatchUpdate) => {
-              // Safely extract timestamp
               const timestamp = update.data?.timestamp || update.timestamp;
               if (timestamp) {
                 lastSeenLoadTimestamp.current = timestamp;
@@ -188,6 +188,9 @@ export function useDispatchRealtime({
           }
           setIsConnected(true);
         } else {
+          if (data?.error) {
+            console.error('Polling error:', data.error);
+          }
           setIsConnected(false);
         }
       } catch (error) {
