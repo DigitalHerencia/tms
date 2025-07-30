@@ -577,7 +577,7 @@ All tenant-specific pages are now under:
 
 - `app/(tenant)/[orgId]/dashboard/page.tsx`
 - `app/(tenant)/[orgId]/analytics/page.tsx`
-- `app/(tenant)/[orgId]/dispatch/page.tsx`
+- `app/(tenant)/[orgId]/dispatch/[userId]/page.tsx`
 - `app/(tenant)/[orgId]/drivers/page.tsx`
 - `app/(tenant)/[orgId]/drivers/[userId]/page.tsx`
 - `app/(tenant)/[orgId]/compliance/page.tsx`
