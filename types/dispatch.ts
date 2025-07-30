@@ -71,7 +71,7 @@ export interface Load {
   notes?: string;
   internalNotes?: string;
   specialInstructions?: string;
-  documents?: LoadDocument[];
+  documents?: Document[];
   statusEvents: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
@@ -257,6 +257,17 @@ export interface Customer {
   updatedAt: Date;
 }
 
+export interface Document {
+  id: string;
+  loadId: string;
+  name: string;
+  url: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: Date;
+  uploadedBy: string;
+}
+
 export interface LoadDocument {
   id: string;
   loadId: string;
@@ -359,3 +370,8 @@ export interface AssignmentMeta {
   trailerAssignedAt?: Date;
   trailerAssignedBy?: string;
 }
+
+export interface LoadActionResult<T = { id: string }> extends import('./actions').ActionResult<T> {
+  fieldErrors?: Record<string, string[]>;
+}
+

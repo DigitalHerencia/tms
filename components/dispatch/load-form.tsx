@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +22,7 @@ import { toast } from '@/hooks/use-toast';
 import { createDispatchLoadAction, updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
 import { AddressFields } from '@/components/shared/AddressFields';
 import { ContactFields } from '@/components/shared/ContactFields';
+import { loadInputSchema } from '@/schemas/dispatch';
 
 interface DriverOption {
   id: string;
@@ -39,6 +43,8 @@ interface LoadFormProps {
   onClose?: () => void;
 }
 
+type LoadInput = z.infer<typeof loadInputSchema>;
+
 export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: LoadFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,64 +52,56 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
   const tractors = vehicles.filter((v) => v.type === 'tractor');
   const trailers = vehicles.filter((v) => v.type === 'trailer');
 
-  // Pre-fill fields for edit mode
-  const originValues = load
-    ? {
-        address: load.originAddress || '',
-        city: load.originCity || '',
-        state: load.originState || '',
-        zip: load.originZip || '',
-      }
-    : { address: '', city: '', state: '', zip: '' };
+  const form = useForm<LoadInput>({
+    resolver: zodResolver(loadInputSchema),
+    defaultValues: {
+      load_number: load?.loadNumber || '',
+      origin_address: load?.originAddress || '',
+      origin_city: load?.originCity || '',
+      origin_state: load?.originState || '',
+      origin_zip: load?.originZip || '',
+      destination_address: load?.destinationAddress || '',
+      destination_city: load?.destinationCity || '',
+      destination_state: load?.destinationState || '',
+      destination_zip: load?.destinationZip || '',
+      customer_id: load?.customerId || '',
+      driver_id: load?.driver_id || '',
+      vehicle_id: load?.vehicle_id || '',
+      trailer_id: load?.trailer_id || '',
+      scheduled_pickup_date: load?.scheduledPickupDate
+        ? new Date(load.scheduledPickupDate).toISOString().slice(0, 16)
+        : '',
+      scheduled_delivery_date: load?.scheduledDeliveryDate
+        ? new Date(load.scheduledDeliveryDate).toISOString().slice(0, 16)
+        : '',
+      notes: load?.notes || '',
+      status: load?.status || 'pending',
+    },
+  });
+  const { register, handleSubmit, formState: { errors }, setError } = form;
 
-  const destinationValues = load
-    ? {
-        address: load.destinationAddress || '',
-        city: load.destinationCity || '',
-        state: load.destinationState || '',
-        zip: load.destinationZip || '',
-      }
-    : { address: '', city: '', state: '', zip: '' };
-
-  const contactValues = load
-    ? {
-        customerContact: load.customer?.contactName || '',
-        customerPhone: load.customer?.phone || '',
-        customerEmail: load.customer?.email || '',
-      }
-    : { customerContact: '', customerPhone: '', customerEmail: '' };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = async (data: LoadInput) => {
     setIsSubmitting(true);
-    const formData = new FormData(event.currentTarget);
-
-    // DB schema field mapping
-    if (formData.has('referenceNumber')) {
-      formData.set('load_number', formData.get('referenceNumber') as string);
-      formData.delete('referenceNumber');
-    }
-    if (formData.has('driverId')) {
-      formData.set('driver_id', formData.get('driverId') as string);
-      formData.delete('driverId');
-    }
-    if (formData.has('vehicleId')) {
-      formData.set('vehicle_id', formData.get('vehicleId') as string);
-      formData.delete('vehicleId');
-    }
-    if (formData.has('trailerId')) {
-      formData.set('trailer_id', formData.get('trailerId') as string);
-      formData.delete('trailerId');
-    }
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value as string);
+      }
+    });
 
     try {
       let result;
       if (load && (load.id || loadId)) {
-        result = await updateDispatchLoadAction(orgId, load.id || loadId, formData);
+        result = await updateDispatchLoadAction(orgId, load.id || (loadId as string), formData);
         if (result.success) {
           toast({ title: 'Load updated', description: 'Load details updated successfully.' });
           onClose ? onClose() : router.push(`/${orgId}/dispatch`);
         } else {
+          if (result.fieldErrors) {
+            for (const [field, messages] of Object.entries(result.fieldErrors)) {
+              setError(field as keyof LoadInput, { message: messages.join(', ') });
+            }
+          }
           toast({
             title: 'Update failed',
             description: result.error || 'Could not update load.',
@@ -116,6 +114,11 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
           toast({ title: 'Load created', description: 'New load has been created.' });
           onClose ? onClose() : router.push(`/${orgId}/dispatch`);
         } else {
+          if (result.fieldErrors) {
+            for (const [field, messages] of Object.entries(result.fieldErrors)) {
+              setError(field as keyof LoadInput, { message: messages.join(', ') });
+            }
+          }
           toast({
             title: 'Creation failed',
             description: result.error || 'Could not create load.',
@@ -143,7 +146,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="space-y-6" onSubmit={handleSubmit} autoComplete="off">
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} autoComplete="off">
           <Tabs defaultValue="basic" className="w-full">
             <TabsList className="grid w-full grid-cols-4 bg-black border border-gray-700">
               <TabsTrigger value="basic">Basic Info</TabsTrigger>
@@ -156,18 +159,19 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
             <TabsContent value="basic" className="mt-4 space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="referenceNumber">Reference Number</Label>
+                  <Label htmlFor="load_number">Reference Number</Label>
                   <Input
-                    id="referenceNumber"
-                    name="referenceNumber"
-                    defaultValue={load?.loadNumber || load?.referenceNumber || ''}
+                    id="load_number"
+                    {...register('load_number')}
                     placeholder="e.g., L-1001"
-                    required
                   />
+                  {errors.load_number && (
+                    <p className="text-sm text-red-500">{errors.load_number.message}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
-                  <Select name="status" defaultValue={load?.status || 'pending'}>
+                  <Select defaultValue={load?.status || 'pending'} {...register('status')}>
                     <SelectTrigger id="status">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -179,6 +183,9 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.status && (
+                    <p className="text-sm text-red-500">{errors.status.message}</p>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
@@ -191,7 +198,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                   required
                 />
               </div>
-              <ContactFields values={contactValues} />
+              <ContactFields values={{}} />
             </TabsContent>
 
             {/* Locations tab */}
@@ -202,20 +209,19 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                     <CardTitle>Origin</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <AddressFields prefix="origin" values={originValues} required />
+                    <AddressFields prefix="origin" register={register} errors={errors} required />
                     <div className="space-y-2">
-                      <Label htmlFor="scheduledPickupDate">Pickup Date & Time</Label>
+                      <Label htmlFor="scheduled_pickup_date">Pickup Date & Time</Label>
                       <Input
-                        id="scheduledPickupDate"
-                        name="scheduledPickupDate"
+                        id="scheduled_pickup_date"
                         type="datetime-local"
-                        defaultValue={
-                          load?.scheduledPickupDate
-                            ? new Date(load.scheduledPickupDate).toISOString().slice(0, 16)
-                            : ''
-                        }
+                        {...register('scheduled_pickup_date')}
+                        type="datetime-local"
                         required
                       />
+                      {errors.scheduled_pickup_date && (
+                        <p className="text-sm text-red-500">{errors.scheduled_pickup_date.message}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -224,20 +230,18 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                     <CardTitle>Destination</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <AddressFields prefix="destination" values={destinationValues} required />
+                    <AddressFields prefix="destination" register={register} errors={errors} required />
                     <div className="space-y-2">
-                      <Label htmlFor="scheduledDeliveryDate">Delivery Date & Time</Label>
+                      <Label htmlFor="scheduled_delivery_date">Delivery Date & Time</Label>
                       <Input
-                        id="scheduledDeliveryDate"
-                        name="scheduledDeliveryDate"
+                        id="scheduled_delivery_date"
                         type="datetime-local"
-                        defaultValue={
-                          load?.scheduledDeliveryDate
-                            ? new Date(load.scheduledDeliveryDate).toISOString().slice(0, 16)
-                            : ''
-                        }
+                        {...register('scheduled_delivery_date')}
                         required
                       />
+                      {errors.scheduled_delivery_date && (
+                        <p className="text-sm text-red-500">{errors.scheduled_delivery_date.message}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -247,9 +251,9 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
             {/* Assignment tab */}
             <TabsContent value="assignment" className="mt-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="driverId">Driver</Label>
-                <Select name="driverId" defaultValue={load?.driver_id || load?.driver?.id || ''}>
-                  <SelectTrigger id="driverId">
+                <Label htmlFor="driver_id">Driver</Label>
+                <Select defaultValue={load?.driver_id || load?.driver?.id || ''} {...register('driver_id')}>
+                  <SelectTrigger id="driver_id">
                     <SelectValue placeholder="Not Assigned" />
                   </SelectTrigger>
                   <SelectContent>
@@ -263,9 +267,9 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="vehicleId">Tractor</Label>
-                <Select name="vehicleId" defaultValue={load?.vehicle_id || load?.vehicle?.id || ''}>
-                  <SelectTrigger id="vehicleId">
+                <Label htmlFor="vehicle_id">Tractor</Label>
+                <Select defaultValue={load?.vehicle_id || load?.vehicle?.id || ''} {...register('vehicle_id')}>
+                  <SelectTrigger id="vehicle_id">
                     <SelectValue placeholder="Not Assigned" />
                   </SelectTrigger>
                   <SelectContent>
@@ -279,9 +283,9 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="trailerId">Trailer</Label>
-                <Select name="trailerId" defaultValue={load?.trailer_id || load?.trailer?.id || ''}>
-                  <SelectTrigger id="trailerId">
+                <Label htmlFor="trailer_id">Trailer</Label>
+                <Select defaultValue={load?.trailer_id || load?.trailer?.id || ''} {...register('trailer_id')}>
+                  <SelectTrigger id="trailer_id">
                     <SelectValue placeholder="Not Assigned" />
                   </SelectTrigger>
                   <SelectContent>
@@ -350,11 +354,13 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
                   id="notes"
-                  name="notes"
-                  defaultValue={load?.notes || ''}
+                  {...register('notes')}
                   placeholder="Additional notes or instructions"
                   rows={3}
                 />
+                {errors.notes && (
+                  <p className="text-sm text-red-500">{errors.notes.message}</p>
+                )}
               </div>
             </TabsContent>
           </Tabs>

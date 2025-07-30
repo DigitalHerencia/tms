@@ -14,12 +14,11 @@ import type { LoadStatus } from '@/types/dispatch';
 export async function createDispatchLoadAction(
   orgId: string,
   formData: FormData,
-): Promise<DashboardActionResult<{ id: string }>> {
+): Promise<LoadActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
     const parsed = loadInputSchema.parse(Object.fromEntries(formData));
-
     const load = await db.load.create({
       data: {
         organizationId: orgId,
@@ -47,11 +46,10 @@ export async function createDispatchLoadAction(
         createdBy: userId,
       },
     });
-
     revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: load.id } };
   } catch (error) {
-    return handleError(error, 'Create Load');
+    return handleError(error, 'Create Load') as LoadActionResult<{ id: string }>;
   }
 }
 
@@ -62,12 +60,11 @@ export async function updateDispatchLoadAction(
   orgId: string,
   loadId: string,
   formData: FormData,
-): Promise<DashboardActionResult<{ id: string }>> {
+): Promise<LoadActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
     const parsed = loadInputSchema.partial().parse(Object.fromEntries(formData));
-
     const data: Record<string, any> = {};
     if (parsed.customer_id !== undefined) data.customerId = parsed.customer_id;
     if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
@@ -87,7 +84,6 @@ export async function updateDispatchLoadAction(
       data.scheduledDeliveryDate = parsed.scheduled_delivery_date ? new Date(parsed.scheduled_delivery_date) : null;
     if (parsed.notes !== undefined) data.notes = parsed.notes;
     if (parsed.status !== undefined) data.status = parsed.status;
-
     data['lastModifiedBy'] = userId;
     data['updatedAt'] = new Date();
 
@@ -107,10 +103,11 @@ export async function updateDispatchLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Ensure all dispatch board pages show the latest data
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, 'Update Dispatch Load');
+    return handleError(error, 'Update Dispatch Load') as LoadActionResult<{ id: string }>;
   }
 }
 
@@ -140,7 +137,8 @@ export async function deleteDispatchLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate the entire dispatch section for this organization
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: null };
   } catch (error) {
     return handleError(error, 'Delete Dispatch Load');
@@ -154,15 +152,56 @@ export async function assignDriverToLoadAction(
   orgId: string,
   loadId: string,
   driverId: string,
+  vehicleId?: string | null,
+  trailerId?: string | null,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
 
-    const load = await db.load.update({
+    const existing = await db.load.findFirst({
+      where: { id: loadId, organizationId: orgId },
+      select: {
+        scheduledPickupDate: true,
+        scheduledDeliveryDate: true,
+        vehicleId: true,
+        trailerId: true,
+      },
+    });
+
+    if (!existing || !existing.scheduledPickupDate || !existing.scheduledDeliveryDate) {
+      return { success: false, error: 'Load not found or missing schedule' };
+    }
+
+    const pickup = existing.scheduledPickupDate;
+    const delivery = existing.scheduledDeliveryDate;
+
+    const vehicleToCheck = vehicleId ?? existing.vehicleId ?? undefined;
+    const trailerToCheck = trailerId ?? existing.trailerId ?? undefined;
+
+    const [driverConflict, vehicleConflict, trailerConflict] = await Promise.all([
+      driverHasOverlappingLoad(orgId, driverId, pickup, delivery, loadId),
+      vehicleToCheck
+        ? vehicleHasOverlappingLoad(orgId, vehicleToCheck, pickup, delivery, loadId)
+        : Promise.resolve(false),
+      trailerToCheck
+        ? trailerHasOverlappingLoad(orgId, trailerToCheck, pickup, delivery, loadId)
+        : Promise.resolve(false),
+    ]);
+
+    if (driverConflict)
+      return { success: false, error: 'Driver already assigned to another load in this time range' };
+    if (vehicleConflict)
+      return { success: false, error: 'Vehicle already assigned to another load in this time range' };
+    if (trailerConflict)
+      return { success: false, error: 'Trailer already assigned to another load in this time range' };
+
+    await db.load.update({
       where: { id: loadId, organizationId: orgId },
       data: {
         driver_id: driverId,
+        vehicleId: vehicleToCheck ?? null,
+        trailerId: trailerToCheck ?? null,
         status: 'assigned',
         lastModifiedBy: userId,
         updatedAt: new Date(),
@@ -180,7 +219,8 @@ export async function assignDriverToLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate dispatch board to reflect new driver assignment
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, 'Assign Driver to Load');
@@ -198,6 +238,18 @@ export async function updateLoadStatusAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
+
+    const current = await db.load.findUnique({
+      where: { id: loadId, organizationId: orgId },
+      select: { status: true },
+    });
+
+    if (!current) return { success: false, error: 'Load not found' };
+
+    const allowed = allowedStatusTransitions[current.status] || [];
+    if (!allowed.includes(newStatus)) {
+      return { success: false, error: 'Invalid status change' };
+    }
 
     await db.load.update({
       where: { id: loadId, organizationId: orgId },
@@ -230,7 +282,8 @@ export async function updateLoadStatusAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate dispatch views so the updated status is visible
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, 'Update Load Status');
