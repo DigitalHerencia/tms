@@ -6,6 +6,7 @@ import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
 import type { DashboardActionResult } from '@/types/dashboard';
 import type { LoadStatus } from '@/types/dispatch';
+import { allowedStatusTransitions } from '@/lib/utils/dispatchStatus';
 
 /**
  * Create a new load (dispatch)
@@ -274,6 +275,18 @@ export async function updateLoadStatusAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
+
+    const current = await db.load.findUnique({
+      where: { id: loadId, organizationId: orgId },
+      select: { status: true },
+    });
+
+    if (!current) return { success: false, error: 'Load not found' };
+
+    const allowed = allowedStatusTransitions[current.status] || [];
+    if (!allowed.includes(newStatus)) {
+      return { success: false, error: 'Invalid status change' };
+    }
 
     await db.load.update({
       where: { id: loadId, organizationId: orgId },
