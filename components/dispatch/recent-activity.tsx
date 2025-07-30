@@ -13,7 +13,7 @@ interface ActivityItem {
 }
 
 interface RecentActivityProps {
-  params: { userId: string };
+  params: { orgId: string; userId: string };
   stats: {
     totalLoads: number;
     pendingLoads: number;
@@ -57,7 +57,7 @@ export function RecentActivityRow({ params, stats, activities }: RecentActivityP
 
           {/* 3) Buttons in a vertical column */}
           <div className="flex flex-col gap-4">
-            <Link href={`/dispatch/${params.userId}/new`} passHref>
+            <Link href={`/${params.orgId}/dispatch/loads/new`} passHref>
               <Button
                 size="sm"
                 className="w-36 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -65,7 +65,7 @@ export function RecentActivityRow({ params, stats, activities }: RecentActivityP
                 Add New Load
               </Button>
             </Link>
-            <Link href={`/dispatch/${params.userId}/edit`} passHref>
+            <Link href={`/${params.orgId}/dispatch/loads/${first?.entityId ?? ''}/edit`} passHref>
               <Button
                 size="sm"
                 className="w-36 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-800 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"

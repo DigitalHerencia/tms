@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
+import { loadInputSchema } from '@/schemas/dispatch';
 import type { DashboardActionResult } from '@/types/dashboard';
 import type { LoadStatus } from '@/types/dispatch';
 
@@ -17,56 +18,37 @@ export async function createDispatchLoadAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
-
-    // Required fields (schema-accurate)
-    const loadNumber = formData.get('load_number') as string;
-    const originAddress = formData.get('origin_address') as string;
-    const originCity = formData.get('origin_city') as string;
-    const originState = formData.get('origin_state') as string;
-    const originZip = formData.get('origin_zip') as string;
-    const destinationAddress = formData.get('destination_address') as string;
-    const destinationCity = formData.get('destination_city') as string;
-    const destinationState = formData.get('destination_state') as string;
-    const destinationZip = formData.get('destination_zip') as string;
-
-    // Optionals/nullable
-    const customerId = formData.get('customer_id') as string | null;
-    const driverId = formData.get('driver_id') as string;
-    const vehicleId = formData.get('vehicle_id') as string | null;
-    const trailerId = formData.get('trailer_id') as string | null;
-    const scheduledPickupDate = formData.get('scheduled_pickup_date')
-      ? new Date(formData.get('scheduled_pickup_date') as string)
-      : null;
-    const scheduledDeliveryDate = formData.get('scheduled_delivery_date')
-      ? new Date(formData.get('scheduled_delivery_date') as string)
-      : null;
-    const notes = formData.get('notes') as string | null;
+    const parsed = loadInputSchema.parse(Object.fromEntries(formData));
 
     const load = await db.load.create({
       data: {
         organizationId: orgId,
-        loadNumber,
-        originAddress,
-        originCity,
-        originState,
-        originZip,
-        destinationAddress,
-        destinationCity,
-        destinationState,
-        destinationZip,
-        customerId: customerId || null,
-        driver_id: driverId,
-        vehicleId: vehicleId || null,
-        trailerId: trailerId || null,
-        scheduledPickupDate,
-        scheduledDeliveryDate,
-        notes,
-        status: 'pending',
+        loadNumber: parsed.load_number,
+        originAddress: parsed.origin_address,
+        originCity: parsed.origin_city,
+        originState: parsed.origin_state,
+        originZip: parsed.origin_zip,
+        destinationAddress: parsed.destination_address,
+        destinationCity: parsed.destination_city,
+        destinationState: parsed.destination_state,
+        destinationZip: parsed.destination_zip,
+        customerId: parsed.customer_id ?? null,
+        driver_id: parsed.driver_id ?? null,
+        vehicleId: parsed.vehicle_id ?? null,
+        trailerId: parsed.trailer_id ?? null,
+        scheduledPickupDate: parsed.scheduled_pickup_date
+          ? new Date(parsed.scheduled_pickup_date)
+          : null,
+        scheduledDeliveryDate: parsed.scheduled_delivery_date
+          ? new Date(parsed.scheduled_delivery_date)
+          : null,
+        notes: parsed.notes ?? null,
+        status: parsed.status ?? 'pending',
         createdBy: userId,
       },
     });
 
-    revalidatePath(`/${orgId}/loads`);
+    revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: load.id } };
   } catch (error) {
     return handleError(error, 'Create Load');
@@ -84,85 +66,27 @@ export async function updateDispatchLoadAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
+    const parsed = loadInputSchema.partial().parse(Object.fromEntries(formData));
 
-    // Only update fields present in the schema
     const data: Record<string, any> = {};
-
-    [
-      'customer_id',
-      'driver_id',
-      'vehicle_id',
-      'trailer_id',
-      'origin_address',
-      'origin_city',
-      'origin_state',
-      'origin_zip',
-      'destination_address',
-      'destination_city',
-      'destination_state',
-      'destination_zip',
-      'scheduled_pickup_date',
-      'scheduled_delivery_date',
-      'notes',
-      'status',
-    ].forEach((key) => {
-      const val = formData.get(key);
-      if (val !== null && val !== undefined) {
-        // Handle dates
-        if (['scheduled_pickup_date', 'scheduled_delivery_date'].includes(key)) {
-          const schemaKey =
-            key === 'scheduled_pickup_date' ? 'scheduledPickupDate' : 'scheduledDeliveryDate';
-          data[schemaKey] = val ? new Date(val as string) : null;
-        } else if (key.endsWith('_id')) {
-          // Map field to schema field
-          const schemaKey =
-            key === 'customer_id'
-              ? 'customerId'
-              : key === 'driver_id'
-                ? 'driver_id'
-                : key === 'vehicle_id'
-                  ? 'vehicleId'
-                  : key === 'trailer_id'
-                    ? 'trailerId'
-                    : key;
-          data[schemaKey] = val;
-        } else if (
-          [
-            'origin_address',
-            'origin_city',
-            'origin_state',
-            'origin_zip',
-            'destination_address',
-            'destination_city',
-            'destination_state',
-            'destination_zip',
-          ].includes(key)
-        ) {
-          // Map form keys to schema fields
-          const schemaKey =
-            key === 'origin_address'
-              ? 'originAddress'
-              : key === 'origin_city'
-                ? 'originCity'
-                : key === 'origin_state'
-                  ? 'originState'
-                  : key === 'origin_zip'
-                    ? 'originZip'
-                    : key === 'destination_address'
-                      ? 'destinationAddress'
-                      : key === 'destination_city'
-                        ? 'destinationCity'
-                        : key === 'destination_state'
-                          ? 'destinationState'
-                          : key === 'destination_zip'
-                            ? 'destinationZip'
-                            : key;
-          data[schemaKey] = val;
-        } else {
-          data[key] = val;
-        }
-      }
-    });
+    if (parsed.customer_id !== undefined) data.customerId = parsed.customer_id;
+    if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
+    if (parsed.vehicle_id !== undefined) data.vehicleId = parsed.vehicle_id;
+    if (parsed.trailer_id !== undefined) data.trailerId = parsed.trailer_id;
+    if (parsed.origin_address !== undefined) data.originAddress = parsed.origin_address;
+    if (parsed.origin_city !== undefined) data.originCity = parsed.origin_city;
+    if (parsed.origin_state !== undefined) data.originState = parsed.origin_state;
+    if (parsed.origin_zip !== undefined) data.originZip = parsed.origin_zip;
+    if (parsed.destination_address !== undefined) data.destinationAddress = parsed.destination_address;
+    if (parsed.destination_city !== undefined) data.destinationCity = parsed.destination_city;
+    if (parsed.destination_state !== undefined) data.destinationState = parsed.destination_state;
+    if (parsed.destination_zip !== undefined) data.destinationZip = parsed.destination_zip;
+    if (parsed.scheduled_pickup_date !== undefined)
+      data.scheduledPickupDate = parsed.scheduled_pickup_date ? new Date(parsed.scheduled_pickup_date) : null;
+    if (parsed.scheduled_delivery_date !== undefined)
+      data.scheduledDeliveryDate = parsed.scheduled_delivery_date ? new Date(parsed.scheduled_delivery_date) : null;
+    if (parsed.notes !== undefined) data.notes = parsed.notes;
+    if (parsed.status !== undefined) data.status = parsed.status;
 
     data['lastModifiedBy'] = userId;
     data['updatedAt'] = new Date();

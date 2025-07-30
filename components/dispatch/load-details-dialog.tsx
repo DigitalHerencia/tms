@@ -332,7 +332,7 @@ export function LoadDetailsDialog({
             )}
           </div>
           <Button asChild variant="secondary" size="sm">
-            <Link href={`/app/${load.id}/edit`}>Edit Load</Link>
+            <Link href={`/${load.organizationId}/dispatch/loads/${load.id}/edit`}>Edit Load</Link>
           </Button>
         </DialogFooter>
       </DialogContent>

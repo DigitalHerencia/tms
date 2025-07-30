@@ -4,15 +4,15 @@ import { getDriversByOrg, getVehiclesByOrg, getLoadById } from '@/lib/fetchers/d
 import { EditLoadFeature } from '@/features/dispatch/EditLoadFeature';
 
 interface EditLoadPageProps {
-  params: { orgId: string; userId: string };
+  params: { orgId: string; loadId: string };
 }
 
 export default async function EditLoadPage({ params }: EditLoadPageProps) {
-  const { orgId, userId } = params;
+  const { orgId, loadId } = params;
   const [drivers, vehicles, load] = await Promise.all([
     getDriversByOrg(orgId),
     getVehiclesByOrg(orgId),
-    getLoadById(orgId, userId),
+    getLoadById(orgId, loadId),
   ]);
 
   if (!load) {

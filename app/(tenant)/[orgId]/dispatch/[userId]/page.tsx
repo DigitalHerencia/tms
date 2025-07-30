@@ -49,7 +49,7 @@ export default async function DispatchPage({ params }: DispatchPageProps) {
 
       {/* Recent Activity & Quick Actions */}
       <RecentActivityRow
-        params={{ userId }}
+        params={{ orgId, userId }}
         stats={summaryStats}
         activities={recentActivity.data.map((activity) => ({
           ...activity,
