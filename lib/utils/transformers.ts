@@ -121,7 +121,7 @@ export function transformLoad(raw: any): Load | null {
   return {
     id: raw.id,
     organizationId: raw.organizationId,
-    referenceNumber: raw.referenceNumber || '',
+    referenceNumber: raw.referenceNumber || raw.loadNumber || '',
     status: raw.status || 'pending',
     priority: raw.priority || 'medium',
     customerId: raw.customerId,

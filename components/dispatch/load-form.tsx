@@ -80,7 +80,9 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
 
     // DB schema field mapping
     if (formData.has('referenceNumber')) {
-      formData.set('load_number', formData.get('referenceNumber') as string);
+      const ref = formData.get('referenceNumber') as string;
+      formData.set('load_number', ref);
+      formData.set('reference_number', ref);
       formData.delete('referenceNumber');
     }
     if (formData.has('driverId')) {
@@ -160,7 +162,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                   <Input
                     id="referenceNumber"
                     name="referenceNumber"
-                    defaultValue={load?.loadNumber || load?.referenceNumber || ''}
+                    defaultValue={load?.referenceNumber || load?.loadNumber || ''}
                     placeholder="e.g., L-1001"
                     required
                   />
