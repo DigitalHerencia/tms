@@ -66,7 +66,9 @@ export async function createDispatchLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/loads`);
+    // Revalidate the dispatch board for all users in this organization
+    // Using the layout option ensures the entire dispatch section is refreshed
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: load.id } };
   } catch (error) {
     return handleError(error, 'Create Load');
@@ -183,7 +185,8 @@ export async function updateDispatchLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Ensure all dispatch board pages show the latest data
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, 'Update Dispatch Load');
@@ -216,7 +219,8 @@ export async function deleteDispatchLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate the entire dispatch section for this organization
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: null };
   } catch (error) {
     return handleError(error, 'Delete Dispatch Load');
@@ -256,7 +260,8 @@ export async function assignDriverToLoadAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate dispatch board to reflect new driver assignment
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, 'Assign Driver to Load');
@@ -306,7 +311,8 @@ export async function updateLoadStatusAction(
       },
     });
 
-    revalidatePath(`/${orgId}/dispatch`);
+    // Revalidate dispatch views so the updated status is visible
+    revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
     return handleError(error, 'Update Load Status');
