@@ -26,6 +26,8 @@ export async function createDispatchLoadAction(
 
     // Required fields (schema-accurate)
     const loadNumber = formData.get('load_number') as string;
+    const referenceNumber =
+      (formData.get('reference_number') as string) || loadNumber;
     const originAddress = formData.get('origin_address') as string;
     const originCity = formData.get('origin_city') as string;
     const originState = formData.get('origin_state') as string;
@@ -52,6 +54,7 @@ export async function createDispatchLoadAction(
       data: {
         organizationId: orgId,
         loadNumber,
+        referenceNumber,
         originAddress,
         originCity,
         originState,
@@ -95,6 +98,8 @@ export async function updateDispatchLoadAction(
     const data: Record<string, any> = {};
 
     [
+      'load_number',
+      'reference_number',
       'customer_id',
       'driver_id',
       'vehicle_id',
@@ -119,6 +124,10 @@ export async function updateDispatchLoadAction(
           const schemaKey =
             key === 'scheduled_pickup_date' ? 'scheduledPickupDate' : 'scheduledDeliveryDate';
           data[schemaKey] = val ? new Date(val as string) : null;
+        } else if (key === 'load_number') {
+          data.loadNumber = val;
+        } else if (key === 'reference_number') {
+          data.referenceNumber = val;
         } else if (key.endsWith('_id')) {
           // Map field to schema field
           const schemaKey =
@@ -169,6 +178,14 @@ export async function updateDispatchLoadAction(
         }
       }
     });
+
+    if (data.loadNumber && !data.referenceNumber) {
+      data.referenceNumber = data.loadNumber;
+    }
+
+    if (data.referenceNumber && !data.loadNumber) {
+      data.loadNumber = data.referenceNumber;
+    }
 
     data['lastModifiedBy'] = userId;
     data['updatedAt'] = new Date();
