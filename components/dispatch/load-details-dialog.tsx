@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { assignDriverToLoadAction, updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
-import { toast } from '@/hooks/use-toast';
+import { updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
+import { LoadDocuments } from './load-documents';
 import type { Driver } from '@/types/drivers';
 import type { Load } from '@/types/dispatch';
 import type { Vehicle } from '@/types/vehicles';
@@ -269,25 +269,7 @@ export function LoadDetailsDialog({
 
           {/* Documents Tab */}
           <TabsContent value="documents" className="mt-4">
-            {load.documents && load.documents.length > 0 ? (
-              <ul className="list-disc pl-6 text-sm">
-                {load.documents.map((doc) => (
-                  <li key={doc.id}>
-                    {doc.type?.toUpperCase()}:{' '}
-                    <a
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      {doc.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-400">No documents uploaded.</p>
-            )}
+            <LoadDocuments orgId={orgId} loadId={load.id} />
           </TabsContent>
 
           {/* History Tab */}

@@ -447,8 +447,8 @@ aspects of the schema include:
 
 - **Compliance & Documents:**
 
-  - **documents** – A general table for uploaded documents (could be used for storing file meta like
-    URL, upload date).
+  - **documents** – A general table for uploaded files. Each record stores file metadata and can be linked to a
+    load via `loadId` for proof of delivery or other paperwork.
   - **compliance_documents** – (If distinct from documents) Stores specific compliance record
     entries, such as a record of a driver's license or a vehicle inspection, possibly linking to an
     entry in `documents` for the file itself. Also linked to the relevant driver/vehicle and

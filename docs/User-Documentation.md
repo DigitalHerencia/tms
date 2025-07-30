@@ -325,7 +325,8 @@ own compliance tasks like hours-of-service logs or document uploads.
    delivered goods).
 3. Choose the document type if prompted (e.g., "Proof of Delivery") and add any notes required.
 4. Submit the upload. The document will be attached to the load record for dispatchers and
-   compliance officers to review.
+   compliance officers to review. Uploaded files appear in a list where you can also delete
+   unwanted documents.
 
 **Logging Hours (if applicable):**
 
