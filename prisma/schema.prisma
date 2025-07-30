@@ -10,44 +10,45 @@ datasource db {
 }
 
 model Organization {
-  id                  String                   @id @default(uuid())
-  name                String
-  slug                String                   @unique
-  mcNumber            String?                  @map("mc_number")
-  address             String?
-  city                String?
-  state               String?
-  zip                 String?
-  phone               String?
-  email               String?
-  logoUrl             String?                  @map("logo_url")
-  subscriptionTier    SubscriptionTier         @default(starter) @map("subscription_tier")
-  subscriptionStatus  SubscriptionStatus       @default(trial) @map("subscription_status")
-  maxUsers            Int                      @default(5) @map("max_users")
-  billingEmail        String?                  @map("billing_email")
-  settings            Json?                    @default("{\"fuelUnit\": \"gallons\", \"timezone\": \"America/Denver\", \"dateFormat\": \"MM/dd/yyyy\", \"distanceUnit\": \"miles\"}")
-  isActive            Boolean                  @default(true) @map("is_active")
-  createdAt           DateTime                 @default(now()) @map("created_at")
-  updatedAt           DateTime                 @updatedAt @map("updated_at")
-  dotNumber           String?
-  auditLogs           AuditLog[]
-  notifications       Notification[]
-  complianceAlerts    ComplianceAlert[]
-  complianceDocuments ComplianceDocument[]
-  drivers             Driver[]
-  IftaFuelPurchase    IftaFuelPurchase[]
-  iftaReports         IftaReport[]
-  IftaTrip            IftaTrip[]
-  loads               Load[]
-  memberships         OrganizationMembership[]
-  users               User[]
-  vehicles            Vehicle[]
-  trailers            Trailer[]
-  customers           Customer[]  
-  dispatchActivities  DispatchActivity[]
+  id                     String                   @id @default(uuid())
+  name                   String
+  slug                   String                   @unique
+  mcNumber               String?                  @map("mc_number")
+  address                String?
+  city                   String?
+  state                  String?
+  zip                    String?
+  phone                  String?
+  email                  String?
+  logoUrl                String?                  @map("logo_url")
+  subscriptionTier       SubscriptionTier         @default(starter) @map("subscription_tier")
+  subscriptionStatus     SubscriptionStatus       @default(trial) @map("subscription_status")
+  maxUsers               Int                      @default(5) @map("max_users")
+  billingEmail           String?                  @map("billing_email")
+  settings               Json?                    @default("{\"fuelUnit\": \"gallons\", \"timezone\": \"America/Denver\", \"dateFormat\": \"MM/dd/yyyy\", \"distanceUnit\": \"miles\"}")
+  isActive               Boolean                  @default(true) @map("is_active")
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  updatedAt              DateTime                 @updatedAt @map("updated_at")
+  dotNumber              String?
+  auditLogs              AuditLog[]
+  notifications          Notification[]
+  complianceAlerts       ComplianceAlert[]
+  complianceDocuments    ComplianceDocument[]
+  drivers                Driver[]
+  IftaFuelPurchase       IftaFuelPurchase[]
+  iftaReports            IftaReport[]
+  IftaTrip               IftaTrip[]
+  loads                  Load[]
+  memberships            OrganizationMembership[]
+  users                  User[]
+  vehicles               Vehicle[]
+  trailers               Trailer[]
+  customers              Customer[]
+  dispatchActivities     DispatchActivity[]
   analyticsFilterPresets AnalyticsFilterPreset[]
-  invitations         OrganizationInvitation[]
-  jurisdictionTaxRates JurisdictionTaxRate[]
+  invitations            OrganizationInvitation[]
+  jurisdictionTaxRates   JurisdictionTaxRate[]
+  Document               Document[]
 
   @@index([slug])
   @@map("organizations")
@@ -81,6 +82,7 @@ model User {
   memberships                   OrganizationMembership[]
   analyticsFilterPresets        AnalyticsFilterPreset[]
   organization                  Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Document                      Document[]
 
   @@index([organizationId])
   @@index([email])
@@ -272,6 +274,7 @@ model Load {
   customer              Customer?         @relation(fields: [customerId], references: [id])
   trailerId             String?           @map("trailer_id")
   trailer               Trailer?          @relation("TrailerLoads", fields: [trailerId], references: [id])
+  Document              Document[]
 
   @@unique([organizationId, loadNumber], name: "loads_org_load_unique")
   @@index([organizationId])
@@ -638,19 +641,19 @@ model IftaTaxCalculation {
 }
 
 model JurisdictionTaxRate {
-  id             String       @id @default(uuid())
-  organizationId String?      @map("organization_id")
-  jurisdiction   String       @map("jurisdiction")
-  taxRate        Decimal      @map("tax_rate") @db.Decimal(10, 4)
-  effectiveDate  DateTime     @map("effective_date")
-  endDate        DateTime?    @map("end_date")
-  source         String       @default("MANUAL")
-  verifiedDate   DateTime     @map("verified_date")
-  isActive       Boolean      @default(true) @map("is_active")
-  createdBy      String?      @map("created_by")
+  id             String        @id @default(uuid())
+  organizationId String?       @map("organization_id")
+  jurisdiction   String        @map("jurisdiction")
+  taxRate        Decimal       @map("tax_rate") @db.Decimal(10, 4)
+  effectiveDate  DateTime      @map("effective_date")
+  endDate        DateTime?     @map("end_date")
+  source         String        @default("MANUAL")
+  verifiedDate   DateTime      @map("verified_date")
+  isActive       Boolean       @default(true) @map("is_active")
+  createdBy      String?       @map("created_by")
   notes          String?
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -763,4 +766,23 @@ enum InvitationStatus {
   pending
   accepted
   revoked
+}
+
+model Document {
+  id             String       @id @default(uuid())
+  organizationId String       @map("organization_id")
+  loadId         String       @map("load_id")
+  name           String
+  fileUrl        String       @map("file_url")
+  fileSize       Int?         @map("file_size")
+  mimeType       String?      @map("mime_type")
+  uploadedAt     DateTime     @default(now()) @map("uploaded_at")
+  uploadedBy     String       @map("uploaded_by")
+  load           Load         @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedByUser User         @relation(fields: [uploadedBy], references: [id])
+
+  @@index([organizationId])
+  @@index([loadId])
+  @@map("documents")
 }
