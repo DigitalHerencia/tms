@@ -164,3 +164,80 @@ export async function getRecentDispatchActivity(orgId: string, limit = 5) {
 
   return { success: true, data: unique };
 }
+
+// -------- Assignment Availability Helpers ---------
+
+/**
+ * Check if the given driver already has a load that overlaps with the
+ * provided pickup/delivery range.
+ */
+export async function driverHasOverlappingLoad(
+  orgId: string,
+  driverId: string,
+  pickup: Date,
+  delivery: Date,
+  excludeLoadId?: string,
+): Promise<boolean> {
+  if (!driverId) return false;
+  const conflict = await db.load.findFirst({
+    where: {
+      organizationId: orgId,
+      driver_id: driverId,
+      id: excludeLoadId ? { not: excludeLoadId } : undefined,
+      scheduledPickupDate: { lt: delivery },
+      scheduledDeliveryDate: { gt: pickup },
+    },
+    select: { id: true },
+  });
+  return !!conflict;
+}
+
+/**
+ * Check if the given vehicle already has a load that overlaps with the
+ * provided pickup/delivery range.
+ */
+export async function vehicleHasOverlappingLoad(
+  orgId: string,
+  vehicleId: string,
+  pickup: Date,
+  delivery: Date,
+  excludeLoadId?: string,
+): Promise<boolean> {
+  if (!vehicleId) return false;
+  const conflict = await db.load.findFirst({
+    where: {
+      organizationId: orgId,
+      vehicleId,
+      id: excludeLoadId ? { not: excludeLoadId } : undefined,
+      scheduledPickupDate: { lt: delivery },
+      scheduledDeliveryDate: { gt: pickup },
+    },
+    select: { id: true },
+  });
+  return !!conflict;
+}
+
+/**
+ * Check if the given trailer already has a load that overlaps with the
+ * provided pickup/delivery range.
+ */
+export async function trailerHasOverlappingLoad(
+  orgId: string,
+  trailerId: string,
+  pickup: Date,
+  delivery: Date,
+  excludeLoadId?: string,
+): Promise<boolean> {
+  if (!trailerId) return false;
+  const conflict = await db.load.findFirst({
+    where: {
+      organizationId: orgId,
+      trailerId,
+      id: excludeLoadId ? { not: excludeLoadId } : undefined,
+      scheduledPickupDate: { lt: delivery },
+      scheduledDeliveryDate: { gt: pickup },
+    },
+    select: { id: true },
+  });
+  return !!conflict;
+}

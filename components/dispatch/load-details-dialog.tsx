@@ -79,13 +79,23 @@ export function LoadDetailsDialog({
   const handleAssign = async () => {
     setIsAssigning(true);
     try {
-      const formData = new FormData();
-      formData.set('driver_id', selectedDriverId || '');
-      formData.set('vehicle_id', selectedVehicleId || '');
-      formData.set('trailer_id', selectedTrailerId || '');
-      await updateDispatchLoadAction(orgId, loadId, formData);
-      router.refresh();
-      onClose();
+      const result = await assignDriverToLoadAction(
+        orgId,
+        loadId,
+        selectedDriverId,
+        selectedVehicleId || null,
+        selectedTrailerId || null,
+      );
+      if (result.success) {
+        router.refresh();
+        onClose();
+      } else if (result.error) {
+        toast({
+          title: 'Assignment conflict',
+          description: result.error,
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
       console.error('Error assigning driver/vehicle:', error);
     } finally {
