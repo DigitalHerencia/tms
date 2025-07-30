@@ -4,6 +4,11 @@ import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
+import {
+  driverHasOverlappingLoad,
+  vehicleHasOverlappingLoad,
+  trailerHasOverlappingLoad,
+} from '@/lib/fetchers/dispatchFetchers';
 import type { DashboardActionResult } from '@/types/dashboard';
 import type { LoadStatus } from '@/types/dispatch';
 
@@ -230,15 +235,56 @@ export async function assignDriverToLoadAction(
   orgId: string,
   loadId: string,
   driverId: string,
+  vehicleId?: string | null,
+  trailerId?: string | null,
 ): Promise<DashboardActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
 
-    const load = await db.load.update({
+    const existing = await db.load.findFirst({
+      where: { id: loadId, organizationId: orgId },
+      select: {
+        scheduledPickupDate: true,
+        scheduledDeliveryDate: true,
+        vehicleId: true,
+        trailerId: true,
+      },
+    });
+
+    if (!existing || !existing.scheduledPickupDate || !existing.scheduledDeliveryDate) {
+      return { success: false, error: 'Load not found or missing schedule' };
+    }
+
+    const pickup = existing.scheduledPickupDate;
+    const delivery = existing.scheduledDeliveryDate;
+
+    const vehicleToCheck = vehicleId ?? existing.vehicleId ?? undefined;
+    const trailerToCheck = trailerId ?? existing.trailerId ?? undefined;
+
+    const [driverConflict, vehicleConflict, trailerConflict] = await Promise.all([
+      driverHasOverlappingLoad(orgId, driverId, pickup, delivery, loadId),
+      vehicleToCheck
+        ? vehicleHasOverlappingLoad(orgId, vehicleToCheck, pickup, delivery, loadId)
+        : Promise.resolve(false),
+      trailerToCheck
+        ? trailerHasOverlappingLoad(orgId, trailerToCheck, pickup, delivery, loadId)
+        : Promise.resolve(false),
+    ]);
+
+    if (driverConflict)
+      return { success: false, error: 'Driver already assigned to another load in this time range' };
+    if (vehicleConflict)
+      return { success: false, error: 'Vehicle already assigned to another load in this time range' };
+    if (trailerConflict)
+      return { success: false, error: 'Trailer already assigned to another load in this time range' };
+
+    await db.load.update({
       where: { id: loadId, organizationId: orgId },
       data: {
         driver_id: driverId,
+        vehicleId: vehicleToCheck ?? null,
+        trailerId: trailerToCheck ?? null,
         status: 'assigned',
         lastModifiedBy: userId,
         updatedAt: new Date(),
