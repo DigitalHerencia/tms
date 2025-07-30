@@ -370,3 +370,8 @@ export interface AssignmentMeta {
   trailerAssignedAt?: Date;
   trailerAssignedBy?: string;
 }
+
+export interface LoadActionResult<T = { id: string }> extends import('./actions').ActionResult<T> {
+  fieldErrors?: Record<string, string[]>;
+}
+

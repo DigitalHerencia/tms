@@ -4,14 +4,8 @@ import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import {
-  driverHasOverlappingLoad,
-  vehicleHasOverlappingLoad,
-  trailerHasOverlappingLoad,
-} from '@/lib/fetchers/dispatchFetchers';
-import type { DashboardActionResult } from '@/types/dashboard';
-import type { LoadStatus } from '@/types/dispatch';
-import { allowedStatusTransitions } from '@/lib/utils/dispatchStatus';
+import { loadInputSchema } from '@/schemas/dispatch';
+import type { LoadStatus, LoadActionResult } from '@/types/dispatch';
 
 /**
  * Create a new load (dispatch)
@@ -19,36 +13,39 @@ import { allowedStatusTransitions } from '@/lib/utils/dispatchStatus';
 export async function createDispatchLoadAction(
   orgId: string,
   formData: FormData,
-): Promise<DashboardActionResult<{ id: string }>> {
+): Promise<LoadActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
+    const parsed = loadInputSchema.safeParse(Object.fromEntries(formData));
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: 'Invalid data',
+        fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      };
+    }
 
-    // Required fields (schema-accurate)
-    const loadNumber = formData.get('load_number') as string;
-    const referenceNumber =
-      (formData.get('reference_number') as string) || loadNumber;
-    const originAddress = formData.get('origin_address') as string;
-    const originCity = formData.get('origin_city') as string;
-    const originState = formData.get('origin_state') as string;
-    const originZip = formData.get('origin_zip') as string;
-    const destinationAddress = formData.get('destination_address') as string;
-    const destinationCity = formData.get('destination_city') as string;
-    const destinationState = formData.get('destination_state') as string;
-    const destinationZip = formData.get('destination_zip') as string;
-
-    // Optionals/nullable
-    const customerId = formData.get('customer_id') as string | null;
-    const driverId = formData.get('driver_id') as string;
-    const vehicleId = formData.get('vehicle_id') as string | null;
-    const trailerId = formData.get('trailer_id') as string | null;
-    const scheduledPickupDate = formData.get('scheduled_pickup_date')
-      ? new Date(formData.get('scheduled_pickup_date') as string)
-      : null;
-    const scheduledDeliveryDate = formData.get('scheduled_delivery_date')
-      ? new Date(formData.get('scheduled_delivery_date') as string)
-      : null;
-    const notes = formData.get('notes') as string | null;
+    const {
+      load_number: loadNumber,
+      origin_address: originAddress,
+      origin_city: originCity,
+      origin_state: originState,
+      origin_zip: originZip,
+      destination_address: destinationAddress,
+      destination_city: destinationCity,
+      destination_state: destinationState,
+      destination_zip: destinationZip,
+      customer_id: customerId,
+      driver_id: driverId,
+      vehicle_id: vehicleId,
+      trailer_id: trailerId,
+      scheduled_pickup_date: pickup,
+      scheduled_delivery_date: delivery,
+      notes,
+    } = parsed.data;
+    const scheduledPickupDate = pickup ? new Date(pickup) : null;
+    const scheduledDeliveryDate = delivery ? new Date(delivery) : null;
 
     const load = await db.load.create({
       data: {
@@ -80,7 +77,7 @@ export async function createDispatchLoadAction(
     revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: load.id } };
   } catch (error) {
-    return handleError(error, 'Create Load');
+    return handleError(error, 'Create Load') as LoadActionResult<{ id: string }>;
   }
 }
 
@@ -91,96 +88,58 @@ export async function updateDispatchLoadAction(
   orgId: string,
   loadId: string,
   formData: FormData,
-): Promise<DashboardActionResult<{ id: string }>> {
+): Promise<LoadActionResult<{ id: string }>> {
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
 
-    // Only update fields present in the schema
+    const parsed = loadInputSchema.partial().safeParse(Object.fromEntries(formData));
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: 'Invalid data',
+        fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      };
+    }
+
+    const {
+      customer_id,
+      driver_id,
+      vehicle_id,
+      trailer_id,
+      origin_address,
+      origin_city,
+      origin_state,
+      origin_zip,
+      destination_address,
+      destination_city,
+      destination_state,
+      destination_zip,
+      scheduled_pickup_date,
+      scheduled_delivery_date,
+      notes,
+      status,
+    } = parsed.data;
+
     const data: Record<string, any> = {};
-
-    [
-      'load_number',
-      'reference_number',
-      'customer_id',
-      'driver_id',
-      'vehicle_id',
-      'trailer_id',
-      'origin_address',
-      'origin_city',
-      'origin_state',
-      'origin_zip',
-      'destination_address',
-      'destination_city',
-      'destination_state',
-      'destination_zip',
-      'scheduled_pickup_date',
-      'scheduled_delivery_date',
-      'notes',
-      'status',
-    ].forEach((key) => {
-      const val = formData.get(key);
-      if (val !== null && val !== undefined) {
-        // Handle dates
-        if (['scheduled_pickup_date', 'scheduled_delivery_date'].includes(key)) {
-          const schemaKey =
-            key === 'scheduled_pickup_date' ? 'scheduledPickupDate' : 'scheduledDeliveryDate';
-          data[schemaKey] = val ? new Date(val as string) : null;
-        } else if (key === 'load_number') {
-          data.loadNumber = val;
-        } else if (key === 'reference_number') {
-          data.referenceNumber = val;
-        } else if (key.endsWith('_id')) {
-          // Map field to schema field
-          const schemaKey =
-            key === 'customer_id'
-              ? 'customerId'
-              : key === 'driver_id'
-                ? 'driver_id'
-                : key === 'vehicle_id'
-                  ? 'vehicleId'
-                  : key === 'trailer_id'
-                    ? 'trailerId'
-                    : key;
-          data[schemaKey] = val;
-        } else if (
-          [
-            'origin_address',
-            'origin_city',
-            'origin_state',
-            'origin_zip',
-            'destination_address',
-            'destination_city',
-            'destination_state',
-            'destination_zip',
-          ].includes(key)
-        ) {
-          // Map form keys to schema fields
-          const schemaKey =
-            key === 'origin_address'
-              ? 'originAddress'
-              : key === 'origin_city'
-                ? 'originCity'
-                : key === 'origin_state'
-                  ? 'originState'
-                  : key === 'origin_zip'
-                    ? 'originZip'
-                    : key === 'destination_address'
-                      ? 'destinationAddress'
-                      : key === 'destination_city'
-                        ? 'destinationCity'
-                        : key === 'destination_state'
-                          ? 'destinationState'
-                          : key === 'destination_zip'
-                            ? 'destinationZip'
-                            : key;
-          data[schemaKey] = val;
-        } else {
-          data[key] = val;
-        }
-      }
-    });
-
+    if (customer_id !== undefined) data.customerId = customer_id;
+    if (driver_id !== undefined) data.driver_id = driver_id;
+    if (vehicle_id !== undefined) data.vehicleId = vehicle_id;
+    if (trailer_id !== undefined) data.trailerId = trailer_id;
+    if (origin_address !== undefined) data.originAddress = origin_address;
+    if (origin_city !== undefined) data.originCity = origin_city;
+    if (origin_state !== undefined) data.originState = origin_state;
+    if (origin_zip !== undefined) data.originZip = origin_zip;
+    if (destination_address !== undefined) data.destinationAddress = destination_address;
+    if (destination_city !== undefined) data.destinationCity = destination_city;
+    if (destination_state !== undefined) data.destinationState = destination_state;
+    if (destination_zip !== undefined) data.destinationZip = destination_zip;
+    if (scheduled_pickup_date !== undefined)
+      data.scheduledPickupDate = scheduled_pickup_date ? new Date(scheduled_pickup_date) : null;
+    if (scheduled_delivery_date !== undefined)
+      data.scheduledDeliveryDate = scheduled_delivery_date ? new Date(scheduled_delivery_date) : null;
+    if (notes !== undefined) data.notes = notes;
+    if (status !== undefined) data.status = status;
     if (data.loadNumber && !data.referenceNumber) {
       data.referenceNumber = data.loadNumber;
     }
@@ -212,7 +171,7 @@ export async function updateDispatchLoadAction(
     revalidatePath(`/${orgId}/dispatch`, 'layout');
     return { success: true, data: { id: loadId } };
   } catch (error) {
-    return handleError(error, 'Update Dispatch Load');
+    return handleError(error, 'Update Dispatch Load') as LoadActionResult<{ id: string }>;
   }
 }
 
