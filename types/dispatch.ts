@@ -71,7 +71,7 @@ export interface Load {
   notes?: string;
   internalNotes?: string;
   specialInstructions?: string;
-  documents?: LoadDocument[];
+  documents?: Document[];
   statusEvents: LoadStatusEvent[];
   trackingUpdates?: TrackingUpdate[];
   brokerInfo?: BrokerInfo;
@@ -255,6 +255,17 @@ export interface Customer {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Document {
+  id: string;
+  loadId: string;
+  name: string;
+  url: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: Date;
+  uploadedBy: string;
 }
 
 export interface LoadDocument {
