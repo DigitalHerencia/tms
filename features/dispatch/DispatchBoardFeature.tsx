@@ -110,7 +110,7 @@ export function DispatchBoardFeature({
   };
 
   const onLoadClick = (load: Load) => {
-    router.push(`/${orgId}/loads/${load.id}`);
+    router.push(`/${orgId}/dispatch/loads/${load.id}/edit`);
   };
 
   const onStatusUpdate = async (loadId: string, newStatus: LoadStatus) => {

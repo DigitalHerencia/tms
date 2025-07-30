@@ -5,7 +5,8 @@ import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
 import { loadInputSchema } from '@/schemas/dispatch';
-import type { LoadStatus, LoadActionResult } from '@/types/dispatch';
+import type { DashboardActionResult } from '@/types/dashboard';
+import type { LoadStatus } from '@/types/dispatch';
 
 /**
  * Create a new load (dispatch)
@@ -17,64 +18,35 @@ export async function createDispatchLoadAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
-    const parsed = loadInputSchema.safeParse(Object.fromEntries(formData));
-    if (!parsed.success) {
-      return {
-        success: false,
-        error: 'Invalid data',
-        fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
-      };
-    }
-
-    const {
-      load_number: loadNumber,
-      origin_address: originAddress,
-      origin_city: originCity,
-      origin_state: originState,
-      origin_zip: originZip,
-      destination_address: destinationAddress,
-      destination_city: destinationCity,
-      destination_state: destinationState,
-      destination_zip: destinationZip,
-      customer_id: customerId,
-      driver_id: driverId,
-      vehicle_id: vehicleId,
-      trailer_id: trailerId,
-      scheduled_pickup_date: pickup,
-      scheduled_delivery_date: delivery,
-      notes,
-    } = parsed.data;
-    const scheduledPickupDate = pickup ? new Date(pickup) : null;
-    const scheduledDeliveryDate = delivery ? new Date(delivery) : null;
-
+    const parsed = loadInputSchema.parse(Object.fromEntries(formData));
     const load = await db.load.create({
       data: {
         organizationId: orgId,
-        loadNumber,
-        referenceNumber,
-        originAddress,
-        originCity,
-        originState,
-        originZip,
-        destinationAddress,
-        destinationCity,
-        destinationState,
-        destinationZip,
-        customerId: customerId || null,
-        driver_id: driverId,
-        vehicleId: vehicleId || null,
-        trailerId: trailerId || null,
-        scheduledPickupDate,
-        scheduledDeliveryDate,
-        notes,
-        status: 'pending',
+        loadNumber: parsed.load_number,
+        originAddress: parsed.origin_address,
+        originCity: parsed.origin_city,
+        originState: parsed.origin_state,
+        originZip: parsed.origin_zip,
+        destinationAddress: parsed.destination_address,
+        destinationCity: parsed.destination_city,
+        destinationState: parsed.destination_state,
+        destinationZip: parsed.destination_zip,
+        customerId: parsed.customer_id ?? null,
+        driver_id: parsed.driver_id ?? null,
+        vehicleId: parsed.vehicle_id ?? null,
+        trailerId: parsed.trailer_id ?? null,
+        scheduledPickupDate: parsed.scheduled_pickup_date
+          ? new Date(parsed.scheduled_pickup_date)
+          : null,
+        scheduledDeliveryDate: parsed.scheduled_delivery_date
+          ? new Date(parsed.scheduled_delivery_date)
+          : null,
+        notes: parsed.notes ?? null,
+        status: parsed.status ?? 'pending',
         createdBy: userId,
       },
     });
-
-    // Revalidate the dispatch board for all users in this organization
-    // Using the layout option ensures the entire dispatch section is refreshed
-    revalidatePath(`/${orgId}/dispatch`, 'layout');
+    revalidatePath(`/${orgId}/dispatch`);
     return { success: true, data: { id: load.id } };
   } catch (error) {
     return handleError(error, 'Create Load') as LoadActionResult<{ id: string }>;
@@ -92,62 +64,26 @@ export async function updateDispatchLoadAction(
   try {
     const { userId } = await auth();
     if (!userId) return { success: false, error: 'Unauthorized' };
-
-    const parsed = loadInputSchema.partial().safeParse(Object.fromEntries(formData));
-    if (!parsed.success) {
-      return {
-        success: false,
-        error: 'Invalid data',
-        fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
-      };
-    }
-
-    const {
-      customer_id,
-      driver_id,
-      vehicle_id,
-      trailer_id,
-      origin_address,
-      origin_city,
-      origin_state,
-      origin_zip,
-      destination_address,
-      destination_city,
-      destination_state,
-      destination_zip,
-      scheduled_pickup_date,
-      scheduled_delivery_date,
-      notes,
-      status,
-    } = parsed.data;
-
+    const parsed = loadInputSchema.partial().parse(Object.fromEntries(formData));
     const data: Record<string, any> = {};
-    if (customer_id !== undefined) data.customerId = customer_id;
-    if (driver_id !== undefined) data.driver_id = driver_id;
-    if (vehicle_id !== undefined) data.vehicleId = vehicle_id;
-    if (trailer_id !== undefined) data.trailerId = trailer_id;
-    if (origin_address !== undefined) data.originAddress = origin_address;
-    if (origin_city !== undefined) data.originCity = origin_city;
-    if (origin_state !== undefined) data.originState = origin_state;
-    if (origin_zip !== undefined) data.originZip = origin_zip;
-    if (destination_address !== undefined) data.destinationAddress = destination_address;
-    if (destination_city !== undefined) data.destinationCity = destination_city;
-    if (destination_state !== undefined) data.destinationState = destination_state;
-    if (destination_zip !== undefined) data.destinationZip = destination_zip;
-    if (scheduled_pickup_date !== undefined)
-      data.scheduledPickupDate = scheduled_pickup_date ? new Date(scheduled_pickup_date) : null;
-    if (scheduled_delivery_date !== undefined)
-      data.scheduledDeliveryDate = scheduled_delivery_date ? new Date(scheduled_delivery_date) : null;
-    if (notes !== undefined) data.notes = notes;
-    if (status !== undefined) data.status = status;
-    if (data.loadNumber && !data.referenceNumber) {
-      data.referenceNumber = data.loadNumber;
-    }
-
-    if (data.referenceNumber && !data.loadNumber) {
-      data.loadNumber = data.referenceNumber;
-    }
-
+    if (parsed.customer_id !== undefined) data.customerId = parsed.customer_id;
+    if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
+    if (parsed.vehicle_id !== undefined) data.vehicleId = parsed.vehicle_id;
+    if (parsed.trailer_id !== undefined) data.trailerId = parsed.trailer_id;
+    if (parsed.origin_address !== undefined) data.originAddress = parsed.origin_address;
+    if (parsed.origin_city !== undefined) data.originCity = parsed.origin_city;
+    if (parsed.origin_state !== undefined) data.originState = parsed.origin_state;
+    if (parsed.origin_zip !== undefined) data.originZip = parsed.origin_zip;
+    if (parsed.destination_address !== undefined) data.destinationAddress = parsed.destination_address;
+    if (parsed.destination_city !== undefined) data.destinationCity = parsed.destination_city;
+    if (parsed.destination_state !== undefined) data.destinationState = parsed.destination_state;
+    if (parsed.destination_zip !== undefined) data.destinationZip = parsed.destination_zip;
+    if (parsed.scheduled_pickup_date !== undefined)
+      data.scheduledPickupDate = parsed.scheduled_pickup_date ? new Date(parsed.scheduled_pickup_date) : null;
+    if (parsed.scheduled_delivery_date !== undefined)
+      data.scheduledDeliveryDate = parsed.scheduled_delivery_date ? new Date(parsed.scheduled_delivery_date) : null;
+    if (parsed.notes !== undefined) data.notes = parsed.notes;
+    if (parsed.status !== undefined) data.status = parsed.status;
     data['lastModifiedBy'] = userId;
     data['updatedAt'] = new Date();
 

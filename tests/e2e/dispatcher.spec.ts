@@ -7,7 +7,7 @@ test.describe('Dispatcher workflow', () => {
     await auth.loginAsDispatcher();
 
     // Navigate to dispatch new load page
-    await page.goto('/org1/dispatch/user_dispatcher123/new');
+    await page.goto('/org1/dispatch/loads/new');
 
     // Wait for page to load
     await expect(page.locator('h1, h2, h3').first()).toBeVisible({

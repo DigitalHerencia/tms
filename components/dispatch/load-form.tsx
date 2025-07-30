@@ -95,7 +95,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
         result = await updateDispatchLoadAction(orgId, load.id || (loadId as string), formData);
         if (result.success) {
           toast({ title: 'Load updated', description: 'Load details updated successfully.' });
-          onClose ? onClose() : router.push(`./`);
+          onClose ? onClose() : router.push(`/${orgId}/dispatch`);
         } else {
           if (result.fieldErrors) {
             for (const [field, messages] of Object.entries(result.fieldErrors)) {
@@ -112,7 +112,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
         result = await createDispatchLoadAction(orgId, formData);
         if (result.success) {
           toast({ title: 'Load created', description: 'New load has been created.' });
-          onClose ? onClose() : router.push(`../`);
+          onClose ? onClose() : router.push(`/${orgId}/dispatch`);
         } else {
           if (result.fieldErrors) {
             for (const [field, messages] of Object.entries(result.fieldErrors)) {
