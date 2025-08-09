@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   Line,
   LineChart,
@@ -12,16 +11,14 @@ import {
 } from 'recharts';
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import type { RevenueMetrics } from '@/types/analytics';
+import type { PerformanceDataPoint } from '@/types/analytics';
 
 interface PerformanceMetricsProps {
-  timeRange: string;
-  performanceData: RevenueMetrics[]; // Updated prop type to RevenueMetrics
+  performanceData: PerformanceDataPoint[];
 }
 /**
  * Client chart component for performance trends over time.
  *
- * @param props.timeRange - Selected range of data.
  * @param props.performanceData - Metrics for loads, miles, and more.
  *
  * Charts resize responsively using Recharts containers.
@@ -58,7 +55,7 @@ export function PerformanceMetrics({ performanceData }: PerformanceMetricsProps)
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line type="monotone" dataKey="loads" stroke="--color-chart-1" name="Loads" />
+                <Line type="monotone" dataKey="loads" stroke="--color-loads" name="Loads" />
               </LineChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -82,7 +79,7 @@ export function PerformanceMetrics({ performanceData }: PerformanceMetricsProps)
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Legend />
-                <Line type="monotone" dataKey="miles" stroke="--color-chart-2" name="Miles" />
+                <Line type="monotone" dataKey="miles" stroke="--color-miles" name="Miles" />
               </LineChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -109,7 +106,7 @@ export function PerformanceMetrics({ performanceData }: PerformanceMetricsProps)
                 <Line
                   type="monotone"
                   dataKey="onTimeDelivery"
-                  stroke="--color-chart-3"
+                  stroke="--color-onTimeDelivery"
                   name="On-Time Delivery"
                 />
               </LineChart>
@@ -138,7 +135,7 @@ export function PerformanceMetrics({ performanceData }: PerformanceMetricsProps)
                 <Line
                   type="monotone"
                   dataKey="utilization"
-                  stroke="--color-chart-3"
+                  stroke="--color-utilization"
                   name="Utilization"
                 />
               </LineChart>

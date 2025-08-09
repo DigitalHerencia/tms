@@ -1,4 +1,13 @@
-import { BarChart2, DollarSign, Filter, MapPin, TrendingUp, Truck, User } from 'lucide-react';
+import {
+  BarChart2,
+  BarChart3,
+  DollarSign,
+  Filter,
+  MapPin,
+  TrendingUp,
+  Truck,
+  User,
+} from 'lucide-react';
 
 import { DriverPerformance } from '@/components/analytics/driver-performance';
 import { ExportOptions } from '@/components/analytics/export-options';
@@ -20,17 +29,6 @@ import {
   getRouteHeatmapAnalytics,
   getVehicleAnalytics,
 } from '@/lib/fetchers/analyticsFetchers';
-import { listDriversByOrg } from '@/lib/fetchers/driverFetchers';
-
-interface PerformanceDataPoint {
-  date: string;
-  revenue?: number;
-  loads?: number;
-  miles?: number;
-  drivers?: number;
-  vehicles?: number;
-  revenuePerMile?: number;
-}
 
 // Import types
 import type { ProfitabilityMetrics, TimeSeriesData } from '@/types/analytics';
@@ -54,9 +52,6 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
   }
 
   const today = new Date();
-  const defaultEnd = end ?? today.toISOString().split('T')[0];
-  const defaultStart =
-    start ?? new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   // Fetch all analytics data in parallel
   const filters = driver ? { driverId: driver } : {};
@@ -67,7 +62,6 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
     financialDataRaw,
     driverPerformanceMetricsRaw,
     vehicleDataRaw,
-    driversList,
     predictions,
     geographicData,
   ] = await Promise.all([
@@ -76,20 +70,17 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
     getFinancialAnalytics(orgId, timeRange, filters),
     getDriverAnalytics(orgId, timeRange, filters),
     getVehicleAnalytics(orgId, timeRange, filters),
-    listDriversByOrg(orgId, { limit: 100 }),
     getPerformanceProjections(orgId, timeRange, filters),
     getRouteHeatmapAnalytics(orgId, timeRange, filters),
   ]);
   // Defensive: ensure arrays/objects for all analytics data
-  const performanceData = Array.isArray(performanceDataRaw) ? performanceDataRaw : [];
+  const performanceData = Array.isArray(performanceDataRaw?.timeSeriesData)
+    ? performanceDataRaw.timeSeriesData
+    : [];
   const driverPerformanceMetrics = Array.isArray(driverPerformanceMetricsRaw)
     ? driverPerformanceMetricsRaw
     : [];
   const vehicleData = Array.isArray(vehicleDataRaw) ? vehicleDataRaw : [];
-  const drivers = Array.isArray(driversList?.drivers) ? driversList.drivers : [];
-  const predictionData = Array.isArray(predictions) ? predictions : [];
-  const routeData = geographicData?.routes || [];
-  const heatmapData = geographicData?.heatmap || [];
   // Process financial data to match component expectations
   const rawFinancialData =
     financialDataRaw && typeof financialDataRaw === 'object' && financialDataRaw !== null
@@ -159,9 +150,9 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
     },
     {
       icon: <User className="h-4 w-4 text-[hsl(var(--info))]" />,
-      label: 'Active Vehicles',
-      value: summary ? summary.activeVehicles.toLocaleString() : '-',
-      change: summary && summary.activeVehicles ? `Active` : '',
+      label: 'Active Drivers',
+      value: summary ? summary.activeDrivers.toLocaleString() : '-',
+      change: summary && summary.activeDrivers ? `Active` : '',
     },
   ];
   return (
@@ -238,7 +229,7 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
               <span className="text-lg font-bold text-white">Performance Metrics</span>
             </CardHeader>
             <CardContent className="overflow-x-auto pb-4">
-              <PerformanceMetrics timeRange={timeRange} performanceData={performanceData} />
+              <PerformanceMetrics performanceData={performanceData} />
             </CardContent>
           </Card>
         </TabsContent>
