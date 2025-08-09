@@ -1,4 +1,15 @@
 /**
+ * RBAC (Role-Based Access Control) utilities for FleetFusion.
+ *
+ * Each helper evaluates a {@link UserContext} against one or more
+ * permission or role identifiers and returns a boolean indicating
+ * whether the RBAC rule is satisfied.
+ *
+ * @param user - Current authenticated user context.
+ * @param permissionOrRole - Permission string or role to evaluate.
+ * @returns `true` when the user meets the specified rule, otherwise `false`.
+ */
+/**
  * ABAC (Attribute-Based Access Control) Utilities
  *
  * Provides permission checking and role management utilities
