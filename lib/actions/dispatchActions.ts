@@ -3,11 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import { getCurrentUser } from '@/lib/auth/auth';
-import { canManageLoadsAndDispatch } from '@/lib/auth/permissions';
+import type { LoadActionResult } from '@/types/dispatch';
 import { loadInputSchema } from '@/schemas/dispatch';
 import type { DashboardActionResult } from '@/types/dashboard';
-import type { LoadStatus } from '@/types/dispatch';
 
 /**
  * Create a new load (dispatch)

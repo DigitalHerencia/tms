@@ -5,8 +5,10 @@ import type { Load, LoadStatus } from '@/types/dispatch';
 import type { Driver } from '@/types/drivers';
 import type { Vehicle } from '@/types/vehicles';
 import { DispatchBoardUI } from '@/components/dispatch/dispatch-board';
+import { DriverMap } from '@/components/dispatch/driver-map';
 import { useRouter } from 'next/navigation';
-import { updateLoadStatusAction } from '@/lib/actions/dispatchActions';
+import { useDispatchRealtime } from '@/hooks/use-dispatch-realtime';
+import { updateLoadStatusAction } from '@/lib/actions/dispatch/loadActions';
 
 interface DispatchBoardFeatureProps {
   loads: Load[];
@@ -20,7 +22,6 @@ interface DispatchBoardFeatureProps {
     origin?: string;
     destination?: string;
     dateRange?: string;
-    page?: string;
   };
 }
 
@@ -47,6 +48,7 @@ export function DispatchBoardFeature({
   searchParams = {},
 }: DispatchBoardFeatureProps) {
   const router = useRouter();
+  const { connectionStatus } = useDispatchRealtime({ orgId });
   const [isPending, startTransition] = useTransition();
 
   const currentTab = searchParams.tab || 'all';
@@ -140,6 +142,10 @@ export function DispatchBoardFeature({
 
   return (
     <div>
+      <div className="mb-4">
+        <DriverMap drivers={drivers} />
+        <p className="mt-2 text-xs text-gray-500">Realtime: {connectionStatus}</p>
+      </div>
       <DispatchBoardUI
         loads={loads}
         drivers={drivers}
