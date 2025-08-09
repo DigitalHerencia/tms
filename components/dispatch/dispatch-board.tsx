@@ -108,7 +108,7 @@ export function DispatchBoardUI(props: DispatchBoardUIProps) {
                   load={load}
                   onClick={() => props.onLoadClick(load)}
                   onStatusUpdate={props.onStatusUpdate}
-                  isUpdating={false}
+                  isUpdating={props.isPending}
                 />
               ))}
             </div>

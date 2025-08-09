@@ -3,9 +3,17 @@
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import type { LoadActionResult } from '@/types/dispatch';
+import type { LoadActionResult, LoadStatus } from '@/types/dispatch';
 import { loadInputSchema } from '@/schemas/dispatch';
 import type { DashboardActionResult } from '@/types/dashboard';
+import { getCurrentUser } from '@/lib/auth/auth';
+import { canManageLoadsAndDispatch } from '@/lib/auth/permissions';
+import {
+  driverHasOverlappingLoad,
+  vehicleHasOverlappingLoad,
+  trailerHasOverlappingLoad,
+} from '@/lib/fetchers/dispatchFetchers';
+import { allowedStatusTransitions } from '@/lib/utils/dispatchStatus';
 
 /**
  * Create a new load (dispatch)

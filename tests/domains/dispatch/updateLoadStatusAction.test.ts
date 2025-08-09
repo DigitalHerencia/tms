@@ -22,7 +22,7 @@ describe('updateLoadStatusAction', () => {
 
   it('updates status when transition is allowed', async () => {
     dbMock.load.findUnique.mockResolvedValue({ status: 'assigned' });
-    const { updateLoadStatusAction } = await import('../../../lib/actions/dispatch/loadActions');
+    const { updateLoadStatusAction } = await import('../../../lib/actions/dispatchActions');
     const res = await updateLoadStatusAction('org1', 'l1', 'in_transit');
     expect(res.success).toBe(true);
     expect(dbMock.load.update).toHaveBeenCalled();
@@ -31,7 +31,7 @@ describe('updateLoadStatusAction', () => {
 
   it('returns error for invalid transition', async () => {
     dbMock.load.findUnique.mockResolvedValue({ status: 'assigned' });
-    const { updateLoadStatusAction } = await import('../../../lib/actions/dispatch/loadActions');
+    const { updateLoadStatusAction } = await import('../../../lib/actions/dispatchActions');
     const res = await updateLoadStatusAction('org1', 'l1', 'delivered');
     expect(res).toEqual({ success: false, error: 'Invalid status change' });
     expect(dbMock.load.update).not.toHaveBeenCalled();

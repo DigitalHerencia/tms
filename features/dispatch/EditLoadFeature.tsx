@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 'use client';
 
 import React, { useState } from 'react';
@@ -75,7 +74,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
 
         <TabsContent value="details" className="space-y-6">
           <LoadDetailsDialog
-            orgid={orgId}
+            orgId={orgId}
             load={load}
             drivers={drivers}
             vehicles={vehicles}
@@ -163,7 +162,7 @@ export function EditLoadFeature({ orgId, drivers, vehicles, load }: EditLoadFeat
       {/* Modal Details Dialog (when button is clicked) */}
       {showDetailsDialog && (
         <LoadDetailsDialog
-          orgid={orgId}
+          orgId={orgId}
           load={load}
           drivers={drivers}
           vehicles={vehicles}
