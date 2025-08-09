@@ -1239,3 +1239,37 @@ export async function getIftaFuelData(
     throw new Error('Failed to fetch IFTA fuel data');
   }
 }
+
+/**
+ * Aggregate mileage by jurisdiction for reporting
+ */
+export async function getMileageByState(
+  orgId: string,
+  filters: { startDate?: string; endDate?: string } = {},
+) {
+  try {
+    await checkUserAccess(orgId);
+
+    const where: any = { organizationId: orgId };
+    if (filters.startDate || filters.endDate) {
+      where.date = {};
+      if (filters.startDate) where.date.gte = new Date(filters.startDate);
+      if (filters.endDate) where.date.lte = new Date(filters.endDate);
+    }
+
+    const grouped = await db.iftaTrip.groupBy({
+      by: ['jurisdiction'],
+      where,
+      _sum: { distance: true },
+      orderBy: { jurisdiction: 'asc' },
+    });
+
+    return grouped.map((g) => ({
+      jurisdiction: g.jurisdiction,
+      miles: g._sum.distance || 0,
+    }));
+  } catch (error) {
+    console.error('Error aggregating mileage by state:', error);
+    throw new Error('Failed to aggregate mileage by state');
+  }
+}
