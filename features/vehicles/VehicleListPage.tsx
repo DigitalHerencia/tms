@@ -23,10 +23,7 @@ export default async function VehicleListPage({
   orgId,
   page = 1,
 }: VehicleListPageProps) {
-  const { data } = await listVehiclesByOrg(orgId, {
-    page,
-    limit: 50,
-  });
+  const { data } = await listVehiclesByOrg(orgId, page, 50);
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">

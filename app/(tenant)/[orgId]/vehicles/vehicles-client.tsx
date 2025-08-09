@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { Vehicle } from '@/types/vehicles';
+import type { Vehicle, VehicleListResponse } from '@/types/vehicles';
 import { VehicleTable } from '@/components/vehicles/vehicle-table';
 import { VehicleCard } from '@/components/vehicles/vehicle-card';
 import { VehicleDetailsDialog } from '@/components/vehicles/vehicle-details-dialog';
@@ -11,13 +11,32 @@ import { Grid, List } from 'lucide-react';
 interface VehiclesClientProps {
   orgId: string;
   initialVehicles: Vehicle[];
+  initialPage: number;
+  totalPages: number;
+  fetchPage: (page: number) => Promise<VehicleListResponse>;
 }
 
-export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClientProps) {
+export default function VehiclesClient({
+  orgId,
+  initialVehicles,
+  initialPage,
+  totalPages: initialTotalPages,
+  fetchPage,
+}: VehiclesClientProps) {
   const [vehicles, setVehicles] = useState(initialVehicles);
+  const [page, setPage] = useState(initialPage);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+    const res = await fetchPage(nextPage);
+    setVehicles((prev) => [...prev, ...res.data]);
+    setPage(nextPage);
+    setTotalPages(res.totalPages);
+  };
 
   const handleVehicleSelect = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
@@ -73,6 +92,12 @@ export default function VehiclesClient({ orgId, initialVehicles }: VehiclesClien
               onClick={() => handleVehicleSelect(vehicle)}
             />
           ))}
+        </div>
+      )}
+
+      {page < totalPages && (
+        <div className="flex justify-center">
+          <Button onClick={handleLoadMore}>Load More</Button>
         </div>
       )}
 

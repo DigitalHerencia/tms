@@ -11,7 +11,13 @@ interface VehiclesPageProps {
 
 export default async function VehiclesPage({ params }: VehiclesPageProps) {
   const { orgId } = await params;
-  const { data } = await listVehiclesByOrg(orgId);
+  const PAGE_SIZE = 10;
+  const { data, totalPages } = await listVehiclesByOrg(orgId, 1, PAGE_SIZE);
+
+  async function fetchPage(page: number) {
+    'use server';
+    return await listVehiclesByOrg(orgId, page, PAGE_SIZE);
+  }
 
   return (
     <div className="flex flex-col gap-6 p-6 bg-neutral-900 text-white min-h-screen">
@@ -35,7 +41,13 @@ export default async function VehiclesPage({ params }: VehiclesPageProps) {
       </div>
 
       <Suspense fallback={<VehicleListSkeleton />}>
-        <VehiclesClient orgId={orgId} initialVehicles={data} />
+        <VehiclesClient
+          orgId={orgId}
+          initialVehicles={data}
+          initialPage={1}
+          totalPages={totalPages}
+          fetchPage={fetchPage}
+        />
       </Suspense>
     </div>
   );

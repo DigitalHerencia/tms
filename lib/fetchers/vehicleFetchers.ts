@@ -16,6 +16,8 @@ import type { Vehicle, VehicleListResponse } from '@/types/vehicles';
 export const listVehiclesByOrg = cache(
   async (
     orgId: string,
+    page = 1,
+    pageSize = 10,
     filters: VehicleFiltersData = {} as VehicleFiltersData,
   ): Promise<VehicleListResponse> => {
     try {
@@ -30,7 +32,11 @@ export const listVehiclesByOrg = cache(
         };
       }
 
-      const parsed = vehicleFilterSchema.parse(filters);
+      const parsed = vehicleFilterSchema.parse({
+        ...filters,
+        page,
+        limit: pageSize,
+      });
 
       const where: any = { organizationId: orgId };
 
@@ -78,9 +84,9 @@ export const listVehiclesByOrg = cache(
       }
 
       // Pagination
-      const page = parsed.page || 1;
-      const limit = Math.min(parsed.limit || 10, 100);
-      const skip = (page - 1) * limit;
+      const currentPage = parsed.page;
+      const limit = Math.min(parsed.limit, 100);
+      const skip = (currentPage - 1) * limit;
 
       const [results, total] = await Promise.all([
         prisma.vehicle.findMany({
@@ -152,7 +158,7 @@ export const listVehiclesByOrg = cache(
       return {
         data: vehicles,
         total,
-        page,
+        page: currentPage,
         limit,
         totalPages: Math.ceil(total / limit),
       };
