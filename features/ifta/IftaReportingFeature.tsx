@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getIftaDataForPeriod, getIftaReports } from '@/lib/fetchers/iftaFetchers';
+import { getOrganizationId } from '@/lib/auth/utils';
 import type { IFTAReport } from '@/components/ifta/ifta-columns';
 import type { IftaPeriodData } from '@/types/ifta';
 
@@ -42,7 +43,16 @@ function getCurrentQuarterAndYear() {
   return { quarter, year };
 }
 
-export async function IftaReportingFeature({ orgId }: { orgId: string }) {
+export async function IftaReportingFeature() {
+  const orgId = await getOrganizationId();
+  if (!orgId) {
+    return (
+      <div className="min-h-screen bg-neutral-900 p-6 pt-8 text-white">
+        <p className="text-sm font-medium text-red-500">Organization not found.</p>
+      </div>
+    );
+  }
+
   const { quarter, year } = getCurrentQuarterAndYear();
   const period = `Q${quarter}`;
   let iftaData: IftaPeriodData | null = null;

@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function TermsPage() {
   return (
-    <div className="relative bg-black flex min-h-screen flex-col">
+    <div className="relative bg-background flex min-h-screen flex-col">
       {/* Background gradient overlay for fade effect */}
       <div
         className="from-background via-background pointer-events-none absolute inset-0 bg-gradient-to-b to-transparent"
@@ -24,7 +24,7 @@ export default function TermsPage() {
 
       <main className="relative z-10 flex-1">
         <div className="container mx-auto px-4 py-12 md:px-8">
-          <div className=" mx-auto mb-100 w-full max-w-3xl p-6">
+          <div className="bg-card/90 mx-auto mb-24 w-full max-w-3xl p-6">
             <h1 className="mb-6 text-center text-3xl font-bold md:text-4xl">📜 Terms of Service</h1>
             <p className="text-muted-foreground mb-8 text-center text-sm">
               Effective Date: April 27, 2025
@@ -145,7 +145,7 @@ export default function TermsPage() {
           </div>
         </div>
       </main>
-      <footer className="bg-black/80 relative z-10 flex w-full flex-row gap-2 px-6 py-3 backdrop-blur-sm">
+      <footer className="bg-background/80 relative z-10 flex w-full flex-row gap-2 px-6 py-3 backdrop-blur-sm">
         <p className="text-muted-foreground text-xs">© 2025 FleetFusion. All rights reserved.</p>
         <nav className="flex gap-4 sm:ml-auto sm:gap-6">
           <Link className="text-xs underline-offset-4 hover:underline" href="/terms">

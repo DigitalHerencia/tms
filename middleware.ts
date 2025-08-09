@@ -1,6 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { SystemRoles } from '@/types/abac';
 
 // Public routes (no auth/RBAC required)
 const isPublicRoute = createRouteMatcher([
@@ -31,13 +30,26 @@ export default clerkMiddleware(
     if (!isPublicRoute(req)) {
       await auth.protect();
     }
+    // Security headers based on Clerk and Vercel analytics requirements
+    const res = NextResponse.next();
 
-    // No role-based restriction for /settings route
-    // All authenticated users can access settings
-    // ...existing code...
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' https://clerk.com https://*.clerk.com https://clerk.dev https://*.clerk.dev https://vitals.vercel-insights.com",
+      "connect-src 'self' https://clerk.com https://*.clerk.com https://clerk.dev https://*.clerk.dev https://vitals.vercel-insights.com",
+      "img-src 'self' data: https://clerk.com https://*.clerk.com https://clerk.dev https://*.clerk.dev",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' https://clerk.com https://*.clerk.com https://clerk.dev https://*.clerk.dev",
+      "frame-src 'self' https://clerk.com https://*.clerk.com https://clerk.dev https://*.clerk.dev",
+    ].join('; ');
+
+    res.headers.set('Content-Security-Policy', csp);
+    res.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    res.headers.set('X-Frame-Options', 'DENY');
+    res.headers.set('X-XSS-Protection', '1; mode=block');
+
+    return res;
   },
-  // Remove CSP configuration to allow Clerk to work properly
-  // We'll implement security headers in next.config.ts if needed
 );
 
 export const config = {

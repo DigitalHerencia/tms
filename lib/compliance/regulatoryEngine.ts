@@ -14,7 +14,17 @@ export interface RegulatorySummary {
 }
 
 /**
- * Aggregate IFTA, HOS, and safety compliance metrics
+ * Build a consolidated regulatory compliance summary for an organization.
+ *
+ * The function validates each upstream response before extracting counts to
+ * ensure missing or failed requests are treated as zero. It then aggregates
+ * IFTA tax data, hours-of-service violations, safety events, and audit log
+ * totals for the requested period.
+ *
+ * @param organizationId - Tenant identifier used to scope the metrics.
+ * @param quarter - Quarter of the year (e.g. "Q1").
+ * @param year - Four-digit year associated with the summary.
+ * @returns Summary metrics for regulatory reporting.
  */
 export async function getRegulatoryComplianceSummary(
   organizationId: string,
