@@ -245,7 +245,29 @@ export const getVehicleById = cache(
 
       const v = await prisma.vehicle.findUnique({
         where: { id: vehicleId },
-      });
+        select: {
+          id: true,
+          organizationId: true,
+          type: true,
+          status: true,
+          make: true,
+          model: true,
+          year: true,
+          vin: true,
+          licensePlate: true,
+          unitNumber: true,
+          fuelType: true,
+          registrationExpiration: true,
+          insuranceExpiration: true,
+          currentOdometer: true,
+          nextMaintenanceDate: true,
+          nextMaintenanceMileage: true,
+          lastMaintenanceDate: true,
+          lastMaintenanceMileage: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      } as any);
       if (!v || v.organizationId !== orgId) return null;
 
       // Map Prisma result to public Vehicle type
@@ -271,14 +293,14 @@ export const getVehicleById = cache(
         insuranceExpiration: v.insuranceExpiration ?? undefined,
         currentLocation: undefined,
         totalMileage: v.currentOdometer ?? undefined,
-        lastMaintenanceMileage: undefined,
-        nextMaintenanceDate: undefined,
-        nextMaintenanceMileage: undefined,
+        lastMaintenanceMileage: v.lastMaintenanceMileage ?? undefined,
+        nextMaintenanceDate: v.nextMaintenanceDate ?? undefined,
+        nextMaintenanceMileage: v.nextMaintenanceMileage ?? undefined,
         createdAt: v.createdAt,
         updatedAt: v.updatedAt,
         driver: undefined,
         organization: undefined,
-        lastMaintenanceDate: undefined,
+        lastMaintenanceDate: v.lastMaintenanceDate ?? undefined,
       };
     } catch (error) {
       console.error('Error fetching vehicle by ID:', error);
