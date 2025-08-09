@@ -1,75 +1,83 @@
-import { test, expect, vi, beforeAll } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+import { inviteUserAction } from '@/lib/actions/userActions';
 
-// Mock fetch for auth flow tests
-global.fetch = vi.fn();
+vi.mock('@/lib/email/mailer', () => ({
+  sendInvitationEmail: vi.fn(),
+}));
 
-beforeAll(() => {
-  // Reset mocks before each test suite
-  vi.clearAllMocks();
-});
+// In-memory mock database
+const users: any[] = [];
+const memberships: any[] = [];
+const invitations: any[] = [];
 
-test('User can register', async () => {
-  // Mock successful registration
-  (fetch as any).mockResolvedValueOnce({
-    status: 201,
-    ok: true,
-    json: async () => ({
-      token: 'mock-jwt-token',
-      user: { id: 'user-123', username: 'testuser' },
-    }),
+vi.mock('@/lib/database/db', () => ({
+  __esModule: true,
+  default: {
+    user: {
+      findFirst: vi.fn(async ({ where: { email } }: any) =>
+        users.find((u) => u.email === email) || null,
+      ),
+      create: vi.fn(async ({ data }: any) => {
+        users.push(data);
+        return data;
+      }),
+    },
+    organizationMembership: {
+      upsert: vi.fn(async ({ where, create, update }: any) => {
+        const existing = memberships.find(
+          (m) =>
+            m.organizationId === where.organizationId_userId.organizationId &&
+            m.userId === where.organizationId_userId.userId,
+        );
+        if (existing) {
+          Object.assign(existing, update);
+          return existing;
+        }
+        const membership = { ...create };
+        memberships.push(membership);
+        return membership;
+      }),
+    },
+    organizationInvitation: {
+      create: vi.fn(async ({ data }: any) => {
+        invitations.push(data);
+        return data;
+      }),
+      findFirst: vi.fn(async ({ where: { token } }: any) =>
+        invitations.find((i) => i.token === token) || null,
+      ),
+      update: vi.fn(async ({ where: { token }, data }: any) => {
+        const inv = invitations.find((i) => i.token === token);
+        if (inv) Object.assign(inv, data);
+        return inv;
+      }),
+    },
+  },
+}));
+
+describe('auth invitation flow', () => {
+  test('invites user and accepts invitation', async () => {
+    const orgId = 'org-1';
+    const email = 'newuser@example.com';
+    const role = 'MEMBER';
+
+    const invite = await inviteUserAction(orgId, email, role);
+    expect(invite.success).toBe(true);
+    expect(users).toHaveLength(1);
+    expect(memberships[0]).toMatchObject({ organizationId: orgId, role });
+
+    // Simulated API route for accepting invitation
+    async function acceptInvitation(token: string) {
+      const invitation = invitations.find((i) => i.token === token);
+      if (!invitation) return { status: 404 };
+      const user = users.find((u) => u.email === invitation.email);
+      if (user) user.isActive = true;
+      invitation.status = 'accepted';
+      return { status: 200 };
+    }
+
+    const response = await acceptInvitation(invite.invitationToken!);
+    expect(response.status).toBe(200);
+    expect(users[0].isActive).toBe(true);
   });
-
-  const response = await fetch('http://localhost:3000/api/auth/register', {
-    method: 'POST',
-    body: JSON.stringify({ username: 'testuser', password: 'password123' }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  expect(response.status).toBe(201);
-  const data = await response.json();
-  expect(data).toHaveProperty('token');
-  expect(data.token).toBe('mock-jwt-token');
-});
-
-test('User can log in', async () => {
-  // Mock successful login
-  (fetch as any).mockResolvedValueOnce({
-    status: 200,
-    ok: true,
-    json: async () => ({
-      token: 'mock-jwt-token',
-      user: { id: 'user-123', username: 'testuser' },
-    }),
-  });
-
-  const response = await fetch('http://localhost:3000/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ username: 'testuser', password: 'password123' }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  expect(response.status).toBe(200);
-  const data = await response.json();
-  expect(data).toHaveProperty('token');
-});
-
-test('User cannot log in with incorrect password', async () => {
-  // Mock failed login
-  (fetch as any).mockResolvedValueOnce({
-    status: 401,
-    ok: false,
-    json: async () => ({
-      error: 'Invalid credentials',
-    }),
-  });
-
-  const response = await fetch('http://localhost:3000/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ username: 'testuser', password: 'wrongpassword' }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-  expect(response.status).toBe(401);
-  const data = await response.json();
-  expect(data.error).toBe('Invalid credentials');
 });
