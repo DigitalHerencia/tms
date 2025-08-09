@@ -19,7 +19,7 @@ interface MainDashboardFeatureProps {
  *
  * The grid of KPI cards is fully responsive, stacking vertically on small
  * screens and expanding to multiple columns on desktop.
- * /* See analytics-kpi.png */
+ * See analytics-kpi.png
  *
  * @param orgId - Identifier for the organization
  */
