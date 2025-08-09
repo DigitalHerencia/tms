@@ -22,15 +22,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
+import {
+  assignDriverToLoadAction,
+  updateLoadStatusAction,
+} from '@/lib/actions/dispatchActions';
 import { LoadDocuments } from './load-documents';
 import type { Driver } from '@/types/drivers';
-import type { Load } from '@/types/dispatch';
+import type { Load, LoadStatus } from '@/types/dispatch';
 import type { Vehicle } from '@/types/vehicles';
 import { Button } from '../ui/button';
+import { toast } from '@/hooks/use-toast';
 
 interface LoadDetailsDialogProps {
-  orgid: string;
+  orgId: string;
   load: Load;
   drivers: Driver[];
   vehicles: Vehicle[];
@@ -39,6 +43,7 @@ interface LoadDetailsDialogProps {
 }
 
 export function LoadDetailsDialog({
+  orgId,
   load,
   drivers,
   vehicles,
@@ -52,7 +57,6 @@ export function LoadDetailsDialog({
   const [isAssigning, setIsAssigning] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-  const orgId = load.organizationId;
   const loadId = load.id;
 
   const getStatusBadgeColor = (status: string) => {
@@ -103,12 +107,10 @@ export function LoadDetailsDialog({
     }
   };
 
-  async function handleStatusUpdate(newStatus: string) {
+  async function handleStatusUpdate(newStatus: LoadStatus) {
     setIsUpdatingStatus(true);
     try {
-      const formData = new FormData();
-      formData.set('status', newStatus);
-      await updateDispatchLoadAction(orgId, loadId, formData);
+      await updateLoadStatusAction(orgId, loadId, newStatus);
       router.refresh();
       onClose();
     } catch (error) {

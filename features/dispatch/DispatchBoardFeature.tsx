@@ -8,7 +8,7 @@ import { DispatchBoardUI } from '@/components/dispatch/dispatch-board';
 import { DriverMap } from '@/components/dispatch/driver-map';
 import { useRouter } from 'next/navigation';
 import { useDispatchRealtime } from '@/hooks/use-dispatch-realtime';
-import { updateLoadStatusAction } from '@/lib/actions/dispatch/loadActions';
+import { updateLoadStatusAction } from '@/lib/actions/dispatchActions';
 
 interface DispatchBoardFeatureProps {
   loads: Load[];
