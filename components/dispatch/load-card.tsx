@@ -1,27 +1,11 @@
 'use client';
 
 import { MapPin, Calendar, User, Truck } from 'lucide-react';
-import type { LoadStatus, LoadPriority, LoadStatusEvent } from '@/types/dispatch';
-
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDate } from '@/lib/utils/utils';
-import type {
-  Customer,
-  LoadAssignedDriver,
-  LoadAssignedVehicle,
-  LoadAssignedTrailer,
-  EquipmentRequirement,
-  CargoDetails,
-  Rate,
-  LoadDocument,
-  TrackingUpdate,
-  BrokerInfo,
-  FactoringInfo,
-  LoadAlert,
-} from '@/types/dispatch';
-import type { Load } from '@/types/dispatch';
+import type { Load, LoadStatus } from '@/types/dispatch';
 
 interface LoadCardProps {
   load: Load;
@@ -31,12 +15,15 @@ interface LoadCardProps {
 }
 
 export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCardProps) {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: LoadStatus) => {
     switch (status) {
+      case 'pending':
+        return 'bg-gray-500 text-white';
       case 'assigned':
         return 'bg-blue-500 text-white';
       case 'in_transit':
         return 'bg-yellow-500 text-black';
+      case 'completed':
       case 'delivered':
         return 'bg-green-500 text-white';
       case 'cancelled':
@@ -46,16 +33,16 @@ export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCard
     }
   };
 
-  const getNextStatusOptions = (currentStatus: string) => {
+  const getNextStatusOptions = (currentStatus: LoadStatus) => {
     switch (currentStatus) {
+      case 'pending':
+        return ['assigned', 'cancelled'];
       case 'assigned':
         return ['in_transit', 'cancelled'];
       case 'in_transit':
-        return ['delivered', 'cancelled'];
-      case 'delivered':
-        return [];
+        return ['completed', 'cancelled'];
       default:
-        return ['assigned'];
+        return [];
     }
   };
 
@@ -108,6 +95,13 @@ export function LoadCard({ load, onClick, onStatusUpdate, isUpdating }: LoadCard
             <div>
               <p className="text-sm font-medium">Pickup</p>
               <p className="text-muted-foreground text-sm">{formatDate(load.pickupDate)}</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-2">
+            <Calendar className="text-muted-foreground mt-0.5 h-4 w-4" />
+            <div>
+              <p className="text-sm font-medium">Delivery</p>
+              <p className="text-muted-foreground text-sm">{formatDate(load.deliveryDate)}</p>
             </div>
           </div>
         </div>
