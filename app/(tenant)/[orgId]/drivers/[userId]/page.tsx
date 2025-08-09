@@ -1,18 +1,16 @@
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { getDriverById } from '@/lib/fetchers/driverFetchers';
 import { CurrentLoadCard } from '@/components/drivers/current-load-card';
-import { UpcomingLoadsCard } from '@/components/drivers/upcoming-loads-card';
-import { RecentActivityCard } from '@/components/drivers/recent-activity-card';
-import { PerformanceOverviewCard } from '@/components/drivers/performance-card';
+import UpcomingLoads from './UpcomingLoads';
+import RecentActivity from './RecentActivity';
+import PerformanceOverview from './PerformanceOverview';
 import { HosStatusCards } from '@/components/drivers/hos-status-cards';
 import { DocumentStatusCard } from '@/components/drivers/document-status-card';
 import { AssignmentDialogWrapper } from '@/features/drivers/AssignmentDialogWrapper';
-import { Driver } from '@/types/drivers';
-import { DriversSkeleton } from '@/components/drivers/drivers-skeleton';
-import DriversListHeader from '@/components/drivers/drivers-list-header';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit, BarChart3, User } from 'lucide-react';
+import { ArrowLeft, Edit, User } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -104,7 +102,7 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       </div>
 
       {/* Driver Assignment Section */}
-      <Suspense fallback={<DriversSkeleton />}>
+      <Suspense fallback={<Skeleton />}>
         <AssignmentDialogWrapper
           driverId={driver.id}
           currentAssignment={driver.currentAssignment}
@@ -112,34 +110,34 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       </Suspense>
 
       {/* HOS Status Cards - Top Priority */}
-      <Suspense fallback={<DriversSkeleton />}>
+      <Suspense fallback={<Skeleton />}>
         <HosStatusCards hosStatus={null} />
       </Suspense>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Suspense fallback={<DriversSkeleton />}>
+        <Suspense fallback={<Skeleton />}>
           <CurrentLoadCard assignment={(driver as any).currentAssignmentDetails} />
         </Suspense>
 
-        <Suspense fallback={<DriversSkeleton />}>
-          <UpcomingLoadsCard driverId={driver.id} orgId={orgId} />
+        <Suspense fallback={<Skeleton />}>
+          <UpcomingLoads driverId={driver.id} orgId={orgId} />
         </Suspense>
       </div>
 
       {/* Secondary Content Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Suspense fallback={<DriversSkeleton />}>
-          <RecentActivityCard driverId={driver.id} orgId={orgId} />
+        <Suspense fallback={<Skeleton />}>
+          <RecentActivity driverId={driver.id} orgId={orgId} />
         </Suspense>
 
-        <Suspense fallback={<DriversSkeleton />}>
-          <PerformanceOverviewCard analytics={null} />
+        <Suspense fallback={<Skeleton />}>
+          <PerformanceOverview driverId={driver.id} orgId={orgId} />
         </Suspense>
       </div>
 
       {/* Document Status - Full Width */}
-      <Suspense fallback={<DriversSkeleton />}>
+      <Suspense fallback={<Skeleton />}>
         <DocumentStatusCard driverId={driver.id} orgId={orgId} />
       </Suspense>
     </PageLayout>
