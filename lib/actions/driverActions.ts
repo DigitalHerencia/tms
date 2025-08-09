@@ -1,9 +1,10 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import type { z } from 'zod';
 import { handleError } from '@/lib/errors/handleError';
+import { getCurrentUser } from '@/lib/auth/auth';
+import { canManageUsersAndRoles, FeaturePermissions } from '@/lib/auth/permissions';
 
 import type {
   Driver,
@@ -36,14 +37,15 @@ export async function createDriverAction(
     return { success: false, error: parsed.error.message };
   }
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || !canManageUsersAndRoles(user)) {
       return {
         success: false,
-        error: 'Authentication required',
+        error: 'Unauthorized',
         code: 'UNAUTHORIZED',
       };
     }
+    const userId = user.userId;
 
     // Validate input data
     const validatedData = driverFormSchema.parse(data);
@@ -149,11 +151,11 @@ export async function updateDriverAction(
     return { success: false, error: parsed.error.message };
   }
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || !canManageUsersAndRoles(user)) {
       return {
         success: false,
-        error: 'Authentication required',
+        error: 'Unauthorized',
         code: 'UNAUTHORIZED',
       };
     }
@@ -252,11 +254,11 @@ export async function updateDriverAction(
  */
 export async function deleteDriverAction(driverId: string): Promise<DriverActionResult> {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || !canManageUsersAndRoles(user)) {
       return {
         success: false,
-        error: 'Authentication required',
+        error: 'Unauthorized',
         code: 'UNAUTHORIZED',
       };
     }
@@ -310,11 +312,11 @@ export async function updateDriverStatusAction(
     return { success: false, error: parsed.error.message };
   }
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || (!canManageUsersAndRoles(user) && user.userId !== driverId)) {
       return {
         success: false,
-        error: 'Authentication required',
+        error: 'Unauthorized',
         code: 'UNAUTHORIZED',
       };
     }
@@ -377,8 +379,8 @@ export async function bulkUpdateDriversAction(
   bulkUpdate: z.infer<typeof driverBulkUpdateSchema>,
 ): Promise<DriverBulkActionResult> {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || !canManageUsersAndRoles(user)) {
       return {
         success: false,
         processed: 0,
@@ -386,7 +388,7 @@ export async function bulkUpdateDriversAction(
         failed: bulkUpdate.driverIds.length,
         errors: bulkUpdate.driverIds.map((id) => ({
           driverId: id,
-          error: 'Authentication required',
+          error: 'Unauthorized',
         })),
       };
     }
@@ -477,14 +479,15 @@ export async function assignDriverAction(
   if (!parsed.success) {
     return { success: false, error: parsed.error.message };
   }
-  const { userId } = await auth();
-  if (!userId) {
+  const user = await getCurrentUser();
+  if (!user || !FeaturePermissions.canAssignDrivers(user)) {
     return {
       success: false,
-      error: 'Authentication required',
+      error: 'Unauthorized',
       code: 'UNAUTHORIZED',
     };
   }
+  const userId = user.userId;
   const {
     driverId,
     loadId,
@@ -554,14 +557,15 @@ export async function assignDriverAction(
  */
 export async function unassignDriverAction(driverId: string): Promise<DriverActionResult> {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getCurrentUser();
+    if (!user || !FeaturePermissions.canAssignDrivers(user)) {
       return {
         success: false,
-        error: 'Authentication required',
+        error: 'Unauthorized',
         code: 'UNAUTHORIZED',
       };
     }
+    const userId = user.userId;
 
     // Get driver with current assignments
     const driver = await db.driver.findUnique({
