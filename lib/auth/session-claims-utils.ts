@@ -6,8 +6,7 @@
 import type { UserSessionAttributes, SystemRole, Permission } from '@/types/abac';
 import { getPermissionsForRole } from '@/types/abac';
 
-// Import the global type properly
-import '@/types/globals';
+
 
 /**
  * Validate session claims structure

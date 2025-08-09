@@ -14,8 +14,7 @@ interface NewLoadFeatureProps {
 /**
  * Form for creating a new load.
  *
- * The form container centers and scales for tablet and desktop widths while
- * remaining full width on mobile. /* See new-load.png */
+
  *
  * @param orgId - Organization identifier
  * @param drivers - Available drivers

@@ -7,6 +7,7 @@ import { LoadCard } from '@/components/dispatch/load-card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+
 interface DispatchBoardUIProps {
   loads: Load[];
   drivers: Driver[];

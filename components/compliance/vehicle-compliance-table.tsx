@@ -9,7 +9,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +16,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import {
-  getVehicleComplianceRecords,
-  type VehicleComplianceRow,
-} from '@/lib/fetchers/complianceFetchers';
 
 import {
   getVehicleComplianceRecords,
