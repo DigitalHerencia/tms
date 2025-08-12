@@ -174,64 +174,6 @@ export const listVehiclesByOrg = cache(
       };
     }
   },
-);
-export const createVehicleAction = async (
-  orgId: string,
-  formData: FormData,
-): Promise<{ success: boolean; data?: Vehicle; error?: string }> => {
-  try {
-    const { userId } = await auth();
-    if (!userId) {
-      return { success: false, error: 'Unauthorized' };
-    }
-
-    const vehicleData = Object.fromEntries(formData.entries());
-    vehicleData.organizationId = orgId;
-
-    const newVehicle = await prisma.vehicle.create({
-      data: vehicleData as any, // Adjust type as needed
-    });
-
-    // Map Prisma result to public Vehicle type, ensuring all required fields are present
-    const mappedVehicle: Vehicle = {
-      id: newVehicle.id,
-      organizationId: newVehicle.organizationId,
-      type: newVehicle.type as Vehicle['type'], // <-- fix: cast to VehicleType
-      status: newVehicle.status as Vehicle['status'], // <-- fix: cast to VehicleStatus
-      make: newVehicle.make ?? '',
-      model: newVehicle.model ?? '',
-      year: newVehicle.year ?? 0,
-      vin: newVehicle.vin ?? '',
-      licensePlate: newVehicle.licensePlate ?? undefined,
-      unitNumber: newVehicle.unitNumber ?? undefined,
-      grossVehicleWeight: undefined, // <-- fix: field not present in Prisma result
-      maxPayload: undefined, // <-- fix: field not present in Prisma result
-      fuelType: newVehicle.fuelType ?? undefined,
-      engineType: undefined, // <-- fix: field not present in Prisma result
-      registrationNumber: undefined, // <-- fix: field not present in Prisma result
-      registrationExpiration: newVehicle.registrationExpiration ?? undefined,
-      insuranceProvider: undefined, // <-- fix: field not present in Prisma result
-      insurancePolicyNumber: undefined, // <-- fix: field not present in Prisma result
-      insuranceExpiration: newVehicle.insuranceExpiration ?? undefined,
-      currentLocation: undefined, // <-- fix: field not present in Prisma result
-      totalMileage: newVehicle.currentOdometer ?? undefined,
-      lastMaintenanceMileage: undefined, // <-- fix: field not present in Prisma result
-      nextMaintenanceDate: undefined, // <-- fix: field not present in Prisma result
-      nextMaintenanceMileage: undefined, // <-- fix: field not present in Prisma result
-      createdAt: newVehicle.createdAt,
-      updatedAt: newVehicle.updatedAt,
-      driver: undefined,
-      organization: undefined,
-      lastMaintenanceDate: undefined, // <-- Add this line to fix the type error
-    };
-
-    return { success: true, data: mappedVehicle };
-  } catch (error) {
-    console.error('Error creating vehicle:', error);
-    return { success: false, error: 'Failed to create vehicle' };
-  }
-};
-
 /**
  * Fetch a single vehicle by organization and vehicle ID.
  * - Returns mapped Vehicle type or null if not found/unauthorized.
