@@ -15,27 +15,13 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PageLayout } from '@/components/shared/PageLayout';
+import { getDriverDisplayStatus, getDriverStatusColor } from '@/lib/utils/driverStatus';
 
 // Next.js 15 async params pattern
 interface PageProps {
   params: Promise<{ orgId: string; userId: string }>; // userId can be either user ID or driver ID
 }
 
-// Helper function to get status color
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'active':
-      return 'bg-green-500/20 text-green-400 border-green-500/30';
-    case 'inactive':
-      return 'bg-red-500/20 text-red-400 border-red-500/30';
-    case 'suspended':
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-    case 'terminated':
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    default:
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-  }
-}
 
 export default async function DriverDashboardPage({ params }: PageProps) {
   const { orgId, userId } = await params;
@@ -76,8 +62,8 @@ export default async function DriverDashboardPage({ params }: PageProps) {
                 {driver.firstName} {driver.lastName}
               </h1>
               <div className="flex items-center gap-2">
-                <Badge className={getStatusColor(driver.status)}>
-                  {driver.status.replace('_', ' ')}
+                <Badge className={getDriverStatusColor(driver.status)}>
+                  {getDriverDisplayStatus(driver.status)}
                 </Badge>
                 {driver.companyName && (
                   <Badge

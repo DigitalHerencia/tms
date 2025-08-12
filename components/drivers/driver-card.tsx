@@ -1,8 +1,9 @@
 import { Phone, Mail, Calendar, FileText } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { formatDate } from '@/lib/utils/utils';
+import { getDriverDisplayStatus, getDriverStatusColor } from '@/lib/utils/driverStatus';
 import type { Driver } from '@/types/drivers';
 
 interface DriverCardProps {
@@ -11,51 +12,28 @@ interface DriverCardProps {
 }
 
 export function DriverCard({ driver, onClick }: DriverCardProps) {
-  const getStatusColor = (status: string) => {
-    // Map multiple statuses to active/inactive display
-    const isActive = ['available', 'assigned', 'driving', 'on_duty'].includes(status);
-    const isInactive = ['inactive', 'terminated'].includes(status);
-
-    if (isActive) {
-      return 'bg-green-500/20 text-green-400 border-green-500/30';
-    } else if (isInactive) {
-      return 'bg-red-500/20 text-red-400 border-red-500/30';
-    } else if (status === 'on_leave' || status === 'off_duty') {
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-    } else {
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
-
-  const getDisplayStatus = (status: string) => {
-    const isActive = ['available', 'assigned', 'driving', 'on_duty'].includes(status);
-    const isInactive = ['inactive', 'terminated'].includes(status);
-
-    if (isActive) return 'active';
-    if (isInactive) return 'inactive';
-    return status.replace('_', ' ');
-  };
-
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
   };
 
   return (
     <Card
-      className="border-muted rounded-md border bg-black hover:border-blue-500 transition-colors cursor-pointer"
+      className="rounded-md shadow-md border border-gray-200 bg-black hover:border-blue-500 transition-colors cursor-pointer"
       onClick={onClick}
     >
-      <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-4">
         <Avatar className="h-12 w-12 bg-blue-500/20 text-blue-400">
           <AvatarFallback className="bg-blue-500/20 text-blue-400">
             {getInitials(driver.firstName, driver.lastName)}
           </AvatarFallback>
         </Avatar>
         <div className="space-y-1">
-          <h3 className="leading-none font-medium text-white">
+          <CardTitle className="text-sm font-medium text-white">
             {driver.firstName} {driver.lastName}
-          </h3>
-          <Badge className={getStatusColor(driver.status)}>{getDisplayStatus(driver.status)}</Badge>
+          </CardTitle>
+          <Badge className={getDriverStatusColor(driver.status)}>
+            {getDriverDisplayStatus(driver.status)}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent className="pb-2">
