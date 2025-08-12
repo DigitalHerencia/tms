@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { FeatureToggleFeature } from '../FeatureToggleFeature';
 
@@ -12,7 +13,8 @@ describe('FeatureToggleFeature', () => {
     const { updateFeatureToggle } = await import('@/lib/actions/settings/featureToggleActions');
     render(<FeatureToggleFeature orgId="org1" flags={{ demo: false }} />);
     const toggle = screen.getByRole('switch');
-    fireEvent.click(toggle);
+    const user = userEvent.setup();
+    await user.click(toggle);
     expect(updateFeatureToggle).toHaveBeenCalledWith({ orgId: 'org1', feature: 'demo', enabled: true });
   });
 });

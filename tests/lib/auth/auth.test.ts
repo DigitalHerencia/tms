@@ -127,14 +127,17 @@ describe('auth.ts', () => {
     });
   });
 
-  describe('checkUserRole', async () => {
+  describe('checkUserRole', () => {
     it('returns false if no user', async () => {
       vi.spyOn(authModule, 'getCurrentUser').mockResolvedValue(null);
       const result = await authModule.checkUserRole('admin');
       expect(result).toBe(false);
     });
 
-    const result = await authModule.checkUserRole('admin');
-    expect(result).toBe(true);
+    it('returns true for matching role', async () => {
+      vi.spyOn(authModule, 'getCurrentUser').mockResolvedValue({ role: 'admin' } as any);
+      const result = await authModule.checkUserRole('admin');
+      expect(result).toBe(true);
+    });
   });
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAuditLog } from '../../../lib/actions/auditLogActions';
 
-vi.mock('../lib/database/db', () => ({
+vi.mock('../../../lib/database/db', () => ({
   __esModule: true,
   default: { auditLog: { create: vi.fn() } },
 }));

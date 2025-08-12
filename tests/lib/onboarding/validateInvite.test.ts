@@ -2,20 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { validateInvite } from '../../../lib/actions/onboardingActions';
 
-let membershipMock: { findUnique: ReturnType<typeof vi.fn> };
-let invitationMock: { findUnique: ReturnType<typeof vi.fn> };
+const { membershipMock, invitationMock } = vi.hoisted(() => ({
+  membershipMock: { findUnique: vi.fn() },
+  invitationMock: { findUnique: vi.fn() },
+}));
 
-vi.mock('../../../lib/database/db', () => {
-  membershipMock = { findUnique: vi.fn() };
-  invitationMock = { findUnique: vi.fn() };
-  return {
-    __esModule: true,
-    default: {
-      organizationMembership: membershipMock,
-      organizationInvitation: invitationMock,
-    },
-  };
-});
+vi.mock('../../../lib/database/db', () => ({
+  __esModule: true,
+  default: {
+    organizationMembership: membershipMock,
+    organizationInvitation: invitationMock,
+  },
+}));
 
 describe('validateInvite', () => {
   beforeEach(() => {
