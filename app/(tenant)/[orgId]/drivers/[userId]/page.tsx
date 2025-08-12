@@ -14,7 +14,6 @@ import { ArrowLeft, Edit, User } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PageLayout } from '@/components/shared/PageLayout';
 import { getDriverDisplayStatus, getDriverStatusColor } from '@/lib/utils/driverStatus';
 
 // Next.js 15 async params pattern
@@ -32,7 +31,7 @@ export default async function DriverDashboardPage({ params }: PageProps) {
   }
 
   return (
-    <PageLayout>
+    <div className="flex flex-col gap-6">
       {/* Back Navigation and Driver Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -126,6 +125,6 @@ export default async function DriverDashboardPage({ params }: PageProps) {
       <Suspense fallback={<Skeleton />}>
         <DocumentStatusCard driverId={driver.id} orgId={orgId} />
       </Suspense>
-    </PageLayout>
+    </div>
   );
 }

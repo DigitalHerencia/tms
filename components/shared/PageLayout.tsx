@@ -10,7 +10,7 @@ export function PageLayout({ children, className }: PageLayoutProps) {
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col gap-6 p-6 bg-background text-foreground',
+        'mx-auto flex min-h-screen w-full max-w-screen-xl flex-col gap-6 p-4 md:p-6 bg-background text-foreground',
         className,
       )}
     >

@@ -7,6 +7,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 
 import { AuthProvider } from '@/components/auth/context';
 import { ThemeProvider } from '@/components/shared/ThemeProvider';
+import { PageLayout } from '@/components/shared/PageLayout';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               enableSystem
               disableTransitionOnChange
             >
-              {children}
+              <PageLayout className="gap-0">{children}</PageLayout>
             </ThemeProvider>
           </AuthProvider>
         </body>
