@@ -1,7 +1,6 @@
 import {
   Users,
   Truck,
-  UserCheck,
   Package,
   Calendar,
   Activity,
@@ -10,15 +9,15 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getDashboardMetrics, getOrganizationStats } from '@/lib/fetchers/dashboardFetchers';
 import { Button } from '@/components/ui/button';
+import type { DashboardMetrics, OrganizationStats as OrgStats } from '@/types/dashboard';
 
-export async function OrganizationStats({ orgId, userId }: { orgId: string; userId?: string }) {
-  // Fetch metrics and stats in parallel
-  const [metrics, stats] = await Promise.all([
-    getDashboardMetrics(orgId, userId ?? ''), // Ensure userId is a string
-    getOrganizationStats(orgId),
-  ]);
+interface OrganizationStatsProps {
+  metrics: DashboardMetrics;
+  stats: OrgStats;
+}
+
+export function OrganizationStats({ metrics, stats }: OrganizationStatsProps) {
 
   // Calculate fleet utilization
   const fleetUtilization =

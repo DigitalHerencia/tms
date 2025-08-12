@@ -189,11 +189,6 @@ export interface SystemHealthProps {
   initialData?: SystemHealthData;
 }
 
-export interface AuditLogViewerProps {
-  orgId: string;
-  initialLogs?: AuditLogEntry[];
-}
-
 export interface AuditLogTableProps {
   logs: AuditLogEntry[];
   selectedLog: AuditLogEntry | null;
