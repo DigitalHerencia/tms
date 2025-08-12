@@ -34,6 +34,7 @@ import { updateDriverStatusAction } from '@/lib/actions/driverActions';
 import type { DriverStatus } from '@/types/drivers';
 import { toast } from '@/hooks/use-toast';
 import type { Driver } from '@/types/drivers';
+import { getDriverDisplayStatus, getDriverStatusColor } from '@/lib/utils/driverStatus';
 
 interface Load {
   id: string;
@@ -63,19 +64,6 @@ export function DriverDetailsDialog({
   orgId,
 }: DriverDetailsDialogProps) {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'inactive':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'on_leave':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`;
@@ -177,8 +165,8 @@ export function DriverDetailsDialog({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className={getStatusColor(driver.status)}>
-                {driver.status.replace('_', ' ')}
+              <Badge className={getDriverStatusColor(driver.status)}>
+                {getDriverDisplayStatus(driver.status)}
               </Badge>
             </div>
           </div>
