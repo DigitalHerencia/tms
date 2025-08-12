@@ -21,7 +21,6 @@ import { unstable_cache } from 'next/cache';
 
 import { requireAdminForOrg } from '@/lib/auth/utils';
 
-import prisma from '@/lib/database/db';
 import { CACHE_TTL, getCachedData, setCachedData } from '@/lib/cache/auth-cache';
 import type {
   AuditLogEntry,
@@ -37,11 +36,11 @@ export async function getOrganizationStats(orgId: string): Promise<OrganizationS
   if (cached) return cached;
 
   const [userCount, activeUserCount, vehicleCount, driverCount, loadCount] = await Promise.all([
-    prisma.user.count({ where: { organizationId: orgId } }),
-    prisma.user.count({ where: { organizationId: orgId, isActive: true } }),
-    prisma.vehicle.count({ where: { organizationId: orgId } }),
-    prisma.user.count({ where: { organizationId: orgId, role: 'driver' } }),
-    prisma.load.count({ where: { organizationId: orgId } }),
+    db.user.count({ where: { organizationId: orgId } }),
+    db.user.count({ where: { organizationId: orgId, isActive: true } }),
+    db.vehicle.count({ where: { organizationId: orgId } }),
+    db.user.count({ where: { organizationId: orgId, role: 'driver' } }),
+    db.load.count({ where: { organizationId: orgId } }),
   ]);
 
   const stats: OrganizationStats = {
@@ -56,7 +55,7 @@ export async function getOrganizationStats(orgId: string): Promise<OrganizationS
 }
 
 export async function getOrganizationUsers(orgId: string): Promise<UserManagementData> {
-  const users = await prisma.user.findMany({
+  const users = await db.user.findMany({
     where: { organizationId: orgId },
     select: {
       id: true,
@@ -82,7 +81,7 @@ export async function getOrganizationUsers(orgId: string): Promise<UserManagemen
 export async function getAuditLogs(orgId: string, limit = 100): Promise<AuditLogEntry[]> {
   await requireAdminForOrg(orgId);
 
-  const logs = await prisma.auditLog.findMany({
+  const logs = await db.auditLog.findMany({
     where: { organizationId: orgId },
     orderBy: { timestamp: 'desc' },
     take: limit,
@@ -102,7 +101,7 @@ export async function getBillingInfo(orgId: string): Promise<BillingInfo> {
   await requireAdminForOrg(orgId);
 
   // fetch the org’s subscription settings
-  const org = await prisma.organization.findUnique({
+  const org = await db.organization.findUnique({
     where: { id: orgId },
     select: {
       subscriptionTier: true,
@@ -112,8 +111,8 @@ export async function getBillingInfo(orgId: string): Promise<BillingInfo> {
   });
 
   // count actual usage
-  const usersCount = await prisma.user.count({ where: { organizationId: orgId } });
-  const vehiclesCount = await prisma.vehicle.count({ where: { organizationId: orgId } });
+  const usersCount = await db.user.count({ where: { organizationId: orgId } });
+  const vehiclesCount = await db.vehicle.count({ where: { organizationId: orgId } });
   const maxVehicles = 1;
 
   // fallback defaults until you have a real subscription table
@@ -163,7 +162,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       maintenanceVehicles,
     ] = await Promise.all([
       // Active vehicles (current)
-      prisma.vehicle.count({
+      db.vehicle.count({
         where: {
           organizationId,
           status: 'active',
@@ -171,7 +170,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Active vehicles (previous 30 days for comparison)
-      prisma.vehicle.count({
+      db.vehicle.count({
         where: {
           organizationId,
           status: 'active',
@@ -182,7 +181,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Active drivers (current)
-      prisma.driver.count({
+      db.driver.count({
         where: {
           organizationId,
           status: 'active',
@@ -190,7 +189,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Active drivers (previous period)
-      prisma.driver.count({
+      db.driver.count({
         where: {
           organizationId,
           status: 'active',
@@ -201,7 +200,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Loads data (last 30 days)
-      prisma.load.findMany({
+      db.load.findMany({
         where: {
           organizationId,
           createdAt: {
@@ -219,7 +218,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Loads data (previous 30 days for comparison)
-      prisma.load.findMany({
+      db.load.findMany({
         where: {
           organizationId,
           createdAt: {
@@ -236,7 +235,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Revenue data (last 30 days)
-      prisma.load.aggregate({
+      db.load.aggregate({
         where: {
           organizationId,
           status: 'delivered',
@@ -250,7 +249,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Revenue data (previous 30 days)
-      prisma.load.aggregate({
+      db.load.aggregate({
         where: {
           organizationId,
           status: 'delivered',
@@ -265,7 +264,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Miles data (last 30 days)
-      prisma.load.aggregate({
+      db.load.aggregate({
         where: {
           organizationId,
           status: 'delivered',
@@ -282,7 +281,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Miles data (previous 30 days)
-      prisma.load.aggregate({
+      db.load.aggregate({
         where: {
           organizationId,
           status: 'delivered',
@@ -300,7 +299,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Inspections data (last 30 days)
-      prisma.vehicle.findMany({
+      db.vehicle.findMany({
         where: {
           organizationId,
           lastInspectionDate: {
@@ -315,7 +314,7 @@ async function _getOrganizationKPIs(organizationId: string): Promise<Organizatio
       }),
 
       // Maintenance data
-      prisma.vehicle.findMany({
+      db.vehicle.findMany({
         where: {
           organizationId,
           status: 'active',
