@@ -1,6 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Activity, Database, Server, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Activity, Database, Server, Clock } from 'lucide-react';
 import React from 'react';
 
 interface SystemOverviewCardsProps {
@@ -18,6 +17,15 @@ export function SystemOverviewCards({
   formatUptime,
   getStatusBadge,
 }: SystemOverviewCardsProps) {
+  const overallStatus =
+    ['healthy', 'ok', 'active'].includes(
+      healthData.databaseStatus.toLowerCase(),
+    ) &&
+    ['healthy', 'ok', 'active'].includes(
+      healthData.queueStatus.toLowerCase(),
+    )
+      ? 'healthy'
+      : 'warning';
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card className="bg-black border border-gray-200">
@@ -73,11 +81,10 @@ export function SystemOverviewCards({
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Badge variant="default" className="bg-green-100 text-green-800">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              Operational
-            </Badge>
-            <p className="text-xs text-muted-foreground">All systems go</p>
+            {getStatusBadge(overallStatus)}
+            <p className="text-xs text-muted-foreground">
+              {overallStatus === 'healthy' ? 'All systems go' : 'Issues detected'}
+            </p>
           </div>
         </CardContent>
       </Card>
