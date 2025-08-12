@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { updateTaxRatesAction } from '@/lib/actions/ifta/taxRateActions';
 
 interface RateRow {
   jurisdiction: string;
@@ -11,26 +12,31 @@ interface RateRow {
 
 interface TaxRateManagerClientProps {
   initialRates: Record<string, number>;
+  orgId: string;
 }
 
-export function TaxRateManagerClient({ initialRates }: TaxRateManagerClientProps) {
+export function TaxRateManagerClient({ initialRates, orgId }: TaxRateManagerClientProps) {
   const [rates, setRates] = useState<RateRow[]>(
     Object.entries(initialRates).map(([j, r]) => ({ jurisdiction: j, rate: r })),
   );
   const [edited, setEdited] = useState<Record<string, number>>({});
+  const [isPending, startTransition] = useTransition();
 
   const handleChange = (j: string, val: string) => {
     setEdited((prev) => ({ ...prev, [j]: parseFloat(val) || 0 }));
   };
 
   const applyChanges = () => {
-    setRates(
-      rates.map((r) => ({
-        ...r,
-        rate: edited[r.jurisdiction] ?? r.rate,
-      })),
-    );
-    setEdited({});
+    startTransition(async () => {
+      await updateTaxRatesAction(orgId, edited);
+      setRates(
+        rates.map((r) => ({
+          ...r,
+          rate: edited[r.jurisdiction] ?? r.rate,
+        })),
+      );
+      setEdited({});
+    });
   };
 
   return (
@@ -58,8 +64,8 @@ export function TaxRateManagerClient({ initialRates }: TaxRateManagerClientProps
           ))}
         </tbody>
       </table>
-      <Button size="sm" onClick={applyChanges}>
-        Save Changes
+      <Button size="sm" onClick={applyChanges} disabled={isPending}>
+        {isPending ? 'Saving...' : 'Save Changes'}
       </Button>
     </div>
   );

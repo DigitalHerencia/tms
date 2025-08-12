@@ -158,6 +158,30 @@ export interface IftaPeriodData {
   } | null;
 }
 
+// Simplified table row types used by IFTA data tables
+export interface IftaTripTableRow {
+  id: string;
+  date: string;
+  driver: string;
+  vehicle: string;
+  startLocation: string;
+  endLocation: string;
+  miles: number;
+  gallons: number;
+  state: string;
+}
+
+export interface IftaReportTableRow {
+  id: string;
+  quarter: string;
+  year: string;
+  totalMiles: number;
+  totalGallons: number;
+  avgMpg: number;
+  status: string;
+  dueDate: string;
+}
+
 // Enhanced PDF Generation Types
 export interface PDFGenerationRequest {
   organizationId: string;
