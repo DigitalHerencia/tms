@@ -10,7 +10,7 @@ import { PublicNav } from '@/components/navigation/PublicNav';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <>
       <PublicNav />
       {/* Main content area */}
       <main className="flex-1">
@@ -41,7 +41,7 @@ export default function Home() {
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button
                     asChild
-                    className="w-full rounded-md bg-blue-500 py-2 font-bold text-white transition-colors hover:bg-blue-800"
+                    className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
                   >
                     <Link href="/sign-up">
                       Start Free 30-Day Trial <ArrowRight className="ml-2 h-4 w-4" />
@@ -125,7 +125,7 @@ export default function Home() {
         <PricingSection />
       </main>
       <SharedFooter />
-    </div>
+    </>
   );
 }
 // Ensure all images referenced above exist in /public. For remote images, add their domains to next.config.ts.

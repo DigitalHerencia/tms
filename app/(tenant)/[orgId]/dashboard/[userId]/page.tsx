@@ -8,7 +8,6 @@ import React, { Suspense } from 'react';
 import { Activity, BarChart, CreditCard, FileText, Settings, Shield, Users } from 'lucide-react';
 import FleetOverviewHeader from '@/features/dashboard/FleetOverviewHeader';
 import UserManagementDashboard from '@/features/dashboard/UserManagementDashboard';
-import { PageLayout } from '@/components/shared/PageLayout';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
 import { getCurrentUser } from '@/lib/auth/auth';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -45,7 +44,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const users = await getOrganizationUsers(orgId);
 
   return (
-    <PageLayout className="gap-3">
+    <div className="flex flex-col gap-3">
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
         <FleetOverviewHeader orgId={orgId} />
@@ -192,6 +191,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           </Card>
         </TabsContent>
       </Tabs>
-    </PageLayout>
+    </div>
   );
 }

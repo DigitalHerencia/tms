@@ -18,7 +18,6 @@ import { DriverComplianceTable } from '@/components/compliance/driver-compliance
 import { VehicleComplianceTable } from '@/components/compliance/vehicle-compliance-table';
 import { DOTInspectionManagement } from '@/components/compliance/dot-inspection-management';
 import { ComplianceAlerts } from '@/components/compliance/compliance-alerts';
-import { PageLayout } from '@/components/shared/PageLayout';
 import { ComplianceDashboard } from '@/features/compliance/ComplianceDashboard';
 import { DocumentManagerFeature } from '@/features/compliance/DocumentManagerFeature';
 
@@ -30,7 +29,7 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
   const { orgId } = await params;
 
   return (
-    <PageLayout className="compliance-page p-4 md:p-6">
+    <div className="compliance-page">
       <div className="mt-14 mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="page-title">Compliance Management</h1>
@@ -146,6 +145,6 @@ export default async function CompliancePage({ params }: CompliancePageProps) {
           </TabsContent>
         </Tabs>
       </div>
-    </PageLayout>
+    </div>
   );
 }

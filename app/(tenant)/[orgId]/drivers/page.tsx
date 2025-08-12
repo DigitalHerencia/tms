@@ -2,7 +2,6 @@ import { DriverListSkeleton } from '@/components/drivers/driver-list-skeleton';
 import { Suspense } from 'react';
 import DriversListHeader from '@/components/drivers/drivers-list-header';
 import DriversList from '@/features/drivers/DriversList';
-import { PageLayout } from '@/components/shared/PageLayout';
 
 // Next.js 15 async params pattern
 interface PageProps {
@@ -14,7 +13,7 @@ export default async function DriverListPage({ params, searchParams }: PageProps
   const { orgId } = await params;
   const resolvedSearchParams = await searchParams;
   return (
-    <PageLayout>
+    <div className="flex flex-col gap-6">
       {/* Drivers List Header */}
       <Suspense fallback={<DriverListSkeleton />}>
         <DriversListHeader />
@@ -24,6 +23,6 @@ export default async function DriverListPage({ params, searchParams }: PageProps
       <Suspense fallback={<DriverListSkeleton />}>
         <DriversList orgId={orgId} searchParams={resolvedSearchParams} />
       </Suspense>
-    </PageLayout>
+    </div>
   );
 }
