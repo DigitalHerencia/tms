@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getIftaDataForPeriod, getIftaReports } from '@/lib/fetchers/iftaFetchers';
-import type { IFTAReport } from '@/components/ifta/ifta-columns';
-import type { IftaPeriodData } from '@/types/ifta';
+import type { IftaReportTableRow, IftaPeriodData } from '@/types/ifta';
 
 function FuelIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -46,7 +45,7 @@ export async function IftaReportingFeature({ orgId }: { orgId: string }) {
   const { quarter, year } = getCurrentQuarterAndYear();
   const period = `Q${quarter}`;
   let iftaData: IftaPeriodData | null = null;
-  let reports: IFTAReport[] = [];
+  let reports: IftaReportTableRow[] = [];
   let error: string | null = null;
 
   try {

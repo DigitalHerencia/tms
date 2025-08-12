@@ -3,30 +3,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
+import type { IftaTripTableRow, IftaReportTableRow } from '@/types/ifta';
 
-// Types must be duplicated or imported from a shared types file
-export type IFTATrip = {
-  id: string;
-  date: string;
-  driver: string;
-  vehicle: string;
-  startLocation: string;
-  endLocation: string;
-  miles: number;
-  gallons: number;
-  state: string;
-};
-
-export type IFTAReport = {
-  id: string;
-  quarter: string;
-  year: string;
-  totalMiles: number;
-  totalGallons: number;
-  avgMpg: number;
-  status: string;
-  dueDate: string;
-};
+export type IFTATrip = IftaTripTableRow;
+export type IFTAReport = IftaReportTableRow;
 
 export const tripColumns: ColumnDef<IFTATrip>[] = [
   { accessorKey: 'date', header: 'Date' },

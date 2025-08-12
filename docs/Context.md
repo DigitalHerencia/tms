@@ -218,10 +218,7 @@ FleetFusion-Main
 │   ├── ifta
 │   │   ├── ifta-columns.tsx
 │   │   ├── ifta-dashboard.tsx
-│   │   ├── ifta-report-table.tsx
 │   │   ├── ifta-tables.tsx
-│   │   ├── ifta-trip-table.tsx
-│   │   ├── IftaReportForm.tsx
 │   │   ├── TaxRateManager.tsx
 │   │   └── TaxRateManagerClient.tsx
 │   ├── navigation
@@ -758,10 +755,7 @@ FleetFusion-Main
 - FleetFusion-Main/components/drivers/upcoming-loads-card.tsx (tsx)
 - FleetFusion-Main/components/ifta/ifta-columns.tsx (tsx)
 - FleetFusion-Main/components/ifta/ifta-dashboard.tsx (tsx)
-- FleetFusion-Main/components/ifta/ifta-report-table.tsx (tsx)
 - FleetFusion-Main/components/ifta/ifta-tables.tsx (tsx)
-- FleetFusion-Main/components/ifta/IftaReportForm.tsx (tsx)
-- FleetFusion-Main/components/ifta/ifta-trip-table.tsx (tsx)
 - FleetFusion-Main/components/ifta/TaxRateManager.tsx (tsx)
 - FleetFusion-Main/components/ifta/TaxRateManagerClient.tsx (tsx)
 - FleetFusion-Main/components/navigation/MainNav.tsx (tsx)
@@ -1401,13 +1395,8 @@ FleetFusion-Main
   - Imports: @tanstack/react-table, @/components/ui/button
 - FleetFusion-Main/components/ifta/ifta-dashboard.tsx
   - Imports: lucide-react, next/navigation, react, @/components/ui/button, @/components/ui/card, @/components/ui/select, @/components/ui/tabs, @/types/ifta, @/components/ui/container, @/components/ui/page-header
-- FleetFusion-Main/components/ifta/ifta-report-table.tsx
 - FleetFusion-Main/components/ifta/ifta-tables.tsx
   - Imports: @/components/ui/data-table, @/components/ifta/ifta-columns
-- FleetFusion-Main/components/ifta/IftaReportForm.tsx
-  - Imports: react
-- FleetFusion-Main/components/ifta/ifta-trip-table.tsx
-  - Imports: lucide-react, react, @/components/ui/table, @/components/ui/badge, @/components/ui/button, @/components/ui/input, @/types/ifta
 - FleetFusion-Main/components/ifta/TaxRateManager.tsx
   - Imports: @/lib/fetchers/iftaFetchers, ./TaxRateManagerClient
 - FleetFusion-Main/components/ifta/TaxRateManagerClient.tsx
