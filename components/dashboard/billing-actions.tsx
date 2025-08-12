@@ -39,14 +39,17 @@ export function BillingActions() {
   };
 
   return (
-    <div className="flex items-baseline flex-col gap-3 ml-60 mr-2">
-      <Button onClick={handleManageBilling} className="bg-blue-500 hover:bg-blue-800">
+    <div className="mt-6 flex w-full flex-col gap-3">
+      <Button
+        onClick={handleManageBilling}
+        className="rounded-md w-full bg-blue-500 px-6 py-2 font-semibold text-white hover:bg-blue-800"
+      >
         Manage Payment & Invoices
       </Button>
       <Button
         onClick={handleCancel}
         disabled={isPending}
-        className="bg-red-600 text-white hover:bg-red-800 w-full"
+        className="rounded-md w-full bg-red-600 px-6 py-2 font-semibold text-white hover:bg-red-800"
       >
         Cancel Subscription
       </Button>

@@ -21,31 +21,10 @@ import type {
 } from '@/types/auth';
 import { ROLE_PERMISSIONS } from '@/types/auth';
 import { SystemRoles } from '@/types/abac';
-import { authCache } from '@/lib/cache/auth-cache';
+import { authCache, getCachedAuthState, setCachedAuthState } from '@/lib/cache/auth-cache';
 
 // Create the auth context
 const AuthContext = createContext<AuthState | null>(null);
-
-// Cache for computed auth state to prevent unnecessary re-renders
-const authStateCache = new Map<
-  string,
-  {
-    state: AuthState;
-    timestamp: number;
-  }
->();
-
-const AUTH_STATE_CACHE_TTL = 60 * 1000; // 1 minute cache for auth state
-
-// Remove expired cache entries
-function cleanupAuthStateCache() {
-  const now = Date.now();
-  for (const [key, value] of authStateCache) {
-    if (now - value.timestamp >= AUTH_STATE_CACHE_TTL) {
-      authStateCache.delete(key);
-    }
-  }
-}
 
 /**
  * AuthProvider
@@ -63,12 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     organization: null,
     company: null,
   });
-
-  // Periodic cleanup of stale cache entries
-  useEffect(() => {
-    const interval = setInterval(cleanupAuthStateCache, AUTH_STATE_CACHE_TTL);
-    return () => clearInterval(interval);
-  }, []);
 
   // Memoized user context builder
   /**
@@ -149,15 +122,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Try to get cached state first
-      cleanupAuthStateCache();
       if (cacheKey) {
-        const cached = authStateCache.get(cacheKey);
+        const cached = getCachedAuthState(cacheKey);
         if (cached) {
-          if (Date.now() - cached.timestamp < AUTH_STATE_CACHE_TTL) {
-            setAuthState(cached.state);
-            return;
-          }
-          authStateCache.delete(cacheKey);
+          setAuthState(cached);
+          return;
         }
       }
 
@@ -210,10 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Cache the computed state
       if (cacheKey) {
-        authStateCache.set(cacheKey, {
-          state: newState,
-          timestamp: Date.now(),
-        });
+        setCachedAuthState(cacheKey, newState);
 
         // Also cache in auth cache for consistency
         authCache.setUser(clerkUser.id, userContext);
