@@ -168,7 +168,8 @@ export const listVehiclesByOrg = cache(
         totalPages: 0,
       };
     }
-  },
+  }
+);
 
 export const getVehicleById = cache(
   async (orgId: string, vehicleId: string): Promise<Vehicle | null> => {
