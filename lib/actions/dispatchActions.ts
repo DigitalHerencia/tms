@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
 import type { LoadActionResult, LoadStatus } from '@/types/dispatch';
-import { loadInputSchema } from '@/schemas/dispatch';
 import type { DashboardActionResult } from '@/types/dashboard';
 import { getCurrentUser } from '@/lib/auth/auth';
 import { canManageLoadsAndDispatch } from '@/lib/auth/permissions';
@@ -14,115 +13,13 @@ import {
   trailerHasOverlappingLoad,
 } from '@/lib/fetchers/dispatchFetchers';
 import { allowedStatusTransitions } from '@/lib/utils/dispatchStatus';
+import { createLoadAction, updateLoadAction } from './loadActions';
 
-/**
- * Create a new load (dispatch)
- */
-export async function createDispatchLoadAction(
-  orgId: string,
-  formData: FormData,
-): Promise<LoadActionResult<{ id: string }>> {
-  try {
-    const user = await getCurrentUser();
-    if (!user || !canManageLoadsAndDispatch(user)) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    const userId = user.userId;
-    const parsed = loadInputSchema.parse(Object.fromEntries(formData));
-    const load = await db.load.create({
-      data: {
-        organizationId: orgId,
-        loadNumber: parsed.load_number,
-        originAddress: parsed.origin_address,
-        originCity: parsed.origin_city,
-        originState: parsed.origin_state,
-        originZip: parsed.origin_zip,
-        destinationAddress: parsed.destination_address,
-        destinationCity: parsed.destination_city,
-        destinationState: parsed.destination_state,
-        destinationZip: parsed.destination_zip,
-        customerId: parsed.customer_id ?? null,
-        driver_id: parsed.driver_id ?? null,
-        vehicleId: parsed.vehicle_id ?? null,
-        trailerId: parsed.trailer_id ?? null,
-        scheduledPickupDate: parsed.scheduled_pickup_date
-          ? new Date(parsed.scheduled_pickup_date)
-          : null,
-        scheduledDeliveryDate: parsed.scheduled_delivery_date
-          ? new Date(parsed.scheduled_delivery_date)
-          : null,
-        notes: parsed.notes ?? null,
-        status: parsed.status ?? 'pending',
-        createdBy: userId,
-      },
-    });
-    revalidatePath(`/${orgId}/dispatch`);
-    return { success: true, data: { id: load.id } };
-  } catch (error) {
-    return handleError(error, 'Create Load') as LoadActionResult<{ id: string }>;
-  }
-}
+export {
+  createLoadAction as createDispatchLoadAction,
+  updateLoadAction as updateDispatchLoadAction,
+};
 
-/**
- * Update a load (dispatch)
- */
-export async function updateDispatchLoadAction(
-  orgId: string,
-  loadId: string,
-  formData: FormData,
-): Promise<LoadActionResult<{ id: string }>> {
-  try {
-    const user = await getCurrentUser();
-    if (!user || !canManageLoadsAndDispatch(user)) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    const userId = user.userId;
-    const parsed = loadInputSchema.partial().parse(Object.fromEntries(formData));
-    const data: Record<string, any> = {};
-    if (parsed.customer_id !== undefined) data.customerId = parsed.customer_id;
-    if (parsed.driver_id !== undefined) data.driver_id = parsed.driver_id;
-    if (parsed.vehicle_id !== undefined) data.vehicleId = parsed.vehicle_id;
-    if (parsed.trailer_id !== undefined) data.trailerId = parsed.trailer_id;
-    if (parsed.origin_address !== undefined) data.originAddress = parsed.origin_address;
-    if (parsed.origin_city !== undefined) data.originCity = parsed.origin_city;
-    if (parsed.origin_state !== undefined) data.originState = parsed.origin_state;
-    if (parsed.origin_zip !== undefined) data.originZip = parsed.origin_zip;
-    if (parsed.destination_address !== undefined) data.destinationAddress = parsed.destination_address;
-    if (parsed.destination_city !== undefined) data.destinationCity = parsed.destination_city;
-    if (parsed.destination_state !== undefined) data.destinationState = parsed.destination_state;
-    if (parsed.destination_zip !== undefined) data.destinationZip = parsed.destination_zip;
-    if (parsed.scheduled_pickup_date !== undefined)
-      data.scheduledPickupDate = parsed.scheduled_pickup_date ? new Date(parsed.scheduled_pickup_date) : null;
-    if (parsed.scheduled_delivery_date !== undefined)
-      data.scheduledDeliveryDate = parsed.scheduled_delivery_date ? new Date(parsed.scheduled_delivery_date) : null;
-    if (parsed.notes !== undefined) data.notes = parsed.notes;
-    if (parsed.status !== undefined) data.status = parsed.status;
-    data['lastModifiedBy'] = userId;
-    data['updatedAt'] = new Date();
-
-    const load = await db.load.update({
-      where: { id: loadId, organizationId: orgId },
-      data,
-    });
-
-    await db.dispatchActivity.create({
-      data: {
-        organizationId: orgId,
-        entityType: 'load',
-        action: 'update',
-        entityId: loadId,
-        userName: userId,
-        timestamp: new Date(),
-      },
-    });
-
-    // Ensure all dispatch board pages show the latest data
-    revalidatePath(`/${orgId}/dispatch`, 'layout');
-    return { success: true, data: { id: loadId } };
-  } catch (error) {
-    return handleError(error, 'Update Dispatch Load') as LoadActionResult<{ id: string }>;
-  }
-}
 
 /**
  * Delete a load (dispatch)

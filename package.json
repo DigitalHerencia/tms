@@ -100,7 +100,8 @@
     "uuid": "11.1.0",
     "vaul": "1.1.2",
     "ws": "8.18.3",
-    "zod": "3.25.67"
+    "zod": "3.25.67",
+    "leaflet": "1.9.4"
   },
   "devDependencies": {
     "@clerk/testing": "1.8.1",

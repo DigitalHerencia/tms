@@ -1,6 +1,6 @@
 'use client';
 
-import { useTransition } from 'react';
+import { useState, useTransition, useMemo } from 'react';
 import type { Load, LoadStatus } from '@/types/dispatch';
 import type { Driver } from '@/types/drivers';
 import type { Vehicle } from '@/types/vehicles';
@@ -48,7 +48,25 @@ export function DispatchBoardFeature({
   searchParams = {},
 }: DispatchBoardFeatureProps) {
   const router = useRouter();
-  const { connectionStatus } = useDispatchRealtime({ orgId });
+  const [loadList, setLoadList] = useState(loads);
+  const { connectionStatus } = useDispatchRealtime({
+    orgId,
+    onUpdate: (update) => {
+      if (!update.data) return;
+      setLoadList((prev) => {
+        const { loadId, load, newStatus } = update.data!;
+        if (update.type === 'load_deleted') {
+          return prev.filter((l) => l.id !== loadId);
+        }
+        if (update.type === 'new_load' && load) {
+          return [load as Load, ...prev];
+        }
+        return prev.map((l) =>
+          l.id === loadId ? { ...l, ...load, status: (newStatus as LoadStatus) ?? l.status } : l,
+        );
+      });
+    },
+  });
   const [isPending, startTransition] = useTransition();
 
   const currentTab = searchParams.tab || 'all';
@@ -62,9 +80,9 @@ export function DispatchBoardFeature({
     dateRange: searchParams.dateRange || '',
   };
 
-  // Filter loads based on search params
-  const filterLoads = (list: Load[]) => {
-    return list.filter((load) => {
+  // Filter loads once and group by status
+  const filteredGroups = useMemo(() => {
+    const filtered = loadList.filter((load) => {
       if (filters.status && load.status !== filters.status) return false;
       if (filters.driverId && load.driver?.id !== filters.driverId) return false;
       if (
@@ -84,25 +102,37 @@ export function DispatchBoardFeature({
       }
       return true;
     });
-  };
-
-  // Filter by status and paginate
-  const pendingLoads = loads.filter((load) => load.status === 'pending');
-  const assignedLoads = loads.filter((load) => load.status === 'assigned');
-  const inTransitLoads = loads.filter((load) => load.status === 'in_transit');
-  const completedLoads = loads.filter((load) => load.status === 'completed');
+    const groups: Record<string, Load[]> = {
+      all: [],
+      pending: [],
+      assigned: [],
+      in_transit: [],
+      completed: [],
+    };
+    filtered.forEach((load) => {
+      groups.all.push(load);
+      groups[load.status]?.push(load);
+    });
+    return groups;
+  }, [loadList, filters]);
 
   const getPagedLoads = (list: Load[]) => {
-    const filtered = filterLoads(list);
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filtered.slice(start, start + ITEMS_PER_PAGE);
+    return list.slice(start, start + ITEMS_PER_PAGE);
   };
 
-  const filteredAll = getPagedLoads(loads);
-  const filteredPending = getPagedLoads(pendingLoads);
-  const filteredAssigned = getPagedLoads(assignedLoads);
-  const filteredInTransit = getPagedLoads(inTransitLoads);
-  const filteredCompleted = getPagedLoads(completedLoads);
+  const filteredAll = getPagedLoads(filteredGroups.all);
+  const filteredPending = getPagedLoads(filteredGroups.pending);
+  const filteredAssigned = getPagedLoads(filteredGroups.assigned);
+  const filteredInTransit = getPagedLoads(filteredGroups.in_transit);
+  const filteredCompleted = getPagedLoads(filteredGroups.completed);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      (filteredGroups[currentTab as keyof typeof filteredGroups]?.length || 0) /
+        ITEMS_PER_PAGE,
+    ),
+  );
 
   // Handlers that update URL params instead of state
   const onTabChange = (tab: string) => {
@@ -118,7 +148,9 @@ export function DispatchBoardFeature({
   const onStatusUpdate = async (loadId: string, newStatus: LoadStatus) => {
     startTransition(async () => {
       await updateLoadStatusAction(orgId, loadId, newStatus);
-      router.refresh();
+      setLoadList((prev) =>
+        prev.map((l) => (l.id === loadId ? { ...l, status: newStatus } : l)),
+      );
     });
   };
 
@@ -140,6 +172,14 @@ export function DispatchBoardFeature({
     });
   };
 
+  const onPageChange = (page: number) => {
+    const newParams = new URLSearchParams(searchParams as Record<string, string>);
+    newParams.set('page', String(page));
+    startTransition(() => {
+      router.push(`?${newParams.toString()}`);
+    });
+  };
+
   return (
     <div>
       <div className="mb-4">
@@ -157,6 +197,8 @@ export function DispatchBoardFeature({
         filteredInTransit={filteredInTransit}
         filteredCompleted={filteredCompleted}
         currentTab={currentTab}
+        currentPage={currentPage}
+        totalPages={totalPages}
         filters={filters}
         isPending={isPending}
         onTabChange={onTabChange}
@@ -164,6 +206,7 @@ export function DispatchBoardFeature({
         onStatusUpdate={onStatusUpdate}
         onFilterChange={onFilterChange}
         onResetFilters={onResetFilters}
+        onPageChange={onPageChange}
       />
     </div>
   );

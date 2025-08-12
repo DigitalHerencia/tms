@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { createDispatchLoadAction, updateDispatchLoadAction } from '@/lib/actions/dispatchActions';
+import { createLoadAction, updateLoadAction } from '@/lib/actions/loadActions';
 import { AddressFields } from '@/components/shared/AddressFields';
 import { ContactFields } from '@/components/shared/ContactFields';
 import { loadInputSchema } from '@/schemas/dispatch';
@@ -92,7 +92,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
     try {
       let result;
       if (load && (load.id || loadId)) {
-        result = await updateDispatchLoadAction(orgId, load.id || (loadId as string), formData);
+        result = await updateLoadAction(orgId, load.id || (loadId as string), formData);
         if (result.success) {
           toast({ title: 'Load updated', description: 'Load details updated successfully.' });
           onClose ? onClose() : router.push(`/${orgId}/dispatch`);
@@ -109,7 +109,7 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
           });
         }
       } else {
-        result = await createDispatchLoadAction(orgId, formData);
+        result = await createLoadAction(orgId, formData);
         if (result.success) {
           toast({ title: 'Load created', description: 'New load has been created.' });
           onClose ? onClose() : router.push(`/${orgId}/dispatch`);
@@ -216,7 +216,6 @@ export function LoadForm({ orgId, load, loadId, drivers, vehicles, onClose }: Lo
                         id="scheduled_pickup_date"
                         type="datetime-local"
                         {...register('scheduled_pickup_date')}
-                        type="datetime-local"
                         required
                       />
                       {errors.scheduled_pickup_date && (
