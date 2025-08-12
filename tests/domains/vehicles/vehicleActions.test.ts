@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as actions from '../../../lib/actions/vehicleActions';
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
-vi.mock('../lib/database/db', () => ({
+vi.mock('../../../lib/database/db', () => ({
   __esModule: true,
   default: {
     vehicle: {

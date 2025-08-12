@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@clerk/nextjs/server', () => ({ auth: () => Promise.resolve({ userId: 'u1' }) }));
 
-const dbMock = {
+const dbMock = vi.hoisted(() => ({
   load: {
     findUnique: vi.fn(),
     update: vi.fn().mockResolvedValue({ id: 'l1' }),
   },
   loadStatusEvent: { create: vi.fn() },
   dispatchActivity: { create: vi.fn() },
-};
+}));
 
 vi.mock('../../../lib/database/db', () => ({ __esModule: true, default: dbMock }));
 vi.mock('../../../lib/errors/handleError', () => ({ handleError: vi.fn() }));

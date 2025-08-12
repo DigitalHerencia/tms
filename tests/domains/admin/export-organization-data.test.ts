@@ -7,7 +7,7 @@ vi.mock('@clerk/nextjs/server', () => ({ auth: () => Promise.resolve({ userId: '
 const putMock = vi.fn(async () => ({ downloadUrl: 'https://blob/test.csv' }));
 vi.mock('@vercel/blob', () => ({ put: putMock }));
 
-const dbMock = {
+const dbMock = vi.hoisted(() => ({
   user: {
     findMany: vi
       .fn()
@@ -16,7 +16,7 @@ const dbMock = {
       ]),
   },
   vehicle: { findMany: vi.fn().mockResolvedValue([]) },
-};
+}));
 vi.mock('../../../lib/database/db', () => ({ __esModule: true, default: dbMock }));
 vi.mock('../../../lib/errors/handleError', () => ({
   handleError: (e: any) => ({ success: false, error: String(e) }),

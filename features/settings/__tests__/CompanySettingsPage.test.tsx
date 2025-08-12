@@ -8,9 +8,15 @@ import CompanySettingsPage from '../CompanySettingsPage';
 vi.mock('@/lib/fetchers/settingsFetchers', () => ({
   getCompanyProfile: vi.fn(async () => ({ name: 'Acme Inc.' })),
 }));
+vi.mock('@/lib/tenantConfig', () => ({
+  getTenantFeatureFlags: vi.fn(async () => ({})),
+}));
 
 vi.mock('@/components/settings/CompanyProfileForm', () => ({
   CompanyProfileForm: ({ profile }: any) => <form>Profile: {profile.name}</form>,
+}));
+vi.mock('../FeatureToggleFeature', () => ({
+  FeatureToggleFeature: () => <div>Feature toggles</div>,
 }));
 
 describe('CompanySettingsPage', () => {

@@ -2,6 +2,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LoadForm } from '@/components/dispatch/load-form';
 import React from 'react';
+import { vi } from 'vitest';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }),
+}));
 
 describe('LoadForm validation', () => {
   it('shows validation errors for required fields', async () => {
