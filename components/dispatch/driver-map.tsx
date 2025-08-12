@@ -1,33 +1,45 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import type { Driver } from '@/types/drivers';
 
 interface DriverMapProps {
   drivers: Driver[];
 }
 
-// Simple SVG map visualization focusing on US region
-export function DriverMap({ drivers }: DriverMapProps) {
-  const markers = drivers.filter(
-    (d) => d.currentLocation?.latitude !== undefined && d.currentLocation?.longitude !== undefined,
-  );
+const markerIcon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
-  return (
-    <div className="relative h-64 w-full overflow-hidden rounded-lg bg-blue-50 dark:bg-blue-900">
-      <svg width="100%" height="100%" viewBox="0 0 800 400" className="border rounded">
-        <rect width="800" height="400" fill="#f0f9ff" className="dark:fill-gray-800" />
-        {markers.map((driver) => {
-          const lat = driver.currentLocation!.latitude;
-          const lng = driver.currentLocation!.longitude;
-          const x = ((lng + 130) / 60) * 800; // Map US longitudes -130 to -70
-          const y = ((50 - lat) / 25) * 400; // Map US latitudes 25 to 50
-          return (
-            <circle key={driver.id} cx={x} cy={y} r={5} fill="#3b82f6">
-              <title>{`${driver.firstName} ${driver.lastName}`}</title>
-            </circle>
-          );
-        })}
-      </svg>
-    </div>
-  );
+// Interactive map using Leaflet for driver locations
+export function DriverMap({ drivers }: DriverMapProps) {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const map = L.map(mapRef.current).setView([39.5, -98.35], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    drivers.forEach((d) => {
+      const lat = d.currentLocation?.latitude;
+      const lng = d.currentLocation?.longitude;
+      if (lat !== undefined && lng !== undefined) {
+        L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+      }
+    });
+
+    return () => {
+      map.remove();
+    };
+  }, [drivers]);
+
+  return <div ref={mapRef} className="h-64 w-full rounded-lg" />;
 }

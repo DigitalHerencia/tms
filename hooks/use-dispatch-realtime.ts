@@ -8,6 +8,7 @@ interface UseDispatchRealtimeOptions {
   orgId: string;
   pollingInterval?: number; // in milliseconds, default 30 seconds
   enableSSE?: boolean; // Enable Server-Sent Events
+  onUpdate?: (update: DispatchUpdate) => void; // Optional callback for updates
 }
 
 interface DispatchUpdate {
@@ -42,6 +43,7 @@ export function useDispatchRealtime({
   orgId,
   pollingInterval = 30000, // 30 seconds
   enableSSE = true,
+  onUpdate,
 }: UseDispatchRealtimeOptions): UseDispatchRealtimeReturn {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(false);
@@ -66,10 +68,12 @@ export function useDispatchRealtime({
 
       setLastUpdate(new Date());
       setUpdateCount((prev) => prev + 1);
-
-      // Refresh the router to get updated data
-      // In a more sophisticated implementation, we could update local state directly
-      router.refresh();
+      if (onUpdate) {
+        onUpdate(update);
+      } else {
+        // Refresh the router to get updated data
+        router.refresh();
+      }
 
       // Optional: Show toast notifications for critical updates
       if (update.type === 'status_change' || update.type === 'assignment_change') {
@@ -77,7 +81,7 @@ export function useDispatchRealtime({
         console.log('Dispatch update:', update);
       }
     },
-    [router],
+    [router, onUpdate],
   );
 
   // Connect to SSE stream

@@ -6,6 +6,7 @@ import type { Vehicle } from '@/types/vehicles';
 import { LoadCard } from '@/components/dispatch/load-card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
 
 interface DispatchBoardUIProps {
@@ -19,6 +20,8 @@ interface DispatchBoardUIProps {
   filteredInTransit: Load[];
   filteredCompleted: Load[];
   currentTab: string;
+  currentPage: number;
+  totalPages: number;
   filters: {
     status: string;
     driverId: string;
@@ -32,6 +35,7 @@ interface DispatchBoardUIProps {
   onStatusUpdate: (loadId: string, status: string) => void;
   onFilterChange: (field: string, value: string) => void;
   onResetFilters: () => void;
+  onPageChange: (page: number) => void;
 }
 
 export function DispatchBoardUI(props: DispatchBoardUIProps) {
@@ -43,6 +47,8 @@ export function DispatchBoardUI(props: DispatchBoardUIProps) {
     filteredInTransit,
     filteredCompleted,
     currentTab,
+    currentPage,
+    totalPages,
   } = props;
 
   if (!loads || loads.length === 0) {
@@ -111,6 +117,25 @@ export function DispatchBoardUI(props: DispatchBoardUIProps) {
                   isUpdating={props.isPending}
                 />
               ))}
+            </div>
+            <div className="flex items-center justify-between pt-4">
+              <Button
+                variant="secondary"
+                disabled={currentPage <= 1}
+                onClick={() => props.onPageChange(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-sm text-white">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="secondary"
+                disabled={currentPage >= totalPages}
+                onClick={() => props.onPageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
             </div>
           </TabsContent>
         ))}
