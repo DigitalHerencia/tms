@@ -7,6 +7,7 @@ import { VehicleCard } from '@/components/vehicles/vehicle-card';
 import { VehicleDetailsDialog } from '@/components/vehicles/vehicle-details-dialog';
 import { Button } from '@/components/ui/button';
 import { Grid, List } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface VehiclesClientProps {
   orgId: string;
@@ -51,32 +52,22 @@ export default function VehiclesClient({
     <div className="space-y-6">
       {/* View Mode Toggle */}
       <div className="flex justify-end">
-        <div className="flex rounded-md border border-muted overflow-hidden">
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setViewMode('table')}
-            className={`rounded-none px-3 py-2 ${
-              viewMode === 'table'
-                ? 'bg-blue-500 text-white hover:bg-blue-800'
-                : 'text-white/70 hover:text-white hover:bg-neutral-800'
-            }`}
-          >
-            <List className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'grid' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setViewMode('grid')}
-            className={`rounded-none px-3 py-2 ${
-              viewMode === 'grid'
-                ? 'bg-blue-500 text-white hover:bg-blue-800'
-                : 'text-white/70 hover:text-white hover:bg-neutral-800'
-            }`}
-          >
-            <Grid className="h-4 w-4" />
-          </Button>
-        </div>
+        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'table' | 'grid')}>
+          <TabsList className="grid w-auto grid-cols-2 bg-black border border-gray-200">
+            <TabsTrigger
+              value="table"
+              className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
+            >
+              <List className="h-4 w-4" /> Table
+            </TabsTrigger>
+            <TabsTrigger
+              value="grid"
+              className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
+            >
+              <Grid className="h-4 w-4" /> Grid
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Content */}

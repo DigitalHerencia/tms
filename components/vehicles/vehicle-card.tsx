@@ -6,12 +6,14 @@ import { Truck, Calendar, Gauge, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils/utils';
+import { getVehicleStatusColor } from '@/lib/utils/status';
+import type { VehicleStatus } from '@/types/vehicles';
 
 interface Vehicle {
   id: string;
   unitNumber?: string;
   type: string;
-  status: string;
+  status: VehicleStatus;
   make?: string;
   model?: string;
   year?: number;
@@ -36,18 +38,6 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'inactive':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'maintenance':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
 
   const getTypeIcon = (type: string) => {
     return <Truck className="h-4 w-4 text-blue-400" />;
@@ -70,7 +60,7 @@ export function VehicleCard({ vehicle, onClick }: VehicleCardProps) {
               {vehicle.unitNumber || 'No Unit Number'}
             </h3>
           </div>
-          <Badge className={getStatusColor(vehicle.status)}>
+          <Badge className={getVehicleStatusColor(vehicle.status)}>
             {vehicle.status.replace('_', ' ')}
           </Badge>
         </div>

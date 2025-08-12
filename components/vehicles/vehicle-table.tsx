@@ -34,6 +34,7 @@ import {
   Filter,
 } from 'lucide-react';
 import Link from 'next/link';
+import { getVehicleStatusColor } from '@/lib/utils/status';
 
 interface VehicleTableProps {
   vehicles: Vehicle[];
@@ -51,21 +52,6 @@ export function VehicleTable({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-
-  const getStatusColor = (status: VehicleStatus) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'maintenance':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'inactive':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
-      case 'decommissioned':
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
 
   const formatDate = (date?: Date) => {
     if (!date) return 'N/A';
@@ -245,7 +231,7 @@ export function VehicleTable({
 
                     {/* Status */}
                     <TableCell>
-                      <Badge className={getStatusColor(vehicle.status)}>
+                      <Badge className={getVehicleStatusColor(vehicle.status)}>
                         {vehicle.status.replace('_', ' ')}
                       </Badge>
                     </TableCell>
