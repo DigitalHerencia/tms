@@ -330,7 +330,6 @@ FleetFusion-Main
 ├── features
 │   ├── analytics
 │   │   ├── dashboard-metrics.tsx
-│   │   ├── MainDashboardFeature.tsx
 │   │   └── performance-metrics.tsx
 │   ├── auth
 │   │   └── index.ts
@@ -859,7 +858,6 @@ FleetFusion-Main
 ##### FleetFusion-Main/features
 
 - FleetFusion-Main/features/analytics/dashboard-metrics.tsx (tsx)
-- FleetFusion-Main/features/analytics/MainDashboardFeature.tsx (tsx)
 - FleetFusion-Main/features/analytics/performance-metrics.tsx (tsx)
 - FleetFusion-Main/features/auth/index.ts (typescript)
 - FleetFusion-Main/features/compliance/ComplianceDashboard.tsx (tsx)
@@ -1618,7 +1616,6 @@ FleetFusion-Main
 
 - FleetFusion-Main/features/analytics/dashboard-metrics.tsx
   - Imports: lucide-react, react, @/components/ui/card, @/lib/fetchers/analyticsFetchers, @/types/analytics
-- FleetFusion-Main/features/analytics/MainDashboardFeature.tsx
   - Imports: @/components/ui/card, @/lib/fetchers/analyticsFetchers
 - FleetFusion-Main/features/analytics/performance-metrics.tsx
   - Imports: recharts, @/components/ui/chart, @/types/analytics

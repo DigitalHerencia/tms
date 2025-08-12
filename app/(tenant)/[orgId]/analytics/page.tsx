@@ -229,7 +229,7 @@ export default async function AnalyticsPage({ params, searchParams }: AnalyticsP
               <span className="text-lg font-bold text-white">Performance Metrics</span>
             </CardHeader>
             <CardContent className="overflow-x-auto pb-4">
-              <PerformanceMetrics performanceData={performanceData} />
+              <PerformanceMetrics analytics={performanceDataRaw} />
             </CardContent>
           </Card>
         </TabsContent>
