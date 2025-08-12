@@ -7,12 +7,7 @@ import prisma from '@/lib/database/db';
 import { vehicleFilterSchema, type VehicleFiltersData } from '@/schemas/vehicles';
 import type { Vehicle, VehicleListResponse } from '@/types/vehicles';
 
-/**
- * List vehicles for an organization with optional filtering and pagination.
- * - Validates the filter input using `vehicleFilterSchema`.
- * - Returns paginated results (vehicles, total, page, limit, totalPages).
- * - Server-first, feature-driven.
- */
+
 export const listVehiclesByOrg = cache(
   async (
     orgId: string,
@@ -174,11 +169,7 @@ export const listVehiclesByOrg = cache(
       };
     }
   },
-/**
- * Fetch a single vehicle by organization and vehicle ID.
- * - Returns mapped Vehicle type or null if not found/unauthorized.
- * - Server-first, feature-driven.
- */
+
 export const getVehicleById = cache(
   async (orgId: string, vehicleId: string): Promise<Vehicle | null> => {
     try {
