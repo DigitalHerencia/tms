@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { DocumentUploadForm } from '@/components/compliance/DocumentUploadForm';
+import { DocumentManagerFeature } from '@/features/compliance/DocumentManagerFeature';
 
 interface MobileCompliancePageProps {
   params: Promise<{ orgId: string }>;
@@ -12,7 +12,7 @@ export default async function MobileCompliancePage({ params }: MobileComplianceP
     <div className="p-4 space-y-4">
       <h1 className="text-2xl font-bold">Upload Compliance Document</h1>
       <Suspense fallback={<div>Loading...</div>}>
-        <DocumentUploadForm onUpload={() => {}} entityType="company" entityId={orgId} />
+        <DocumentManagerFeature orgId={orgId} />
       </Suspense>
     </div>
   );
