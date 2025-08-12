@@ -468,41 +468,35 @@ export class DatabaseQueries {
     }
   }
 
-  /**
-   * Delete organization
-   */
-  static async deleteOrganization(id: string) {
+  private static async safeDelete(
+    model: any,
+    id: string,
+    entity: 'organization' | 'user',
+  ) {
     try {
-      console.log('[DB] deleteOrganization called with id:', id);
-      const organization = await db.organization.findFirst({
-        where: { id },
-      });
-      if (!organization) {
-        console.warn(`[DB] Organization with id ${id} does not exist, skipping delete.`);
+      const record = await model.findFirst({ where: { id } });
+      if (!record) {
         return {
           success: true,
-          message: 'Organization already deleted or does not exist',
+          message: `${entity.charAt(0).toUpperCase() + entity.slice(1)} already deleted or does not exist`,
         };
       }
-      await db.organization.delete({
-        where: { id: organization.id },
-      });
-      console.log(`[DB] Organization deleted successfully: ${id}`);
+      await model.delete({ where: { id: record.id } });
       return {
         success: true,
-        message: 'Organization deleted successfully',
+        message: `${entity.charAt(0).toUpperCase() + entity.slice(1)} deleted successfully`,
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
         return {
           success: true,
-          message: 'Organization already deleted or does not exist',
+          message: `${entity.charAt(0).toUpperCase() + entity.slice(1)} already deleted or does not exist`,
         };
       }
-      console.error(`[DB] Error deleting organization ${id}:`, error);
+      console.error(`[DB] Error deleting ${entity} ${id}:`, error);
       return {
         success: false,
-        message: `Failed to delete organization: ${
+        message: `Failed to delete ${entity}: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
       };
@@ -510,41 +504,17 @@ export class DatabaseQueries {
   }
 
   /**
+   * Delete organization
+   */
+  static deleteOrganization(id: string) {
+    return this.safeDelete(db.organization, id, 'organization');
+  }
+
+  /**
    * Delete user
    */
-  static async deleteUser(id: string) {
-    try {
-      console.log('[DB] deleteUser called with id:', id);
-      const user = await db.user.findFirst({
-        where: { id },
-      });
-      if (!user) {
-        console.warn(`[DB] User with id ${id} does not exist, skipping delete.`);
-        return {
-          success: true,
-          message: 'User already deleted or does not exist',
-        };
-      }
-      await db.user.deleteMany({
-        where: { id },
-      });
-      console.log(`[DB] User deleted successfully: ${id}`);
-      return { success: true, message: 'User deleted successfully' };
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-        return {
-          success: true,
-          message: 'User already deleted or does not exist',
-        };
-      }
-      console.error(`[DB] Error deleting user ${id}:`, error);
-      return {
-        success: false,
-        message: `Failed to delete user: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      };
-    }
+  static deleteUser(id: string) {
+    return this.safeDelete(db.user, id, 'user');
   }
 }
 

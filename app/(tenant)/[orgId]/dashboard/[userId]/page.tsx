@@ -56,49 +56,47 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         <TabsList className="grid w-auto grid-cols-5 bg-black border border-gray-200">
           <TabsTrigger
             value="overview"
-            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500/70"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
           >
             <Shield className="h-4 w-4" />
             Overview
           </TabsTrigger>
           <TabsTrigger
             value="users"
-            className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
           >
             <Users className="h-4 w-4" />
             Users
           </TabsTrigger>
           <TabsTrigger
             value="billing"
-            className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
           >
             <CreditCard className="h-4 w-4" />
             Billing
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
           >
             <FileText className="h-4 w-4" />
             Audit
           </TabsTrigger>
           <TabsTrigger
             value="system"
-            className="flex items-center gap-2 text-foreground data-[state=active]:bg-blue-500/70"
+            className="flex items-center gap-2 text-white data-[state=active]:bg-blue-500"
           >
             <Settings className="h-4 w-4" />
             System
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="width-auto mt-6 space-y-6">
-          <Card className="bg-blue-500/60">
+        <TabsContent value="overview" className="mt-6 space-y-6">
+          <Card className="rounded-md shadow-md bg-black p-6 border border-gray-200">
             <CardHeader>
-              <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
-                  <BarChart className="h-8 w-8" />
-                  Company Statistics
-                </h1>
+              <CardTitle className="text-3xl font-medium flex items-center gap-2 text-white">
+                <BarChart className="h-8 w-8" />
+                Company Statistics
               </CardTitle>
               <CardDescription className="text-gray-400">
                 Key metrics and performance indicators
@@ -113,13 +111,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         </TabsContent>
 
         <TabsContent value="users" className="mt-6 space-y-6">
-          <Card className="bg-blue-500/60">
+          <Card className="rounded-md shadow-md bg-black p-6 border border-gray-200">
             <CardHeader>
-              <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
-                  <Users className="h-8 w-8" />
-                  User Management
-                </h1>
+              <CardTitle className="text-3xl font-medium flex items-center gap-2 text-white">
+                <Users className="h-8 w-8" />
+                User Management
               </CardTitle>
               <CardDescription className="text-gray-400">
                 Manage user accounts, roles, and permissions for your organization
@@ -137,14 +133,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         </TabsContent>
 
         <TabsContent value="billing" className="mt-6 space-y-6">
-          <Card className="bg-blue-500/60">
+          <Card className="rounded-md shadow-md bg-black p-6 border border-gray-200">
             <CardHeader className="flex flex-row">
               <div>
-                <CardTitle>
-                  <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
-                    <CreditCard className="h-8 w-8" />
-                    Billing & Subscriptions
-                  </h1>
+                <CardTitle className="text-3xl font-medium flex items-center gap-2 text-white">
+                  <CreditCard className="h-8 w-8" />
+                  Billing & Subscriptions
                 </CardTitle>
                 <CardDescription className="text-gray-400">
                   Monitor subscription status, usage, and manage billing settings
@@ -161,13 +155,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         </TabsContent>
 
         <TabsContent value="audit" className="mt-6 space-y-6">
-          <Card className="bg-blue-500/60">
+          <Card className="rounded-md shadow-md bg-black p-6 border border-gray-200">
             <CardHeader>
-              <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
-                  <FileText className="h-8 w-8" />
-                  Audit Logs
-                </h1>
+              <CardTitle className="text-3xl font-medium flex items-center gap-2 text-white">
+                <FileText className="h-8 w-8" />
+                Audit Logs
               </CardTitle>
               <CardDescription className="text-gray-400">
                 View system activity, user actions, and security events
@@ -182,13 +174,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
         </TabsContent>
 
         <TabsContent value="system" className="mt-6 space-y-6">
-          <Card className="bg-blue-500/60">
+          <Card className="rounded-md shadow-md bg-black p-6 border border-gray-200">
             <CardHeader>
-              <CardTitle>
-                <h1 className="text-3xl font-medium flex items-center gap-2 text-foreground">
-                  <Activity className="w-8 h-8" />
-                  System Health Monitor
-                </h1>
+              <CardTitle className="text-3xl font-medium flex items-center gap-2 text-white">
+                <Activity className="w-8 h-8" />
+                System Health Monitor
               </CardTitle>
               <CardDescription className="text-gray-400">
                 Monitor system performance, uptime, and infrastructure status
