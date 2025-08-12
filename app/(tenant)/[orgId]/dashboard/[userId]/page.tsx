@@ -6,7 +6,7 @@
 
 import React, { Suspense } from 'react';
 import { Activity, BarChart, CreditCard, FileText, Settings, Shield, Users } from 'lucide-react';
-import FleetOverviewHeader from '@/components/dashboard/fleet-overview-header';
+import FleetOverviewHeader from '@/features/dashboard/FleetOverviewHeader';
 import UserManagementDashboard from '@/features/dashboard/UserManagementDashboard';
 import { PageLayout } from '@/components/shared/PageLayout';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
@@ -48,7 +48,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     <PageLayout className="gap-3">
       {/* Fleet Overview Header */}
       <Suspense fallback={<DashboardSkeleton />}>
-        <FleetOverviewHeader orgId={orgId} userId={userId} />
+        <FleetOverviewHeader orgId={orgId} />
       </Suspense>
 
       {/* Main Admin Interface */}
@@ -175,12 +175,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <Suspense fallback={<LoadingSpinner />}>
-                <AuditLogViewer
-                  logs={auditLogs}
-                  selectedLog={null}
-                  setSelectedLog={() => {}}
-                  getActionBadgeVariant={() => 'default'}
-                />
+                <AuditLogViewer logs={auditLogs} />
               </Suspense>
             </CardContent>
           </Card>

@@ -1,15 +1,14 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { getDashboardSummary } from '@/lib/fetchers/analyticsFetchers';
 import type { DashboardSummary } from '@/types/dashboard';
 import { RefreshCw, Home } from 'lucide-react';
 import React from 'react';
+
 interface FleetOverviewHeaderProps {
-  orgId: string;
-  userId: string; // <-- Add userId to props
+  summary: DashboardSummary | null;
 }
 
-export default async function FleetOverviewHeader({ orgId }: FleetOverviewHeaderProps) {
-  if (!orgId) {
+export default function FleetOverviewHeader({ summary }: FleetOverviewHeaderProps) {
+  if (!summary) {
     return (
       <Card className="border-red-200 bg-red-50">
         <CardContent className="p-4">
@@ -19,30 +18,14 @@ export default async function FleetOverviewHeader({ orgId }: FleetOverviewHeader
     );
   }
 
-  let summary: DashboardSummary | null = null;
-  let lastUpdated: string | null = null;
-
-  try {
-    const rawSummary = await getDashboardSummary(orgId);
-    // Ensure totalVehicles is present for kpi DashboardSummary
-    summary = {
-      ...rawSummary,
-      totalVehicles:
-        // Use activeVehicles as a proxy for total vehicles, since totalVehicles does not exist
-        rawSummary.activeVehicles ?? 0,
-    };
-    lastUpdated = summary?.lastUpdated
-      ? new Date(summary.lastUpdated).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : null;
-  } catch {
-    summary = null;
-    lastUpdated = null;
-  }
+  const lastUpdated = summary.lastUpdated
+    ? new Date(summary.lastUpdated).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null;
 
   return (
     <div className="flex flex-row items-baseline justify-between mb-6">
