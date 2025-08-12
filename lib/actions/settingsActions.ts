@@ -12,27 +12,7 @@ import {
 } from '@/schemas/settings';
 import { handleError } from '@/lib/errors/handleError';
 import type { ActionResult } from '@/types/actions';
-
-async function verifyOrgAccess(orgId: string) {
-  const { userId, orgId: sessionOrg } = await auth();
-  if (!userId || sessionOrg !== orgId) {
-    throw new Error('Unauthorized');
-  }
-  return userId;
-}
-
-async function logChange(orgId: string, userId: string, action: string) {
-  await db.auditLog.create({
-    data: {
-      organizationId: orgId,
-      userId,
-      entityType: 'settings',
-      entityId: orgId,
-      action,
-      timestamp: new Date(),
-    },
-  });
-}
+import { verifyOrgAccess, logSettingsChange } from './settings/utils';
 
 export async function updateCompanyProfileAction(
   orgId: string,
@@ -41,7 +21,7 @@ export async function updateCompanyProfileAction(
   try {
     const userId = await verifyOrgAccess(orgId);
     const _parsed = CompanyProfileSchema.parse(data);
-    await logChange(orgId, userId, 'updateCompanyProfile');
+    await logSettingsChange(orgId, userId, 'updateCompanyProfile');
     return { success: true };
   } catch (error) {
     return handleError(error, 'Update Company Profile');
@@ -66,7 +46,7 @@ export async function updateOrganizationSettings(
         },
       },
     });
-    await logChange(orgId, userId, 'updateOrganization');
+    await logSettingsChange(orgId, userId, 'updateOrganization');
     revalidatePath(`/[orgId]/settings`);
     return { success: true, data: result };
   } catch (error) {
@@ -82,7 +62,7 @@ export async function updateUserPreferences(
     if (!userId) throw new Error('Unauthorized');
     const parsed = UserPreferencesSchema.parse(data);
     if (parsed.userId !== userId) throw new Error('Invalid user');
-    await logChange(parsed.userId, parsed.userId, 'updateUserPrefs');
+    await logSettingsChange(parsed.userId, parsed.userId, 'updateUserPrefs');
     return { success: true };
   } catch (error) {
     return handleError(error, 'Update User Preferences');
@@ -97,7 +77,7 @@ export async function updateNotificationSettings(
     if (!userId) throw new Error('Unauthorized');
     const parsed = NotificationSettingsSchema.parse(data);
     if (parsed.userId !== userId) throw new Error('Invalid user');
-    await logChange(parsed.userId, parsed.userId, 'updateNotifications');
+    await logSettingsChange(parsed.userId, parsed.userId, 'updateNotifications');
     return { success: true };
   } catch (error) {
     return handleError(error, 'Update Notification Settings');
@@ -110,7 +90,7 @@ export async function updateIntegrationSettings(
 ): Promise<ActionResult<void>> {
   try {
     const userId = await verifyOrgAccess(orgId);
-    await logChange(orgId, userId, 'updateIntegrations');
+    await logSettingsChange(orgId, userId, 'updateIntegrations');
     return { success: true };
   } catch (error) {
     return handleError(error, 'Update Integration Settings');
@@ -122,7 +102,7 @@ export async function resetSettingsToDefault(
 ): Promise<ActionResult<void>> {
   try {
     const userId = await verifyOrgAccess(orgId);
-    await logChange(orgId, userId, 'resetSettings');
+    await logSettingsChange(orgId, userId, 'resetSettings');
     return { success: true };
   } catch (error) {
     return handleError(error, 'Reset Settings To Default');

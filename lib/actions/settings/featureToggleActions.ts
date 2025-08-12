@@ -1,37 +1,16 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 import db from '@/lib/database/db';
 import type { Prisma } from '@prisma/client';
-import { z } from 'zod';
+import { verifyOrgAccess, logSettingsChange } from './utils';
 
 const FeatureToggleSchema = z.object({
   orgId: z.string(),
   feature: z.string(),
   enabled: z.boolean(),
 });
-
-async function verifyOrgAccess(orgId: string) {
-  const { userId, orgId: sessionOrg } = await auth();
-  if (!userId || sessionOrg !== orgId) {
-    throw new Error('Unauthorized');
-  }
-  return userId;
-}
-
-async function logChange(orgId: string, userId: string, feature: string, enabled: boolean) {
-  await db.auditLog.create({
-    data: {
-      organizationId: orgId,
-      userId,
-      entityType: 'settings',
-      entityId: orgId,
-      action: `feature:${feature}:${enabled ? 'enabled' : 'disabled'}`,
-      timestamp: new Date(),
-    },
-  });
-}
 
 export async function updateFeatureToggle(data: unknown) {
   const parsed = FeatureToggleSchema.parse(data);
@@ -49,7 +28,11 @@ export async function updateFeatureToggle(data: unknown) {
       } as Prisma.JsonObject,
     },
   });
-  await logChange(parsed.orgId, userId, parsed.feature, parsed.enabled);
+  await logSettingsChange(
+    parsed.orgId,
+    userId,
+    `feature:${parsed.feature}:${parsed.enabled ? 'enabled' : 'disabled'}`,
+  );
   revalidatePath(`/[orgId]/settings`);
   return { success: true };
 }
