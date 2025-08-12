@@ -10,7 +10,7 @@ import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import db from '@/lib/database/db';
 import { handleError } from '@/lib/errors/handleError';
-import { getOrganizationKPIs } from '@/lib/fetchers/dashboardFetchers';
+import { getOrganizationKPIs, getBillingInfo } from '@/lib/fetchers/dashboardFetchers';
 import type {
   OrganizationKPIs,
   DashboardActionResult,
@@ -29,30 +29,7 @@ export async function getOrganizationBillingAction(
   orgId: string,
 ): Promise<DashboardActionResult<BillingInfo>> {
   try {
-    const { userId } = await auth();
-    if (!userId) return { success: false, error: 'Unauthorized' };
-
-    // Fetch org from DB
-    const org = await db.organization.findUnique({
-      where: { id: orgId },
-      select: { subscriptionTier: true, subscriptionStatus: true, maxUsers: true },
-    });
-    if (!org) return { success: false, error: 'Organization not found' };
-
-    const usersCount = await db.user.count({ where: { organizationId: orgId } });
-    const vehiclesCount = await db.vehicle.count({ where: { organizationId: orgId } });
-    const maxVehicles = 1;
-    const billingData = {
-      plan: org.subscriptionTier || 'free',
-      status: org.subscriptionStatus || 'inactive',
-      currentPeriodEnds: '',
-      usage: {
-        users: usersCount,
-        maxUsers: org.maxUsers ?? 1,
-        vehicles: vehiclesCount,
-        maxVehicles,
-      },
-    };
+    const billingData = await getBillingInfo(orgId);
     const parsed = billingInfoSchema.safeParse(billingData);
     if (!parsed.success) {
       return { success: false, error: 'Invalid billing data' };

@@ -9,7 +9,7 @@
  * - Smart cache warming
  */
 
-import type { UserContext, ClerkOrganizationMetadata } from '@/types/auth';
+import type { UserContext, ClerkOrganizationMetadata, AuthState } from '@/types/auth';
 import { ClerkUserMetadata } from '@/types/auth';
 
 interface CacheItem<T> {
@@ -252,6 +252,46 @@ export const CACHE_TTL = {
   KPI: 2 * 60 * 1000, // 2 minutes cache for KPIs (more frequent updates)
   SHORT: 1 * 60 * 1000, // 1 minute cache for rapidly changing data
 } as const;
+
+// Auth state cache for client context
+
+const authStateCache = new Map<
+  string,
+  {
+    state: AuthState;
+    timestamp: number;
+  }
+>();
+
+const AUTH_STATE_TTL = 60 * 1000; // 1 minute
+
+export function getCachedAuthState(key: string): AuthState | null {
+  const cached = authStateCache.get(key);
+  if (cached && Date.now() - cached.timestamp < AUTH_STATE_TTL) {
+    return cached.state;
+  }
+  if (cached) {
+    authStateCache.delete(key);
+  }
+  return null;
+}
+
+export function setCachedAuthState(key: string, state: AuthState): void {
+  authStateCache.set(key, { state, timestamp: Date.now() });
+}
+
+export function cleanupAuthStateCache(): void {
+  const now = Date.now();
+  for (const [key, value] of authStateCache) {
+    if (now - value.timestamp >= AUTH_STATE_TTL) {
+      authStateCache.delete(key);
+    }
+  }
+}
+
+if (typeof setInterval !== 'undefined') {
+  setInterval(cleanupAuthStateCache, AUTH_STATE_TTL);
+}
 
 /**
  * Get cached data if available and not expired

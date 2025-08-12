@@ -1,13 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { CreditCard, CheckCircle } from 'lucide-react';
-
-export interface PlanDetails {
-  name: string;
-  price: string;
-  color: string;
-  features: string[];
-}
+import type { PlanDetails } from '@/lib/config/billingPlans';
 
 export interface BillingPlanOverviewProps {
   planDetails: PlanDetails;

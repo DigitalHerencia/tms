@@ -13,54 +13,18 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Users, Car, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSidebarCollapsed } from '@/components/navigation/MainNav';
 import { cn } from '@/lib/utils/utils';
 
 import type { BillingInfo } from '@/types/dashboard';
+import { planMap, type PlanKey } from '@/lib/config/billingPlans';
 
 interface BillingManagementClientProps {
   billingInfo: BillingInfo;
 }
 
 export function BillingManagementClient({ billingInfo }: BillingManagementClientProps) {
-  const collapsed = useSidebarCollapsed();
 
   // ── 1) planMap & tier narrowing ──
-  type PlanKey = 'starter' | 'growth' | 'enterprise';
-  type PlanDetails = BillingPlanOverviewProps['planDetails'];
-
-  const planMap: Record<PlanKey, PlanDetails> = {
-    starter: {
-      name: 'Starter',
-      price: '$249/mo',
-      color: 'text-blue-500',
-      features: [
-        'Up to 5 trucks',
-        '2 dispatcher seats',
-        '5 driver apps',
-        'Core TMS features',
-        '90‑day log retention',
-      ],
-    },
-    growth: {
-      name: 'Growth',
-      price: '$549/mo',
-      color: 'text-green-500',
-      features: [
-        'Up to 25 trucks',
-        'Unlimited dispatcher seats',
-        '25 driver apps',
-        'IFTA engine',
-        'Custom reports',
-      ],
-    },
-    enterprise: {
-      name: 'Enterprise',
-      price: '$799/mo',
-      color: 'text-purple-500',
-      features: ['Advanced features', 'Priority support', 'Unlimited everything'],
-    },
-  };
 
   const incoming = billingInfo.plan as PlanKey;
   const tier: PlanKey = incoming in planMap ? incoming : 'starter';
